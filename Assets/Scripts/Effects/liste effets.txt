@@ -1,0 +1,47 @@
+﻿Pousser(décale tous les blocs au dessus et les connexes)
+Frapper (décale 1 bloc, mais sur deux cases)
+colle
+Fantome (traverse bloc)
+Balles traversantes
+Tough: ne peut pas être écrasé, détruis le bloc qui lui tombe dessus
+Floaty: remonte a la surface
+Creuser
+Dashing shot
+Falling shot
+Grimpeur
+Sauter: saut a travers un bloc vide?
+Explosion: (à la mort ou sur des events)
+Miroir
+Zombifier
+Châtiment
+Immune debuff
+Heal
+Faller
+Turn Rock
+Arbre => grandit au et a mesure des tours
+Stab => Multiplication plus grande quand tape par derriere
+Sniper => Multiplication plus grande quand tape par derriere
+6eme sens => esquive de devant améliorée (séparée potentiellemenent en cac ou pas)
+Armes contondantes: limite le déplacement
+Débuff de stats dégats/autre
+Sentry / Zombie
+Fast Wall
+Flag happy=> pas le debuff du flag
+Augmentation de la range du flingue?
+Double shot => permet de tirer sur deux personnes mais -60% de puissance
+Traversable walkable?
+Porter ub allié ou les blocs au dessus.
+Lancer un allié
+Désactiver des compétences adverses?
+Rebond
+Kagenui => marcher sur la tête des ennemis
+Bouclier de 1 shot
+Intangibilité
+Effets effectifs un tour sur deux
+Rétrécir
+Delay damages?
+Retrecir le temps du tour/ l'augmenter => Augmenter le temps d'un effet d'un nombre fixe de tour 
+Bloqueur de blocs!
+Purgeurs
+Spherique aura
+multipliers changes damage

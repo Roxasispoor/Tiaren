@@ -1,0 +1,11 @@
+Creer les modeles humains facilement:
+Blender + MakeHumans Add-on (ou mixamo ou poser)
+
+Animation via MoCap
+cgspeed.com
+https://accad.osu.edu/researchmain/research/motion_lab/system_data.html
+http://www.thetrailerspark.com
+Animation via I-Frame depuis blender
+Mixamo datapack!
+
+Texturing des materiaux avec toshop + blender (baking)
