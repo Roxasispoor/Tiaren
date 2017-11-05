@@ -8,13 +8,13 @@ public class Personnage : LivingPlaceable {
     
 
     //constructeur classique de personnages
-    public Personnage(bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+    public Personnage(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur
         , float pvMax, float pvActuels, int pmMax, int pmActuels, int force, int speed, int dexterity, int miningPower, int speedstack,
         List<Competence> competences, List<Arme> armes, int nbFoisFiredThisTurn, bool estMort
         , int nbFoisMort, int tourRestantsCimetiere, Vector3 shootPosition) :
-         base( walkable,onWalkEffects,  movable,  destroyable,  traversableChar,  traversableBullet,
+         base(position, walkable,onWalkEffects,  movable,  destroyable,  traversableChar,  traversableBullet,
          gravityType,  pickable,  ecrasable,  onDestroyEffects
         ,  hitablePoints, onDebutTour, onFinTour,joueur
         ,  pvMax,  pvActuels,  pmMax,  pmActuels,  force,  speed,  dexterity,  miningPower,  speedstack,

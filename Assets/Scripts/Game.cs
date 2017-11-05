@@ -14,9 +14,10 @@ public class Game : MonoBehaviour {
     private List<Effect> listeEffectsDebutTour;
     private List<Effect> listeEffectsFinTour;
     private GameEffectManager gameEffectManager;
-    private Grid grilleJeu;
+    private Grille grilleJeu;
     private Timer clock;
     private Joueur winner;
+    private Vector3Int placeToGo;
     /// <summary>
     /// Permet de savoir si le jeu est fini
     /// </summary>
@@ -54,7 +55,7 @@ public class Game : MonoBehaviour {
         }
     }
 
-    public Grid GrilleJeu
+    public Grille GrilleJeu
     {
         get
         {
@@ -80,6 +81,8 @@ public class Game : MonoBehaviour {
         }
     }
 
+
+
     /** Déroulement 
 1)On reset pm et le bool de tir/compétences
 On applique les effets qui prennent effet en début de tour
@@ -92,7 +95,7 @@ On continue jusqu'à la fin des 30s /
 **/
 
     // Use this for initialization
-    void Start()
+    IEnumerator Start()
     {
         //La speed de turn est déterminée par l'élément le plus lent
 
@@ -102,7 +105,7 @@ On continue jusqu'à la fin des 30s /
             this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsDebutTour);
             this.gameEffectManager.Solve();
 
-            List<LivingPlaceable> liste = createTurnOrder();
+            List<LivingPlaceable> liste = CreateTurnOrder();
 
             foreach (LivingPlaceable placeable in liste)
             {
@@ -111,13 +114,22 @@ On continue jusqu'à la fin des 30s /
                 this.gameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
                 this.gameEffectManager.Solve();
                 //Ici l'utilisateur a la main, et 30 secondes.
-                clock.StartTimer(30f);
-                while (!clock.IsFinished)
+                
+                clock.StartTimer(30f);//devrait être remplacé par une coroutine
+
+
+                if (placeable.Joueur != null)
                 {
+                    bool endPhase = false;
+                    Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y-1, placeable.Position.z);
+                    DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax / 3, positiongo);
 
-
-
-                }
+                    while (placeable.NbFoisFiredThisTurn<1 && placeable.PmActuels >0 && !endPhase)
+                    {
+                        yield return StartCoroutine(PlayerChoice(clock));
+                        //On applique les changements
+                    }
+                    }
                 this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
                 this.gameEffectManager.Solve();
             }
@@ -125,7 +137,13 @@ On continue jusqu'à la fin des 30s /
 
         }
     }
-    public  List<LivingPlaceable> createTurnOrder(){
+    IEnumerator PlayerChoice(Timer clock)
+    {
+        while (this.placeToGo==null || clock.IsFinished )
+            yield return null;
+    }
+
+    public  List<LivingPlaceable> CreateTurnOrder(){
         int maxSpeedStack = 0;
         List<LivingPlaceable> liste = new List<LivingPlaceable>();
 

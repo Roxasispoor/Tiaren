@@ -15,15 +15,15 @@ public class Timer : MonoBehaviour {
     {
         get
         {
-            return isFinished;
+            return IsFinished;
         }
 
         set
         {
-            isFinished = value;
+            IsFinished = value;
         }
     }
-
+    
     public void StartTimer(float time)
     {
         this.targetTime = time;

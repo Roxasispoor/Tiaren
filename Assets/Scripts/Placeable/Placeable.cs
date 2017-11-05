@@ -9,6 +9,8 @@ using System.Collections.Generic;
 public abstract class Placeable : MonoBehaviour
 {
     private GameObject prefab;
+    private Vector3Int position;
+    private bool accessible;
     private bool walkable;
     private List<Effect> onWalkEffects;
     private bool movable;
@@ -40,13 +42,14 @@ public abstract class Placeable : MonoBehaviour
     /// <param name="gravityType"></param>
     /// <param name="pickable"></param>
     /// <param name="ecrasable"></param>
-    public Placeable(bool walkable, List<Effect> onWalkEffects, bool movable,bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+    public Placeable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable,bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour,Joueur joueur)
     {
 
-        
 
+        this.position = position;
+        this.accessible = false;
         this.walkable = walkable;
         this.OnWalkEffects=onWalkEffects;
         this.movable = movable;
@@ -253,6 +256,19 @@ public abstract class Placeable : MonoBehaviour
         }
     }
 
+    public Vector3Int Position
+    {
+        get
+        {
+            return position;
+        }
+
+        set
+        {
+            position = value;
+        }
+    }
+
 
     /// <summary>
     /// Copie l'objet
@@ -274,6 +290,16 @@ public abstract class Placeable : MonoBehaviour
             foreach (var effet in this.OnDestroyEffects)
             {
                 effet.Use();
+            }
+        }
+    }
+    public void OnMouseOver()
+    {
+        if (accessible) //on met en vert
+        {
+            if (Input.GetMouseButton(0))//on lance l'ordre a grille
+            {
+
             }
         }
     }
