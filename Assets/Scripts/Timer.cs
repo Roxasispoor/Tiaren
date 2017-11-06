@@ -8,22 +8,22 @@ public class Timer : MonoBehaviour {
 
     public Timer()
     {
-        this.IsFinished = false;
+        this.isFinished = false;
     }
 
     public bool IsFinished
     {
         get
         {
-            return IsFinished;
+            return isFinished;
         }
 
         set
         {
-            IsFinished = value;
+            isFinished = value;
         }
     }
-    
+
     public void StartTimer(float time)
     {
         this.targetTime = time;
@@ -34,7 +34,7 @@ public class Timer : MonoBehaviour {
 
         targetTime -= Time.deltaTime;
 
-        if (targetTime <= 0.0f)
+        if (!IsFinished && targetTime <= 0.0f)
         {
             IsFinished = true;
         }
