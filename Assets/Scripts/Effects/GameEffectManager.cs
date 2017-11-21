@@ -7,8 +7,8 @@ using System.Collections.Generic;
 /// </summary>
 public class GameEffectManager:MonoBehaviour
 {
-    private List<Effect> toBeTreated;
-    private List<BlockEffects> activeBlocks;
+    private List<Effect> toBeTreated =new List<Effect>();
+    private List<BlockEffects> activeBlocks= new List<BlockEffects>(); // blocks comme bouclier qui bloque
 
    
 
@@ -51,12 +51,12 @@ public class GameEffectManager:MonoBehaviour
     {
         get
         {
-            return ActiveBlocks;
+            return activeBlocks;
         }
 
         set
         {
-            ActiveBlocks = value;
+            activeBlocks = value;
         }
     }
 
@@ -77,6 +77,7 @@ public class GameEffectManager:MonoBehaviour
     // Use this for initialization
     void Start()
     {
+    
 
     }
 

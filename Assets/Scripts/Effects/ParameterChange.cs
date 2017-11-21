@@ -23,13 +23,5 @@ public class ParameterChange<T> : Effect {
         this.delegateSetter(paramNewValue);
     }
     
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }

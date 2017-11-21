@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Classe représentant une grille de jeux pour une partie
 /// </summary>
-public class Grille : MonoBehaviour {
+public class Grille  {
 
     //  50 x 50 x 5 = 12 500 blocs
     public static int sizeX = 50;
@@ -165,21 +165,7 @@ public class Grille : MonoBehaviour {
     {
        
     }
-
-    /// <summary>
-    /// Fonction lancée dès le début du jeu.
-    /// </summary>
-    void Start()
-    {
-        grid = new Placeable[sizeX, sizeY, sizeZ];
-
-        CreateRandomGrid();
-       // CanGo(4, 1, new Vector3(25, 3, 25));
-
-
-
-    }
-
+    
     /// <summary>
     /// Fonction qui intitalise la valeur du booléen explored des blocs de la grille
     /// </summary>
@@ -416,9 +402,5 @@ public class Grille : MonoBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
 
-    }
 }

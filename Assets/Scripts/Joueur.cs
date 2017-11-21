@@ -8,7 +8,8 @@ using UnityEngine;
 public class Joueur : MonoBehaviour {
     private bool acted;
     private int score;
-    private List<Personnage> personnages;
+    
+    private List<GameObject> personnages=new List<GameObject>();
    
 
     /// <summary>
@@ -43,10 +44,7 @@ public class Joueur : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Liste des personnages du joueur
-    /// </summary>
-    public List<Personnage> Personnages
+    public List<GameObject> Personnages
     {
         get
         {
@@ -59,10 +57,18 @@ public class Joueur : MonoBehaviour {
         }
     }
 
-   
+
+
+    /// <summary>
+    /// Liste des personnages du joueur
+    /// </summary>
+
+
 
     // Use this for initialization
     void Start () {
+        this.acted = false;
+        this.score = 0;
 		
 	}
 	

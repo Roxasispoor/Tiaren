@@ -4,7 +4,7 @@ using UnityEngine;
 /**
  * Effects are added to the GameEffectManager that will treat them. Effects should be kept simple and be independant of one another.
  * */
-public abstract class Effect : MonoBehaviour {
+public abstract class Effect  {
     private Placeable cible;
     private Placeable lanceur;
     private int tourEffetActif; //-1 = inactif 0=on arrête. On utilisera int.MaxValue/2 quand c'est indépendant

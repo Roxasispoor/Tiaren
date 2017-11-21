@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HitablePoint : MonoBehaviour {
+public class HitablePoint  {
     private Vector3 relativePosition;
     private float damageMultiplier;
 
@@ -32,13 +32,5 @@ public class HitablePoint : MonoBehaviour {
         }
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+   
 }

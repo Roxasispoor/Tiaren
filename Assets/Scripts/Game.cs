@@ -7,12 +7,19 @@ using UnityEngine;
 public class Game : MonoBehaviour {
     private int numberTurn;
     private int TurnSpeed;
-    private Joueur joueurJouant;
-    private Joueur joueur1;
-    private Joueur joueur2;
-    private List<LivingPlaceable> listeMonstresNeutres;
-    private List<Effect> listeEffectsDebutTour;
-    private List<Effect> listeEffectsFinTour;
+    private GameObject joueurJouant; //Should be Object
+    public GameObject[] prefabPersos;
+
+    public GameObject joueur1; //Should be Object
+    
+    public GameObject joueur2; //Should be Object
+    public GameObject[] prefabMonstres;
+
+    private List<GameObject> listeMonstresNeutres=new List<GameObject>(); 
+
+    private List<Effect> listeEffectsDebutTour=new List<Effect>(); 
+    private List<Effect> listeEffectsFinTour=new List<Effect>();
+
     private GameEffectManager gameEffectManager;
     private Grille grilleJeu;
     private Timer clock;
@@ -42,18 +49,7 @@ public class Game : MonoBehaviour {
     /// <summary>
     /// Indique le joueur en train de jouer
     /// </summary>
-    public Joueur JoueurJouant
-    {
-        get
-        {
-            return joueurJouant;
-        }
-
-        set
-        {
-            joueurJouant = value;
-        }
-    }
+   
 
     public Grille GrilleJeu
     {
@@ -97,6 +93,10 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
+        this.gameEffectManager=gameObject.GetComponent<GameEffectManager>();
+        this.clock = gameObject.GetComponent<Timer>();
+
+
         //La speed de turn est déterminée par l'élément le plus lent
 
 
@@ -147,9 +147,9 @@ On continue jusqu'à la fin des 30s /
         int maxSpeedStack = 0;
         List<LivingPlaceable> liste = new List<LivingPlaceable>();
 
-        foreach (Personnage pers1 in joueur1.Personnages)
+        foreach (GameObject pers1b in joueur1.GetComponent<Joueur>().Personnages)
         {
-
+            Personnage pers1 = pers1b.GetComponent<Personnage>();
             pers1.SpeedStack += 1 / pers1.Speed;
 
             liste.Add(pers1);
@@ -159,9 +159,9 @@ On continue jusqu'à la fin des 30s /
             }
 
         }
-        foreach (Personnage pers2 in joueur2.Personnages)
+        foreach (GameObject pers2b in joueur2.GetComponent<Joueur>().Personnages)
         {
-            pers2.SpeedStack += 1 / pers2.Speed;
+            Personnage pers2 = pers2b.GetComponent<Personnage>();
             liste.Add(pers2);
             if (maxSpeedStack < pers2.SpeedStack)
             {
@@ -169,8 +169,10 @@ On continue jusqu'à la fin des 30s /
             }
 
         }
-        foreach (LivingPlaceable monstre in listeMonstresNeutres)
+        foreach (GameObject monstre2 in listeMonstresNeutres)
         {
+            LivingPlaceable monstre = monstre2.GetComponent<LivingPlaceable>();
+
             monstre.SpeedStack += 1 / monstre.Speed;
             liste.Add(monstre);
             if (maxSpeedStack < monstre.SpeedStack)
@@ -180,9 +182,11 @@ On continue jusqu'à la fin des 30s /
 
         }
 
-        foreach (Personnage pers1 in joueur1.Personnages)
+        foreach (GameObject pers1b in joueur1.GetComponent<Joueur>().Personnages)
         {
-            if(pers1.SpeedStack<maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
+            Personnage pers1 = pers1b.GetComponent<Personnage>();
+
+            if (pers1.SpeedStack<maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
             {
                 pers1.SpeedStack += 1 / pers1.Speed;
                 liste.Add(pers1);
@@ -190,16 +194,18 @@ On continue jusqu'à la fin des 30s /
 
         }
 
-        foreach (Personnage pers2 in joueur2.Personnages)
+        foreach (GameObject pers2b in joueur2.GetComponent<Joueur>().Personnages)
         {
+            Personnage pers2 = pers2b.GetComponent<Personnage>();
             if (pers2.SpeedStack < maxSpeedStack + 1 / pers2.Speed) // alors on peut le rerajouter
             {
                 pers2.SpeedStack += 1 / pers2.Speed;
                 liste.Add(pers2);
             }
         }
-        foreach (LivingPlaceable monstre in listeMonstresNeutres)
+        foreach (GameObject monstre2 in listeMonstresNeutres)
         {
+            LivingPlaceable monstre = monstre2.GetComponent<LivingPlaceable>();
             if (monstre.SpeedStack < maxSpeedStack + 1 / monstre.Speed) // alors on peut le rerajouter
             {
                 monstre.SpeedStack += 1 / monstre.Speed;
