@@ -106,7 +106,8 @@ On continue jusqu'à la fin des 30s /
             this.gameEffectManager.Solve();
 
             List<LivingPlaceable> liste = CreateTurnOrder();
-
+            if(liste.Count != 0)
+            { 
             foreach (LivingPlaceable placeable in liste)
             {
                 placeable.PmActuels = placeable.PmMax;
@@ -115,23 +116,33 @@ On continue jusqu'à la fin des 30s /
                 this.gameEffectManager.Solve();
                 //Ici l'utilisateur a la main, et 30 secondes.
                 
-                clock.StartTimer(30f);//devrait être remplacé par une coroutine
-
+              
 
                 if (placeable.Joueur != null)
                 {
+                    clock.StartTimer(30f);//devrait être remplacé par une coroutine
+
+                    Coroutine routine= StartCoroutine(PlayerChoice(clock));
+
                     bool endPhase = false;
                     Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y-1, placeable.Position.z);
                     DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax / 3, positiongo);
 
                     while (placeable.NbFoisFiredThisTurn<1 && placeable.PmActuels >0 && !endPhase)
                     {
-                        yield return StartCoroutine(PlayerChoice(clock));
-                        //On applique les changements
+                        yield return null;
+                        
                     }
+                    //On applique les changements
+                    StopCoroutine(routine);
                     }
                 this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
                 this.gameEffectManager.Solve();
+            }
+            }
+            else
+            {
+                yield return null;
             }
 
 
