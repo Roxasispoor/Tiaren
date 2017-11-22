@@ -76,7 +76,14 @@ public class Game : MonoBehaviour {
             winner = value;
         }
     }
+    private void Awake()
 
+    {
+        //    DontDestroyOnLoad(gameObject);
+
+        this.gameEffectManager = gameObject.GetComponent<GameEffectManager>();
+        this.clock = gameObject.GetComponent<Timer>();
+    }
 
 
     /** Déroulement 
@@ -90,11 +97,11 @@ Le game manager applique vérifie que l'effet est activable /: pas contré/ autr
 On continue jusqu'à la fin des 30s /
 **/
 
+
     // Use this for initialization
     IEnumerator Start()
     {
-        this.gameEffectManager=gameObject.GetComponent<GameEffectManager>();
-        this.clock = gameObject.GetComponent<Timer>();
+       
 
 
         //La speed de turn est déterminée par l'élément le plus lent
