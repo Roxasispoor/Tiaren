@@ -240,6 +240,7 @@
     <Compile Include="Assets\Scripts\Placeable\LivingPlaceable.cs" />
     <Compile Include="Assets\Scripts\Placeable\Personnage.cs" />
     <Compile Include="Assets\Scripts\Placeable\Placeable.cs" />
+    <Compile Include="Assets\Scripts\Placeable\StandardCube.cs" />
     <Compile Include="Assets\Scripts\Tests\yieldTest.cs" />
     <Compile Include="Assets\Scripts\Timer.cs" />
     <Compile Include="Assets\UnityChan\Scripts\CameraController.cs" />

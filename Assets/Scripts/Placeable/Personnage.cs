@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Personnage : LivingPlaceable {
 
-    
-    
+   
 
     //constructeur classique de personnages
     public Personnage(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
@@ -51,8 +50,38 @@ public class Personnage : LivingPlaceable {
 
     // Use this for initialization
     void Start () {
-		
-	}
+
+        this.Position = new Vector3Int(0, 4, 0);
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.GRAVITE_SIMPLE;
+        this.Pickable = false;
+        this.Ecrasable = EcraseType.ECRASEDEATH;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+        {
+            new HitablePoint(new Vector3(0, 0, 0), 1)
+        };
+        this.OnDebutTour = new List<Effect>();
+        this.OnFinTour = new List<Effect>();
+        this.PvMax = 100;
+        this.PmActuels = 3;
+        this.Force = 100;
+        this.Speed = 100;
+        this.Dexterity = 100;
+        this.SpeedStack = 0;
+        this.Competences = new List<Competence>();
+        this.Armes = new List<Arme>();
+        this.NbFoisFiredThisTurn = 0;
+        this.EstMort = false;
+        this.NbFoisMort = 0;
+        this.TourRestantsCimetiere = 0;
+        this.ShootPosition = new Vector3(0, 0, 0);
+
+    }
 	
 	// Update is called once per frame
 	void Update () {

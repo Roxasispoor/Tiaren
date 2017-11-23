@@ -48,7 +48,7 @@ public abstract class LivingPlaceable : Placeable {
     this.equipedArm = armes[0];//la première arme est automatiquement équipée
     
     this.NbFoisFiredThisTurn = nbFoisFiredThisTurn;
-    this.estMort = estMort;
+    this.EstMort = estMort;
     this.NbFoisMort = nbFoisMort;
     this.TourRestantsCimetiere = tourRestantsCimetiere;
     this.shootPosition = shootPosition;
@@ -307,6 +307,19 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
+    public bool EstMort
+    {
+        get
+        {
+            return estMort;
+        }
+
+        set
+        {
+            estMort = value;
+        }
+    }
+
 
     /// <summary>
     /// Copie l'objet
@@ -326,7 +339,7 @@ public abstract class LivingPlaceable : Placeable {
     new protected virtual void Destroy()
     {
         base.Destroy();
-        this.estMort = true;
+        this.EstMort = true;
         NbFoisMort++;
     }
 

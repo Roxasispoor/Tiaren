@@ -9,7 +9,7 @@ public class Joueur : MonoBehaviour {
     private bool acted;
     private int score;
     
-    private List<GameObject> personnages=new List<GameObject>();
+    public List<GameObject> personnages=new List<GameObject>();
    
 
     /// <summary>

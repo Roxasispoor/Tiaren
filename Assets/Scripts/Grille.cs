@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Classe représentant une grille de jeux pour une partie
 /// </summary>
-public class Grille  {
+public class Grille: MonoBehaviour  {
 
     //  50 x 50 x 5 = 12 500 blocs
     public static int sizeX = 50;
@@ -16,7 +16,7 @@ public class Grille  {
     /// <summary>
     /// Représente la grille de jeux
     /// </summary>
-    private Placeable[,,] grid;
+    private Placeable[,,] grid=new Placeable[sizeX,sizeY,sizeZ];
     /// <summary>
     /// Pourquoi est-il fixé ?
     /// </summary>
@@ -26,6 +26,7 @@ public class Grille  {
     /// </summary>
     public List<Placeable> floaties;
 
+    public GameObject[] prefabsList;
     /// <summary>
     /// Crée une grille aléatoire a partir de randomParameter
     /// </summary>
@@ -39,11 +40,15 @@ public class Grille  {
                 {
                     if (Random.Range(0, 100) < randomParameter && y < sizeY - 1) // la deuxième condition pourrait simplement etre dans le for du Y
                     {
-                        
+                        GameObject obj = Instantiate(prefabsList[0],new Vector3(x,y,z),Quaternion.identity);
+                        obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
+                        grid[x,y,z]= obj.GetComponent<Placeable>() ;
+                       
                     }
                 }
             }
         }
+
     }
 
    
@@ -82,8 +87,8 @@ public class Grille  {
 
             Vector3Int posBlocActuel = queue.Dequeue();
             parent = gridBool[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
-     
-            grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z].GetComponent<Renderer>().material.color = Color.cyan;
+            Placeable testa = grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
+            testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
             //là mettre l'affichage du bloc en bleu
             for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
             {
@@ -401,6 +406,14 @@ public class Grille  {
             }
         }
     }
+    public void ReadGridFromFile()
+    {
 
+    }
 
+    void Start()
+    {
+     
+        
+    }
 }

@@ -29,7 +29,7 @@ public abstract class Placeable : MonoBehaviour
     /// <summary>
     /// Le joueur a qui appartient le placeable. Les joueurs, équipe neutre(monstres neutres) et null(blocs indépendants)
     /// </summary>
-    private Joueur joueur;
+    public Joueur joueur;
 
 
 
@@ -42,18 +42,18 @@ public abstract class Placeable : MonoBehaviour
     /// <param name="gravityType"></param>
     /// <param name="pickable"></param>
     /// <param name="ecrasable"></param>
-    public Placeable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable,bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+    public Placeable(Vector3Int position, bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
-        , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour,Joueur joueur)
+        , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur)
     {
 
 
         this.position = position;
         this.accessible = false;
         this.walkable = walkable;
-        this.OnWalkEffects=onWalkEffects;
+        this.OnWalkEffects = onWalkEffects;
         this.movable = movable;
-        this.destroyable = destroyable;
+        this.Destroyable = destroyable;
         this.TraversableChar = traversableChar;
         this.TraversableBullet = traversableBullet;
         this.GravityType = gravityType;
@@ -65,7 +65,7 @@ public abstract class Placeable : MonoBehaviour
         this.OnFinTour = onFinTour;
         this.Joueur = joueur;
     }
-	
+
     public bool Walkable
     {
         get
@@ -104,7 +104,7 @@ public abstract class Placeable : MonoBehaviour
             pickable = value;
         }
     }
-    
+
 
     /// <summary>
     /// Indique si on a déja fait nos test de gravité sur ce placeable
@@ -123,8 +123,8 @@ public abstract class Placeable : MonoBehaviour
     }
 
 
-    
-    
+
+
 
     public List<Effect> OnDebutTour
     {
@@ -269,6 +269,19 @@ public abstract class Placeable : MonoBehaviour
         }
     }
 
+    public bool Destroyable
+    {
+        get
+        {
+            return destroyable;
+        }
+
+        set
+        {
+            destroyable = value;
+        }
+    }
+
 
     /// <summary>
     /// Copie l'objet
@@ -285,7 +298,7 @@ public abstract class Placeable : MonoBehaviour
     /// </summary>
     public virtual void Destroy()
     {
-        if (this.destroyable)
+        if (this.Destroyable)
         {
             foreach (var effet in this.OnDestroyEffects)
             {
@@ -302,16 +315,5 @@ public abstract class Placeable : MonoBehaviour
 
             }
         }
-    }
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

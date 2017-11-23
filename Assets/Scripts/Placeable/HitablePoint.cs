@@ -6,6 +6,12 @@ public class HitablePoint  {
     private Vector3 relativePosition;
     private float damageMultiplier;
 
+    public HitablePoint(Vector3 relativePosition,float damageMultiplier)
+    {
+        this.relativePosition = relativePosition;
+        this.damageMultiplier = damageMultiplier;
+    }
+
     public Vector3 RelativePosition
     {
         get

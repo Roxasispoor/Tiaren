@@ -83,6 +83,9 @@ public class Game : MonoBehaviour {
 
         this.gameEffectManager = gameObject.GetComponent<GameEffectManager>();
         this.clock = gameObject.GetComponent<Timer>();
+        this.grilleJeu = gameObject.GetComponent<Grille>();
+        grilleJeu.CreateRandomGrid();
+
     }
 
 
@@ -133,13 +136,14 @@ On continue jusqu'à la fin des 30s /
 
                     bool endPhase = false;
                     Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y-1, placeable.Position.z);
-                    DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax / 3, positiongo);
-
-                    while (placeable.NbFoisFiredThisTurn<1 && placeable.PmActuels >0 && !endPhase)
+                    DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
+                        Debug.Log("C'est le debut lol!");
+                        while (placeable.NbFoisFiredThisTurn<1 && placeable.PmActuels >0 && !endPhase)
                     {
                         yield return null;
                         
                     }
+                        Debug.Log("C'est la fin lol!");
                     //On applique les changements
                     StopCoroutine(routine);
                     }
