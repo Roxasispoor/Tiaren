@@ -49,7 +49,7 @@ public class Personnage : LivingPlaceable {
     }
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
 
         this.Position = new Vector3Int(0, 4, 0);
         this.Walkable = false;
@@ -68,6 +68,7 @@ public class Personnage : LivingPlaceable {
         this.OnDebutTour = new List<Effect>();
         this.OnFinTour = new List<Effect>();
         this.PvMax = 100;
+        this.PmMax = 3;
         this.PmActuels = 3;
         this.Force = 100;
         this.Speed = 100;

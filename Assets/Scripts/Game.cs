@@ -85,6 +85,7 @@ public class Game : MonoBehaviour {
         this.clock = gameObject.GetComponent<Timer>();
         this.grilleJeu = gameObject.GetComponent<Grille>();
         grilleJeu.CreateRandomGrid();
+        this.placeToGo = new Vector3Int(-1, -1, -1);
 
     }
 
@@ -130,22 +131,25 @@ On continue jusqu'à la fin des 30s /
 
                 if (placeable.Joueur != null)
                 {
-                    clock.StartTimer(30f);//devrait être remplacé par une coroutine
+                        clock.IsFinished = false;
+                    clock.StartTimer(30f);
 
-                    Coroutine routine= StartCoroutine(PlayerChoice(clock));
+                    //Coroutine routine= StartCoroutine(PlayerChoice(clock));
 
                     bool endPhase = false;
                     Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y-1, placeable.Position.z);
+                        
                     DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
-                        Debug.Log("C'est le debut lol!");
-                        while (placeable.NbFoisFiredThisTurn<1 && placeable.PmActuels >0 && !endPhase)
+                         Debug.Log("C'est le debut lol!");
+                        Vector3Int vecTest = new Vector3Int(-1, -1, -1);
+                        while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest) 
                     {
                         yield return null;
                         
                     }
                         Debug.Log("C'est la fin lol!");
                     //On applique les changements
-                    StopCoroutine(routine);
+                    //StopCoroutine(routine);
                     }
                 this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
                 this.gameEffectManager.Solve();
@@ -159,11 +163,7 @@ On continue jusqu'à la fin des 30s /
 
         }
     }
-    IEnumerator PlayerChoice(Timer clock)
-    {
-        while (this.placeToGo==null || clock.IsFinished )
-            yield return null;
-    }
+ 
 
     public  List<LivingPlaceable> CreateTurnOrder(){
         int maxSpeedStack = 0;
