@@ -85,7 +85,9 @@ public class Game : MonoBehaviour {
         this.clock = gameObject.GetComponent<Timer>();
         this.grilleJeu = gameObject.GetComponent<Grille>();
         grilleJeu.CreateRandomGrid();
-        
+      
+
+
         //  grilleJeu.ActualisePosition();
         this.placeToGo = new Vector3Int(-1, -1, -1);
 
@@ -108,8 +110,13 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
-
-        //yield return new WaitForSeconds(3);
+        foreach (GameObject pers in joueur1.GetComponent<Joueur>().Personnages)
+        {
+            Vector3Int posPers = pers.GetComponent<Personnage>().Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers.GetComponent<Personnage>();
+        }
+       
+        yield return new WaitForSeconds(1);
         grilleJeu.GraviteSimple();
 
 
