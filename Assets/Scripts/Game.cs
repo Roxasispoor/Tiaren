@@ -85,7 +85,10 @@ public class Game : MonoBehaviour {
         this.clock = gameObject.GetComponent<Timer>();
         this.grilleJeu = gameObject.GetComponent<Grille>();
         grilleJeu.CreateRandomGrid();
+        
+        //  grilleJeu.ActualisePosition();
         this.placeToGo = new Vector3Int(-1, -1, -1);
+
 
     }
 
@@ -105,7 +108,9 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
-       
+
+        //yield return new WaitForSeconds(3);
+        grilleJeu.GraviteSimple();
 
 
         //La speed de turn est déterminée par l'élément le plus lent
@@ -121,6 +126,7 @@ On continue jusqu'à la fin des 30s /
             { 
             foreach (LivingPlaceable placeable in liste)
             {
+                    
                 placeable.PmActuels = placeable.PmMax;
                 placeable.NbFoisFiredThisTurn = 0;
                 this.gameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);

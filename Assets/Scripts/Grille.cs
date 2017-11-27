@@ -93,7 +93,7 @@ public class Grille: MonoBehaviour  {
             for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
             {
                
-                if (posBlocActuel.y + yactuel>=0 && posBlocActuel.y + yactuel<sizeY && posBlocActuel.x<sizeX - 1 &&
+                if (posBlocActuel.y + yactuel>=0 && posBlocActuel.y + yactuel<sizeY  && posBlocActuel.x<sizeX - 1 &&
                     gridBool[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 &&
                     grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&
                     (grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null
@@ -110,7 +110,7 @@ public class Grille: MonoBehaviour  {
                     gridBool[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].SetParent(parent);
                 }
 
-                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.x > 0 &&
+                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.x > 0 &&
                     gridBool[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 &&
                     grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&
                     (grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null
@@ -127,7 +127,7 @@ public class Grille: MonoBehaviour  {
                     
                     
                 }
-                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.z < sizeZ - 1 &&
+                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.z < sizeZ - 1 &&
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1].GetDistance() == -1 &&
                     grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1] != null &&
                     (grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1] == null
@@ -143,7 +143,7 @@ public class Grille: MonoBehaviour  {
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z+1].SetParent(parent);
 
                 }
-                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.z > 0 &&
+                if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.z > 0 &&
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].GetDistance() == -1 &&
                     grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1] != null &&
                     (grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1] == null
@@ -160,7 +160,26 @@ public class Grille: MonoBehaviour  {
             }
        
         }
+        
         return gridBool;
+    }
+
+    public void ActualisePosition()
+    {
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    if(grid[x, y, z] !=null)
+                    { 
+                    grid[x, y, z].gameObject.transform.position = new Vector3(x, y, z);
+
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -266,6 +285,7 @@ public class Grille: MonoBehaviour  {
     public void Gravite()
     {
         GraviteSimple();
+        ActualisePosition();
         //VERIFIER que a la creation explored = false. Tant que tous ne sont pas explorés
         while (!IsGridAllExplored())
         {
@@ -295,6 +315,7 @@ public class Grille: MonoBehaviour  {
             }
             //Ensuite tous les blocs non nuls avec explored à false tombent de 1
             TombeConnexe();
+            ActualisePosition();
         }
     }
     /// <summary>
@@ -336,14 +357,14 @@ public class Grille: MonoBehaviour  {
            if (grid[x, y - ydescente, z] == null)// On copie et on détruit
             {
             
-                grid[x, y - ydescente, z] = grid[x, y, z].Clone();
+                grid[x, y - ydescente, z] = grid[x, y, z].Cloner();
             grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
 
                 grid[x, y, z] = null;
             }
             else if (grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
             {
-                grid[x, y, z].Destroy();
+                grid[x, y, z].Detruire();
                 grid[x, y, z] = null;
 
             }
@@ -355,18 +376,18 @@ public class Grille: MonoBehaviour  {
                     ymontee++;
                 }
 
-                grid[x, ymontee, z] = grid[x, y - ydescente, z].Clone();
+                grid[x, ymontee, z] = grid[x, y - ydescente, z].Cloner();
                 grid[x, ymontee, z].Position.Set(x, ymontee, z);
 
                 
-                grid[x, y - ydescente, z] = grid[x, y, z].Clone();
+                grid[x, y - ydescente, z] = grid[x, y, z].Cloner();
             grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
             grid[x, y, z] = null;
             }
             else if (grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDEATH)
             {
-                grid[x, y - ydescente, z].Destroy();
-                grid[x, y - ydescente, z] = grid[x, y, z].Clone();
+                grid[x, y - ydescente, z].Detruire();
+                grid[x, y - ydescente, z] = grid[x, y, z].Cloner();
             grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
                 grid[x, y, z] = null;
 
@@ -382,28 +403,46 @@ public class Grille: MonoBehaviour  {
     /// </summary>
     public void GraviteSimple()
     {
-        for (int x = 0; x < sizeX; x++)
+        int y = 0;
+        while (y < sizeY)
         {
-            for (int y = 0; y < sizeY; y++)
+            for (int x = 0; x < sizeX; x++)
             {
+            
                 for (int z = 0; z < sizeZ; z++)
                 {
                     if (grid[x, y, z] != null && grid[x, y, z].GravityType == GravityType.GRAVITE_SIMPLE)
                     {
                         int ydescente = 0;
 
-                        while (y > 0 && (grid[x, y - ydescente, z] != null || grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASESTAY))
+                        while (y-ydescente > 0 && (grid[x, y - ydescente - 1, z] == null 
+                            ||(grid[x, y - ydescente - 1, z].Ecrasable != EcraseType.ECRASESTAY)))
 
                         {
                             ydescente++;
                         }
+                        if(ydescente > 0)
+                        {
+                            //GereEcrasageBloc(x, y, z, ydescente);
+                            Debug.Log("x:" + x + "y:" + y + "z:" + z);
 
-                        GereEcrasageBloc(x, y, z, ydescente);
+                            Debug.Log("x:"+x+"y:"+ (y - ydescente)+ "z:"+z );
+                            grid[x, y, z].gameObject.GetComponent<Renderer>().material.color = Color.black;
+                            grid[x, y - ydescente, z]=Instantiate(grid[x, y, z].gameObject,new Vector3(x,y-ydescente,z),Quaternion.identity).GetComponent<Placeable>();
+                            grid[x, y - ydescente, z].Position = new Vector3Int(x, y - ydescente, z);
+                            grid[x, y-ydescente, z].gameObject.GetComponent<Renderer>().material.color = Color.white;
+                            grid[x, y, z].Detruire();
+                            Debug.Log(grid[x, y, z]);
+                            grid[x, y, z] = null;
+                            
+
+                        }
 
 
                     }
                 }
             }
+            y++;
         }
     }
     public void ReadGridFromFile()

@@ -287,7 +287,7 @@ public abstract class Placeable : MonoBehaviour
     /// Copie l'objet
     /// </summary>
     /// <returns>Retourne une copie de l'objet</returns>
-    public virtual Placeable Clone()
+    public virtual Placeable Cloner()
     {
         var copy = (Placeable)this.MemberwiseClone();
         return copy;
@@ -296,7 +296,7 @@ public abstract class Placeable : MonoBehaviour
     /// <summary>
     /// Méthode a appeler lors de la destruction de l'objet
     /// </summary>
-    public virtual void Destroy()
+    public virtual void Detruire()
     {
         if (this.Destroyable)
         {
@@ -305,6 +305,8 @@ public abstract class Placeable : MonoBehaviour
                 effet.Use();
             }
         }
+        Destroy(this);
+        Destroy(this.gameObject);
     }
     public void OnMouseOver()
     {

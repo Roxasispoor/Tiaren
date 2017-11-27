@@ -327,7 +327,7 @@ public abstract class LivingPlaceable : Placeable {
     /// <returns>Retourne une copie de l'objet</returns>
     new protected virtual LivingPlaceable Clone()
     {
-        var copy = (LivingPlaceable)base.Clone();
+        var copy = (LivingPlaceable)base.Cloner();
         return copy;
     }
 
@@ -338,7 +338,7 @@ public abstract class LivingPlaceable : Placeable {
     
     new protected virtual void Destroy()
     {
-        base.Destroy();
+        base.Detruire();
         this.EstMort = true;
         NbFoisMort++;
     }
