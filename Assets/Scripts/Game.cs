@@ -119,6 +119,11 @@ On continue jusqu'à la fin des 30s /
         yield return new WaitForSeconds(1);
         grilleJeu.GraviteSimple();
 
+        grilleJeu.InitialiseExplored(false);
+        Debug.Log(grilleJeu.IsGridAllExplored());
+        grilleJeu.Explore(0, 0, 0);
+        Debug.Log(grilleJeu.IsGridAllExplored());
+
 
         //La speed de turn est déterminée par l'élément le plus lent
 

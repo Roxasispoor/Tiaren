@@ -213,7 +213,7 @@ public class Grille: MonoBehaviour  {
     /// <summary>
     /// Fonction qui intitalise la valeur du booléen explored des blocs de la grille
     /// </summary>
-	private void InitialiseExplored(bool value)
+	public void InitialiseExplored(bool value)
 	{
 		for (int x = 0; x < sizeX; x++)
 		{
@@ -237,9 +237,12 @@ public class Grille: MonoBehaviour  {
     /// <param name="positionSommetX"></param>
     /// <param name="positionSommetY"></param>
     /// <param name="positionSommetZ"></param>
-	private void Explore(int positionSommetX,int positionSommetY,int positionSommetZ)
+	public void Explore(int positionSommetX,int positionSommetY,int positionSommetZ)
 	{
+        if(!Grid[positionSommetX, positionSommetY, positionSommetZ].Explored)
+        { 
 		Grid[positionSommetX, positionSommetY, positionSommetZ].Explored = true;
+        //Debug.Log("x" + positionSommetX + "y" + positionSommetY + "z" + positionSommetZ + "bool" + Grid[positionSommetX, positionSommetY, positionSommetZ].Explored);
 
         //on considère les 4 à cotés et ceux au dess(o)us ... donc les 6 cotés ?
         //si les voisins sont  non nuls et non explorés et toujours dans la map
@@ -268,11 +271,12 @@ public class Grille: MonoBehaviour  {
         {
             Explore(positionSommetX, positionSommetY, positionSommetZ - 1);
         }
-        if (positionSommetZ > sizeZ - 1 && Grid[positionSommetX, positionSommetY , positionSommetZ + 1] != null &&
+        if (positionSommetZ < sizeZ - 1 && Grid[positionSommetX, positionSommetY , positionSommetZ + 1] != null &&
             !Grid[positionSommetX, positionSommetY , positionSommetZ + 1].Explored)
         {
             Explore(positionSommetX, positionSommetY , positionSommetZ + 1);
         }
+    }
     }
 
     /// <summary>
@@ -290,6 +294,7 @@ public class Grille: MonoBehaviour  {
                     if(Grid[x,y,z]!=null && !Grid[x,y,z].Explored)
                     // si on a des trucs non explorés, c'est à dire qu'ils doivent tomber donc faux
                     {
+                        Debug.Log("x" + x + "y" + y + "z" + z);
                         return false;
 
                     }

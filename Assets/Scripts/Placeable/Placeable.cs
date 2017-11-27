@@ -21,7 +21,7 @@ public abstract class Placeable : MonoBehaviour
     private GravityType gravityType;
     private bool pickable;
     private EcraseType ecrasable;
-    private bool explored;
+    public bool explored;
     private List<Effect> onDestroyEffects;
     private List<HitablePoint> hitablePoints;
     private List<Effect> onDebutTour;
