@@ -117,7 +117,7 @@ On continue jusqu'à la fin des 30s /
         }
        
         yield return new WaitForSeconds(1);
-        grilleJeu.GraviteSimple();
+        grilleJeu.Gravite();
 
         grilleJeu.InitialiseExplored(false);
         Debug.Log(grilleJeu.IsGridAllExplored());

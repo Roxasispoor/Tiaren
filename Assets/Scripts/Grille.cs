@@ -310,7 +310,7 @@ public class Grille: MonoBehaviour  {
     public void Gravite()
     {
         GraviteSimple();
-        ActualisePosition();
+     
         //VERIFIER que a la creation explored = false. Tant que tous ne sont pas explorés
         while (!IsGridAllExplored())
         {
@@ -340,7 +340,7 @@ public class Grille: MonoBehaviour  {
             }
             //Ensuite tous les blocs non nuls avec explored à false tombent de 1
             TombeConnexe();
-            ActualisePosition();
+            
         }
     }
     /// <summary>
@@ -349,9 +349,7 @@ public class Grille: MonoBehaviour  {
     /// </summary>
     public void TombeConnexe()
     {
-        bool mustStop = false;
-        while (!mustStop)
-        {
+        
             for (int x = 0; x < sizeX; x++)
             {
                 for (int y = 0; y < sizeY; y++)
@@ -367,7 +365,7 @@ public class Grille: MonoBehaviour  {
                     }
                 }
             }
-        }
+        
     }
 
     /// <summary>
