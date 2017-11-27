@@ -11,7 +11,8 @@ public class Grille: MonoBehaviour  {
     public static int sizeX = 50;
     public static int sizeY = 6;
     public static int sizeZ = 50;
-    
+    public DistanceAndParent[,,] gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
+
 
     /// <summary>
     /// Représente la grille de jeux
@@ -79,9 +80,9 @@ public class Grille: MonoBehaviour  {
     /// </summary>
     public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable,int saut, Vector3Int positionBloc)
     {
-        int deplacement = livingPlaceable.PmActuels;
+        int deplacement = 3;
         
-        DistanceAndParent[,,] gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
+       
 
         for (int x = 0; x < sizeX; x++)
         {
@@ -97,12 +98,14 @@ public class Grille: MonoBehaviour  {
         Queue<Vector3Int> queue = new Queue<Vector3Int>();
         queue.Enqueue(positionBloc);
         DistanceAndParent parent = null;
-        while (parent==null||(parent.GetDistance() < deplacement && queue.Count != 0))
+        gridBool[positionBloc.x, positionBloc.y, positionBloc.z].SetDistance ( 0);
+        while (parent==null||((parent.GetDistance() <= deplacement) && queue.Count != 0))
         {
             //On mets ceux à coté, ceux au dessus accessibles ou ceux en dessous accessibles
             //coté
 
             Vector3Int posBlocActuel = queue.Dequeue();
+         //   Debug.Log("x" + posBlocActuel.x + "y" + posBlocActuel.y + "z" + posBlocActuel.z);
             parent = gridBool[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
             Placeable testa = Grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
             testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
@@ -110,13 +113,13 @@ public class Grille: MonoBehaviour  {
             for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
             {
                
-                if (posBlocActuel.y + yactuel>=0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.x<sizeX - 1 &&
-                    gridBool[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 &&
-                    Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&
-                    (Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null
-                    || Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar==TraversableType.ALLTHROUGH
-                    ||Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar==TraversableType.ALLIESTHROUGH &&
-                    Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Joueur==livingPlaceable.Joueur)
+                if (posBlocActuel.y + yactuel>=0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.x<sizeX - 1 && //au dessus de 0, en dessous du max, dans le terrain en x
+                    gridBool[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 && //si on l'a pas dejà vu
+                    Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&        // et si le bloc existe
+                    (Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null  //si le bloc au dessus est vide
+                    || Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar==TraversableType.ALLTHROUGH //ou traversable en général
+                    ||Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar==TraversableType.ALLIESTHROUGH && //ou seulement par un allié
+                    Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Joueur==livingPlaceable.Joueur) //si on est l'allié
                     && Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].Walkable
                     )
                 {//si le sommet n'est pas marqué et qu'il existe, et qu'il n'y a rien au dessus ou que celui du dessus est traversable, que le bloc est walkable
@@ -163,7 +166,7 @@ public class Grille: MonoBehaviour  {
                 if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.z > 0 &&
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].GetDistance() == -1 &&
                     Grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1] != null &&
-                    (Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1] == null
+                    (Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1] == null
                     || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLTHROUGH
                     || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
                     Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].Joueur == livingPlaceable.Joueur)
