@@ -43,7 +43,7 @@ public class Personnage : LivingPlaceable {
     // Use this for initialization
     void Awake () {
 
-        this.Position = new Vector3Int(0, 4, 0);
+        //this.Position = new Vector3Int(0, 4, 0);
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;

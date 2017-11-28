@@ -298,7 +298,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 549653266}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 558, y: 394.5, z: 0}
+  m_LocalPosition: {x: 558, y: 267.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 820190055}
@@ -402,7 +402,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc199c3aa1659849bfc610d2a99abe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  personnages: []
+  personnages:
+  - {fileID: 819160533}
 --- !u!4 &609096099
 Transform:
   m_ObjectHideFlags: 0
@@ -416,6 +417,72 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &819160532
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777157796085198, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1184022599308642, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+      propertyPath: m_Name
+      value: unitytan
+      objectReference: {fileID: 0}
+    - target: {fileID: 114750332910638814, guid: b50cb02bc27551f4a9fe1e6fdf2e462a,
+        type: 2}
+      propertyPath: joueur
+      value: 
+      objectReference: {fileID: 609096098}
+    - target: {fileID: 114750332910638814, guid: b50cb02bc27551f4a9fe1e6fdf2e462a,
+        type: 2}
+      propertyPath: position.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114750332910638814, guid: b50cb02bc27551f4a9fe1e6fdf2e462a,
+        type: 2}
+      propertyPath: position.z
+      value: 10
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: b50cb02bc27551f4a9fe1e6fdf2e462a, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1 &819160533 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1184022599308642, guid: b50cb02bc27551f4a9fe1e6fdf2e462a,
+    type: 2}
+  m_PrefabInternal: {fileID: 819160532}
 --- !u!1 &820190054
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,7 +507,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 820190054}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -359.5, z: 0}
+  m_LocalPosition: {x: 0, y: -232.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 994784967}
@@ -567,6 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b9db63ca1aa32418004e3201e78052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jagged: {fileID: 0}
   randomParameter: 90
   floaties: []
   prefabsList:
@@ -881,4 +949,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ebd7baf998d22a4e8aa73015d679990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  position: {x: 0, y: 4, z: 0}
+  explored: 0
   joueur: {fileID: 1012728417}

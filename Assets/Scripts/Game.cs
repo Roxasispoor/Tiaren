@@ -288,10 +288,14 @@ On continue jusqu'à la fin des 30s /
 
             foreach (HitablePoint pointToHit in pers2.HitablePoints)
             {
-                if (Physics.Raycast(shootpos, shootpos - (pers2b.transform.position + pointToHit.RelativePosition),
+                
+                RaycastHit hit;
+                if (Physics.Raycast(shootpos, shootpos - (pers2b.transform.position + pointToHit.RelativePosition), out hit,
                     (shootpos - (pers2b.transform.position + pointToHit.RelativePosition)).magnitude))
                 {
-                    pointToHit.Shootable = true;
+                    if(hit.transform.gameObject==pers2b) // si la première chose qu'on touche est l'objet qu'on vise
+                    { pointToHit.Shootable = true; }
+                    
                 }
                 else
                 {

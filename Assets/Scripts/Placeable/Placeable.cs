@@ -6,10 +6,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Représente a peut pres n'importe quoi pouvant occuper un bloc dans le grille
 /// </summary>
-[System.Serializable]
+
 public abstract class Placeable : MonoBehaviour
 {
-    private GameObject prefab;
+
     public Vector3Int position;
     private bool accessible;
     private bool walkable;
