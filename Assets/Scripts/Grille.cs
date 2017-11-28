@@ -110,8 +110,12 @@ public class Grille: MonoBehaviour  {
             //coté
 
             Vector3Int posBlocActuel = queue.Dequeue();
+
          //   Debug.Log("x" + posBlocActuel.x + "y" + posBlocActuel.y + "z" + posBlocActuel.z);
             parent = gridBool[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
+            if(parent.GetDistance()<=deplacement)
+            { 
+
             Placeable testa = Grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
             testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
             //là mettre l'affichage du bloc en bleu
@@ -181,6 +185,7 @@ public class Grille: MonoBehaviour  {
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].SetDistance(
                         parent.GetDistance() + 1);
                     gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].SetParent(parent);
+                }
                 }
             }
        

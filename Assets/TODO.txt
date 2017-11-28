@@ -1,6 +1,4 @@
-﻿Revoir le timer
-Comprendre et surement faire de belles coroutines pour les inputs users.
-Coder la fonction de tir (possibilité,bonus,creation de l'effet)
+﻿Coder la fonction de tir (possibilité,bonus,creation de l'effet)
 Coder les armes
 Coder l'interface utilisateur
 Coder plus de compétences

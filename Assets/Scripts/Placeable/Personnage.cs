@@ -29,15 +29,6 @@ public class Personnage : LivingPlaceable {
 
 
 
-    /// <summary>
-    /// Copie l'objet
-    /// </summary>
-    /// <returns>Retourne une copie de l'objet</returns>
-    new public virtual LivingPlaceable Clone()
-    {
-        var copy = (Personnage)base.Clone();
-        return copy;
-    }
 
     /// <summary>
     /// Méthode a appeler lors de la destruction du personnage

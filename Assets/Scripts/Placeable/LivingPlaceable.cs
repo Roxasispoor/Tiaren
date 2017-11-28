@@ -321,22 +321,13 @@ public abstract class LivingPlaceable : Placeable {
     }
 
 
-    /// <summary>
-    /// Copie l'objet
-    /// </summary>
-    /// <returns>Retourne une copie de l'objet</returns>
-    new protected virtual LivingPlaceable Clone()
-    {
-        var copy = (LivingPlaceable)base.Cloner();
-        return copy;
-    }
-
+  
     /// <summary>
     /// Méthode a appeler lors de la destruction de l'objet
     /// </summary>
     /// 
     
-    new protected virtual void Destroy()
+    protected virtual void Destroy()
     {
         base.Detruire();
         this.EstMort = true;

@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class Game : MonoBehaviour {
     private int numberTurn;
-    private int TurnSpeed;
-    private GameObject joueurJouant; //Should be Object
+   
+    
     public GameObject[] prefabPersos;
 
     public GameObject joueur1; //Should be Object
