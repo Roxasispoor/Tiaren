@@ -119,7 +119,7 @@ On continue jusqu'à la fin des 30s /
        
         yield return new WaitForSeconds(1);
         grilleJeu.Gravite();
-        grilleJeu.Save("test1.xml");
+        //grilleJeu.SaveGridFile();
         grilleJeu.InitialiseExplored(false);
         Debug.Log(grilleJeu.IsGridAllExplored());
         grilleJeu.Explore(0, 0, 0);

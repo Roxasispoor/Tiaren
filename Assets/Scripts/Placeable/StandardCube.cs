@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class StandardCube : Placeable {
 
    public StandardCube() : base(new Vector3Int(), true, new List<Effect>(), true, true, TraversableType.NOTHROUGH, TraversableType.NOTHROUGH, GravityType.GRAVITE_SIMPLE, false, EcraseType.ECRASESTAY,

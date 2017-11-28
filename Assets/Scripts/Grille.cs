@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Serialization;
+
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 /// <summary>
 /// Classe représentant une grille de jeux pour une partie
 /// </summary>
-    [XmlRoot("GrilleRoot")]
+    
 public class Grille: MonoBehaviour  {
  
     //  50 x 50 x 5 = 12 500 blocs
@@ -16,11 +17,11 @@ public class Grille: MonoBehaviour  {
     public static int sizeZ = 50;
     public DistanceAndParent[,,] gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
 
-
+    public JaggedGrid jagged;
     /// <summary>
     /// Représente la grille de jeux
     /// </summary>
-    [XmlArray("Placeables"),XmlArrayItem("Placeable")]
+    
     private Placeable[,,] grid=new Placeable[sizeX,sizeY,sizeZ];
     /// <summary>
     /// Pourquoi est-il fixé ?
@@ -478,28 +479,20 @@ public class Grille: MonoBehaviour  {
             y++;
         }
     }
-    public void ReadGridFromFile()
+    public void SaveGridFile()
     {
+        //Stream stream = File.Open("test", FileMode.Create);
+        //BinaryFormatter bformatter = new BinaryFormatter();
+        //MemoryStream ms = new MemoryStream();
+        //bformatter.Binder = new VersionDeserializationBinder();
+        //bformatter.Serialize(stream, grid);
+         jagged = gameObject.AddComponent<JaggedGrid>();
+        jagged.ToJagged(grid);
+        jagged.Save();
 
     }
 
-    public void Save(string path)
-    {
-        var serializer = new XmlSerializer(typeof(Grille));
-        using (var stream = new FileStream(path, FileMode.Create))
-        {
-            serializer.Serialize(stream, this);
-        }
-    }
 
-    public static Grille Load(string path)
-    {
-        var serializer = new XmlSerializer(typeof(Grille));
-        using (var stream = new FileStream(path, FileMode.Open))
-        {
-            return serializer.Deserialize(stream) as Grille;
-        }
-    }
 
     void Start()
     {

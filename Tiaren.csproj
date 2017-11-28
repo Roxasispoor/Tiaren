@@ -237,6 +237,7 @@
     <Compile Include="Assets\Scripts\Placeable\enums\GravityType.cs" />
     <Compile Include="Assets\Scripts\Placeable\enums\TraversableType.cs" />
     <Compile Include="Assets\Scripts\Placeable\HitablePoint.cs" />
+    <Compile Include="Assets\Scripts\Placeable\JaggedGrid.cs" />
     <Compile Include="Assets\Scripts\Placeable\LivingPlaceable.cs" />
     <Compile Include="Assets\Scripts\Placeable\Personnage.cs" />
     <Compile Include="Assets\Scripts\Placeable\Placeable.cs" />
