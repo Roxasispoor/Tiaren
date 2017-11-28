@@ -59,12 +59,12 @@ public abstract class LivingPlaceable : Placeable {
 
     /// <summary>
     /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
-    /// ne vérifie pas si on peut toucher la cible. Ajoute le bonus de hauteur
+    /// ne vérifie pas si on peut toucher la cible,se cibntente de lire. Ajoute le bonus de hauteur
     /// Choisi le point qui fait le plus mal
     /// </summary>
     /// <param name="cible"></param>
     /// <param name="gameEffectManager"></param>
-    public HitablePoint ShootDamage(Placeable cible, GameEffectManager gameEffectManager)
+    public Vector3 ShootDamage(Placeable cible)
     {
         
         float nbDmgs;
@@ -82,10 +82,9 @@ public abstract class LivingPlaceable : Placeable {
         float maxdmg = 0;
         HitablePoint maxHit= null;
         float nbDmga;
-        foreach(HitablePoint hitPoint in cible.HitablePoints)
+        foreach(HitablePoint hitPoint in CanHit(cible))
         { 
-            if(hitPoint.Shootable)
-            { 
+           
             Vector3 shotaPos = this.transform.position + shootPosition;
             Vector3 ciblaPos = cible.transform.position + hitPoint.RelativePosition;
              nbDmga =nbDmgs * (1 + Mathf.Cos((shotaPos.z - ciblaPos.z) /
@@ -95,15 +94,16 @@ public abstract class LivingPlaceable : Placeable {
                 maxdmg = nbDmga;
                 maxHit = hitPoint;
             }
-            }
+            
         }        //
         Debug.Log(maxdmg);
         new Damage(cible, this, maxdmg);
         //on prépare le damage en conséquence avant?
+        this.NbFoisFiredThisTurn++;
 
-        gameEffectManager.ToBeTreated.AddRange(this.equipedArm.OnShootEffects);
-        gameEffectManager.Solve();
-        return maxHit;
+        this.GameManager.GameEffectManager.ToBeTreated.AddRange(this.equipedArm.OnShootEffects);
+        this.GameManager.GameEffectManager.Solve();
+        return cible.transform.position+maxHit.RelativePosition;
     }
 
     /// <summary>
@@ -116,7 +116,8 @@ public abstract class LivingPlaceable : Placeable {
         List<HitablePoint> arenvoyer=new List<HitablePoint>();
 
         Vector3 depart = this.transform.position + this.shootPosition;
-        //hits = Physics.SphereCastAll(transform.position,equipedArm.Range,transform.forward);
+      
+
         foreach (HitablePoint x in placeable.HitablePoints)
         {
             Vector3 arrivee= placeable.transform.position + x.RelativePosition;
@@ -135,8 +136,14 @@ public abstract class LivingPlaceable : Placeable {
             }
             if(significantItemShot==1)
             {
+                x.Shootable = true;
                 arenvoyer.Add(x);
             }
+            else
+            {
+                x.Shootable = false;
+            }
+                
         }
 
         return arenvoyer;
@@ -339,12 +346,22 @@ public abstract class LivingPlaceable : Placeable {
     }
 
 
-  
+    new void OnMouseOver()
+    {
+
+        Debug.Log("AAAAAAAAAAAAAAH");
+        if(Input.GetMouseButtonUp(1))
+        {
+            GameManager.ShotPlaceable = this;
+        }
+
+    }
+
     /// <summary>
     /// Méthode a appeler lors de la destruction de l'objet
     /// </summary>
     /// 
-    
+
     protected virtual void Destroy()
     {
         base.Detruire();

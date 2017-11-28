@@ -5,9 +5,9 @@ using UnityEngine;
 
 
 public class Game : MonoBehaviour {
-    private int numberTurn;
-   
-    
+    private int numberTurn=0;
+
+    private LivingPlaceable shotPlaceable;
     public GameObject[] prefabPersos;
 
     public GameObject joueur1; //Should be Object
@@ -19,7 +19,7 @@ public class Game : MonoBehaviour {
 
     private List<Effect> listeEffectsDebutTour=new List<Effect>(); 
     private List<Effect> listeEffectsFinTour=new List<Effect>();
-
+    private int capacityinUse=0;
     private GameEffectManager gameEffectManager;
     private Grille grilleJeu;
     private Timer clock;
@@ -77,14 +77,42 @@ public class Game : MonoBehaviour {
             winner = value;
         }
     }
+
+    public LivingPlaceable ShotPlaceable
+    {
+        get
+        {
+            return shotPlaceable;
+        }
+
+        set
+        {
+            shotPlaceable = value;
+        }
+    }
+
+    public GameEffectManager GameEffectManager
+    {
+        get
+        {
+            return gameEffectManager;
+        }
+
+        set
+        {
+            gameEffectManager = value;
+        }
+    }
+
     private void Awake()
 
     {
         //    DontDestroyOnLoad(gameObject);
 
-        this.gameEffectManager = gameObject.GetComponent<GameEffectManager>();
+        this.GameEffectManager = gameObject.GetComponent<GameEffectManager>();
         this.clock = gameObject.GetComponent<Timer>();
         this.grilleJeu = gameObject.GetComponent<Grille>();
+        grilleJeu.GameManager = this;
         grilleJeu.CreateRandomGrid();
       
 
@@ -94,7 +122,10 @@ public class Game : MonoBehaviour {
 
 
     }
-
+    public void ChangeCapacityOnUse(int i)
+    {
+        this.capacityinUse = i;   
+    }
 
     /** Déroulement 
 1)On reset pm et le bool de tir/compétences
@@ -131,8 +162,8 @@ On continue jusqu'à la fin des 30s /
 
         while (Winner == null)
         {
-            this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsDebutTour);
-            this.gameEffectManager.Solve();
+            this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsDebutTour);
+            this.GameEffectManager.Solve();
 
             List<LivingPlaceable> liste = CreateTurnOrder();
             if(liste.Count != 0)
@@ -142,8 +173,8 @@ On continue jusqu'à la fin des 30s /
                     
                 placeable.PmActuels = placeable.PmMax;
                 placeable.NbFoisFiredThisTurn = 0;
-                this.gameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
-                this.gameEffectManager.Solve();
+                this.GameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
+                this.GameEffectManager.Solve();
                 //Ici l'utilisateur a la main, et 30 secondes.
                 
               
@@ -163,15 +194,21 @@ On continue jusqu'à la fin des 30s /
                         Vector3Int vecTest = new Vector3Int(-1, -1, -1);
                         while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest) 
                     {
+                            if(shotPlaceable!=null && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count>0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
+                            {
+                                //piew piew
+                               Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
+                            }
                         yield return null;
                         
                     }
+                        shotPlaceable = null;
                         Debug.Log("C'est la fin lol!");
                     //On applique les changements
                     //StopCoroutine(routine);
                     }
-                this.gameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
-                this.gameEffectManager.Solve();
+                this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
+                this.GameEffectManager.Solve();
             }
             }
             else
@@ -267,17 +304,10 @@ On continue jusqu'à la fin des 30s /
 
             Personnage pers1 = pers1b.GetComponent<Personnage>();
 
-            foreach (HitablePoint pointToHit in pers1.HitablePoints)
+           if(shooter.CanHit(pers1).Count>0)
             {
-                if (Physics.Raycast(shootpos, shootpos - (pers1b.transform.position + pointToHit.RelativePosition),
-                    (shootpos - (pers1b.transform.position + pointToHit.RelativePosition)).magnitude))
-                {
-                    pointToHit.Shootable = true;
-                }
-                else
-                {
-                    pointToHit.Shootable = false;
-                }
+                
+                //typiquement, on change sa couleur
             }
 
         }
@@ -286,23 +316,11 @@ On continue jusqu'à la fin des 30s /
         {
             Personnage pers2 = pers2b.GetComponent<Personnage>();
 
-            foreach (HitablePoint pointToHit in pers2.HitablePoints)
+            if (shooter.CanHit(pers2).Count > 0)
             {
-                
-                RaycastHit hit;
-                if (Physics.Raycast(shootpos, shootpos - (pers2b.transform.position + pointToHit.RelativePosition), out hit,
-                    (shootpos - (pers2b.transform.position + pointToHit.RelativePosition)).magnitude))
-                {
-                    if(hit.transform.gameObject==pers2b) // si la première chose qu'on touche est l'objet qu'on vise
-                    { pointToHit.Shootable = true; }
-                    
-                }
-                else
-                {
-                    pointToHit.Shootable = false;
-                }
-            }
 
+                //typiquement, on change sa couleur
+            }
 
 
         }
@@ -311,21 +329,15 @@ On continue jusqu'à la fin des 30s /
             LivingPlaceable monstre = monstre2.GetComponent<LivingPlaceable>();
 
 
-            foreach (HitablePoint pointToHit in monstre.HitablePoints)
+            if (shooter.CanHit(monstre).Count > 0)
             {
-                if (Physics.Raycast(shootpos, shootpos - (monstre2.transform.position + pointToHit.RelativePosition),
-                    (shootpos - (monstre2.transform.position + pointToHit.RelativePosition)).magnitude))
-                {
-                    pointToHit.Shootable = true;
-                }
-                else
-                {
-                    pointToHit.Shootable = false;
-                }
 
+                //typiquement, on change sa couleur
             }
+
         }
-    }
+        }
+    
 
             /*
             private int MinSpeedPersos()

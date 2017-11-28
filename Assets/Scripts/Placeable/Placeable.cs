@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 public abstract class Placeable : MonoBehaviour
 {
-
+    private Game gameManager;
     public Vector3Int position;
     private bool accessible;
     private bool walkable;
@@ -280,6 +280,19 @@ public abstract class Placeable : MonoBehaviour
         set
         {
             destroyable = value;
+        }
+    }
+
+    public Game GameManager
+    {
+        get
+        {
+            return gameManager;
+        }
+
+        set
+        {
+            gameManager = value;
         }
     }
 

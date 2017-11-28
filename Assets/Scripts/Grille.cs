@@ -10,7 +10,7 @@ using UnityEngine;
 /// </summary>
     
 public class Grille: MonoBehaviour  {
- 
+    private Game gameManager;
     //  50 x 50 x 5 = 12 500 blocs
     public static int sizeX = 50;
     public static int sizeY = 6;
@@ -48,6 +48,19 @@ public class Grille: MonoBehaviour  {
         }
     }
 
+    public Game GameManager
+    {
+        get
+        {
+            return gameManager;
+        }
+
+        set
+        {
+            gameManager = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -65,7 +78,10 @@ public class Grille: MonoBehaviour  {
                     {
                         GameObject obj = Instantiate(prefabsList[0],new Vector3(x,y,z),Quaternion.identity);
                         obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
+                        obj.GetComponent<Placeable>().GameManager = this.gameManager;
                         Grid[x,y,z]= obj.GetComponent<Placeable>() ;
+                        
+
                        
                     }
                 }
