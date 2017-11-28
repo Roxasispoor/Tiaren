@@ -405,29 +405,38 @@ public class Grille: MonoBehaviour  {
     {
            if (Grid[x, y - ydescente, z] == null)// On copie et on détruit
             {
-           
-            Grid[x, y - ydescente, z] = Instantiate(Grid[x, y, z].gameObject, 
-                new Vector3(Grid[x, y, z].gameObject.transform.position.x, Grid[x, y, z].gameObject.transform.position.y - ydescente, Grid[x, y, z].gameObject.transform.position.z),
-                Quaternion.identity).GetComponent<Placeable>();
-            Grid[x, y - ydescente, z].Position = new Vector3Int(x, y - ydescente, z);
-            Debug.Log(Grid[x, y, z].GetType());
-            if(Grid[x,y-ydescente,z].GetType()==typeof(Personnage))
-            {
-                Joueur j = Grid[x, y-ydescente, z].GetComponent<Personnage>().Joueur;
-               
-                j.Personnages[j.Personnages.IndexOf(Grid[x,y,z].gameObject)]=(Grid[x, y - ydescente, z].gameObject);//
-            }
-          //  Grid[x, y - ydescente, z].gameObject.GetComponent<Renderer>().material.color = Color.white;
-            Grid[x, y, z].Detruire();
+            /*
+             Grid[x, y - ydescente, z] = Instantiate(Grid[x, y, z].gameObject, 
+                 new Vector3(Grid[x, y, z].gameObject.transform.position.x, Grid[x, y, z].gameObject.transform.position.y - ydescente, Grid[x, y, z].gameObject.transform.position.z),
+                 Quaternion.identity).GetComponent<Placeable>();
+             Grid[x, y - ydescente, z].Position = new Vector3Int(x, y - ydescente, z);
+             Debug.Log(Grid[x, y, z].GetType());
+             if(Grid[x,y-ydescente,z].GetType()==typeof(Personnage))
+             {
+                 Joueur j = Grid[x, y-ydescente, z].GetComponent<Personnage>().Joueur;
 
+                 j.Personnages[j.Personnages.IndexOf(Grid[x,y,z].gameObject)]=(Grid[x, y - ydescente, z].gameObject);//
+             }
+           //  Grid[x, y - ydescente, z].gameObject.GetComponent<Renderer>().material.color = Color.white;
+             Destroy(Grid[x, y, z].gameObject);
+             */
+            Grid[x, y - ydescente, z] = Grid[x, y, z];
+            Grid[x,y-ydescente,z].gameObject.transform.position= 
+                new Vector3(Grid[x, y, z].gameObject.transform.position.x,
+                Grid[x, y, z].gameObject.transform.position.y - ydescente,
+                Grid[x, y, z].gameObject.transform.position.z);
+            if (Grid[x, y - ydescente, z].GetType() == typeof(Personnage))
+            {
+                Debug.Log("unity-tanplz");
+            }
+                Grid[x,y-ydescente,z].Position= new Vector3Int(x, y - ydescente, z);
             Grid[x, y, z] = null;
 
-
-        
+                   
             }
             else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
             {
-                Grid[x, y, z].Detruire();
+            Grid[x, y, z].Detruire();
                 Grid[x, y, z] = null;
 
             }

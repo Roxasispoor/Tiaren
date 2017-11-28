@@ -147,7 +147,17 @@ On continue jusqu'à la fin des 30s /
             Vector3Int posPers = pers.GetComponent<Personnage>().Position;
             this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers.GetComponent<Personnage>();
         }
-       
+        foreach (GameObject pers in joueur2.GetComponent<Joueur>().Personnages)
+        {
+            Vector3Int posPers = pers.GetComponent<Personnage>().Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers.GetComponent<Personnage>();
+        }
+        foreach (GameObject monstre in listeMonstresNeutres)
+        {
+            Vector3Int posPers = monstre.GetComponent<LivingPlaceable>().Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = monstre.GetComponent<LivingPlaceable>();
+        }
+
         yield return new WaitForSeconds(1);
         grilleJeu.Gravite();
         //grilleJeu.SaveGridFile();

@@ -41,6 +41,8 @@ public class Damage : Effect {
             Cible.PvActuels -= Damage1;
             if(Cible.PvActuels<=0)
             {
+                Debug.Log("ouille ouille ouille");
+
                 Cible.Detruire();
             }
 
