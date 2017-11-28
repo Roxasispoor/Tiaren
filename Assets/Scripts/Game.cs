@@ -259,32 +259,95 @@ On continue jusqu'à la fin des 30s /
 
         return liste;
      }
-
-        /*
-        private int MinSpeedPersos()
+    public void Shootable(LivingPlaceable shooter)
+    {
+        Vector3 shootpos = shooter.position + shooter.ShootPosition;
+        foreach (GameObject pers1b in joueur1.GetComponent<Joueur>().Personnages)
         {
-           int minSpeed = 1000000000;
-            foreach (Personnage pers1 in joueur1.Personnages)
-            {
-                if(minSpeed>pers1.Speed)
-                {
-                    minSpeed = pers1.Speed;
-                }
 
-            }
-            foreach (Personnage pers2 in joueur2.Personnages)
-            {
-                if (minSpeed > pers2.Speed)
-                {
-                    minSpeed = pers2.Speed;
-                }
+            Personnage pers1 = pers1b.GetComponent<Personnage>();
 
+            foreach (HitablePoint pointToHit in pers1.HitablePoints)
+            {
+                if (Physics.Raycast(shootpos, shootpos - (pers1b.transform.position + pointToHit.RelativePosition),
+                    (shootpos - (pers1b.transform.position + pointToHit.RelativePosition)).magnitude))
+                {
+                    pointToHit.Shootable = true;
+                }
+                else
+                {
+                    pointToHit.Shootable = false;
+                }
             }
-            return minSpeed;
+
         }
-        */
-        // Update is called once per frame
-        void Update () {
+
+        foreach (GameObject pers2b in joueur2.GetComponent<Joueur>().Personnages)
+        {
+            Personnage pers2 = pers2b.GetComponent<Personnage>();
+
+            foreach (HitablePoint pointToHit in pers2.HitablePoints)
+            {
+                if (Physics.Raycast(shootpos, shootpos - (pers2b.transform.position + pointToHit.RelativePosition),
+                    (shootpos - (pers2b.transform.position + pointToHit.RelativePosition)).magnitude))
+                {
+                    pointToHit.Shootable = true;
+                }
+                else
+                {
+                    pointToHit.Shootable = false;
+                }
+            }
+
+
+
+        }
+        foreach (GameObject monstre2 in listeMonstresNeutres)
+        {
+            LivingPlaceable monstre = monstre2.GetComponent<LivingPlaceable>();
+
+
+            foreach (HitablePoint pointToHit in monstre.HitablePoints)
+            {
+                if (Physics.Raycast(shootpos, shootpos - (monstre2.transform.position + pointToHit.RelativePosition),
+                    (shootpos - (monstre2.transform.position + pointToHit.RelativePosition)).magnitude))
+                {
+                    pointToHit.Shootable = true;
+                }
+                else
+                {
+                    pointToHit.Shootable = false;
+                }
+
+            }
+        }
+    }
+
+            /*
+            private int MinSpeedPersos()
+            {
+               int minSpeed = 1000000000;
+                foreach (Personnage pers1 in joueur1.Personnages)
+                {
+                    if(minSpeed>pers1.Speed)
+                    {
+                        minSpeed = pers1.Speed;
+                    }
+
+                }
+                foreach (Personnage pers2 in joueur2.Personnages)
+                {
+                    if (minSpeed > pers2.Speed)
+                    {
+                        minSpeed = pers2.Speed;
+                    }
+
+                }
+                return minSpeed;
+            }
+            */
+            // Update is called once per frame
+            void Update () {
 		
 	}
 }

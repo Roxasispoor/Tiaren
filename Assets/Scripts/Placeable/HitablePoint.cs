@@ -5,6 +5,7 @@ using UnityEngine;
 public class HitablePoint  {
     private Vector3 relativePosition;
     private float damageMultiplier;
+    private bool shootable;
 
     public HitablePoint(Vector3 relativePosition,float damageMultiplier)
     {
@@ -38,5 +39,16 @@ public class HitablePoint  {
         }
     }
 
-   
+    public bool Shootable
+    {
+        get
+        {
+            return shootable;
+        }
+
+        set
+        {
+            shootable = value;
+        }
+    }
 }

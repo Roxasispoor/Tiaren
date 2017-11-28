@@ -56,13 +56,15 @@ public abstract class LivingPlaceable : Placeable {
 
 
     }
+
     /// <summary>
     /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
     /// ne vérifie pas si on peut toucher la cible. Ajoute le bonus de hauteur
+    /// Choisi le point qui fait le plus mal
     /// </summary>
     /// <param name="cible"></param>
     /// <param name="gameEffectManager"></param>
-    public void Shoot(Placeable cible, GameEffectManager gameEffectManager)
+    public HitablePoint ShootDamage(Placeable cible, GameEffectManager gameEffectManager)
     {
         
         float nbDmgs;
@@ -77,15 +79,31 @@ public abstract class LivingPlaceable : Placeable {
              nbDmgs = equipedArm.BaseDamage + equipedArm.StatMultiplier * dexterity;
 
         }
-
-        nbDmgs *= 1 + Mathf.Cos((this.transform.position.z - cible.transform.position.z) / Vector3.Distance(cible.transform.position, this.transform.position)) * cosMultiplier;
-        //
-               
-        new Damage(cible, this, nbDmgs);
+        float maxdmg = 0;
+        HitablePoint maxHit= null;
+        float nbDmga;
+        foreach(HitablePoint hitPoint in cible.HitablePoints)
+        { 
+            if(hitPoint.Shootable)
+            { 
+            Vector3 shotaPos = this.transform.position + shootPosition;
+            Vector3 ciblaPos = cible.transform.position + hitPoint.RelativePosition;
+             nbDmga =nbDmgs * (1 + Mathf.Cos((shotaPos.z - ciblaPos.z) /
+                (shotaPos-ciblaPos).magnitude) * cosMultiplier);
+            if(nbDmga>maxdmg)
+            {
+                maxdmg = nbDmga;
+                maxHit = hitPoint;
+            }
+            }
+        }        //
+        Debug.Log(maxdmg);
+        new Damage(cible, this, maxdmg);
         //on prépare le damage en conséquence avant?
 
         gameEffectManager.ToBeTreated.AddRange(this.equipedArm.OnShootEffects);
         gameEffectManager.Solve();
+        return maxHit;
     }
 
     /// <summary>
