@@ -364,8 +364,16 @@ public abstract class LivingPlaceable : Placeable {
 
     protected virtual void Destroy()
     {
-        base.Detruire();
+
+        if (this.Destroyable)
+        {
+            foreach (var effet in this.OnDestroyEffects)
+            {
+                effet.Use();
+            }
+        }
         this.EstMort = true;
+        this.GameManager.GrilleJeu.Grid[Position.x, Position.y, Position.z] = null;
         NbFoisMort++;
     }
 
