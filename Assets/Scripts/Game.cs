@@ -33,6 +33,7 @@ public class Game : MonoBehaviour {
     /// <summary>
     /// indique le numéro du tour actuel
     /// </summary>
+    /// 
     public int NumberTurn
     {
         get
@@ -118,7 +119,7 @@ On continue jusqu'à la fin des 30s /
        
         yield return new WaitForSeconds(1);
         grilleJeu.Gravite();
-
+        grilleJeu.Save("test1.xml");
         grilleJeu.InitialiseExplored(false);
         Debug.Log(grilleJeu.IsGridAllExplored());
         grilleJeu.Explore(0, 0, 0);
