@@ -210,6 +210,7 @@ On continue jusqu'à la fin des 30s /
                             if(shotPlaceable!=null && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count>0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                             {
                                 //piew piew
+                                Debug.Log("Piew piew");
                                Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
                             }
                         yield return null;
@@ -377,6 +378,7 @@ On continue jusqu'à la fin des 30s /
             */
             // Update is called once per frame
             void Update () {
-		
-	}
+        
+
+    }
 }

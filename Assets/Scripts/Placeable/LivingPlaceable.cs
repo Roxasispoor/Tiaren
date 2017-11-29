@@ -121,15 +121,19 @@ public abstract class LivingPlaceable : Placeable {
         foreach (HitablePoint x in placeable.HitablePoints)
         {
             Vector3 arrivee= placeable.transform.position + x.RelativePosition;
+            Vector3 direction = arrivee - depart;
+           
+            Debug.DrawRay(depart,
+               direction,Color.green,100);
             RaycastHit[] hits = Physics.RaycastAll(depart,
-                depart - arrivee,(depart-arrivee).magnitude);
+               direction ,(depart-arrivee).magnitude+0.1f);//les arrondis i guess
             int significantItemShot = 0;
             foreach (RaycastHit hit in hits) //pas opti, un while serait mieux
             {
                 
               Placeable  placeableshot = hit.transform.gameObject.GetComponent(typeof(Placeable)) as Placeable;
-                if (placeableshot.TraversableBullet == TraversableType.ALLTHROUGH ||
-                    placeableshot.TraversableBullet==TraversableType.ALLIESTHROUGH && placeableshot.Joueur != this.Joueur)
+                if (!(placeableshot.TraversableBullet == TraversableType.ALLTHROUGH ||
+                    placeableshot.TraversableBullet==TraversableType.ALLIESTHROUGH && placeableshot.Joueur != this.Joueur))
                 {
                     significantItemShot++;
                 }

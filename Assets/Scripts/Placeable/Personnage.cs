@@ -55,7 +55,7 @@ public class Personnage : LivingPlaceable {
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>
         {
-            new HitablePoint(new Vector3(0, 0, 0), 1)
+            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
         };
         this.OnDebutTour = new List<Effect>();
         this.OnFinTour = new List<Effect>();
@@ -72,7 +72,7 @@ public class Personnage : LivingPlaceable {
         this.EstMort = false;
         this.NbFoisMort = 0;
         this.TourRestantsCimetiere = 0;
-        this.ShootPosition = new Vector3(0, 0, 0);
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
 
     }
 	
