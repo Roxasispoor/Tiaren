@@ -207,7 +207,7 @@ On continue jusqu'à la fin des 30s /
                         Vector3Int vecTest = new Vector3Int(-1, -1, -1);
                         while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest) 
                     {
-                            if(shotPlaceable!=null && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count>0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
+                            if(shotPlaceable!=null && capacityinUse==0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count>0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                             {
                                 //piew piew
                                 Debug.Log("Piew piew");
