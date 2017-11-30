@@ -10,7 +10,8 @@ public class Joueur : MonoBehaviour {
     private int score;
     
     public List<GameObject> personnages=new List<GameObject>();
-   
+    public List<int> numeroPrefab;
+
 
     /// <summary>
     /// Permet de savoir si le joueur a agi ce tour ci
@@ -54,6 +55,19 @@ public class Joueur : MonoBehaviour {
         set
         {
             personnages = value;
+        }
+    }
+
+    public List<int> NumeroPrefab
+    {
+        get
+        {
+            return numeroPrefab;
+        }
+
+        set
+        {
+            numeroPrefab = value;
         }
     }
 

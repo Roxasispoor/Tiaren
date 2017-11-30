@@ -101,6 +101,7 @@ public class Grille: MonoBehaviour  {
     /// </summary>
     public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable,int saut, Vector3Int positionBloc)
     {
+
         int deplacement = 3;
         
        

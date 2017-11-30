@@ -143,25 +143,42 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
-        foreach (GameObject pers in joueur1.GetComponent<Joueur>().Personnages)
+        for (int i = 0; i < joueur1.GetComponent<Joueur>().NumeroPrefab.Count ; i++)
         {
+            GameObject pers = Instantiate(prefabPersos[joueur1.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 0),Quaternion.identity);
+            
+
+
             Personnage pers1 = pers.GetComponent<Personnage>();
             pers1.GameManager = this;
+            joueur1.GetComponent<Joueur>().Personnages.Add(pers);
+            pers1.Joueur = joueur1.GetComponent<Joueur>();
+            pers1.Position = new Vector3Int(0, 4, 0);
             Vector3Int posPers = pers1.Position;
             this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
             pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
             pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
             
         }
-        foreach (GameObject pers in joueur2.GetComponent<Joueur>().Personnages)
+
+        for (int i = 0; i < joueur2.GetComponent<Joueur>().NumeroPrefab.Count; i++)
         {
+            GameObject pers = Instantiate(prefabPersos[joueur2.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 10), Quaternion.identity);
+
             Personnage pers1 = pers.GetComponent<Personnage>();
             pers1.GameManager = this;
+
+            joueur2.GetComponent<Joueur>().Personnages.Add(pers);
+            pers1.Joueur = joueur2.GetComponent<Joueur>();
+            pers1.Position = new Vector3Int(0, 4, 10);
             Vector3Int posPers = pers1.Position;
             this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
             pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
             pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+
         }
+
+        //pas vérifié
         foreach (GameObject monstre in listeMonstresNeutres)
         {
             LivingPlaceable monstre1 = monstre.GetComponent<Personnage>();
