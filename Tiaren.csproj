@@ -219,7 +219,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Arme.cs" />
+    <Compile Include="Assets\Scripts\Armes\Arme.cs" />
+    <Compile Include="Assets\Scripts\Armes\StandardGun.cs" />
     <Compile Include="Assets\Scripts\Competences.cs" />
     <Compile Include="Assets\Scripts\Controllers\maxCamera.cs" />
     <Compile Include="Assets\Scripts\Controllers\PlayerController.cs" />

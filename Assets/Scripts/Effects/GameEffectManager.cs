@@ -17,20 +17,24 @@ public class GameEffectManager:MonoBehaviour
     /// </summary>
     public void Solve()
     {
+       
+        
         foreach(Effect element in ToBeTreated)
         {
+
             bool canUse = true;
             foreach(BlockEffects blockEffect in ActiveBlocks) // si il n'y a pas de block, on applique l'effet
             {
               
 
                 if (blockEffect.ContientEffetType(element)) 
-                //attention a bien override contains
+               
                 {
                     blockEffect.NumberToBlock -= 1;
                     if(blockEffect.NumberToBlock>0 || blockEffect.TourEffetActif>0)
                     {
                         canUse = false;
+                        
                         break; // petite opti
 
                     }
@@ -39,8 +43,25 @@ public class GameEffectManager:MonoBehaviour
             if(canUse)
             {
                 element.Use();
+              
+
+
+            }
+            element.TourEffetActif--;
+        }
+        int i = 0;
+        while (i < ToBeTreated.Count) // la différence diminue de 1 a chaque tour de boucle
+        {
+            if(ToBeTreated[i].TourEffetActif<=0)
+            {
+                ToBeTreated.RemoveAt(i);
+            }
+            else
+            {
+            i++;
             }
         }
+
         ActiveBlocks.RemoveAll(x => x.NumberToBlock <= 0 && x.TourEffetActif < 0);// si il n'y a plus de coup a bloquer ni de tour effet actif on le supprime de la liste des blocs actifs
     }
 

@@ -5,24 +5,25 @@ using UnityEngine;
 
 public class Personnage : LivingPlaceable {
 
-   
+
 
     //constructeur classique de personnages
-    public Personnage(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
-        GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
-        , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur
-        , float pvMax, float pvActuels, int pmMax, int pmActuels, int force, int speed, int dexterity, int miningPower, int speedstack,
-        List<Competence> competences, List<Arme> armes, int nbFoisFiredThisTurn, bool estMort
-        , int nbFoisMort, int tourRestantsCimetiere, Vector3 shootPosition) :
-         base(position, walkable,onWalkEffects,  movable,  destroyable,  traversableChar,  traversableBullet,
-         gravityType,  pickable,  ecrasable,  onDestroyEffects
-        ,  hitablePoints, onDebutTour, onFinTour,joueur
-        ,  pvMax,  pvActuels,  pmMax,  pmActuels,  force,  speed,  dexterity,  miningPower,  speedstack,
-        competences, armes,  nbFoisFiredThisTurn,  estMort
-        ,  nbFoisMort,  tourRestantsCimetiere,  shootPosition)
-    {
+    /** public Personnage(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
+         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur
+         , float pvMax, float pvActuels, int pmMax, int pmActuels, int force, int speed, int dexterity, int miningPower, int speedstack,
+         List<Competence> competences, List<GameObject> armes, int nbFoisFiredThisTurn, bool estMort
+         , int nbFoisMort, int tourRestantsCimetiere, Vector3 shootPosition) :
+          base(position, walkable,onWalkEffects,  movable,  destroyable,  traversableChar,  traversableBullet,
+          gravityType,  pickable,  ecrasable,  onDestroyEffects
+         ,  hitablePoints, onDebutTour, onFinTour,joueur
+         ,  pvMax,  pvActuels,  pmMax,  pmActuels,  force,  speed,  dexterity,  miningPower,  speedstack,
+         competences, armes,  nbFoisFiredThisTurn,  estMort
+         ,  nbFoisMort,  tourRestantsCimetiere,  shootPosition)
+     {
 
-    }
+     }
+     **/
 
 
 
@@ -33,9 +34,11 @@ public class Personnage : LivingPlaceable {
     /// <summary>
     /// Méthode a appeler lors de la destruction du personnage
     /// </summary>
-   new  protected virtual void Destroy()
+    override
+    public void Detruire()
     {
-        base.Destroy();
+        Debug.Log("maman je passe a la télé");
+        base.Detruire();
        
         TourRestantsCimetiere = 2 * NbFoisMort; // Fonction qui sera peut être modifiée à l'équilibrage
     }
@@ -67,7 +70,7 @@ public class Personnage : LivingPlaceable {
         this.Dexterity = 100;
         this.SpeedStack = 0;
         this.Competences = new List<Competence>();
-        this.Armes = new List<Arme>();
+        this.Armes = new List<GameObject>();
         this.NbFoisFiredThisTurn = 0;
         this.EstMort = false;
         this.NbFoisMort = 0;

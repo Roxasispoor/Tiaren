@@ -43,7 +43,8 @@ public abstract class Placeable : MonoBehaviour
     /// <param name="gravityType"></param>
     /// <param name="pickable"></param>
     /// <param name="ecrasable"></param>
-    public Placeable(Vector3Int position, bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+
+    /** public Placeable(Vector3Int position, bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur)
     {
@@ -66,6 +67,7 @@ public abstract class Placeable : MonoBehaviour
         this.OnFinTour = onFinTour;
         this.Joueur = joueur;
     }
+    **/
 
     public bool Walkable
     {

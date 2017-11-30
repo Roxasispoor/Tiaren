@@ -531,6 +531,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabPersos:
   - {fileID: 1953985787}
+  prefabArmes:
+  - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   joueur1: {fileID: 1012728416}
   joueur2: {fileID: 609096097}
   prefabMonstres: []
@@ -1036,6 +1038,11 @@ Prefab:
       propertyPath: joueur
       value: 
       objectReference: {fileID: 1012728417}
+    - target: {fileID: 114624198994380336, guid: cf74def299c3aec4ba9fdd4fa8b35ad2,
+        type: 2}
+      propertyPath: pvActuels
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}
   m_IsPrefabParent: 0
@@ -1091,6 +1098,11 @@ Prefab:
         type: 2}
       propertyPath: position.z
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114624198994380336, guid: cf74def299c3aec4ba9fdd4fa8b35ad2,
+        type: 2}
+      propertyPath: pvActuels
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}

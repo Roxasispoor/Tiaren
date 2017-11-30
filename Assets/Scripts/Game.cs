@@ -9,6 +9,7 @@ public class Game : MonoBehaviour {
 
     private LivingPlaceable shotPlaceable;
     public GameObject[] prefabPersos;
+    public GameObject[] prefabArmes;
 
     public GameObject joueur1; //Should be Object
     
@@ -144,21 +145,31 @@ On continue jusqu'à la fin des 30s /
     {
         foreach (GameObject pers in joueur1.GetComponent<Joueur>().Personnages)
         {
-            pers.GetComponent<Personnage>().GameManager = this;
-            Vector3Int posPers = pers.GetComponent<Personnage>().Position;
-            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers.GetComponent<Personnage>();
+            Personnage pers1 = pers.GetComponent<Personnage>();
+            pers1.GameManager = this;
+            Vector3Int posPers = pers1.Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
+            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
+            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+            
         }
         foreach (GameObject pers in joueur2.GetComponent<Joueur>().Personnages)
         {
-            pers.GetComponent<Personnage>().GameManager = this;
-            Vector3Int posPers = pers.GetComponent<Personnage>().Position;
-            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers.GetComponent<Personnage>();
+            Personnage pers1 = pers.GetComponent<Personnage>();
+            pers1.GameManager = this;
+            Vector3Int posPers = pers1.Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
+            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
+            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
         }
         foreach (GameObject monstre in listeMonstresNeutres)
         {
-            monstre.GetComponent<Personnage>().GameManager = this;
-            Vector3Int posPers = monstre.GetComponent<LivingPlaceable>().Position;
-            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = monstre.GetComponent<LivingPlaceable>();
+            LivingPlaceable monstre1 = monstre.GetComponent<Personnage>();
+            monstre1.GameManager = this;
+            Vector3Int posPers = monstre1.Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = monstre1;
+            monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
+            monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
         }
 
         yield return new WaitForSeconds(1);
@@ -194,34 +205,43 @@ On continue jusqu'à la fin des 30s /
 
                 if (placeable.Joueur != null)
                 {
-                        clock.IsFinished = false;
-                    clock.StartTimer(30f);
+                        if (!placeable.EstMort)
+                        {
+                            clock.IsFinished = false;
+                            clock.StartTimer(30f);
 
-                    //Coroutine routine= StartCoroutine(PlayerChoice(clock));
+                            //Coroutine routine= StartCoroutine(PlayerChoice(clock));
 
-                    bool endPhase = false;
-                    Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y-1, placeable.Position.z);
-                        
-                    DistanceAndParent[,,] inPlace=grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
-                         Debug.Log("C'est le debut lol!");
-                        Vector3Int vecTest = new Vector3Int(-1, -1, -1);
-                        while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest) 
-                    {
-                            if(shotPlaceable!=null && capacityinUse==0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count>0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
+                            bool endPhase = false;
+                            Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y - 1, placeable.Position.z);
+
+                            DistanceAndParent[,,] inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
+                            Debug.Log("C'est le debut lol!");
+                            Vector3Int vecTest = new Vector3Int(-1, -1, -1);
+                            while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest)
                             {
-                                //piew piew
-                                Debug.Log("Piew piew");
-                               Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
+                                if (shotPlaceable != null && capacityinUse == 0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
+                                {
+                                    //piew piew
+                                    Debug.Log("Piew piew");
+                                    Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
+                                }
+                                yield return null;
+
                             }
-                        yield return null;
-                        
+                            shotPlaceable = null;
+                            Debug.Log("C'est la fin lol!");
+                            //On applique les changements
+                            //StopCoroutine(routine);
+                        }
+                        else
+                        {
+                            placeable.TourRestantsCimetiere--;
+                        }
+
                     }
-                        shotPlaceable = null;
-                        Debug.Log("C'est la fin lol!");
-                    //On applique les changements
-                    //StopCoroutine(routine);
-                    }
-                this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
+
+                    this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
                 this.GameEffectManager.Solve();
             }
             }

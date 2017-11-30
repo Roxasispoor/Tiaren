@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class LivingPlaceable : Placeable {
     
     private float pvMax;
-    private float pvActuels;
+    public float pvActuels;
     private int pmMax;
     private int pmActuels;
     private int force;
@@ -14,9 +14,9 @@ public abstract class LivingPlaceable : Placeable {
     private int miningPower;
     private int speedStack;
     private List<Competence> competences;
-    private List<Arme> armes;
+    private List<GameObject> armes;
     private Arme equipedArm;
-    private float cosMultiplier = 0.66f;
+    private float sinMultiplier = 0.66f;
     private int nbFoisFiredThisTurn;
     private bool estMort;
     private int nbFoisMort;
@@ -24,11 +24,11 @@ public abstract class LivingPlaceable : Placeable {
     private Vector3 shootPosition;
 
 
-    public LivingPlaceable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+ /**   public LivingPlaceable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour,Joueur joueur
         , float pvMax, float pvActuels, int pmMax,int pmActuels,int force,int speed,int dexterity,int miningPower,int speedstack,
-        List<Competence> competences, List<Arme> armes,int nbFoisFiredThisTurn,bool estMort
+        List<Competence> competences, List<GameObject> armes,int nbFoisFiredThisTurn,bool estMort
         ,int nbFoisMort,int tourRestantsCimetiere,Vector3 shootPosition) : 
         base(position, walkable, onWalkEffects, movable, destroyable, traversableChar,  traversableBullet,
          gravityType,  pickable,  ecrasable, onDestroyEffects
@@ -44,8 +44,8 @@ public abstract class LivingPlaceable : Placeable {
     this.miningPower=miningPower;
     this.speedStack = speedstack;
     this.competences = competences;
-    this.armes = armes;
-    this.equipedArm = armes[0];//la première arme est automatiquement équipée
+    this.Armes = armes;
+    this.equipedArm = armes[0].GetComponent<Arme>();//la première arme est automatiquement équipée
     
     this.NbFoisFiredThisTurn = nbFoisFiredThisTurn;
     this.EstMort = estMort;
@@ -56,6 +56,7 @@ public abstract class LivingPlaceable : Placeable {
 
 
     }
+    **/
 
     /// <summary>
     /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
@@ -69,14 +70,14 @@ public abstract class LivingPlaceable : Placeable {
         
         float nbDmgs;
 
-        if (equipedArm.ScalesOnForce)
+        if (EquipedArm.ScalesOnForce)
         {
 
-            nbDmgs = equipedArm.BaseDamage + equipedArm.StatMultiplier * force;
+            nbDmgs = EquipedArm.BaseDamage + EquipedArm.StatMultiplier * force;
          }
         else
         {
-             nbDmgs = equipedArm.BaseDamage + equipedArm.StatMultiplier * dexterity;
+             nbDmgs = EquipedArm.BaseDamage + EquipedArm.StatMultiplier * dexterity;
 
         }
         float maxdmg = 0;
@@ -87,8 +88,10 @@ public abstract class LivingPlaceable : Placeable {
            
             Vector3 shotaPos = this.transform.position + shootPosition;
             Vector3 ciblaPos = cible.transform.position + hitPoint.RelativePosition;
-             nbDmga =nbDmgs * (1 + Mathf.Cos((shotaPos.z - ciblaPos.z) /
-                (shotaPos-ciblaPos).magnitude) * cosMultiplier);
+            float sinfactor = (shotaPos.y - ciblaPos.y) /
+                (shotaPos - ciblaPos).magnitude;
+           
+             nbDmga =nbDmgs * (1 +  sinfactor* sinMultiplier);
             if(nbDmga>maxdmg)
             {
                 maxdmg = nbDmga;
@@ -97,11 +100,13 @@ public abstract class LivingPlaceable : Placeable {
             
         }        //
         Debug.Log(maxdmg);
-        new Damage(cible, this, maxdmg);
+        
         //on prépare le damage en conséquence avant?
         this.NbFoisFiredThisTurn++;
 
-        this.GameManager.GameEffectManager.ToBeTreated.AddRange(this.equipedArm.OnShootEffects);
+        this.GameManager.GameEffectManager.ToBeTreated.AddRange(this.EquipedArm.OnShootEffects);
+        this.GameManager.GameEffectManager.ToBeTreated.Add(new Damage(cible, this, maxdmg));
+
         this.GameManager.GameEffectManager.Solve();
         return cible.transform.position+maxHit.RelativePosition;
     }
@@ -206,19 +211,7 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
-    public List<Arme> Armes
-    {
-        get
-        {
-            return armes;
-        }
-
-        set
-        {
-            armes = value;
-        }
-    }
-
+  
     public int Force
     {
         get
@@ -349,6 +342,31 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
+    public List<GameObject> Armes
+    {
+        get
+        {
+            return armes;
+        }
+
+        set
+        {
+            armes = value;
+        }
+    }
+
+    public Arme EquipedArm
+    {
+        get
+        {
+            return equipedArm;
+        }
+
+        set
+        {
+            equipedArm = value;
+        }
+    }
 
     new void OnMouseOver()
     {
@@ -365,8 +383,8 @@ public abstract class LivingPlaceable : Placeable {
     /// Méthode a appeler lors de la destruction de l'objet
     /// </summary>
     /// 
-
-    protected virtual void Destroy()
+    override
+    public void Detruire()
     {
 
         if (this.Destroyable)
@@ -376,7 +394,9 @@ public abstract class LivingPlaceable : Placeable {
                 effet.Use();
             }
         }
+
         this.EstMort = true;
+        this.gameObject.SetActive(false);
         this.GameManager.GrilleJeu.Grid[Position.x, Position.y, Position.z] = null;
         NbFoisMort++;
     }

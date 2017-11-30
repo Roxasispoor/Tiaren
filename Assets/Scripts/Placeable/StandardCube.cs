@@ -6,11 +6,11 @@ using UnityEngine;
 [Serializable]
 public class StandardCube : Placeable {
 
-   public StandardCube() : base(new Vector3Int(), true, new List<Effect>(), true, true, TraversableType.NOTHROUGH, TraversableType.NOTHROUGH, GravityType.GRAVITE_SIMPLE, false, EcraseType.ECRASESTAY,
+ /**  public StandardCube() : base(new Vector3Int(), true, new List<Effect>(), true, true, TraversableType.NOTHROUGH, TraversableType.NOTHROUGH, GravityType.GRAVITE_SIMPLE, false, EcraseType.ECRASESTAY,
             new List<Effect>(), new List<HitablePoint>(), new List<Effect>(), new List<Effect>(), null)
     {
        
-    }
+    }**/
     void Start()
     {
 
