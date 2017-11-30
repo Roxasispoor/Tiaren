@@ -78,6 +78,7 @@ public class Grille: MonoBehaviour  {
                     {
                         GameObject obj = Instantiate(prefabsList[0],new Vector3(x,y,z),Quaternion.identity);
                         obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
+                       // Debug.Log(obj.GetComponent<Placeable>().Position);
                         obj.GetComponent<Placeable>().GameManager = this.gameManager;
                         Grid[x,y,z]= obj.GetComponent<Placeable>() ;
                         
@@ -134,9 +135,13 @@ public class Grille: MonoBehaviour  {
             { 
 
             Placeable testa = Grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
+                if(testa.gameObject.GetComponent<Renderer>() !=null)
+                { 
+                parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
             testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
-            //là mettre l'affichage du bloc en bleu
-            for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
+                }
+                //là mettre l'affichage du bloc en bleu
+                for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
             {
                
                 if (posBlocActuel.y + yactuel>=0 && posBlocActuel.y + yactuel < sizeY  && posBlocActuel.x<sizeX - 1 && //au dessus de 0, en dessous du max, dans le terrain en x

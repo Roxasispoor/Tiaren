@@ -324,14 +324,16 @@ public abstract class Placeable : MonoBehaviour
         Destroy(this);
         Destroy(this.gameObject);
     }
-    public void OnMouseOver()
+  
+         void OnMouseOver()
     {
-        if (accessible) //on met en vert
-        {
-            if (Input.GetMouseButton(0))//on lance l'ordre a grille
-            {
 
+           
+            if (Input.GetMouseButtonUp(0))
+            {
+                GameManager.PlaceToGo = this.Position ;
             }
+
         }
-    }
+    
 }

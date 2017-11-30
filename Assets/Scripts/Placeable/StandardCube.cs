@@ -11,7 +11,7 @@ public class StandardCube : Placeable {
     {
        
     }**/
-    void Start()
+    void Awake()
     {
 
         this.Position = new Vector3Int();

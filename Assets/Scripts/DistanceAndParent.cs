@@ -17,7 +17,21 @@ public class DistanceAndParent{
     /// Le parent est lui meme un objet de ce type ? Oui.
     /// </summary>
     private DistanceAndParent parent;
-    
+    private Color color;
+
+    public Color Color
+    {
+        get
+        {
+            return color;
+        }
+
+        set
+        {
+            color = value;
+        }
+    }
+
     public DistanceAndParent(int x, int y, int z)
     {
         this.distance = -1;

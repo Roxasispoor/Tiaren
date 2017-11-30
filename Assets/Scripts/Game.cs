@@ -105,6 +105,19 @@ public class Game : MonoBehaviour {
         }
     }
 
+    public Vector3Int PlaceToGo
+    {
+        get
+        {
+            return placeToGo;
+        }
+
+        set
+        {
+            placeToGo = value;
+        }
+    }
+
     private void Awake()
 
     {
@@ -119,7 +132,7 @@ public class Game : MonoBehaviour {
 
 
         //  grilleJeu.ActualisePosition();
-        this.placeToGo = new Vector3Int(-1, -1, -1);
+        this.PlaceToGo = new Vector3Int(-1, -1, -1);
 
 
     }
@@ -192,15 +205,19 @@ On continue jusqu'à la fin des 30s /
             monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
             monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
         }
-
+        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
         yield return new WaitForSeconds(1);
+        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
         grilleJeu.Gravite();
         //grilleJeu.SaveGridFile();
+        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
         grilleJeu.InitialiseExplored(false);
+        
         Debug.Log(grilleJeu.IsGridAllExplored());
         grilleJeu.Explore(0, 0, 0);
         Debug.Log(grilleJeu.IsGridAllExplored());
 
+        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
 
         //La speed de turn est déterminée par l'élément le plus lent
 
@@ -239,7 +256,7 @@ On continue jusqu'à la fin des 30s /
                             DistanceAndParent[,,] inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
                             Debug.Log("C'est le debut lol!");
                             Vector3Int vecTest = new Vector3Int(-1, -1, -1);
-                            while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished && placeToGo == vecTest)
+                            while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished)
                             {
                                 if (shotPlaceable != null && capacityinUse == 0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                                 {
@@ -247,11 +264,32 @@ On continue jusqu'à la fin des 30s /
                                     Debug.Log("Piew piew");
                                     Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
                                 }
+                                else if(placeToGo != vecTest && inPlace[placeToGo.x, placeToGo.y, placeToGo.z].GetDistance()>0 && inPlace[placeToGo.x,placeToGo.y,placeToGo.z].GetDistance()<=placeable.PmActuels)
+                                {
+                                    Debug.Log("runny run");
+                                }
                                 yield return null;
 
                             }
                             shotPlaceable = null;
-                            Debug.Log("C'est la fin lol!");
+                            this.PlaceToGo = vecTest;
+
+                            Color transp = new Color(0, 0, 0, 0);
+                            for (int x = 0; x < inPlace.GetLength(0); x++)
+                            {
+                                for (int y = 0; y < inPlace.GetLength(1); y++)
+                                {
+                                    for (int z = 0; z < inPlace.GetLength(2); z++)
+                                    {
+                                        
+                                        if (inPlace[x,y,z].Color != transp)
+                                        {
+                                            GrilleJeu.Grid[x, y, z].gameObject.GetComponent<Renderer>().material.color= inPlace[x, y, z].Color;
+                                        }
+                                    }
+                                }
+                            }
+                                        Debug.Log("C'est la fin lol!");
                             //On applique les changements
                             //StopCoroutine(routine);
                         }
