@@ -143,6 +143,10 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
+        //quand on aura la serialization bien:
+        //on lit la position et le numero dans le fichier et non dans le numero prefab joueur on instancie.
+        //Dans le awake de perso on lit les bonnes valeurs également.
+
         for (int i = 0; i < joueur1.GetComponent<Joueur>().NumeroPrefab.Count ; i++)
         {
             GameObject pers = Instantiate(prefabPersos[joueur1.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 0),Quaternion.identity);

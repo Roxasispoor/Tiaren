@@ -63,6 +63,8 @@ public class Personnage : LivingPlaceable {
         this.OnDebutTour = new List<Effect>();
         this.OnFinTour = new List<Effect>();
         this.PvMax = 100;
+        this.PvActuels = 100;
+
         this.PmMax = 3;
         this.PmActuels = 3;
         this.Force = 100;
