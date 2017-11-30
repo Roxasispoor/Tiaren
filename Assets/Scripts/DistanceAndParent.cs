@@ -8,9 +8,7 @@ using UnityEngine;
 public class DistanceAndParent{
 
     private int distance;
-    private int x;
-    private int y;
-    private int z;
+    private Vector3Int pos;
 
 
     /// <summary>
@@ -32,12 +30,23 @@ public class DistanceAndParent{
         }
     }
 
+    public Vector3Int Pos
+    {
+        get
+        {
+            return pos;
+        }
+
+        set
+        {
+            pos = value;
+        }
+    }
+
     public DistanceAndParent(int x, int y, int z)
     {
         this.distance = -1;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.Pos = new Vector3Int(x, y, z);
     }
     public DistanceAndParent(int distance, DistanceAndParent parent)
     {

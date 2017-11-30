@@ -335,5 +335,4 @@ public abstract class Placeable : MonoBehaviour
             }
 
         }
-    
 }

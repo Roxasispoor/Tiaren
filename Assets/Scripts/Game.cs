@@ -205,21 +205,15 @@ On continue jusqu'à la fin des 30s /
             monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
             monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
         }
-        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
-        yield return new WaitForSeconds(1);
-        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
         grilleJeu.Gravite();
         //grilleJeu.SaveGridFile();
-        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
         grilleJeu.InitialiseExplored(false);
         
         Debug.Log(grilleJeu.IsGridAllExplored());
         grilleJeu.Explore(0, 0, 0);
         Debug.Log(grilleJeu.IsGridAllExplored());
 
-        Debug.Log("plz" + grilleJeu.Grid[0, 3, 10].Position);
-
-        //La speed de turn est déterminée par l'élément le plus lent
+       //La speed de turn est déterminée par l'élément le plus lent
 
 
         while (Winner == null)
@@ -266,7 +260,27 @@ On continue jusqu'à la fin des 30s /
                                 }
                                 else if(placeToGo != vecTest && inPlace[placeToGo.x, placeToGo.y, placeToGo.z].GetDistance()>0 && inPlace[placeToGo.x,placeToGo.y,placeToGo.z].GetDistance()<=placeable.PmActuels)
                                 {
+                                    List<Vector3> listAnimator = new List<Vector3>();
+                                    DistanceAndParent parent=inPlace[placeToGo.x, placeToGo.y, placeToGo.z];
+                                    listAnimator.Add(parent.Pos);
+                                    while (parent.GetDistance()>1)
+                                    {
+                                        
+                                        parent = parent.GetParent();
+                                        listAnimator.Add(parent.Pos);
+                                    }
+                                    listAnimator.Add(placeable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
+                                    StartCoroutine(ApplyMove(listAnimator,placeable));
+                                    placeable.PmActuels -= listAnimator.Count;
+
+                                    //on actualise les positions
+                                    grilleJeu.Grid[PlaceToGo.x, PlaceToGo.y+1, PlaceToGo.z] = placeable;   
+                                    grilleJeu.Grid[placeable.Position.x, placeable.Position.y, placeable.Position.z] = null; // on est plus a l'emplacement précédent
+                                    placeable.Position = PlaceToGo+new Vector3Int(0,1,0);
+                                    
+                                    this.PlaceToGo = vecTest;
                                     Debug.Log("runny run");
+                                    
                                 }
                                 yield return null;
 
@@ -312,7 +326,104 @@ On continue jusqu'à la fin des 30s /
 
         }
     }
- 
+    public IEnumerator ApplyMove(List<Vector3> path,Placeable placeable)
+    {
+        Vector3 delta =   placeable.transform.position - path[path.Count - 1]  ;
+        bool isMoving = true;
+        float speed = 1;
+        // distance parcourue depuis le point de départ
+        float travelDistance = 0;
+
+        // position de départ
+        Vector3 startPosition = path[path.Count-1] + delta;
+
+        // boucle sur tous les point du chemin (c'est toujours mieux de stocker le total dans une variable locale)
+        for (int i = path.Count - 2, count = path.Count, lastIndex = 0; i >= 0; i--)
+        {
+
+            // distance entre le point de départ et le point d'arrivée (node actuel, node suivant)
+            float distance = Vector3.Distance(startPosition, path[i] + delta);
+
+            // vecteur directeur entre ces deux points
+            Vector3 direction = (path[i] + delta - startPosition).normalized;
+
+            // boucle tant qu'on a pas encore dépassé la position du node suivant
+            while (travelDistance < distance)
+            {
+
+                // on avance en fonction de la vitesse de déplacement et du temps écoulé
+                travelDistance += (speed * Time.deltaTime);
+
+                // si on a dépassé ou atteint la position du node d'arrivée
+                if (travelDistance >= distance)
+                {
+
+                    // si on est encore en chemin, 
+                    if (i > lastIndex)
+                    {
+                        // on se positionne un peu plus loin sur le chemin 
+                        // entre les deux nodes suivants, selon la distance parcourue au delà du node d'arrivée actuel
+                        float distanceNext = Vector3.Distance(path[i - 1], path[i]);
+                        float ratio = (travelDistance - distance) / distanceNext;
+
+                        // si le ratio est supérieur à 1, c'est que la distance parcourue
+                        // est aussi supérieur à la distance entre les deux node suivants (donc on bouge vite)
+                        // cette boucle va sauter tous les nodes qu'on est censé avoir parcourus en se déplaçant
+                        // à grande vitesse
+                        while (ratio > 1)
+                        {
+                            i--;
+                            if (i == lastIndex)
+                            {
+                                // on est arrivé au dernier node du chemin
+                                placeable.transform.position = path[i] + delta;
+                                // sortie de la boucle
+                                break;
+                            }
+                            else
+                            {
+                                travelDistance -= distance;
+                                distance = distanceNext;
+                                distanceNext = Vector3.Distance(path[i - 1], path[i]);
+                                ratio = (travelDistance - distance) / distanceNext;
+                            }
+                        }
+
+                        if (i == lastIndex)
+                        {
+                            // on est arrivé au dernier node du chemin dans le while précédent
+                            break;
+                        }
+                        else
+                        {
+                            transform.position = Vector3.Lerp(path[i], path[i - 1], ratio);
+                        }
+
+                    }
+                    else
+                    {
+                        // on est arrivé au dernier node du chemin
+                        placeable.transform.position = path[i] + delta ;
+                        break;
+                    }
+                }
+                else
+                {
+                    // sinon on avance en direction du point d'arrivée
+                    placeable.transform.position += direction * (speed * Time.deltaTime) ;
+                }
+
+                yield return null;
+            }
+
+            // on retire la distance qu'il y avait à parcourir entre les deux nodes précédents
+            travelDistance -= distance;
+
+            // mise à jour de la position de départ pour l'itération suivante
+            startPosition = path[i] + delta;
+        }
+        isMoving = false;
+    }
 
     public  List<LivingPlaceable> CreateTurnOrder(){
         int maxSpeedStack = 0;
