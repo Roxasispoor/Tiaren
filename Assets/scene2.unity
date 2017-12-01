@@ -573,7 +573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jagged: {fileID: 0}
-  randomParameter: 100
+  randomParameter: 90
   floaties: []
   prefabsList:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}

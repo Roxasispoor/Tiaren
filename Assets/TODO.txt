@@ -1,4 +1,5 @@
-﻿Coder la fonction de tir (possibilité,bonus,creation de l'effet)
+﻿Ajouter des points fictifs de déplacement pour les sauts
+Coder la fonction de tir (possibilité,bonus,creation de l'effet)
 Coder les armes
 Coder l'interface utilisateur
 Coder plus de compétences

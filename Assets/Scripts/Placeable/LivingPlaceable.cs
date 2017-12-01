@@ -127,7 +127,13 @@ public abstract class LivingPlaceable : Placeable {
         {
             Vector3 arrivee= placeable.transform.position + x.RelativePosition;
             Vector3 direction = arrivee - depart;
-           
+           if(direction.magnitude>this.EquipedArm.Range)
+            {
+                x.Shootable = false;
+            }
+           else
+            { 
+
             Debug.DrawRay(depart,
                direction,Color.green,100);
             RaycastHit[] hits = Physics.RaycastAll(depart,
@@ -152,7 +158,7 @@ public abstract class LivingPlaceable : Placeable {
             {
                 x.Shootable = false;
             }
-                
+            }
         }
 
         return arenvoyer;
