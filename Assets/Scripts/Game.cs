@@ -231,11 +231,11 @@ On continue jusqu'à la fin des 30s /
                 placeable.NbFoisFiredThisTurn = 0;
                 this.GameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
                 this.GameEffectManager.Solve();
-                //Ici l'utilisateur a la main, et 30 secondes.
-                
-              
+                    //Ici l'utilisateur a la main, et 30 secondes.
 
-                if (placeable.Joueur != null)
+                    Color transp = new Color(0, 0, 0, 0);
+
+                    if (placeable.Joueur != null)
                 {
                         if (!placeable.EstMort)
                         {
@@ -271,13 +271,28 @@ On continue jusqu'à la fin des 30s /
                                     }
                                     listAnimator.Add(placeable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
                                     StartCoroutine(ApplyMove(listAnimator,placeable));
-                                    placeable.PmActuels -= listAnimator.Count;
+                                    placeable.PmActuels -= listAnimator.Count - 1;
 
                                     //on actualise les positions
                                     grilleJeu.Grid[PlaceToGo.x, PlaceToGo.y+1, PlaceToGo.z] = placeable;   
                                     grilleJeu.Grid[placeable.Position.x, placeable.Position.y, placeable.Position.z] = null; // on est plus a l'emplacement précédent
                                     placeable.Position = PlaceToGo+new Vector3Int(0,1,0);
-                                    
+
+                                    for (int x = 0; x < inPlace.GetLength(0); x++)
+                                    {
+                                        for (int y = 0; y < inPlace.GetLength(1); y++)
+                                        {
+                                            for (int z = 0; z < inPlace.GetLength(2); z++)
+                                            {
+
+                                                if (inPlace[x, y, z].Color != transp)
+                                                {
+                                                    GrilleJeu.Grid[x, y, z].gameObject.GetComponent<Renderer>().material.color = inPlace[x, y, z].Color;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, placeToGo);
                                     this.PlaceToGo = vecTest;
                                     Debug.Log("runny run");
                                     
@@ -288,7 +303,7 @@ On continue jusqu'à la fin des 30s /
                             shotPlaceable = null;
                             this.PlaceToGo = vecTest;
 
-                            Color transp = new Color(0, 0, 0, 0);
+                         
                             for (int x = 0; x < inPlace.GetLength(0); x++)
                             {
                                 for (int y = 0; y < inPlace.GetLength(1); y++)
