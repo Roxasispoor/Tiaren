@@ -26,6 +26,7 @@ public class Game : MonoBehaviour {
     private Timer clock;
     private Joueur winner;
     private Vector3Int placeToGo;
+    private bool endPhase;
     /// <summary>
     /// Permet de savoir si le jeu est fini
     /// </summary>
@@ -35,6 +36,10 @@ public class Game : MonoBehaviour {
     /// indique le numéro du tour actuel
     /// </summary>
     /// 
+    public void EndTurn()
+    {
+        this.endPhase = true;
+    }
     public int NumberTurn
     {
         get
@@ -115,6 +120,19 @@ public class Game : MonoBehaviour {
         set
         {
             placeToGo = value;
+        }
+    }
+
+    public bool EndPhase
+    {
+        get
+        {
+            return endPhase;
+        }
+
+        set
+        {
+            endPhase = value;
         }
     }
 
@@ -243,13 +261,13 @@ On continue jusqu'à la fin des 30s /
                             clock.StartTimer(30f);
 
 
-                            bool endPhase = false;
+                            this.EndPhase = false;
                             Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y - 1, placeable.Position.z);
 
                             DistanceAndParent[,,] inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
                             Debug.Log("C'est le debut lol!");
                             Vector3Int vecTest = new Vector3Int(-1, -1, -1);
-                            while (placeable.NbFoisFiredThisTurn < 1 && placeable.PmActuels > 0 && !endPhase && !clock.IsFinished)
+                            while (!EndPhase && !clock.IsFinished && (placeable.NbFoisFiredThisTurn < 1 || placeable.PmActuels > 0 ))
                             {
                                 if (shotPlaceable != null && capacityinUse == 0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                                 {
