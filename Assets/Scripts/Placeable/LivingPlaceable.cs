@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class LivingPlaceable : Placeable {
     
+    
     private float pvMax;
     public float pvActuels;
     private int pmMax;

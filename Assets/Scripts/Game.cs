@@ -258,6 +258,10 @@ On continue jusqu'à la fin des 30s /
                                     Debug.Log("Piew piew");
                                     Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
                                 }
+                               /* else if(placeable.Competences[capacityinUse].condition!=null && placeable.Competences[capacityinUse].condition())
+                                {
+
+                                }*/
                                 else if(placeToGo != vecTest && inPlace[placeToGo.x, placeToGo.y, placeToGo.z].GetDistance()>0 && inPlace[placeToGo.x,placeToGo.y,placeToGo.z].GetDistance()<=placeable.PmActuels)
                                 {
                                     List<Vector3> listAnimator = new List<Vector3>();
@@ -351,34 +355,39 @@ On continue jusqu'à la fin des 30s /
 
         // position de départ
         Vector3 startPosition = path[path.Count-1] + delta;
-
+        
+        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
+        targetDir.y = 0;
         // boucle sur tous les point du chemin (c'est toujours mieux de stocker le total dans une variable locale)
         for (int i = path.Count - 2, count = path.Count, lastIndex = 0; i >= 0; i--)
         {
-
+             //targetDir = path[i] - placeable.transform.position;
             // distance entre le point de départ et le point d'arrivée (node actuel, node suivant)
             float distance = Vector3.Distance(startPosition, path[i] + delta);
 
             // vecteur directeur entre ces deux points
             Vector3 direction = (path[i] + delta - startPosition).normalized;
-
+           
             // boucle tant qu'on a pas encore dépassé la position du node suivant
             while (travelDistance < distance)
             {
 
                 // on avance en fonction de la vitesse de déplacement et du temps écoulé
                 travelDistance += (speed * Time.deltaTime);
-
+               
                 // si on a dépassé ou atteint la position du node d'arrivée
                 if (travelDistance >= distance)
                 {
-
+                   
                     // si on est encore en chemin, 
                     if (i > lastIndex)
                     {
+                        targetDir = path[i - 1] - placeable.transform.position;
+                        targetDir.y = 0;
                         // on se positionne un peu plus loin sur le chemin 
                         // entre les deux nodes suivants, selon la distance parcourue au delà du node d'arrivée actuel
                         float distanceNext = Vector3.Distance(path[i - 1], path[i]);
+                        
                         float ratio = (travelDistance - distance) / distanceNext;
 
                         // si le ratio est supérieur à 1, c'est que la distance parcourue
@@ -411,6 +420,7 @@ On continue jusqu'à la fin des 30s /
                         }
                         else
                         {
+                            
                             transform.position = Vector3.Lerp(path[i], path[i - 1], ratio);
                         }
 
@@ -419,6 +429,7 @@ On continue jusqu'à la fin des 30s /
                     {
                         // on est arrivé au dernier node du chemin
                         placeable.transform.position = path[i] + delta ;
+                        
                         break;
                     }
                 }
@@ -427,6 +438,9 @@ On continue jusqu'à la fin des 30s /
                     // sinon on avance en direction du point d'arrivée
                     placeable.transform.position += direction * (speed * Time.deltaTime) ;
                 }
+
+                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+                placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
 
                 yield return null;
             }

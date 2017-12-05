@@ -45,3 +45,4 @@ Bloqueur de blocs!
 Purgeurs
 Spherique aura
 multipliers changes damage
+-blops 
