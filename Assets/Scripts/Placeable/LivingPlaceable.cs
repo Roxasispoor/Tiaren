@@ -378,11 +378,12 @@ public abstract class LivingPlaceable : Placeable {
     new void OnMouseOver()
     {
 
-        Debug.Log("AAAAAAAAAAAAAAH");
+        
         if(Input.GetMouseButtonUp(1))
         {
             GameManager.ShotPlaceable = this;
         }
+      
 
     }
 

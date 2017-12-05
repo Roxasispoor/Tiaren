@@ -333,6 +333,11 @@ public abstract class Placeable : MonoBehaviour
             {
                 GameManager.PlaceToGo = this.Position ;
             }
+            else if (Input.GetMouseButtonUp(2))
+            {
+            gameManager.ShotPlaceable = this;
 
-        }
+            }
+
+    }
 }

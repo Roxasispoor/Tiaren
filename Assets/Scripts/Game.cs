@@ -7,7 +7,7 @@ using UnityEngine;
 public class Game : MonoBehaviour {
     private int numberTurn=0;
 
-    private LivingPlaceable shotPlaceable;
+    private Placeable shotPlaceable;
     public GameObject[] prefabPersos;
     public GameObject[] prefabArmes;
 
@@ -79,7 +79,7 @@ public class Game : MonoBehaviour {
         }
     }
 
-    public LivingPlaceable ShotPlaceable
+    public Placeable ShotPlaceable
     {
         get
         {
@@ -242,7 +242,6 @@ On continue jusqu'à la fin des 30s /
                             clock.IsFinished = false;
                             clock.StartTimer(30f);
 
-                            //Coroutine routine= StartCoroutine(PlayerChoice(clock));
 
                             bool endPhase = false;
                             Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y - 1, placeable.Position.z);
@@ -258,10 +257,34 @@ On continue jusqu'à la fin des 30s /
                                     Debug.Log("Piew piew");
                                     Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
                                 }
-                               /* else if(placeable.Competences[capacityinUse].condition!=null && placeable.Competences[capacityinUse].condition())
+                                else if (shotPlaceable != null && capacityinUse !=0 &&  placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                    placeable.Competences[capacityinUse].CompetenceType==CompetenceType.ONECLICKLIVING
+                                    && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
+                                    && shotPlaceable.GetType()==typeof(LivingPlaceable)
+                                    && placeable.Competences[capacityinUse].condition())
                                 {
+                                    placeable.Competences[capacityinUse].Use();
+                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                }
+                                else if (shotPlaceable ==placeable && capacityinUse != 0 && placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                    placeable.Competences[capacityinUse].CompetenceType == CompetenceType.SELFCOMPETENCE
+                                    && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
+                                    && placeable.Competences[capacityinUse].condition())
+                                {
+                                    placeable.Competences[capacityinUse].Use();
+                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                }
+                                else if (shotPlaceable != null && capacityinUse != 0 && placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                  placeable.Competences[capacityinUse].CompetenceType == CompetenceType.ONECLICKPLACEABLE
+                                  && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
+                                  && shotPlaceable.GetType() == typeof(Placeable)
+                                  && placeable.Competences[capacityinUse].condition())
+                                {
+                                    placeable.Competences[capacityinUse].Use();
+                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                }
 
-                                }*/
+
                                 else if(placeToGo != vecTest && inPlace[placeToGo.x, placeToGo.y, placeToGo.z].GetDistance()>0 && inPlace[placeToGo.x,placeToGo.y,placeToGo.z].GetDistance()<=placeable.PmActuels)
                                 {
                                     List<Vector3> listAnimator = new List<Vector3>();
@@ -303,6 +326,14 @@ On continue jusqu'à la fin des 30s /
                                 }
                                 yield return null;
 
+                            }
+                            //on diminue de 1 le cooldown de la competence
+                            foreach (Competence comp in placeable.Competences)
+                            {
+                                if(comp.TourCooldownLeft > 0)
+                                {
+                                    comp.TourCooldownLeft--;
+                                }
                             }
                             shotPlaceable = null;
                             this.PlaceToGo = vecTest;

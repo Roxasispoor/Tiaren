@@ -8,7 +8,7 @@ using UnityEngine;
 public class Joueur : MonoBehaviour {
     private bool acted;
     private int score;
-    
+    private float ressource;
     public List<GameObject> personnages=new List<GameObject>();
     public List<int> numeroPrefab;
 
@@ -71,6 +71,19 @@ public class Joueur : MonoBehaviour {
         }
     }
 
+    public float Ressource
+    {
+        get
+        {
+            return ressource;
+        }
+
+        set
+        {
+            ressource = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -83,6 +96,7 @@ public class Joueur : MonoBehaviour {
     void Start () {
         this.acted = false;
         this.score = 0;
+        this.Ressource = 0;
 		
 	}
 	
