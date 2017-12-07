@@ -1,5 +1,5 @@
 ﻿Pousser(décale tous les blocs au dessus et les connexes)
-Frapper (décale 1 bloc, mais sur deux cases)
+Frapper (décale 1 bloc, mais sur X cases)+ super Punch 
 colle
 Fantome (traverse bloc)
 Balles traversantes

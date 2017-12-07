@@ -17,14 +17,19 @@ public class GameEffectManager:MonoBehaviour
     /// </summary>
     public void Solve()
     {
-       
-        
-        foreach(Effect element in ToBeTreated)
+
+        int k = 0;
+        while (k < ToBeTreated.Count)
         {
+            Effect element = ToBeTreated[k];
+        
 
             bool canUse = true;
-            foreach(BlockEffects blockEffect in ActiveBlocks) // si il n'y a pas de block, on applique l'effet
+            int l = 0;
+            while(l<ActiveBlocks.Count)
             {
+                BlockEffects blockEffect = ActiveBlocks[l]; // si il n'y a pas de block, on applique l'effet
+            
               
 
                 if (blockEffect.ContientEffetType(element)) 
@@ -39,6 +44,7 @@ public class GameEffectManager:MonoBehaviour
 
                     }
                 }
+                l++;
             }
             if(canUse)
             {
@@ -48,6 +54,7 @@ public class GameEffectManager:MonoBehaviour
 
             }
             element.TourEffetActif--;
+            k++;
         }
         int i = 0;
         while (i < ToBeTreated.Count) // la différence diminue de 1 a chaque tour de boucle

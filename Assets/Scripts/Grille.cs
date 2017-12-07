@@ -381,25 +381,40 @@ public class Grille: MonoBehaviour  {
     /// </summary>
     public void TombeConnexe()
     {
-        
-            for (int x = 0; x < sizeX; x++)
-            {
-                for (int y = 0; y < sizeY; y++)
-                {
-                    for (int z = 0; z < sizeZ; z++)
-                    {
-                        if (Grid[x, y, z] != null && !Grid[x, y, z].Explored) // si le bloc est non nul, que le bloc était sensé tombé
-                                                                              //Alors on tombe.
-                        {
 
-                            GereEcrasageBloc(x, y, z,1); // On peut descendre de 1 il faut juste appliquer le bon ecrasage si besoin
-                        }
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    if (Grid[x, y, z] != null && !Grid[x, y, z].Explored) // si le bloc est non nul, que le bloc était sensé tombé
+                                                                          //Alors on tombe.
+                    {
+
+                        GereEcrasageBloc(x, y, z, 1); // On peut descendre de 1 il faut juste appliquer le bon ecrasage si besoin
                     }
                 }
             }
-        
-    }
+        }
 
+    }
+public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
+{
+    if (bloc != null && positionVoulue.x >= 0 && positionVoulue.x < sizeX
+       && positionVoulue.y >= 0 && positionVoulue.y < sizeY
+       && positionVoulue.z >= 0 && positionVoulue.z < sizeZ &&
+       Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y] == null
+     || (Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y] != null
+     && Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y].Destroyable))
+    {
+        Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z] = Grid[bloc.Position.x, bloc.Position.y, bloc.Position.z];//met un lien
+        Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z].gameObject.transform.position += (positionVoulue - bloc.Position);//on decale le modèle
+        Grid[bloc.Position.x, bloc.Position.y, bloc.Position.z] = null;//on met a zero l'ancien endroit
+        Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z].Position = positionVoulue;//on change la Position
+
+    }
+}
     /// <summary>
     /// Fonction qui va s'occuper de gérer les colisions verticale d'un bloc par un autre
     /// </summary>
@@ -409,67 +424,55 @@ public class Grille: MonoBehaviour  {
     /// <param name="ydescente"></param>
     public void GereEcrasageBloc(int x, int y, int z,int ydescente)
     {
-           if (Grid[x, y - ydescente, z] == null)// On copie et on détruit
-            {
-            /*
-             Grid[x, y - ydescente, z] = Instantiate(Grid[x, y, z].gameObject, 
-                 new Vector3(Grid[x, y, z].gameObject.transform.position.x, Grid[x, y, z].gameObject.transform.position.y - ydescente, Grid[x, y, z].gameObject.transform.position.z),
-                 Quaternion.identity).GetComponent<Placeable>();
-             Grid[x, y - ydescente, z].Position = new Vector3Int(x, y - ydescente, z);
-             Debug.Log(Grid[x, y, z].GetType());
-             if(Grid[x,y-ydescente,z].GetType()==typeof(Personnage))
-             {
-                 Joueur j = Grid[x, y-ydescente, z].GetComponent<Personnage>().Joueur;
+        if (Grid[x, y - ydescente, z] == null)// On copie et on détruit
+        {
+            DeplaceBloc(Grid[x, y, z], new Vector3Int(x, y - ydescente, z));
+        }
+        /*
+                    Grid[x, y - ydescente, z] = Grid[x, y, z];
+                    Grid[x,y-ydescente,z].gameObject.transform.position= 
+                        new Vector3(Grid[x, y, z].gameObject.transform.position.x,
+                        Grid[x, y, z].gameObject.transform.position.y - ydescente,
+                        Grid[x, y, z].gameObject.transform.position.z);
+                    if (Grid[x, y - ydescente, z].GetType() == typeof(Personnage))
+                    {
+                        Debug.Log("unity-tanplz");
+                    }
+                        Grid[x,y-ydescente,z].Position= new Vector3Int(x, y - ydescente, z);
+                    Grid[x, y, z] = null;
 
-                 j.Personnages[j.Personnages.IndexOf(Grid[x,y,z].gameObject)]=(Grid[x, y - ydescente, z].gameObject);//
-             }
-           //  Grid[x, y - ydescente, z].gameObject.GetComponent<Renderer>().material.color = Color.white;
-             Destroy(Grid[x, y, z].gameObject);
-             */
-            Grid[x, y - ydescente, z] = Grid[x, y, z];
-            Grid[x,y-ydescente,z].gameObject.transform.position= 
-                new Vector3(Grid[x, y, z].gameObject.transform.position.x,
-                Grid[x, y, z].gameObject.transform.position.y - ydescente,
-                Grid[x, y, z].gameObject.transform.position.z);
-            if (Grid[x, y - ydescente, z].GetType() == typeof(Personnage))
-            {
-                Debug.Log("unity-tanplz");
-            }
-                Grid[x,y-ydescente,z].Position= new Vector3Int(x, y - ydescente, z);
-            Grid[x, y, z] = null;
 
-                   
-            }
-            else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
-            {
+                    }*/
+        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
+        {
             Grid[x, y, z].Detruire();
-                Grid[x, y, z] = null;
+            Grid[x, y, z] = null;
 
-            }
-            else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASELIFT)// On copie et on détruit
+        }
+        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASELIFT)// On copie et on détruit
+        {
+            int ymontee = y;
+            while (ymontee < sizeY && Grid[x, ymontee, z] != null) // la verification devrait être non nécessaire en y mais bon -_-
             {
-                int ymontee = y;
-                while (ymontee < sizeY && Grid[x, ymontee, z] != null) // la verification devrait être non nécessaire en y mais bon -_-
-                {
-                    ymontee++;
-                }
+                ymontee++;
+            }
 
-                Grid[x, ymontee, z] = Grid[x, y - ydescente, z].Cloner();
-                Grid[x, ymontee, z].Position.Set(x, ymontee, z);
+            Grid[x, ymontee, z] = Grid[x, y - ydescente, z].Cloner();
+            Grid[x, ymontee, z].Position.Set(x, ymontee, z);
 
-                
-                Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
+
+            Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
             Grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
             Grid[x, y, z] = null;
-            }
-            else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDEATH)
-            {
-                Grid[x, y - ydescente, z].Detruire();
-                Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
+        }
+        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDEATH)
+        {
+            Grid[x, y - ydescente, z].Detruire();
+            Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
             Grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
-                Grid[x, y, z] = null;
+            Grid[x, y, z] = null;
 
-            }
+        }
             
 
 
