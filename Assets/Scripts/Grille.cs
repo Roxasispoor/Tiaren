@@ -428,21 +428,7 @@ public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
         {
             DeplaceBloc(Grid[x, y, z], new Vector3Int(x, y - ydescente, z));
         }
-        /*
-                    Grid[x, y - ydescente, z] = Grid[x, y, z];
-                    Grid[x,y-ydescente,z].gameObject.transform.position= 
-                        new Vector3(Grid[x, y, z].gameObject.transform.position.x,
-                        Grid[x, y, z].gameObject.transform.position.y - ydescente,
-                        Grid[x, y, z].gameObject.transform.position.z);
-                    if (Grid[x, y - ydescente, z].GetType() == typeof(Personnage))
-                    {
-                        Debug.Log("unity-tanplz");
-                    }
-                        Grid[x,y-ydescente,z].Position= new Vector3Int(x, y - ydescente, z);
-                    Grid[x, y, z] = null;
-
-
-                    }*/
+        
         else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
         {
             Grid[x, y, z].Detruire();

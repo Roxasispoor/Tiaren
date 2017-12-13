@@ -18,6 +18,7 @@ public abstract class LivingPlaceable : Placeable {
     private List<GameObject> armes;
     private Arme equipedArm;
     private float sinMultiplier = 0.66f;
+    private float sinMultiplier2 = 0.66f;
     private int nbFoisFiredThisTurn;
     private bool estMort;
     private int nbFoisMort;
@@ -91,8 +92,16 @@ public abstract class LivingPlaceable : Placeable {
             Vector3 ciblaPos = cible.transform.position + hitPoint.RelativePosition;
             float sinfactor = (shotaPos.y - ciblaPos.y) /
                 (shotaPos - ciblaPos).magnitude;
-           
-             nbDmga =nbDmgs * (1 +  sinfactor* sinMultiplier);
+
+            Vector3 vect1 = this.transform.forward;
+            Vector3 vect2 = (ciblaPos - shotaPos);
+            vect1.y = 0;
+            vect2.y = 0;
+            vect1.Normalize();
+            vect2.Normalize();
+            
+            float sinDirection = Vector3.Cross(vect1,vect2).magnitude;      
+             nbDmga =nbDmgs * (1 +  sinfactor* sinMultiplier - sinDirection * sinMultiplier2);
             if(nbDmga>maxdmg)
             {
                 maxdmg = nbDmga;

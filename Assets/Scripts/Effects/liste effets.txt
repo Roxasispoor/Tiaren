@@ -1,10 +1,10 @@
 ﻿Pousser(décale tous les blocs au dessus et les connexes)
-Frapper (décale 1 bloc, mais sur X cases)+ super Punch 
-colle
+Frapper (décale 1 bloc, mais sur X cases)+ super Punch --V
+colle --V
 Fantome (traverse bloc)
 Balles traversantes
-Tough: ne peut pas être écrasé, détruis le bloc qui lui tombe dessus
-Floaty: remonte a la surface
+Tough: ne peut pas être écrasé, détruis le bloc qui lui tombe dessus --V
+Floaty: remonte a la surface --V
 Creuser
 Dashing shot
 Falling shot

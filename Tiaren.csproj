@@ -228,6 +228,7 @@
     <Compile Include="Assets\Scripts\DistanceAndParent.cs" />
     <Compile Include="Assets\Scripts\Effects\BlockEffects.cs" />
     <Compile Include="Assets\Scripts\Effects\Damage.cs" />
+    <Compile Include="Assets\Scripts\Effects\DestroyBloc.cs" />
     <Compile Include="Assets\Scripts\Effects\Effect.cs" />
     <Compile Include="Assets\Scripts\Effects\EndGame.cs" />
     <Compile Include="Assets\Scripts\Effects\GameEffectManager.cs" />
