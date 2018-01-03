@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Cube placeable standard
+/// </summary>
 [Serializable]
 public class StandardCube : Placeable {
 

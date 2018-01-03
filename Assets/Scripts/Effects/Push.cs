@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Effet permettant de repousser un bloc
+/// </summary>
 public class Push : Effect
 {
     private float damage;

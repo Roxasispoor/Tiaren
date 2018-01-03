@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/**
- * Effects are added to the GameEffectManager that will treat them. Effects should be kept simple and be independant of one another.
- * */
+/// <summary>
+/// Les effect doivent être utilisés par le gameEffectManager qui les résoudra 
+/// </summary>
 public abstract class Effect  {
     private Placeable cible;
     private Placeable lanceur;

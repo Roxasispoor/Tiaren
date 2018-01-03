@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Les blocs sont des effets tout ce qu'il y a de plus normal. Quand ils sont utilisés ils sont ajoutés dans la liste des effets bloqués actifs du GameEffectsManager
+/// <summary>
+/// Classe pour effet permettant de contrer d'autres effets.
+/// </summary>
 public class BlockEffects : Effect {
     private List<Effect> listEffectsToBlock;
-    
-    private int numberToBlock;// -1 = not dependant
+   /// <summary>
+   /// -1 = non dépendant
+   /// </summary>
+    private int numberToBlock;
     private GameEffectManager gameEffectManager;
 
     public BlockEffects(Placeable cible, Placeable lanceur, GameEffectManager gameEffectManager): base(cible,lanceur)

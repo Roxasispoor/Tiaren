@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Classe représentant une compétence utilisable par le joueur
+/// </summary>
 public class Competence {
     private int cost;
     private int tourCooldownLeft;
@@ -76,11 +78,13 @@ public class Competence {
             gameManager = value;
         }
     }
-
+    /// <summary>
+    /// Ajoute les effets au gameEffectManager et lance la résolution
+    /// </summary>
     public void Use()
     {
         gameManager.GameEffectManager.ToBeTreated.AddRange(this.effects);
-        
+        gameManager.GameEffectManager.Solve();
         this.tourCooldownLeft = this.cooldown;
     }
 }

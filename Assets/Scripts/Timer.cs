@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Permet de lancer des comptes a rebours
+/// </summary>
 public class Timer : MonoBehaviour {
     private bool isFinished;
     private float targetTime;

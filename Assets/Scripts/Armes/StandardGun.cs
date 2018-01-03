@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Classe test pour gun classique
+/// </summary>
 public class StandardGun : Arme {
 
 	// Use this for initialization

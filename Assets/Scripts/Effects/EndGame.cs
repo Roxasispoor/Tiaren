@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Effet de fin du jeu
+/// </summary>
 public class EndGame : Effect {
 
     private Game game;

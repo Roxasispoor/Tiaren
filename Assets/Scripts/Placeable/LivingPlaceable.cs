@@ -111,7 +111,7 @@ public abstract class LivingPlaceable : Placeable {
         }        //
         Debug.Log(maxdmg);
         
-        //on prépare le damage en conséquence avant?
+        //on prépare le damage en conséquence avant
         this.NbFoisFiredThisTurn++;
 
         this.GameManager.GameEffectManager.ToBeTreated.AddRange(this.EquipedArm.OnShootEffects);

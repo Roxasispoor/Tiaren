@@ -324,7 +324,9 @@ public abstract class Placeable : MonoBehaviour
         Destroy(this);
         Destroy(this.gameObject);
     }
-  
+  /// <summary>
+  /// permet le shoot et le déplacement
+  /// </summary>
          void OnMouseOver()
     {
 

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/// <summary>
+/// Classe représentant un personnage
+/// </summary>
 public class Personnage : LivingPlaceable {
 
 

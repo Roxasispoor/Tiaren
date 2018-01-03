@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
-
+/// <summary>
+/// Classe centrale gérant le déroulement des tours et répertoriant les objets
+/// </summary>
 public class Game : MonoBehaviour {
     private int numberTurn=0;
 
@@ -174,7 +174,7 @@ On continue jusqu'à la fin des 30s /
     // Use this for initialization
     IEnumerator Start()
     {
-        //quand on aura la serialization bien:
+        //quand on aura la serialization:
         //on lit la position et le numero dans le fichier et non dans le numero prefab joueur on instancie.
         //Dans le awake de perso on lit les bonnes valeurs également.
 
@@ -213,7 +213,7 @@ On continue jusqu'à la fin des 30s /
 
         }
 
-        //pas vérifié
+        //TODO debug if necessary
         foreach (GameObject monstre in listeMonstresNeutres)
         {
             LivingPlaceable monstre1 = monstre.GetComponent<Personnage>();
@@ -371,7 +371,7 @@ On continue jusqu'à la fin des 30s /
                                     }
                                 }
                             }
-                                        Debug.Log("C'est la fin lol!");
+                                        Debug.Log("C'est la fin!");
                             //On applique les changements
                             //StopCoroutine(routine);
                         }
@@ -394,6 +394,12 @@ On continue jusqu'à la fin des 30s /
 
         }
     }
+    /// <summary>
+    /// déplace le personnage le long du chemin
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="placeable"></param>
+    /// <returns></returns>
     public IEnumerator ApplyMove(List<Vector3> path,Placeable placeable)
     {
         Vector3 delta =   placeable.transform.position - path[path.Count - 1]  ;
@@ -502,7 +508,10 @@ On continue jusqu'à la fin des 30s /
         }
         isMoving = false;
     }
-
+    /// <summary>
+    /// Crée l'ordre dans lequel les personnages jouent
+    /// </summary>
+    /// <returns></returns>
     public  List<LivingPlaceable> CreateTurnOrder(){
         int maxSpeedStack = 0;
         List<LivingPlaceable> liste = new List<LivingPlaceable>();
@@ -578,6 +587,10 @@ On continue jusqu'à la fin des 30s /
 
         return liste;
      }
+    /// <summary>
+    /// Fonctions inutilisée qui permet d'appliquer une fonction a tous les personnages visable
+    /// </summary>
+    /// <param name="shooter"></param>
     public void Shootable(LivingPlaceable shooter)
     {
         Vector3 shootpos = shooter.position + shooter.ShootPosition;

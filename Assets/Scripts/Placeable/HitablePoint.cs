@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Représente un point visable et ses multiplicateur de dégats, ainsi que si il est atteignable.
+/// </summary>
 public class HitablePoint  {
     private Vector3 relativePosition;
     private float damageMultiplier;

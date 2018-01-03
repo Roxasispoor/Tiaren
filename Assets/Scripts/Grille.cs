@@ -24,7 +24,7 @@ public class Grille: MonoBehaviour  {
     
     private Placeable[,,] grid=new Placeable[sizeX,sizeY,sizeZ];
     /// <summary>
-    /// Pourquoi est-il fixé ?
+    /// Paramètre de génération de la grille
     /// </summary>
     public int randomParameter = 90;
     /// <summary>
@@ -215,7 +215,9 @@ public class Grille: MonoBehaviour  {
         
         return gridBool;
     }
-
+    /// <summary>
+    /// Actualise la position de chac bloc de la grille
+    /// </summary>
     public void ActualisePosition()
     {
         for (int x = 0; x < sizeX; x++)

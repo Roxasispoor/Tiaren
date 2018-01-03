@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Que représente cette classe ?
+/// Classe utile pour le pathfinding et la remontée de chemin
 /// </summary>
 public class DistanceAndParent{
 
     private int distance;
     private Vector3Int pos;
 
-
-    /// <summary>
-    /// Le parent est lui meme un objet de ce type ? Oui.
-    /// </summary>
     private DistanceAndParent parent;
     private Color color;
 

@@ -5,7 +5,9 @@ using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
 
-
+/// <summary>
+/// Classe qui transforme la grille en jagged array a des fins de serialization
+/// </summary>
 public class JaggedGrid:MonoBehaviour  {
 
    
