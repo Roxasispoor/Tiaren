@@ -506,6 +506,9 @@ public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
             y++;
         }
     }
+    /// <summary>
+    /// Sauvegarde la grille dans un fichier json en utilisant un jaggedarray
+    /// </summary>
     public void SaveGridFile()
     {
         //Stream stream = File.Open("test", FileMode.Create);
