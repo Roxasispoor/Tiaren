@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 /// <summary>
 /// Permet de lancer des comptes a rebours
 /// </summary>
 public class Timer : MonoBehaviour {
     private bool isFinished;
     private float targetTime;
+    public Text textToUpdate;
 
+  
     public Timer()
     {
         this.isFinished = false;
@@ -40,7 +43,10 @@ public class Timer : MonoBehaviour {
         {
             IsFinished = true;
         }
-
+        if(textToUpdate!=null)
+        {
+            textToUpdate.text = targetTime.ToString();
+        }
     }
 
 }

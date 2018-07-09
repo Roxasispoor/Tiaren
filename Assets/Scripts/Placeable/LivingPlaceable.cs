@@ -384,7 +384,7 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
-    new void OnMouseOver()
+    void OnMouseOver()
     {
 
         

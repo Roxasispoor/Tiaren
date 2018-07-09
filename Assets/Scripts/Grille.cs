@@ -66,7 +66,7 @@ public class Grille: MonoBehaviour  {
     /// <summary>
     /// Crée une grille aléatoire a partir de randomParameter
     /// </summary>
-    public void CreateRandomGrid()
+    public void CreateRandomGrid(GameObject parent)
     {
         for (int x = 0; x < sizeX; x++)
         {
@@ -76,7 +76,7 @@ public class Grille: MonoBehaviour  {
                 {
                     if (Random.Range(0, 100) < randomParameter && y < sizeY - 2) // la deuxième condition pourrait simplement etre dans le for du Y
                     {
-                        GameObject obj = Instantiate(prefabsList[0],new Vector3(x,y,z),Quaternion.identity);
+                        GameObject obj = Instantiate(prefabsList[0],new Vector3(x,y,z),Quaternion.identity,parent.transform);
                         obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
                        // Debug.Log(obj.GetComponent<Placeable>().Position);
                         obj.GetComponent<Placeable>().GameManager = this.gameManager;

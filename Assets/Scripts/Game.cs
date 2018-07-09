@@ -10,7 +10,7 @@ public class Game : MonoBehaviour {
     private Placeable shotPlaceable;
     public GameObject[] prefabPersos;
     public GameObject[] prefabArmes;
-
+    public GameObject gridFolder;
     public GameObject joueur1; //Should be Object
     
     public GameObject joueur2; //Should be Object
@@ -145,7 +145,7 @@ public class Game : MonoBehaviour {
         this.clock = gameObject.GetComponent<Timer>();
         this.grilleJeu = gameObject.GetComponent<Grille>();
         grilleJeu.GameManager = this;
-        grilleJeu.CreateRandomGrid();
+        grilleJeu.CreateRandomGrid(gridFolder);
       
 
 
@@ -273,7 +273,7 @@ On continue jusqu'à la fin des 30s /
                                 {
                                     //piew piew
                                     Debug.Log("Piew piew");
-                                    Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // pour les animations
+                                    Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // TODO: pour les animations
                                 }
                                 else if (shotPlaceable != null && capacityinUse !=0 &&  placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
                                     placeable.Competences[capacityinUse].CompetenceType==CompetenceType.ONECLICKLIVING
