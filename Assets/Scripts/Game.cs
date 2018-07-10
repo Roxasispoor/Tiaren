@@ -315,7 +315,7 @@ On continue jusqu'à la fin des 30s /
                                         listAnimator.Add(parent.Pos);
                                     }
                                     listAnimator.Add(placeable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
-                                    StartCoroutine(ApplyMove(listAnimator,placeable));
+                                    StartCoroutine(MoveAlongBezier(listAnimator,placeable,1));
                                     placeable.PmActuels -= listAnimator.Count - 1;
 
                                     //on actualise les positions
@@ -394,6 +394,143 @@ On continue jusqu'à la fin des 30s /
 
         }
     }
+    /// <summary>
+    /// See https://www.gamedev.net/forums/topic/551455-length-of-a-generalized-quadratic-bezier-curve-in-3d/
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="control"></param>
+    /// <returns></returns>
+    public float LengthQuadraticBezier(Vector3 start, Vector3 end, Vector3 control)
+{
+        Vector3[] C = { start, control, end };
+            // ASSERT:  C[0], C[1], and C[2] are distinct points.
+
+        // The position is the following vector-valued function for 0 <= t <= 1.
+        //   P(t) = (1-t)^2*C[0] + 2*(1-t)*t*C[1] + t^2*C[2].
+        // The derivative is
+        //   P'(t) = -2*(1-t)*C[0] + 2*(1-2*t)*C[1] + 2*t*C[2]
+        //         = 2*(C[0] - 2*C[1] + C[2])*t + 2*(C[1] - C[0])
+        //         = 2*A[1]*t + 2*A[0]
+        // The squared length of the derivative is
+        //   f(t) = 4*Dot(A[1],A[1])*t^2 + 8*Dot(A[0],A[1])*t + 4*Dot(A[0],A[0])
+        // The length of the curve is
+        //   integral[0,1] sqrt(f(t)) dt
+
+        Vector3[] A ={ C[1] - C[0],  // A[0] not zero by assumption
+        C[0] - 2.0f*C[1] + C[2]
+    };
+
+            float length;
+
+            if (A[1] != Vector3.zero)
+            {
+                // Coefficients of f(t) = c*t^2 + b*t + a.
+                float c = 4.0f * Vector3.Dot(A[1],A[1]);  // c > 0 to be in this block of code
+                float b = 8.0f * Vector3.Dot(A[0],A[1]);
+                float a = 4.0f * Vector3.Dot(A[0],A[0]);  // a > 0 by assumption
+                float q = 4.0f * a * c - b * b;  // = 16*|Cross(A0,A1)| >= 0
+
+                // Antiderivative of sqrt(c*t^2 + b*t + a) is
+                // F(t) = (2*c*t + b)*sqrt(c*t^2 + b*t + a)/(4*c)
+                //   + (q/(8*c^{3/2}))*log(2*sqrt(c*(c*t^2 + b*t + a)) + 2*c*t + b)
+                // Integral is F(1) - F(0).
+
+                float twoCpB = 2.0f * c + b;
+                float sumCBA = c + b + a;
+                float mult0 = 0.25f / c;
+                float mult1 = q / (8.0f * Mathf.Pow(c, 1.5f));
+                length =
+                    mult0 * (twoCpB * Mathf.Sqrt(sumCBA) - b * Mathf.Sqrt(a)) +
+                    mult1 * (Mathf.Log(2.0f * Mathf.Sqrt(c * sumCBA) + twoCpB) - Mathf.Log(2.0f * Mathf.Sqrt(c * a) + b));
+            }
+            else
+            {
+                length = 2.0f * A[0].magnitude;
+            }
+
+            return length;
+        }
+ /// <summary>
+ /// Unused Hacky way to approximate bezierr length
+ /// </summary>
+ /// <param name="start"></param>
+ /// <param name="end"></param>
+ /// <param name="control"></param>
+ /// <returns></returns>
+    public float LengthBezierApprox(Vector3 start,Vector3 end,Vector3 control)
+    {
+        float chord = Vector3.Distance(end , start);
+        float cont = Vector3.Distance(start, control) + Vector3.Distance(control, end);
+        return (cont + chord) / 2;
+    }
+    public float CalculateDistance(Vector3 start,Vector3 nextNode)
+    {
+        if (start.y != nextNode.y)// si il y a différence de hauteur
+        {
+            Vector3 controlPoint = (nextNode + start + new Vector3(0, (nextNode.y - start.y), 0)) / 2;
+
+            return LengthQuadraticBezier(start, controlPoint, nextNode);
+        }
+        else
+        {
+            return Vector3.Distance(start, nextNode);
+        }
+
+    }
+    public IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable,float speed)
+    {
+        float tempsBezier = 0f;
+        Vector3 delta = placeable.transform.position - path[path.Count - 1];
+        Vector3 startPosition = path[path.Count - 1];
+        //For visual rotation
+        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
+        targetDir.y = 0;
+
+            int i = path.Count - 2;
+
+            float distance=CalculateDistance(startPosition,path[i]);
+        float distanceParcourue = 0;
+            while (tempsBezier < 1)
+            {
+                distanceParcourue += (speed * Time.deltaTime );
+                tempsBezier = distanceParcourue / distance ;
+                       
+                while(tempsBezier>1 && i>0) //on go through 
+                {
+                    
+
+                    distanceParcourue -= distance;
+                    startPosition = path[i];
+                    i--;
+                    targetDir = path[i] - placeable.transform.position;//next one
+                    targetDir.y = 0;// don't move up 
+
+                    distance = CalculateDistance(startPosition, path[i]);//On calcule la distance au noeud suivant
+                    tempsBezier = distanceParcourue / distance; //on recalcule
+
+                }
+            if (i == 0 && tempsBezier > 1)
+            {
+                // on est arrivé au dernier node du chemin, dans la boucle précédente
+                placeable.transform.position = path[i] + delta;
+                // sortie de la boucle qui yield
+                break;
+            }
+
+            placeable.transform.position = Vector3.Lerp(startPosition+delta, path[i]+delta, tempsBezier);
+                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+                placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //On change ce qu'on regarde
+        
+            yield return null;
+            
+
+            }
+            
+        }
+           
+    
     /// <summary>
     /// déplace le personnage le long du chemin
     /// </summary>
