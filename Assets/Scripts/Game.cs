@@ -464,16 +464,25 @@ On continue jusqu'à la fin des 30s /
         float cont = Vector3.Distance(start, control) + Vector3.Distance(control, end);
         return (cont + chord) / 2;
     }
-    public float CalculateDistance(Vector3 start,Vector3 nextNode)
+    /// <summary>
+    /// Calculate distance of bezier, update isBezier and the needed controlPoint
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="nextNode"></param>
+    /// <param name="isBezier"></param>
+    /// <returns></returns>
+    public float CalculateDistance(Vector3 start,Vector3 nextNode,ref bool isBezier,ref Vector3 controlPoint)
     {
-        if (start.y != nextNode.y)// si il y a différence de hauteur
+        isBezier = start.y != nextNode.y;
+        if (isBezier)// si il y a différence de hauteur
         {
-            Vector3 controlPoint = (nextNode + start + new Vector3(0, (nextNode.y - start.y), 0)) / 2;
-
-            return LengthQuadraticBezier(start, controlPoint, nextNode);
+            controlPoint = (nextNode + start + 2*new Vector3(0, Mathf.Abs(nextNode.y - start.y), 0)) / 2;
+         
+            return LengthQuadraticBezier(start, nextNode, controlPoint);
         }
         else
         {
+
             return Vector3.Distance(start, nextNode);
         }
 
@@ -483,13 +492,15 @@ On continue jusqu'à la fin des 30s /
         float tempsBezier = 0f;
         Vector3 delta = placeable.transform.position - path[path.Count - 1];
         Vector3 startPosition = path[path.Count - 1];
+        Vector3 controlPoint=new Vector3();
+        bool isBezier=true;
         //For visual rotation
         Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
         targetDir.y = 0;
 
             int i = path.Count - 2;
 
-            float distance=CalculateDistance(startPosition,path[i]);
+            float distance=CalculateDistance(startPosition,path[i],ref isBezier,ref controlPoint);
         float distanceParcourue = 0;
             while (tempsBezier < 1)
             {
@@ -506,7 +517,7 @@ On continue jusqu'à la fin des 30s /
                     targetDir = path[i] - placeable.transform.position;//next one
                     targetDir.y = 0;// don't move up 
 
-                    distance = CalculateDistance(startPosition, path[i]);//On calcule la distance au noeud suivant
+                    distance = CalculateDistance(startPosition, path[i],ref isBezier,ref controlPoint);//On calcule la distance au noeud suivant
                     tempsBezier = distanceParcourue / distance; //on recalcule
 
                 }
@@ -517,9 +528,17 @@ On continue jusqu'à la fin des 30s /
                 // sortie de la boucle qui yield
                 break;
             }
+            if(isBezier)
+            {
+                placeable.transform.position =delta+Mathf.Pow(1 - tempsBezier ,2) * (startPosition ) + 2 * (1 - tempsBezier) * tempsBezier * (controlPoint) + Mathf.Pow(tempsBezier,2) * (path[i] );
+               
+            }
+            else
+            {
+                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, tempsBezier);
 
-            placeable.transform.position = Vector3.Lerp(startPosition+delta, path[i]+delta, tempsBezier);
-                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            }
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
                 placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
             //On change ce qu'on regarde
         
