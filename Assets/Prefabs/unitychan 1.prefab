@@ -5119,6 +5119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  serializeNumber: 2
   position: {x: 0, y: 4, z: 0}
   explored: 0
   joueur: {fileID: 0}

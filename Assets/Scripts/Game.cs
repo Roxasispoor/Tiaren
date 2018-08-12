@@ -28,7 +28,7 @@ public class Game : NetworkBehaviour {
     private Grille grilleJeu;
     private Timer clock;
     private Joueur winner;
-    private Vector3Int placeToGo;
+    //private Vector3Int placeToGo;
     private bool endPhase;
     /// <summary>
     /// Permet de savoir si le jeu est fini
@@ -114,18 +114,6 @@ public class Game : NetworkBehaviour {
         }
     }
 
-    public Vector3Int PlaceToGo
-    {
-        get
-        {
-            return placeToGo;
-        }
-
-        set
-        {
-            placeToGo = value;
-        }
-    }
 
     public bool EndPhase
     {
@@ -157,12 +145,11 @@ public class Game : NetworkBehaviour {
   
 
 
-        this.GameEffectManager = gameObject.GetComponent<GameEffectManager>();
+    this.GameEffectManager = gameObject.GetComponent<GameEffectManager>();
     this.clock = gameObject.GetComponent<Timer>();
     this.grilleJeu = gameObject.GetComponent<Grille>();
     grilleJeu.GameManager = this;
-     this.PlaceToGo = new Vector3Int(-1, -1, -1);
-        //    DontDestroyOnLoad(gameObject);
+           //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         for (int i= 0;i<networkManager.spawnPrefabs.Count;i++)
     {
@@ -190,6 +177,7 @@ On continue jusqu'à la fin des 30s /
     
 
     // Use this for initialization
+    [Server]
     IEnumerator Start()
     {
         Debug.Log("Am I server?" + isServer);
@@ -214,14 +202,14 @@ On continue jusqu'à la fin des 30s /
         }
         Debug.Log("Oh mon dieu un client je fais quoi je fais quoi je fais quoi!");
 
-        CreatePersonnages(ref joueur1);
+        CreatePersonnages(joueur1);
         while (joueur2 == null)
         {
 
             yield return null;
         }
         Debug.Log("Au secours, un autre!");
-        CreatePersonnages(ref joueur2);
+        CreatePersonnages(joueur2);
 
         //TODO debug if necessary
         foreach (GameObject monstre in listeMonstresNeutres)
@@ -314,10 +302,12 @@ On continue jusqu'à la fin des 30s /
                                 }
 
 
-                                else if(placeToGo != vecTest && inPlace[placeToGo.x, placeToGo.y, placeToGo.z].GetDistance()>0 && inPlace[placeToGo.x,placeToGo.y,placeToGo.z].GetDistance()<=placeable.PmActuels)
+                                else if(placeable.joueur.PlaceToGo != vecTest &&
+                                    inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z].GetDistance()>0 
+                                    && inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z].GetDistance()<=placeable.PmActuels)
                                 {
                                     List<Vector3> listAnimator = new List<Vector3>();
-                                    DistanceAndParent parent=inPlace[placeToGo.x, placeToGo.y, placeToGo.z];
+                                    DistanceAndParent parent=inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z];
                                     listAnimator.Add(parent.Pos);
                                     while (parent.GetDistance()>1)
                                     {
@@ -326,13 +316,13 @@ On continue jusqu'à la fin des 30s /
                                         listAnimator.Add(parent.Pos);
                                     }
                                     listAnimator.Add(placeable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
-                                    StartCoroutine(MoveAlongBezier(listAnimator,placeable,1));
+                                    RpcMoveAlongBezier(listAnimator.ToArray(),placeable.netId,1);
                                     placeable.PmActuels -= listAnimator.Count - 1;
 
                                     //on actualise les positions
-                                    grilleJeu.Grid[PlaceToGo.x, PlaceToGo.y+1, PlaceToGo.z] = placeable;   
+                                    grilleJeu.Grid[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y+1, placeable.joueur.PlaceToGo.z] = placeable;   
                                     grilleJeu.Grid[placeable.Position.x, placeable.Position.y, placeable.Position.z] = null; // on est plus a l'emplacement précédent
-                                    placeable.Position = PlaceToGo+new Vector3Int(0,1,0);
+                                    placeable.Position = placeable.joueur.PlaceToGo + new Vector3Int(0,1,0);
 
                                     for (int x = 0; x < inPlace.GetLength(0); x++)
                                     {
@@ -348,8 +338,8 @@ On continue jusqu'à la fin des 30s /
                                             }
                                         }
                                     }
-                                    inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, placeToGo);
-                                    this.PlaceToGo = vecTest;
+                                    inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, placeable.joueur.PlaceToGo);
+                                    placeable.joueur.PlaceToGo = vecTest;
                                     Debug.Log("runny run");
                                     
                                 }
@@ -365,7 +355,7 @@ On continue jusqu'à la fin des 30s /
                                 }
                             }
                             shotPlaceable = null;
-                            this.PlaceToGo = vecTest;
+                            placeable.joueur.PlaceToGo = vecTest;
 
                          
                             for (int x = 0; x < inPlace.GetLength(0); x++)
@@ -499,6 +489,19 @@ On continue jusqu'à la fin des 30s /
         }
 
     }
+    [ClientRpc]
+    public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
+    {
+        Debug.Log(placeable);
+        GameObject plc = ClientScene.FindLocalObject(placeable);
+       
+        List<Vector3> pathe = new List<Vector3>(path);
+        StartCoroutine(MoveAlongBezier( pathe, plc.GetComponent<Placeable>(),  speed));
+        Debug.Log("Started on client though");
+    }
+
+
+    [Client]
     public IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable,float speed)
     {
         float tempsBezier = 0f;
@@ -677,8 +680,8 @@ On continue jusqu'à la fin des 30s /
         isMoving = false;
     }
 
-
-    private void CreatePersonnages(ref GameObject joueur )
+    [Server]
+    private void CreatePersonnages(GameObject joueur )
     {
         for (int i = 0; i < joueur.GetComponent<Joueur>().NumeroPrefab.Count; i++)
         {

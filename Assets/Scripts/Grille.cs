@@ -550,12 +550,14 @@ public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
                         GameObject obj = Instantiate(gameManager.networkManager.spawnPrefabs[jagged.grille[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity,parent.transform);
                         obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
+                        
                         // Debug.Log(obj.GetComponent<Placeable>().Position);
                         obj.GetComponent<Placeable>().GameManager = gameManager;
 
 
                         Grid[x, y, z] = obj.GetComponent<Placeable>(); //ce qui nous intéresse c'est pas le game object
                         NetworkServer.Spawn(obj);
+
 
                     }
 

@@ -318,6 +318,7 @@
     <Compile Include="Assets\Scripts\Effects\GameEffectManager.cs" />
     <Compile Include="Assets\Scripts\Effects\ParameterChange.cs" />
     <Compile Include="Assets\Scripts\Effects\Push.cs" />
+    <Compile Include="Assets\Scripts\Effects\SpawnEffect.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\Grille.cs" />
     <Compile Include="Assets\Scripts\Joueur.cs" />

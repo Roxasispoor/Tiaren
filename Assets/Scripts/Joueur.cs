@@ -24,10 +24,10 @@ public class Joueur : NetworkBehaviour {
     /// </summary>
     /// <param name="toGo"></param>
     [Command]
-    public void CmdMoveTo(Vector3 toGo)
+    public void CmdMoveTo(NetworkInstanceId toGo)
     {
-
-        this.placeToGo = new Vector3Int((int)toGo.x, (int)toGo.y, (int)toGo.z);
+        
+        this.placeToGo = NetworkServer.FindLocalObject(toGo).GetComponent<Placeable>().Position;
         if(isServer)
         {
             Debug.Log("Coucou commandé");

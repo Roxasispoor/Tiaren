@@ -12,7 +12,6 @@ public abstract class Placeable : NetworkBehaviour
     public Game gameManager;
 
     public int serializeNumber;
-
     public Vector3Int position;
     private bool accessible;
     private bool walkable;
@@ -36,42 +35,7 @@ public abstract class Placeable : NetworkBehaviour
     public Joueur joueur;
 
 
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="walkable">Indique si on peut marcher sur le bloc</param>
-    /// <param name="movable">Indique siu le bloc est déplassable</param>
-    /// <param name="traversableType"></param>
-    /// <param name="gravityType"></param>
-    /// <param name="pickable"></param>
-    /// <param name="ecrasable"></param>
-
-    /** public Placeable(Vector3Int position, bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
-        GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
-        , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur)
-    {
-
-
-        this.position = position;
-        this.accessible = false;
-        this.walkable = walkable;
-        this.OnWalkEffects = onWalkEffects;
-        this.movable = movable;
-        this.Destroyable = destroyable;
-        this.TraversableChar = traversableChar;
-        this.TraversableBullet = traversableBullet;
-        this.GravityType = gravityType;
-        this.pickable = pickable;
-        this.Ecrasable = ecrasable;
-        this.OnDestroyEffects = onDestroyEffects;
-        this.hitablePoints = hitablePoints;
-        this.onDebutTour = onDebutTour;
-        this.OnFinTour = onFinTour;
-        this.Joueur = joueur;
-    }
-    **/
-
+    
     public bool Walkable
     {
         get
@@ -127,7 +91,6 @@ public abstract class Placeable : NetworkBehaviour
             explored = value;
         }
     }
-
 
 
 
@@ -336,11 +299,16 @@ public abstract class Placeable : NetworkBehaviour
            
             if (Input.GetMouseButtonUp(0) && this.walkable)
             {
-            gameManager.GetLocalPlayer().CmdMoveTo(new Vector3(this.Position.x, this.Position.y, this.Position.z));
-//            gameManager.PlayerMove();
+            Debug.Log("Hello there");
 
-                GameManager.PlaceToGo = this.Position ;
-            }
+            //Warning: works because only local player is joueur
+            ClientScene.localPlayers[0].gameObject.GetComponent<Joueur>().CmdMoveTo(this.netId);
+
+            //
+            //            gameManager.PlayerMove();
+
+            //GameManager.PlaceToGo = this.Position ;
+        }
             else if (Input.GetMouseButtonUp(2))
             {
             gameManager.ShotPlaceable = this;
