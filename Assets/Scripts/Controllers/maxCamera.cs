@@ -15,7 +15,7 @@ public class maxCamera : MonoBehaviour
     public float ySpeed = 200.0f;
     public int yMinLimit = -80;
     public int yMaxLimit = 80;
-    public int zoomRate = 40;
+    public int zoomRate = 70;
     public float panSpeed = 0.3f;
     public float zoomDampening = 5.0f;
 
@@ -86,7 +86,7 @@ public class maxCamera : MonoBehaviour
         // otherwise if middle mouse is selected, we pan by way of transforming the target in screenspace
         else if (Input.GetMouseButton(2))
         {
-            //grab the rotation of the camera so we can move in a psuedo local XY space
+            //grab the rotation of the camera so we can move in a pseudo local XY space
             target.rotation = transform.rotation;
             target.Translate(Vector3.right * -Input.GetAxis("Mouse X") * panSpeed);
             target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, Space.World);

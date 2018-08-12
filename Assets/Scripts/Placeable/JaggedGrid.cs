@@ -4,34 +4,38 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
-/// Classe qui transforme la grille en jagged array a des fins de serialization
+/// Classe qui transforme la grille en jagged array a des fins de serialization. 
+/// La serialization se fait en deux temps: On sauvegarde le numero dans la liste préfab correspondant
+/// On ajoute des effets en plus si nécessaires.
 /// </summary>
-public class JaggedGrid:MonoBehaviour  {
+public class JaggedGrid  {
 
    
-    public String[] grille;
+    public int[] grille;
 
-    public void ToJagged(Placeable[,,] grid)
+    public void ToJagged(Grille grid)
     {
-        grille= new String[grid.GetLength(0)* grid.GetLength(1)* grid.GetLength(2)];
+        grille= new int[grid.sizeX* grid.sizeY* grid.sizeZ];
 
-        for (int x = 0; x < grid.GetLength(0); x++)
+        //On met y en dernier pour des besoins futurs potentiels de compression
+        for (int y = 0; y < grid.sizeY; y++)
         {
-            
-            for (int y = 0; y < grid.GetLength(1); y++)
+            for (int x = 0; x < grid.sizeX; x++)
             {
-                for (int z = 0; z < grid.GetLength(2); z++)
+            
+                for (int z = 0; z < grid.sizeZ; z++)
                 {
-                    if (grid[x, y, z]==null)
+                    if (grid.Grid[x, y, z]==null)
                     {
-                        this.grille[x * grid.GetLength(1) * grid.GetLength(2) + y * grid.GetLength(2) + z] = null;
+                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = 0;
 
                     }
                     else
                     {
-                        this.grille[x * grid.GetLength(1) * grid.GetLength(2) + y * grid.GetLength(2) + z] = grid[x, y, z].GetType().ToString();
+                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.Grid[x, y, z].serializeNumber;
 
                     }
                    
@@ -43,17 +47,26 @@ public class JaggedGrid:MonoBehaviour  {
     {
         string blah = JsonUtility.ToJson(this);
       
-        string path =  Application.dataPath + "Grid.json";
+        string path = "Grid.json";
         Debug.Log("AssetPath:" + path);
         File.WriteAllText(path, blah);
     }
-   
-    public static JaggedGrid Load(string path)
+
+    public static JaggedGrid FillGridFromJSON()
     {
-        var serializer = new XmlSerializer(typeof(JaggedGrid));
-        using (var stream = new FileStream(path, FileMode.Open))
-        {
-            return serializer.Deserialize(stream) as JaggedGrid;
-        }
+        return JsonUtility.FromJson<JaggedGrid>(ReadString());
     }
+   
+
+    static string ReadString()
+    {
+        string path = "Grid.json";
+
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+        string toreturn=reader.ReadToEnd();
+        reader.Close();
+        return toreturn;
+    }
+
 }

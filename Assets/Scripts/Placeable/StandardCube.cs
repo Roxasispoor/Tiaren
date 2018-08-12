@@ -15,7 +15,7 @@ public class StandardCube : Placeable {
     }**/
     void Awake()
     {
-
+        this.serializeNumber = 1;
         this.Position = new Vector3Int();
 
         this.Walkable = true;

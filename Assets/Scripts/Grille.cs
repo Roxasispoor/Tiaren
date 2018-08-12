@@ -4,25 +4,26 @@ using System.IO;
 
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.Networking;
 
 /// <summary>
 /// Classe représentant une grille de jeux pour une partie
 /// </summary>
-    
+
 public class Grille: MonoBehaviour  {
     private Game gameManager;
     //  50 x 50 x 5 = 12 500 blocs
-    public static int sizeX = 50;
-    public static int sizeY = 6;
-    public static int sizeZ = 50;
-    public DistanceAndParent[,,] gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
-
-    public JaggedGrid jagged;
+    public int sizeX = 50;
+    public int sizeY = 6;
+    public int sizeZ = 50;
+    public DistanceAndParent[,,] gridBool ;
+    
+    
     /// <summary>
     /// Représente la grille de jeux
     /// </summary>
     
-    private Placeable[,,] grid=new Placeable[sizeX,sizeY,sizeZ];
+    private Placeable[,,] grid;
     /// <summary>
     /// Paramètre de génération de la grille
     /// </summary>
@@ -81,6 +82,7 @@ public class Grille: MonoBehaviour  {
                        // Debug.Log(obj.GetComponent<Placeable>().Position);
                         obj.GetComponent<Placeable>().GameManager = this.gameManager;
                         Grid[x,y,z]= obj.GetComponent<Placeable>() ;
+                        NetworkServer.Spawn(obj);
                         
 
                        
@@ -216,7 +218,7 @@ public class Grille: MonoBehaviour  {
         return gridBool;
     }
     /// <summary>
-    /// Actualise la position de chac bloc de la grille
+    /// Actualise la position de chaque bloc de la grille
     /// </summary>
     public void ActualisePosition()
     {
@@ -511,22 +513,55 @@ public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
     /// </summary>
     public void SaveGridFile()
     {
-        //Stream stream = File.Open("test", FileMode.Create);
-        //BinaryFormatter bformatter = new BinaryFormatter();
-        //MemoryStream ms = new MemoryStream();
-        //bformatter.Binder = new VersionDeserializationBinder();
-        //bformatter.Serialize(stream, grid);
-         jagged = gameObject.AddComponent<JaggedGrid>();
-        jagged.ToJagged(grid);
+        JaggedGrid jagged = new JaggedGrid();
+        jagged.ToJagged(this);
         jagged.Save();
 
     }
 
 
 
-    void Start()
+    void Awake()
     {
-     
-        
+         gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
+         grid = new Placeable[sizeX, sizeY, sizeZ];
+
+
+
     }
+
+    /// <summary>
+    /// Precondition: grille vide jamais remplie
+    /// </summary>
+    /// <param name="grid"></param>
+    public void FillThisGrilleAndSpawn(GameObject parent)
+    {
+        JaggedGrid jagged = JaggedGrid.FillGridFromJSON();
+
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    if (jagged.grille[y * sizeZ * sizeX + z * sizeX + x] != 0) //On suppose que la grille était vide et jamais remplie!
+                    {
+
+                        GameObject obj = Instantiate(gameManager.networkManager.spawnPrefabs[jagged.grille[y * sizeZ * sizeX + z * sizeX + x] - 1],
+                            new Vector3(x, y, z), Quaternion.identity,parent.transform);
+                        obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
+                        // Debug.Log(obj.GetComponent<Placeable>().Position);
+                        obj.GetComponent<Placeable>().GameManager = gameManager;
+
+
+                        Grid[x, y, z] = obj.GetComponent<Placeable>(); //ce qui nous intéresse c'est pas le game object
+                        NetworkServer.Spawn(obj);
+
+                    }
+
+                }
+            }
+        }
+    }
+
 }

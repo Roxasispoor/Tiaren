@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
 /// </summary>
-public class Game : MonoBehaviour {
+public class Game : NetworkBehaviour {
+    //can't be the network manager or isServer can't work
+    public NetworkManager networkManager;
     private int numberTurn=0;
 
     private Placeable shotPlaceable;
@@ -36,6 +39,7 @@ public class Game : MonoBehaviour {
     /// indique le numéro du tour actuel
     /// </summary>
     /// 
+    
     public void EndTurn()
     {
         this.endPhase = true;
@@ -135,23 +139,37 @@ public class Game : MonoBehaviour {
             endPhase = value;
         }
     }
-
+    /// <summary>
+    /// Return the player who has authority
+    /// </summary>
+    /// <returns></returns>
+   public Joueur GetLocalPlayer()
+    {
+        Joueur toreturn= joueur1.GetComponent<Joueur>().hasAuthority ? joueur1.GetComponent<Joueur>() : joueur2.GetComponent<Joueur>();
+        return toreturn;
+    }
+    
     private void Awake()
 
     {
-        //    DontDestroyOnLoad(gameObject);
+
+
+  
+
 
         this.GameEffectManager = gameObject.GetComponent<GameEffectManager>();
-        this.clock = gameObject.GetComponent<Timer>();
-        this.grilleJeu = gameObject.GetComponent<Grille>();
-        grilleJeu.GameManager = this;
-        grilleJeu.CreateRandomGrid(gridFolder);
-      
+    this.clock = gameObject.GetComponent<Timer>();
+    this.grilleJeu = gameObject.GetComponent<Grille>();
+    grilleJeu.GameManager = this;
+     this.PlaceToGo = new Vector3Int(-1, -1, -1);
+        //    DontDestroyOnLoad(gameObject);
+        //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
+        for (int i= 0;i<networkManager.spawnPrefabs.Count;i++)
+    {
+            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i+1; // sorte de valeur partagée a tous les préfabs, pas besoin d'etre statique
 
 
-        //  grilleJeu.ActualisePosition();
-        this.PlaceToGo = new Vector3Int(-1, -1, -1);
-
+    }
 
     }
     public void ChangeCapacityOnUse(int i)
@@ -169,49 +187,41 @@ A chaque fois qu'un effet se déclenche, il est ajouté au game manager
 Le game manager applique vérifie que l'effet est activable /: pas contré/ autre	puis le use()
 On continue jusqu'à la fin des 30s /
 **/
-
+    
 
     // Use this for initialization
     IEnumerator Start()
     {
+        Debug.Log("Am I server?" + isServer);
+        Debug.Log("Am I client?" + isClient);
+        Debug.Log("Am I authority?" + hasAuthority);
+        if (isServer)
+        {
+            //If you want to create one and save it
+           // grilleJeu.CreateRandomGrid(gridFolder);
+           //grilleJeu.SaveGridFile();
+
+            //If you want to load one
+            grilleJeu.FillThisGrilleAndSpawn(gridFolder);
+        }
         //quand on aura la serialization:
         //on lit la position et le numero dans le fichier et non dans le numero prefab joueur on instancie.
         //Dans le awake de perso on lit les bonnes valeurs également.
-
-        for (int i = 0; i < joueur1.GetComponent<Joueur>().NumeroPrefab.Count ; i++)
+        while (joueur1==null)
         {
-            GameObject pers = Instantiate(prefabPersos[joueur1.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 0),Quaternion.identity);
-            
 
-
-            Personnage pers1 = pers.GetComponent<Personnage>();
-            pers1.GameManager = this;
-            joueur1.GetComponent<Joueur>().Personnages.Add(pers);
-            pers1.Joueur = joueur1.GetComponent<Joueur>();
-            pers1.Position = new Vector3Int(0, 4, 0);
-            Vector3Int posPers = pers1.Position;
-            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
-            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
-            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
-            
+            yield return null;
         }
+        Debug.Log("Oh mon dieu un client je fais quoi je fais quoi je fais quoi!");
 
-        for (int i = 0; i < joueur2.GetComponent<Joueur>().NumeroPrefab.Count; i++)
+        CreatePersonnages(ref joueur1);
+        while (joueur2 == null)
         {
-            GameObject pers = Instantiate(prefabPersos[joueur2.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 10), Quaternion.identity);
 
-            Personnage pers1 = pers.GetComponent<Personnage>();
-            pers1.GameManager = this;
-
-            joueur2.GetComponent<Joueur>().Personnages.Add(pers);
-            pers1.Joueur = joueur2.GetComponent<Joueur>();
-            pers1.Position = new Vector3Int(0, 4, 10);
-            Vector3Int posPers = pers1.Position;
-            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
-            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
-            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
-
+            yield return null;
         }
+        Debug.Log("Au secours, un autre!");
+        CreatePersonnages(ref joueur2);
 
         //TODO debug if necessary
         foreach (GameObject monstre in listeMonstresNeutres)
@@ -223,13 +233,14 @@ On continue jusqu'à la fin des 30s /
             monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
             monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
         }
+
         grilleJeu.Gravite();
         //grilleJeu.SaveGridFile();
         grilleJeu.InitialiseExplored(false);
         
-        Debug.Log(grilleJeu.IsGridAllExplored());
-        grilleJeu.Explore(0, 0, 0);
-        Debug.Log(grilleJeu.IsGridAllExplored());
+       // Debug.Log(grilleJeu.IsGridAllExplored());
+        //grilleJeu.Explore(0, 0, 0);
+        //Debug.Log(grilleJeu.IsGridAllExplored());
 
        //La speed de turn est déterminée par l'élément le plus lent
 
@@ -371,7 +382,8 @@ On continue jusqu'à la fin des 30s /
                                     }
                                 }
                             }
-                                        Debug.Log("C'est la fin!");
+                            Debug.Log("C'est la fin!");
+                            
                             //On applique les changements
                             //StopCoroutine(routine);
                         }
@@ -664,8 +676,32 @@ On continue jusqu'à la fin des 30s /
         }
         isMoving = false;
     }
+
+
+    private void CreatePersonnages(ref GameObject joueur )
+    {
+        for (int i = 0; i < joueur.GetComponent<Joueur>().NumeroPrefab.Count; i++)
+        {
+            GameObject pers = Instantiate(prefabPersos[joueur.GetComponent<Joueur>().NumeroPrefab[i]], new Vector3(0, 3.5f, 0), Quaternion.identity);
+
+
+
+            Personnage pers1 = pers.GetComponent<Personnage>();
+            pers1.GameManager = this;
+            joueur.GetComponent<Joueur>().Personnages.Add(pers);
+            pers1.Joueur = joueur.GetComponent<Joueur>();
+            pers1.Position = new Vector3Int(0, 4, 0);
+            Vector3Int posPers = pers1.Position;
+            this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
+            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
+            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+            NetworkServer.Spawn(pers);
+
+        }
+
+    }
     /// <summary>
-    /// Crée l'ordre dans lequel les personnages jouent
+    /// Crée l'ordre dans lequel les personnages jouent TODO: séparer la pile réelle de celle prévue
     /// </summary>
     /// <returns></returns>
     public  List<LivingPlaceable> CreateTurnOrder(){
@@ -711,7 +747,7 @@ On continue jusqu'à la fin des 30s /
         {
             Personnage pers1 = pers1b.GetComponent<Personnage>();
 
-            if (pers1.SpeedStack<maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
+            while (pers1.SpeedStack<maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
             {
                 pers1.SpeedStack += 1 / pers1.Speed;
                 liste.Add(pers1);
@@ -722,7 +758,7 @@ On continue jusqu'à la fin des 30s /
         foreach (GameObject pers2b in joueur2.GetComponent<Joueur>().Personnages)
         {
             Personnage pers2 = pers2b.GetComponent<Personnage>();
-            if (pers2.SpeedStack < maxSpeedStack + 1 / pers2.Speed) // alors on peut le rerajouter
+            while (pers2.SpeedStack < maxSpeedStack + 1 / pers2.Speed) // alors on peut le rerajouter
             {
                 pers2.SpeedStack += 1 / pers2.Speed;
                 liste.Add(pers2);
@@ -731,7 +767,7 @@ On continue jusqu'à la fin des 30s /
         foreach (GameObject monstre2 in listeMonstresNeutres)
         {
             LivingPlaceable monstre = monstre2.GetComponent<LivingPlaceable>();
-            if (monstre.SpeedStack < maxSpeedStack + 1 / monstre.Speed) // alors on peut le rerajouter
+            while (monstre.SpeedStack < maxSpeedStack + 1 / monstre.Speed) // alors on peut le rerajouter
             {
                 monstre.SpeedStack += 1 / monstre.Speed;
                 liste.Add(monstre);

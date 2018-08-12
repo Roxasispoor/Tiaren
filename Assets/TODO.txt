@@ -1,4 +1,4 @@
-﻿Ajouter des points fictifs de déplacement pour les sauts
+﻿Ajouter des points fictifs de déplacement pour les sauts ok
 Rework Competences (passives, simple et doubleclicks+ condition use)
 Bonus de dos => produit scalaire
 
@@ -7,3 +7,5 @@ Coder l'interface utilisateur
 Coder plus de compétences
 Mettre à jour canGo pour qu'il prennent en compte si c'est walkable/traversable. Un traverable ne doit pas pouvoir être cliqué dessus.
 Animations
+Delay own turn
+Dirty flag for actu

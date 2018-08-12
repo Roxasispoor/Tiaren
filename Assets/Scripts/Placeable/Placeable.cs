@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.Networking;
 
 /// <summary>
 /// Représente a peut pres n'importe quoi pouvant occuper un bloc dans le grille
 /// </summary>
 
-public abstract class Placeable : MonoBehaviour
+public abstract class Placeable : NetworkBehaviour
 {
     public Game gameManager;
+
+    public int serializeNumber;
+
     public Vector3Int position;
     private bool accessible;
     private bool walkable;
@@ -331,8 +334,11 @@ public abstract class Placeable : MonoBehaviour
     {
 
            
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) && this.walkable)
             {
+            gameManager.GetLocalPlayer().CmdMoveTo(new Vector3(this.Position.x, this.Position.y, this.Position.z));
+//            gameManager.PlayerMove();
+
                 GameManager.PlaceToGo = this.Position ;
             }
             else if (Input.GetMouseButtonUp(2))

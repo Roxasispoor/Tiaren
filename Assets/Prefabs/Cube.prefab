@@ -8,21 +8,23 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1032257904305354}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1032257904305354
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4013667900633606}
   - component: {fileID: 33186608110191262}
   - component: {fileID: 65211554512087142}
   - component: {fileID: 23836669232815178}
   - component: {fileID: 114105382873498880}
+  - component: {fileID: 114945978310607720}
+  - component: {fileID: 114468354025213840}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -33,7 +35,7 @@ GameObject:
 --- !u!4 &4013667900633606
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032257904305354}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -46,7 +48,7 @@ Transform:
 --- !u!23 &23836669232815178
 MeshRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032257904305354}
   m_Enabled: 1
@@ -56,6 +58,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: d393261edd4f76b4195e245d1d818fca, type: 2}
   m_StaticBatchInfo:
@@ -80,14 +83,14 @@ MeshRenderer:
 --- !u!33 &33186608110191262
 MeshFilter:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032257904305354}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!65 &65211554512087142
 BoxCollider:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032257904305354}
   m_Material: {fileID: 0}
@@ -99,7 +102,7 @@ BoxCollider:
 --- !u!114 &114105382873498880
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1032257904305354}
   m_Enabled: 1
@@ -107,3 +110,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1e989823256d0438c381cbc3f6ada6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  position: {x: 0, y: 0, z: 0}
+  explored: 0
+  joueur: {fileID: 0}
+--- !u!114 &114468354025213840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1032257904305354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 1
+  m_SendInterval: 0.1
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
+--- !u!114 &114945978310607720
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1032257904305354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 124
+    i1: 137
+    i2: 54
+    i3: 64
+    i4: 9
+    i5: 41
+    i6: 144
+    i7: 116
+    i8: 121
+    i9: 21
+    i10: 175
+    i11: 138
+    i12: 173
+    i13: 100
+    i14: 246
+    i15: 39
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
