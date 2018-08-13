@@ -18,6 +18,16 @@ public class Joueur : NetworkBehaviour {
     public List<int> numeroPrefab;
     private Vector3Int placeToGo;
     private Placeable shotPlaceable;
+    public CameraScript cameraScript;
+    public delegate float Axis();
+    public delegate bool Condition();
+    private Dictionary<string, Axis> dicoAxis;
+    private Dictionary<string, Condition> dicoCondition;
+ 
+
+
+    private Game gameManager;
+
 
     /// <summary>
     /// Updates where to go on server, and ask gameManager to do it
@@ -27,13 +37,12 @@ public class Joueur : NetworkBehaviour {
     public void CmdMoveTo(NetworkInstanceId toGo)
     {
         
-        this.placeToGo = NetworkServer.FindLocalObject(toGo).GetComponent<Placeable>().Position;
-        if(isServer)
+        Placeable potential= NetworkServer.FindLocalObject(toGo).GetComponent<Placeable>();
+        if(gameManager.PlayingPlaceable.joueur==this)//on update que si c'est à son tour de jouer, on fait les autres vérifs dans la Gamemanager
         {
-            Debug.Log("Coucou commandé");
+            placeToGo = potential.position;
             Debug.Log(placeToGo);
-
-        }
+        }         
     }
     [Command]
     public void CmdInputShot(GameObject shotPlaceable)
@@ -47,10 +56,18 @@ public class Joueur : NetworkBehaviour {
 
         }
     }
+    [ClientRpc]
+    public void RpcSetCamera(NetworkInstanceId doitJouer)
+    {
+        Placeable potential = ClientScene.FindLocalObject(doitJouer).GetComponent<Placeable>();
+        
+        this.cameraScript.target = potential.gameObject.transform;
+        
+     }
     override
     public void OnStartLocalPlayer()
     {
-        
+        transform.Find("Main Camera").gameObject.SetActive(true);
         //On active la camera du joueur et on se dit prêt
 
 
@@ -154,26 +171,79 @@ public class Joueur : NetworkBehaviour {
         }
     }
 
+    public Game GameManager
+    {
+        get
+        {
+            return gameManager;
+        }
+
+        set
+        {
+            gameManager = value;
+        }
+    }
+
+    public Dictionary<string, Axis> DicoAxis
+    {
+        get
+        {
+            return dicoAxis;
+        }
+
+        set
+        {
+            dicoAxis = value;
+        }
+    }
+
+    public Dictionary<string, Condition> DicoCondition
+    {
+        get
+        {
+            return dicoCondition;
+        }
+
+        set
+        {
+            dicoCondition = value;
+        }
+    }
+
 
 
     /// <summary>
     /// Liste des personnages du joueur
     /// </summary>
 
+    private void Awake()
+    {
 
+        DicoAxis = new Dictionary<string, Axis>();
+        DicoCondition = new Dictionary<string, Condition>();
+        DicoAxis.Add("AxisXCamera", () => Input.GetAxis("Mouse X"));
+        DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
+        DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
+
+        DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
+        DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
+
+    }
 
     // Use this for initialization
     void Start () {
-        if(this.isServer)
+        
+
+        if (this.isServer)
         {
-          
-            if(!GameObject.Find("GameManager").GetComponent<Game>().joueur1)
+             gameManager = GameObject.Find("GameManager").GetComponent<Game>();
+            if (!gameManager.joueur1)
             {
-                GameObject.Find("GameManager").GetComponent<Game>().joueur1 = this.gameObject;
+                gameManager.joueur1 = this.gameObject;
             }
             else
             {
-                GameObject.Find("GameManager").GetComponent<Game>().joueur2 = this.gameObject;
+                gameManager.joueur2 = this.gameObject;
             }
             this.acted = false;
         this.score = 0;
@@ -184,6 +254,7 @@ public class Joueur : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+       
 		
 	}
 }

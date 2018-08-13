@@ -28,6 +28,7 @@ public class Game : NetworkBehaviour {
     private Grille grilleJeu;
     private Timer clock;
     private Joueur winner;
+    private Placeable playingPlaceable;
     //private Vector3Int placeToGo;
     private bool endPhase;
     /// <summary>
@@ -127,11 +128,25 @@ public class Game : NetworkBehaviour {
             endPhase = value;
         }
     }
+
+    public Placeable PlayingPlaceable
+    {
+        get
+        {
+            return playingPlaceable;
+        }
+
+        set
+        {
+            playingPlaceable = value;
+        }
+    }
+
     /// <summary>
     /// Return the player who has authority
     /// </summary>
     /// <returns></returns>
-   public Joueur GetLocalPlayer()
+    public Joueur GetLocalPlayer()
     {
         Joueur toreturn= joueur1.GetComponent<Joueur>().hasAuthority ? joueur1.GetComponent<Joueur>() : joueur2.GetComponent<Joueur>();
         return toreturn;
@@ -243,7 +258,8 @@ On continue jusqu'à la fin des 30s /
             { 
             foreach (LivingPlaceable placeable in liste)
             {
-                    
+                PlayingPlaceable = placeable;
+                placeable.joueur.RpcSetCamera(placeable.netId);
                 placeable.PmActuels = placeable.PmMax;
                 placeable.NbFoisFiredThisTurn = 0;
                 this.GameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
@@ -264,7 +280,7 @@ On continue jusqu'à la fin des 30s /
                             Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y - 1, placeable.Position.z);
 
                             DistanceAndParent[,,] inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
-                            Debug.Log("C'est le debut lol!");
+                            Debug.Log("Tour de"+placeable.joueur);
                             Vector3Int vecTest = new Vector3Int(-1, -1, -1);
                             while (!EndPhase && !clock.IsFinished && (placeable.NbFoisFiredThisTurn < 1 || placeable.PmActuels > 0 ))
                             {
@@ -699,9 +715,23 @@ On continue jusqu'à la fin des 30s /
             pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
             pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
             NetworkServer.Spawn(pers);
+            RpcCreatePerso(pers,joueur);
 
         }
 
+    }
+    [ClientRpc]
+    public void RpcCreatePerso(GameObject pers,GameObject joueur)
+    {
+        Personnage pers1 = pers.GetComponent<Personnage>();
+        pers1.GameManager = this;
+        joueur.GetComponent<Joueur>().Personnages.Add(pers);
+        pers1.Joueur = joueur.GetComponent<Joueur>();
+        pers1.Position = new Vector3Int(0, 4, 0);
+        Vector3Int posPers = pers1.Position;
+        this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
+        pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
+        pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
     }
     /// <summary>
     /// Crée l'ordre dans lequel les personnages jouent TODO: séparer la pile réelle de celle prévue

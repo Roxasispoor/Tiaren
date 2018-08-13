@@ -40,13 +40,14 @@ GameObject:
   - component: {fileID: 124851103528510014}
   - component: {fileID: 81779918661003182}
   - component: {fileID: 114033276599704532}
+  - component: {fileID: 114842114445431480}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4268877746156454
 Transform:
   m_ObjectHideFlags: 1
@@ -141,9 +142,10 @@ MonoBehaviour:
   ySpeed: 200
   yMinLimit: -80
   yMaxLimit: 80
-  zoomRate: 40
+  zoomRate: 70
   panSpeed: 0.3
   zoomDampening: 5
+  joueur: {fileID: 114249487584291362}
 --- !u!114 &114139178170437598
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -189,6 +191,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   personnages: []
   numeroPrefab: 00000000
+  cameraScript: {fileID: 114033276599704532}
+--- !u!114 &114842114445431480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1097716436208006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 167
+    i1: 139
+    i2: 201
+    i3: 3
+    i4: 186
+    i5: 181
+    i6: 51
+    i7: 196
+    i8: 154
+    i9: 226
+    i10: 143
+    i11: 66
+    i12: 105
+    i13: 13
+    i14: 3
+    i15: 255
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!124 &124851103528510014
 Behaviour:
   m_ObjectHideFlags: 1
