@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 /// <summary>
 /// Représente un joueur 
@@ -17,17 +18,70 @@ public class Joueur : NetworkBehaviour {
     public List<GameObject> personnages=new List<GameObject>();
     public List<int> numeroPrefab;
     private Vector3Int placeToGo;
+    
     private Placeable shotPlaceable;
     public CameraScript cameraScript;
     public delegate float Axis();
     public delegate bool Condition();
     private Dictionary<string, Axis> dicoAxis;
     private Dictionary<string, Condition> dicoCondition;
- 
-
+    private bool endPhase;
+    public Timer clock;
+    private Dictionary<GameObject,Color> changedColor; 
 
     private Game gameManager;
 
+    [ClientRpc]
+    public void RpcStartTimer(float temps)
+    {
+     
+        clock.StartTimer(temps);
+    }
+       /// <summary>
+       /// For reasons works that way
+       /// </summary>
+    public void LaunchCommandEndTurn()
+    {
+      //  Debug.Log("Bonjour je suis" + this);
+        CmdEndTurn();
+    }
+    [ClientRpc]
+    public void RpcMakeCubeBlue(NetworkInstanceId cube)
+    {
+       // Debug.Log("id client joueur recherché" + concernedJoueur);
+        Debug.Log("et moi je suis" + netId);
+        if (isLocalPlayer)
+        {
+            GameObject cuube = ClientScene.FindLocalObject(cube);
+            changedColor.Add(cuube, cuube.GetComponent<Renderer>().material.color);
+            //cuube.parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
+            cuube.GetComponent<Renderer>().material.color = Color.cyan;
+
+        }
+    }
+    [ClientRpc]
+    public void RpcChangeBackColor()
+    {
+        if (isLocalPlayer)
+        {
+            foreach(GameObject  cube in changedColor.Keys)
+            {
+                if(cube.GetComponent<Renderer>()!=null)
+                {
+                    cube.GetComponent<Renderer>().material.color = changedColor[cube];
+                }
+
+            }
+            changedColor.Clear();
+        }
+    }
+
+    [Command]
+    public void CmdEndTurn()
+    {
+        this.endPhase = true;
+        Debug.Log("STP phase finie");
+    }
 
     /// <summary>
     /// Updates where to go on server, and ask gameManager to do it
@@ -68,6 +122,7 @@ public class Joueur : NetworkBehaviour {
     public void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
+        transform.Find("Canvas").gameObject.SetActive(true);
         //On active la camera du joueur et on se dit prêt
 
 
@@ -210,6 +265,19 @@ public class Joueur : NetworkBehaviour {
         }
     }
 
+    public bool EndPhase
+    {
+        get
+        {
+            return endPhase;
+        }
+
+        set
+        {
+            endPhase = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -218,7 +286,8 @@ public class Joueur : NetworkBehaviour {
 
     private void Awake()
     {
-
+        changedColor = new Dictionary<GameObject,Color>(); 
+        clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
         DicoCondition = new Dictionary<string, Condition>();
         DicoAxis.Add("AxisXCamera", () => Input.GetAxis("Mouse X"));

@@ -131,16 +131,19 @@ public class Grille: MonoBehaviour  {
 
             Vector3Int posBlocActuel = queue.Dequeue();
 
-         //   Debug.Log("x" + posBlocActuel.x + "y" + posBlocActuel.y + "z" + posBlocActuel.z);
+         
             parent = gridBool[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
             if(parent.GetDistance()<=deplacement)
             { 
 
             Placeable testa = Grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
-                if(testa.gameObject.GetComponent<Renderer>() !=null)
-                { 
-                parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
-            testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                               if(testa.gameObject.GetComponent<Renderer>() !=null)
+                {
+                   // Debug.Log("id joueur envoyant" + gameManager.PlayingPlaceable.Joueur.netId);
+                    //On envoie plutot l'id parce que rien n'assure que les blocs soient a la bonne position coté client
+                    gameManager.PlayingPlaceable.Joueur.RpcMakeCubeBlue(testa.netId);
+               // parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
+            //testa.gameObject.GetComponent<Renderer>().material.color = Color.cyan;
                 }
                 //là mettre l'affichage du bloc en bleu
                 for (int yactuel = -saut + 1; yactuel < saut; yactuel++) 
@@ -237,7 +240,7 @@ public class Grille: MonoBehaviour  {
             }
         }
     }
-
+   
     /// <summary>
     /// Constructeur standard
     /// </summary>

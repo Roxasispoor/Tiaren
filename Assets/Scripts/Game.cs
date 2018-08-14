@@ -19,18 +19,18 @@ public class Game : NetworkBehaviour {
     public GameObject joueur2; //Should be Object
     public GameObject[] prefabMonstres;
 
-    private List<GameObject> listeMonstresNeutres=new List<GameObject>(); 
-
+    private List<GameObject> listeMonstresNeutres=new List<GameObject>();
+    
+    private List<LivingPlaceable> tourOrder;
     private List<Effect> listeEffectsDebutTour=new List<Effect>(); 
     private List<Effect> listeEffectsFinTour=new List<Effect>();
     private int capacityinUse=0;
     private GameEffectManager gameEffectManager;
     private Grille grilleJeu;
-    private Timer clock;
+    
     private Joueur winner;
-    private Placeable playingPlaceable;
-    //private Vector3Int placeToGo;
-    private bool endPhase;
+    private LivingPlaceable playingPlaceable;
+    
     /// <summary>
     /// Permet de savoir si le jeu est fini
     /// </summary>
@@ -41,10 +41,7 @@ public class Game : NetworkBehaviour {
     /// </summary>
     /// 
     
-    public void EndTurn()
-    {
-        this.endPhase = true;
-    }
+   
     public int NumberTurn
     {
         get
@@ -116,20 +113,8 @@ public class Game : NetworkBehaviour {
     }
 
 
-    public bool EndPhase
-    {
-        get
-        {
-            return endPhase;
-        }
 
-        set
-        {
-            endPhase = value;
-        }
-    }
-
-    public Placeable PlayingPlaceable
+    public LivingPlaceable PlayingPlaceable
     {
         get
         {
@@ -141,6 +126,8 @@ public class Game : NetworkBehaviour {
             playingPlaceable = value;
         }
     }
+
+
 
     /// <summary>
     /// Return the player who has authority
@@ -157,11 +144,11 @@ public class Game : NetworkBehaviour {
     {
 
 
-  
 
 
+        tourOrder = new List<LivingPlaceable>();
     this.GameEffectManager = gameObject.GetComponent<GameEffectManager>();
-    this.clock = gameObject.GetComponent<Timer>();
+   
     this.grilleJeu = gameObject.GetComponent<Grille>();
     grilleJeu.GameManager = this;
            //    DontDestroyOnLoad(gameObject);
@@ -179,6 +166,7 @@ public class Game : NetworkBehaviour {
         this.capacityinUse = i;   
     }
 
+
     /** Déroulement 
 1)On reset pm et le bool de tir/compétences
 On applique les effets qui prennent effet en début de tour
@@ -189,7 +177,7 @@ A chaque fois qu'un effet se déclenche, il est ajouté au game manager
 Le game manager applique vérifie que l'effet est activable /: pas contré/ autre	puis le use()
 On continue jusqu'à la fin des 30s /
 **/
-    
+
 
     // Use this for initialization
     [Server]
@@ -235,6 +223,7 @@ On continue jusqu'à la fin des 30s /
             this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = monstre1;
             monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
             monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
+            tourOrder.Add(monstre1);
         }
 
         grilleJeu.Gravite();
@@ -247,83 +236,86 @@ On continue jusqu'à la fin des 30s /
 
        //La speed de turn est déterminée par l'élément le plus lent
 
-
-        while (Winner == null)
+                while (Winner == null)
         {
             this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsDebutTour);
             this.GameEffectManager.Solve();
-
-            List<LivingPlaceable> liste = CreateTurnOrder();
-            if(liste.Count != 0)
-            { 
-            foreach (LivingPlaceable placeable in liste)
+            tourOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack )/ (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
+            playingPlaceable = tourOrder[0];
+            playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+            //List<LivingPlaceable> liste = CreateTurnOrder();
+            //Petite verif on sait jamais
+            if(tourOrder.Count != 0)
             {
-                PlayingPlaceable = placeable;
-                placeable.joueur.RpcSetCamera(placeable.netId);
-                placeable.PmActuels = placeable.PmMax;
-                placeable.NbFoisFiredThisTurn = 0;
-                this.GameEffectManager.ToBeTreated.AddRange(placeable.OnDebutTour);
+                
+                
+
+                playingPlaceable.joueur.RpcSetCamera(playingPlaceable.netId);
+                playingPlaceable.PmActuels = playingPlaceable.PmMax;
+                playingPlaceable.NbFoisFiredThisTurn = 0;
+                this.GameEffectManager.ToBeTreated.AddRange(playingPlaceable.OnDebutTour);
                 this.GameEffectManager.Solve();
                     //Ici l'utilisateur a la main, et 30 secondes.
 
                     Color transp = new Color(0, 0, 0, 0);
 
-                    if (placeable.Joueur != null)
+                    if (playingPlaceable.Joueur != null)
                 {
-                        if (!placeable.EstMort)
+                        if (!playingPlaceable.EstMort)
                         {
-                            clock.IsFinished = false;
-                            clock.StartTimer(30f);
+                            playingPlaceable.Joueur.clock.IsFinished = false;
+                            playingPlaceable.Joueur.clock.StartTimer(30f);
+                            playingPlaceable.Joueur.RpcStartTimer(30f);
 
 
-                            this.EndPhase = false;
-                            Vector3Int positiongo = new Vector3Int(placeable.Position.x, placeable.Position.y - 1, placeable.Position.z);
+                            playingPlaceable.Joueur.EndPhase = false;
+                            Vector3Int positiongo = new Vector3Int(playingPlaceable.Position.x, playingPlaceable.Position.y - 1, playingPlaceable.Position.z);
 
-                            DistanceAndParent[,,] inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, positiongo);
-                            Debug.Log("Tour de"+placeable.joueur);
+                            DistanceAndParent[,,] inPlace = grilleJeu.CanGo(playingPlaceable, playingPlaceable.PmMax, positiongo);
+                            Debug.Log("Tour de"+playingPlaceable.joueur);
                             Vector3Int vecTest = new Vector3Int(-1, -1, -1);
-                            while (!EndPhase && !clock.IsFinished && (placeable.NbFoisFiredThisTurn < 1 || placeable.PmActuels > 0 ))
+                            while (!playingPlaceable.Joueur.EndPhase && !playingPlaceable.Joueur.clock.IsFinished && (playingPlaceable.NbFoisFiredThisTurn < 1 || playingPlaceable.PmActuels > 0 ))
                             {
-                                if (shotPlaceable != null && capacityinUse == 0 && shotPlaceable != placeable && placeable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
+                                if (shotPlaceable != null && capacityinUse == 0 && shotPlaceable != playingPlaceable && playingPlaceable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                                 {
                                     //piew piew
                                     Debug.Log("Piew piew");
-                                    Vector3 thePlaceToShoot = placeable.ShootDamage(shotPlaceable); // TODO: pour les animations
+                                    Vector3 thePlaceToShoot = playingPlaceable.ShootDamage(shotPlaceable); // TODO: pour les animations
                                 }
-                                else if (shotPlaceable != null && capacityinUse !=0 &&  placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
-                                    placeable.Competences[capacityinUse].CompetenceType==CompetenceType.ONECLICKLIVING
-                                    && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
+                                else if (shotPlaceable != null && capacityinUse !=0 &&  playingPlaceable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                    playingPlaceable.Competences[capacityinUse].CompetenceType==CompetenceType.ONECLICKLIVING
+                                    && playingPlaceable.Joueur.Ressource >= playingPlaceable.Competences[capacityinUse].Cost
                                     && shotPlaceable.GetType()==typeof(LivingPlaceable)
-                                    && placeable.Competences[capacityinUse].condition())
+                                    && playingPlaceable.Competences[capacityinUse].condition())
                                 {
-                                    placeable.Competences[capacityinUse].Use();
-                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                    playingPlaceable.Competences[capacityinUse].Use();
+                                    playingPlaceable.Joueur.Ressource -= playingPlaceable.Competences[capacityinUse].Cost;
                                 }
-                                else if (shotPlaceable ==placeable && capacityinUse != 0 && placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
-                                    placeable.Competences[capacityinUse].CompetenceType == CompetenceType.SELFCOMPETENCE
-                                    && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
-                                    && placeable.Competences[capacityinUse].condition())
+                                else if (shotPlaceable ==playingPlaceable && capacityinUse != 0 && playingPlaceable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                    playingPlaceable.Competences[capacityinUse].CompetenceType == CompetenceType.SELFCOMPETENCE
+                                    && playingPlaceable.Joueur.Ressource >= playingPlaceable.Competences[capacityinUse].Cost
+                                    && playingPlaceable.Competences[capacityinUse].condition())
                                 {
-                                    placeable.Competences[capacityinUse].Use();
-                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                    playingPlaceable.Competences[capacityinUse].Use();
+                                    playingPlaceable.Joueur.Ressource -= playingPlaceable.Competences[capacityinUse].Cost;
                                 }
-                                else if (shotPlaceable != null && capacityinUse != 0 && placeable.Competences[capacityinUse].TourCooldownLeft == 0 &&
-                                  placeable.Competences[capacityinUse].CompetenceType == CompetenceType.ONECLICKPLACEABLE
-                                  && placeable.Joueur.Ressource >= placeable.Competences[capacityinUse].Cost
+                                else if (shotPlaceable != null && capacityinUse != 0 && playingPlaceable.Competences[capacityinUse].TourCooldownLeft == 0 &&
+                                  playingPlaceable.Competences[capacityinUse].CompetenceType == CompetenceType.ONECLICKPLACEABLE
+                                  && playingPlaceable.Joueur.Ressource >= playingPlaceable.Competences[capacityinUse].Cost
                                   && shotPlaceable.GetType() == typeof(Placeable)
-                                  && placeable.Competences[capacityinUse].condition())
+                                  && playingPlaceable.Competences[capacityinUse].condition())
                                 {
-                                    placeable.Competences[capacityinUse].Use();
-                                    placeable.Joueur.Ressource -= placeable.Competences[capacityinUse].Cost;
+                                    playingPlaceable.Competences[capacityinUse].Use();
+                                    playingPlaceable.Joueur.Ressource -= playingPlaceable.Competences[capacityinUse].Cost;
                                 }
 
 
-                                else if(placeable.joueur.PlaceToGo != vecTest &&
-                                    inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z].GetDistance()>0 
-                                    && inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z].GetDistance()<=placeable.PmActuels)
+                                else if(playingPlaceable.joueur.PlaceToGo != vecTest &&
+                                    inPlace[playingPlaceable.joueur.PlaceToGo.x, playingPlaceable.joueur.PlaceToGo.y, playingPlaceable.joueur.PlaceToGo.z].GetDistance()>0 
+                                    && inPlace[playingPlaceable.joueur.PlaceToGo.x, playingPlaceable.joueur.PlaceToGo.y, playingPlaceable.joueur.PlaceToGo.z].GetDistance()<=playingPlaceable.PmActuels)
                                 {
                                     List<Vector3> listAnimator = new List<Vector3>();
-                                    DistanceAndParent parent=inPlace[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y, placeable.joueur.PlaceToGo.z];
+                                    DistanceAndParent parent=inPlace[playingPlaceable.joueur.PlaceToGo.x, playingPlaceable.joueur.PlaceToGo.y, playingPlaceable.joueur.PlaceToGo.z];
                                     listAnimator.Add(parent.Pos);
                                     while (parent.GetDistance()>1)
                                     {
@@ -331,31 +323,20 @@ On continue jusqu'à la fin des 30s /
                                         parent = parent.GetParent();
                                         listAnimator.Add(parent.Pos);
                                     }
-                                    listAnimator.Add(placeable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
-                                    RpcMoveAlongBezier(listAnimator.ToArray(),placeable.netId,1);
-                                    placeable.PmActuels -= listAnimator.Count - 1;
+                                    listAnimator.Add(playingPlaceable.Position-new Vector3Int(0,1,0)); //on veut l'emplacement dessous en fait
+                                    RpcMoveAlongBezier(listAnimator.ToArray(),playingPlaceable.netId,1);
+                                    playingPlaceable.PmActuels -= listAnimator.Count - 1;
 
                                     //on actualise les positions
-                                    grilleJeu.Grid[placeable.joueur.PlaceToGo.x, placeable.joueur.PlaceToGo.y+1, placeable.joueur.PlaceToGo.z] = placeable;   
-                                    grilleJeu.Grid[placeable.Position.x, placeable.Position.y, placeable.Position.z] = null; // on est plus a l'emplacement précédent
-                                    placeable.Position = placeable.joueur.PlaceToGo + new Vector3Int(0,1,0);
+                                    grilleJeu.Grid[playingPlaceable.joueur.PlaceToGo.x, playingPlaceable.joueur.PlaceToGo.y+1, playingPlaceable.joueur.PlaceToGo.z] = playingPlaceable;   
+                                    grilleJeu.Grid[playingPlaceable.Position.x, playingPlaceable.Position.y, playingPlaceable.Position.z] = null; // on est plus a l'emplacement précédent
+                                    playingPlaceable.Position = playingPlaceable.joueur.PlaceToGo + new Vector3Int(0,1,0);
+                                    //On efface les anciens
+                                    PlayingPlaceable.Joueur.RpcChangeBackColor();
 
-                                    for (int x = 0; x < inPlace.GetLength(0); x++)
-                                    {
-                                        for (int y = 0; y < inPlace.GetLength(1); y++)
-                                        {
-                                            for (int z = 0; z < inPlace.GetLength(2); z++)
-                                            {
-
-                                                if (inPlace[x, y, z].Color != transp)
-                                                {
-                                                    GrilleJeu.Grid[x, y, z].gameObject.GetComponent<Renderer>().material.color = inPlace[x, y, z].Color;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    inPlace = grilleJeu.CanGo(placeable, placeable.PmMax, placeable.joueur.PlaceToGo);
-                                    placeable.joueur.PlaceToGo = vecTest;
+                                    //On se déplace, donc on actualise ce qu'on peut voir, et on remet a 0 le vectest
+                                    inPlace = grilleJeu.CanGo(playingPlaceable, playingPlaceable.PmMax, playingPlaceable.joueur.PlaceToGo);
+                                    playingPlaceable.joueur.PlaceToGo = vecTest;
                                     Debug.Log("runny run");
                                     
                                 }
@@ -363,7 +344,7 @@ On continue jusqu'à la fin des 30s /
 
                             }
                             //on diminue de 1 le cooldown de la competence
-                            foreach (Competence comp in placeable.Competences)
+                            foreach (Competence comp in playingPlaceable.Competences)
                             {
                                 if(comp.TourCooldownLeft > 0)
                                 {
@@ -371,23 +352,13 @@ On continue jusqu'à la fin des 30s /
                                 }
                             }
                             shotPlaceable = null;
-                            placeable.joueur.PlaceToGo = vecTest;
+                        //On efface les bleus encore actifs a la fin
+                        PlayingPlaceable.Joueur.RpcChangeBackColor();
+
+                        playingPlaceable.joueur.PlaceToGo = vecTest;
 
                          
-                            for (int x = 0; x < inPlace.GetLength(0); x++)
-                            {
-                                for (int y = 0; y < inPlace.GetLength(1); y++)
-                                {
-                                    for (int z = 0; z < inPlace.GetLength(2); z++)
-                                    {
-                                        
-                                        if (inPlace[x,y,z].Color != transp)
-                                        {
-                                            GrilleJeu.Grid[x, y, z].gameObject.GetComponent<Renderer>().material.color= inPlace[x, y, z].Color;
-                                        }
-                                    }
-                                }
-                            }
+                            playingPlaceable.Joueur.clock.IsFinished = false;
                             Debug.Log("C'est la fin!");
                             
                             //On applique les changements
@@ -395,14 +366,14 @@ On continue jusqu'à la fin des 30s /
                         }
                         else
                         {
-                            placeable.TourRestantsCimetiere--;
+                            playingPlaceable.TourRestantsCimetiere--;
                         }
 
                     }
 
                     this.GameEffectManager.ToBeTreated.AddRange(this.listeEffectsFinTour);
                 this.GameEffectManager.Solve();
-            }
+            
             }
             else
             {
@@ -714,6 +685,8 @@ On continue jusqu'à la fin des 30s /
             this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
             pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
             pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+
+            tourOrder.Add(pers1);
             NetworkServer.Spawn(pers);
             RpcCreatePerso(pers,joueur);
 
@@ -727,6 +700,7 @@ On continue jusqu'à la fin des 30s /
         pers1.GameManager = this;
         joueur.GetComponent<Joueur>().Personnages.Add(pers);
         pers1.Joueur = joueur.GetComponent<Joueur>();
+        pers1.joueur.GameManager = this;
         pers1.Position = new Vector3Int(0, 4, 0);
         Vector3Int posPers = pers1.Position;
         this.grilleJeu.Grid[posPers.x, posPers.y, posPers.z] = pers1;
@@ -738,7 +712,7 @@ On continue jusqu'à la fin des 30s /
     /// </summary>
     /// <returns></returns>
     public  List<LivingPlaceable> CreateTurnOrder(){
-        int maxSpeedStack = 0;
+        float maxSpeedStack = 0;
         List<LivingPlaceable> liste = new List<LivingPlaceable>();
 
         foreach (GameObject pers1b in joueur1.GetComponent<Joueur>().Personnages)
@@ -780,9 +754,9 @@ On continue jusqu'à la fin des 30s /
         {
             Personnage pers1 = pers1b.GetComponent<Personnage>();
 
-            while (pers1.SpeedStack<maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
+            while (pers1.SpeedStack < maxSpeedStack + 1/pers1.Speed) // alors on peut le rerajouter
             {
-                pers1.SpeedStack += 1 / pers1.Speed;
+               
                 liste.Add(pers1);
             }
 
@@ -808,7 +782,7 @@ On continue jusqu'à la fin des 30s /
         }
 
 
-        liste.Sort((x, y) => x.SpeedStack - y.SpeedStack);
+        liste.Sort((x, y) => (int)(x.SpeedStack - y.SpeedStack/(Mathf.Abs(x.SpeedStack - y.SpeedStack))));
 
         return liste;
      }

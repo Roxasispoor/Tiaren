@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Timer : MonoBehaviour {
     private bool isFinished;
-    private float targetTime;
+    private float targetTime=0;
     public Text textToUpdate;
 
   
@@ -36,11 +36,14 @@ public class Timer : MonoBehaviour {
 
  void  Update()
     {
+        if(targetTime >0)
 
+        { 
         targetTime -= Time.deltaTime;
-
+        }
         if (!IsFinished && targetTime <= 0.0f)
         {
+            targetTime = 0;
             IsFinished = true;
         }
         if(textToUpdate!=null)

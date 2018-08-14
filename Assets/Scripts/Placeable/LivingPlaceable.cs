@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,10 +11,12 @@ public abstract class LivingPlaceable : Placeable {
     private int pmMax;
     private int pmActuels;
     private int force;
-    private int speed;
+    private float speed;
     private int dexterity;
     private int miningPower;
-    private int speedStack;
+    private float speedStack;
+    
+
     private List<Competence> competences;
     private List<GameObject> armes;
     private Arme equipedArm;
@@ -26,40 +29,43 @@ public abstract class LivingPlaceable : Placeable {
     private Vector3 shootPosition;
 
 
- /**   public LivingPlaceable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
-        GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
-        , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour,Joueur joueur
-        , float pvMax, float pvActuels, int pmMax,int pmActuels,int force,int speed,int dexterity,int miningPower,int speedstack,
-        List<Competence> competences, List<GameObject> armes,int nbFoisFiredThisTurn,bool estMort
-        ,int nbFoisMort,int tourRestantsCimetiere,Vector3 shootPosition) : 
-        base(position, walkable, onWalkEffects, movable, destroyable, traversableChar,  traversableBullet,
-         gravityType,  pickable,  ecrasable, onDestroyEffects
-        ,  hitablePoints,  onDebutTour,  onFinTour,joueur)
+    /**   public LivingPlaceable(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
+           GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
+           , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour,Joueur joueur
+           , float pvMax, float pvActuels, int pmMax,int pmActuels,int force,int speed,int dexterity,int miningPower,int speedstack,
+           List<Competence> competences, List<GameObject> armes,int nbFoisFiredThisTurn,bool estMort
+           ,int nbFoisMort,int tourRestantsCimetiere,Vector3 shootPosition) : 
+           base(position, walkable, onWalkEffects, movable, destroyable, traversableChar,  traversableBullet,
+            gravityType,  pickable,  ecrasable, onDestroyEffects
+           ,  hitablePoints,  onDebutTour,  onFinTour,joueur)
+       {
+       this.pvMax=pvMax;
+       this.pvActuels=pvActuels;
+       this.pmMax=pmMax;
+       this.PmActuels=pmActuels;
+       this.Force=force;
+       this.Speed=speed;
+       this.Dexterity=dexterity;
+       this.miningPower=miningPower;
+       this.speedStack = speedstack;
+       this.competences = competences;
+       this.Armes = armes;
+       this.equipedArm = armes[0].GetComponent<Arme>();//la première arme est automatiquement équipée
+       
+       this.NbFoisFiredThisTurn = nbFoisFiredThisTurn;
+       this.EstMort = estMort;
+       this.NbFoisMort = nbFoisMort;
+       this.TourRestantsCimetiere = tourRestantsCimetiere;
+       this.shootPosition = shootPosition;
+
+
+
+       }
+       **/
+    private void Awake()
     {
-    this.pvMax=pvMax;
-    this.pvActuels=pvActuels;
-    this.pmMax=pmMax;
-    this.PmActuels=pmActuels;
-    this.Force=force;
-    this.Speed=speed;
-    this.Dexterity=dexterity;
-    this.miningPower=miningPower;
-    this.speedStack = speedstack;
-    this.competences = competences;
-    this.Armes = armes;
-    this.equipedArm = armes[0].GetComponent<Arme>();//la première arme est automatiquement équipée
-    
-    this.NbFoisFiredThisTurn = nbFoisFiredThisTurn;
-    this.EstMort = estMort;
-    this.NbFoisMort = nbFoisMort;
-    this.TourRestantsCimetiere = tourRestantsCimetiere;
-    this.shootPosition = shootPosition;
-
-
-
+        SpeedStack = 1 / Speed;
     }
-    **/
-
     /// <summary>
     /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
     /// ne vérifie pas si on peut toucher la cible,se cibntente de lire. Ajoute le bonus de hauteur
@@ -241,7 +247,7 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
-    public int Speed
+    public float Speed
     {
         get
         {
@@ -267,7 +273,7 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
-    public int SpeedStack
+    public float SpeedStack
     {
         get
         {
@@ -384,6 +390,7 @@ public abstract class LivingPlaceable : Placeable {
         }
     }
 
+
     void OnMouseOver()
     {
 
@@ -427,4 +434,7 @@ public abstract class LivingPlaceable : Placeable {
 	void Update () {
 		
 	}
+
+
+
 }

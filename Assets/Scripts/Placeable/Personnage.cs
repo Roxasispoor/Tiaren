@@ -70,9 +70,11 @@ public class Personnage : LivingPlaceable {
         this.PmMax = 3;
         this.PmActuels = 3;
         this.Force = 100;
-        this.Speed = 100;
+        this.Speed = 100 ;
+        this.SpeedStack = 1/Speed;
+
         this.Dexterity = 100;
-        this.SpeedStack = 0;
+
         this.Competences = new List<Competence>();
         this.Armes = new List<GameObject>();
         this.NbFoisFiredThisTurn = 0;
