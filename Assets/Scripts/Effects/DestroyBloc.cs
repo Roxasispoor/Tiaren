@@ -4,13 +4,14 @@ using UnityEngine;
 /// <summary>
 /// Effet permettant de détruire un bloc
 /// </summary>
-public class DestroyBloc : Effect {
+public class DestroyBloc : Effect
+{
 
-	// Use this for initialization
+    // Use this for initialization
     override
-	public void Use()
+    public void Use()
     {
-        if(Cible.GetType()!=typeof(LivingPlaceable))
+        if (Cible.GetType() != typeof(LivingPlaceable))
         {
             Cible.Detruire();
         }

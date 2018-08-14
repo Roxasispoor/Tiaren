@@ -4,8 +4,9 @@ using UnityEngine;
 /// <summary>
 /// classe abstraite pour armes
 /// </summary>
-public abstract class Arme : MonoBehaviour {
-    
+public abstract class Arme : MonoBehaviour
+{
+
     private float range;
     private float baseDamage;
     private float statMultiplier;
@@ -92,12 +93,14 @@ public abstract class Arme : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

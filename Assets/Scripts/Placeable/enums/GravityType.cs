@@ -12,5 +12,5 @@
     /// Flotte dans les airs, non soumis à la gravité
     /// </summary>
     GRAVITE_NULLE
-    
+
 }

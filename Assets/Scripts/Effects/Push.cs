@@ -26,7 +26,7 @@ public class Push : Effect
 
 
 
-
+    //TODO: a revoir, vieux et mal fait
     override
         public void Use()
     {
@@ -35,15 +35,16 @@ public class Push : Effect
             Vector3Int vectDiff = Cible.Position - Lanceur.Position;
             if (vectDiff.magnitude == 1)
             {
-
                 for (int i = 0; i < nbCases; i++)
                 {
+                    //Si il y a de la place derrière la cible on la déplace
                     Vector3Int posConsidered = Cible.Position + vectDiff;
                     if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z] == null)
                     {
                         gameManager.GrilleJeu.DeplaceBloc(Cible, posConsidered);
 
                     }
+                    //si derrière il y avait un placeable il prend des dégats
                     else if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z].GetType() == typeof(LivingPlaceable))
                     {
                         if (isSuper)
@@ -67,32 +68,32 @@ public class Push : Effect
                     }
                     else if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z].GetType() == typeof(Placeable))
                     {
-                        
-                            if (isSuper)
-                            {
+
+                        if (isSuper)
+                        {
                             //on deplace le placeable
                             gameManager.GrilleJeu.DeplaceBloc(Cible, posConsidered);
-                                if (Cible.GetType() == typeof(LivingPlaceable))
-                                {
-                                    gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 35));
-                                }
-                            }
-                            else //on applique des dommages réduit si il y a lieu
+                            if (Cible.GetType() == typeof(LivingPlaceable))
                             {
-                                if (Cible.GetType() == typeof(LivingPlaceable))
-                                {
-                                    gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 20));
-                                }
-
-                                break;
+                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 35));
                             }
-                            }
-                          
                         }
+                        else //on applique des dommages réduit si il y a lieu
+                        {
+                            if (Cible.GetType() == typeof(LivingPlaceable))
+                            {
+                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 20));
+                            }
 
-                    
+                            break;
+                        }
+                    }
 
-                
+                }
+
+
+
+
             }
         }
     }

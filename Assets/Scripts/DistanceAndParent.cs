@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Classe utile pour le pathfinding et la remontée de chemin
 /// </summary>
-public class DistanceAndParent{
+public class DistanceAndParent
+{
 
     private int distance;
     private Vector3Int pos;

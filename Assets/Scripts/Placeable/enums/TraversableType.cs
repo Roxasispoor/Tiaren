@@ -12,5 +12,5 @@
     /// Seuls les éléments alliés peuvent traverser
     /// </summary>
     ALLIESTHROUGH
-    
+
 }

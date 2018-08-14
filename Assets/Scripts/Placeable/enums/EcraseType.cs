@@ -1,5 +1,5 @@
 ﻿public enum EcraseType
-{ 
+{
     /// <summary>
     /// Quand écrasé, détruit le bloc qui lui tombe dessus
     /// </summary>

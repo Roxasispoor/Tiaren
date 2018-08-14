@@ -18,6 +18,7 @@ public class Joueur : NetworkBehaviour {
     public List<GameObject> personnages=new List<GameObject>();
     public List<int> numeroPrefab;
     private Vector3Int placeToGo;
+
     
     private Placeable shotPlaceable;
     public CameraScript cameraScript;

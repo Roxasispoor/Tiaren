@@ -13,7 +13,6 @@ public abstract class Placeable : NetworkBehaviour
 
     public int serializeNumber;
     public Vector3Int position;
-    private bool accessible;
     private bool walkable;
     private List<Effect> onWalkEffects;
     private bool movable;
@@ -35,7 +34,7 @@ public abstract class Placeable : NetworkBehaviour
     public Joueur joueur;
 
 
-    
+
     public bool Walkable
     {
         get
@@ -290,15 +289,15 @@ public abstract class Placeable : NetworkBehaviour
         Destroy(this);
         Destroy(this.gameObject);
     }
-  /// <summary>
-  /// permet le shoot et le déplacement
-  /// </summary>
-         void OnMouseOver()
+    /// <summary>
+    /// permet le shoot et le déplacement
+    /// </summary>
+    void OnMouseOver()
     {
 
-           
-            if (Input.GetMouseButtonUp(0) && this.walkable)
-            {
+
+        if (Input.GetMouseButtonUp(0) && this.walkable)
+        {
             Debug.Log("Hello there");
 
             //Warning: works because only local player is joueur
@@ -309,11 +308,11 @@ public abstract class Placeable : NetworkBehaviour
 
             //GameManager.PlaceToGo = this.Position ;
         }
-            else if (Input.GetMouseButtonUp(2))
-            {
+        else if (Input.GetMouseButtonUp(2))
+        {
             gameManager.ShotPlaceable = this;
 
-            }
+        }
 
     }
 }

@@ -11,24 +11,25 @@ using UnityEngine.Networking;
 /// La serialization se fait en deux temps: On sauvegarde le numero dans la liste préfab correspondant
 /// On ajoute des effets en plus si nécessaires.
 /// </summary>
-public class JaggedGrid  {
+public class JaggedGrid
+{
 
-   
+
     public int[] grille;
 
     public void ToJagged(Grille grid)
     {
-        grille= new int[grid.sizeX* grid.sizeY* grid.sizeZ];
+        grille = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
 
         //On met y en dernier pour des besoins futurs potentiels de compression
         for (int y = 0; y < grid.sizeY; y++)
         {
             for (int x = 0; x < grid.sizeX; x++)
             {
-            
+
                 for (int z = 0; z < grid.sizeZ; z++)
                 {
-                    if (grid.Grid[x, y, z]==null)
+                    if (grid.Grid[x, y, z] == null)
                     {
                         this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = 0;
 
@@ -38,7 +39,7 @@ public class JaggedGrid  {
                         this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.Grid[x, y, z].serializeNumber;
 
                     }
-                   
+
                 }
             }
         }
@@ -46,7 +47,7 @@ public class JaggedGrid  {
     public void Save()
     {
         string blah = JsonUtility.ToJson(this);
-      
+
         string path = "Grid.json";
         Debug.Log("AssetPath:" + path);
         File.WriteAllText(path, blah);
@@ -56,7 +57,7 @@ public class JaggedGrid  {
     {
         return JsonUtility.FromJson<JaggedGrid>(ReadString());
     }
-   
+
 
     static string ReadString()
     {
@@ -64,7 +65,7 @@ public class JaggedGrid  {
 
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
-        string toreturn=reader.ReadToEnd();
+        string toreturn = reader.ReadToEnd();
         reader.Close();
         return toreturn;
     }

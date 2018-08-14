@@ -7,7 +7,7 @@ public class SpawnEffect : Effect
     override
       public void Use()
     {
-     //   Lanceur.gameManager.
-   
+        //   Lanceur.gameManager.
+
     }
 }

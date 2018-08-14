@@ -4,12 +4,13 @@ using UnityEngine;
 /// <summary>
 /// Représente un point visable et ses multiplicateur de dégats, ainsi que si il est atteignable.
 /// </summary>
-public class HitablePoint  {
+public class HitablePoint
+{
     private Vector3 relativePosition;
     private float damageMultiplier;
     private bool shootable;
 
-    public HitablePoint(Vector3 relativePosition,float damageMultiplier)
+    public HitablePoint(Vector3 relativePosition, float damageMultiplier)
     {
         this.relativePosition = relativePosition;
         this.damageMultiplier = damageMultiplier;

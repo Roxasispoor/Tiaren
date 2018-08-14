@@ -6,15 +6,16 @@ using UnityEngine;
 /// <summary>
 /// Classe pour effet permettant de contrer d'autres effets.
 /// </summary>
-public class BlockEffects : Effect {
+public class BlockEffects : Effect
+{
     private List<Effect> listEffectsToBlock;
-   /// <summary>
-   /// -1 = non dépendant
-   /// </summary>
+    /// <summary>
+    /// -1 = non dépendant
+    /// </summary>
     private int numberToBlock;
     private GameEffectManager gameEffectManager;
 
-    public BlockEffects(Placeable cible, Placeable lanceur, GameEffectManager gameEffectManager): base(cible,lanceur)
+    public BlockEffects(Placeable cible, Placeable lanceur, GameEffectManager gameEffectManager) : base(cible, lanceur)
     {
         this.gameEffectManager = gameEffectManager;
     }
@@ -31,12 +32,12 @@ public class BlockEffects : Effect {
             listEffectsToBlock = value;
         }
     }
-   
+
     public bool ContientEffetType(Effect effet) // vérifie que la liste des effets contient une instance du type de l'objet
     {
-        foreach(Effect a in listEffectsToBlock)
+        foreach (Effect a in listEffectsToBlock)
         {
-            if(effet.GetType() == a.GetType())
+            if (effet.GetType() == a.GetType())
             {
                 return true;
             }

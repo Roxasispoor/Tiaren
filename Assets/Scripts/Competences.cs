@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Classe représentant une compétence utilisable par le joueur
 /// </summary>
-public class Competence {
+public class Competence
+{
     private int cost;
     private int tourCooldownLeft;
     private int cooldown;

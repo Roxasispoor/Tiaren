@@ -5,12 +5,13 @@ using UnityEngine.UI;
 /// <summary>
 /// Permet de lancer des comptes a rebours
 /// </summary>
-public class Timer : MonoBehaviour {
+public class Timer : MonoBehaviour
+{
     private bool isFinished;
-    private float targetTime=0;
+    private float targetTime = 0;
     public Text textToUpdate;
 
-  
+
     public Timer()
     {
         this.isFinished = false;
@@ -34,19 +35,19 @@ public class Timer : MonoBehaviour {
         this.targetTime = time;
     }
 
- void  Update()
+    void Update()
     {
-        if(targetTime >0)
+        if (targetTime > 0)
 
-        { 
-        targetTime -= Time.deltaTime;
+        {
+            targetTime -= Time.deltaTime;
         }
         if (!IsFinished && targetTime <= 0.0f)
         {
             targetTime = 0;
             IsFinished = true;
         }
-        if(textToUpdate!=null)
+        if (textToUpdate != null)
         {
             textToUpdate.text = targetTime.ToString();
         }

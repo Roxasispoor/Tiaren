@@ -4,8 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Effet de fin du jeu
 /// </summary>
-public class EndGame : Effect {
-
+public class EndGame : Effect
+{
     private Game game;
     private Joueur joueur;
     public EndGame(Game game, Joueur joueur)
@@ -18,5 +18,5 @@ public class EndGame : Effect {
     {
         this.game.Winner = joueur;
     }
-	
+
 }

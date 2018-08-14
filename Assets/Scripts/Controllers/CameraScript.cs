@@ -29,7 +29,7 @@ public class CameraScript : NetworkBehaviour
     private Quaternion rotation;
     private Vector3 position;
 
-    
+
     public float XDeg
     {
         get
@@ -69,10 +69,11 @@ public class CameraScript : NetworkBehaviour
         }
     }
 
-    void Start() {
-        
+    void Start()
+    {
+
         Init();
-       
+
     }
     void OnEnable() { Init(); }
 
@@ -98,7 +99,7 @@ public class CameraScript : NetworkBehaviour
 
         XDeg = Vector3.Angle(Vector3.right, transform.right);
         YDeg = Vector3.Angle(Vector3.up, transform.up);
-        
+
 
     }
 
@@ -107,7 +108,7 @@ public class CameraScript : NetworkBehaviour
      */
     void LateUpdate()
     {
-     
+
 
         //0 gauche 1droite 2 milieu
         // If Middle button? ZOOM!
@@ -142,7 +143,7 @@ public class CameraScript : NetworkBehaviour
         ////////Orbit Position
 
         // affect the desired Zoom distance if we roll the scrollwheel
-        DesiredDistance -= joueur.DicoAxis["AxisZoomCamera"]()  * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);
+        DesiredDistance -= joueur.DicoAxis["AxisZoomCamera"]() * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);
         //clamp the zoom min/max
         DesiredDistance = Mathf.Clamp(DesiredDistance, minDistance, maxDistance);
         // For smoothing of the zoom, lerp distance

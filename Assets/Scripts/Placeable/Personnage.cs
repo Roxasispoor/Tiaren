@@ -8,31 +8,6 @@ using UnityEngine;
 public class Personnage : LivingPlaceable {
 
 
-
-    //constructeur classique de personnages
-    /** public Personnage(Vector3Int position,bool walkable, List<Effect> onWalkEffects, bool movable, bool destroyable, TraversableType traversableChar, TraversableType traversableBullet,
-         GravityType gravityType, bool pickable, EcraseType ecrasable, List<Effect> onDestroyEffects
-         , List<HitablePoint> hitablePoints, List<Effect> onDebutTour, List<Effect> onFinTour, Joueur joueur
-         , float pvMax, float pvActuels, int pmMax, int pmActuels, int force, int speed, int dexterity, int miningPower, int speedstack,
-         List<Competence> competences, List<GameObject> armes, int nbFoisFiredThisTurn, bool estMort
-         , int nbFoisMort, int tourRestantsCimetiere, Vector3 shootPosition) :
-          base(position, walkable,onWalkEffects,  movable,  destroyable,  traversableChar,  traversableBullet,
-          gravityType,  pickable,  ecrasable,  onDestroyEffects
-         ,  hitablePoints, onDebutTour, onFinTour,joueur
-         ,  pvMax,  pvActuels,  pmMax,  pmActuels,  force,  speed,  dexterity,  miningPower,  speedstack,
-         competences, armes,  nbFoisFiredThisTurn,  estMort
-         ,  nbFoisMort,  tourRestantsCimetiere,  shootPosition)
-     {
-
-     }
-     **/
-
-
-
-
-
-
-
     /// <summary>
     /// Méthode a appeler lors de la destruction du personnage
     /// </summary>
@@ -72,9 +47,7 @@ public class Personnage : LivingPlaceable {
         this.Force = 100;
         this.Speed = 100 ;
         this.SpeedStack = 1/Speed;
-
         this.Dexterity = 100;
-
         this.Competences = new List<Competence>();
         this.Armes = new List<GameObject>();
         this.NbFoisFiredThisTurn = 0;

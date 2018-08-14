@@ -4,7 +4,8 @@ using UnityEngine;
 /// <summary>
 /// Les effect doivent être utilisés par le gameEffectManager qui les résoudra 
 /// </summary>
-public abstract class Effect  {
+public abstract class Effect
+{
     private Placeable cible;
     private Placeable lanceur;
     private int tourEffetActif; //-1 = inactif 0=on arrête. On utilisera int.MaxValue/2 quand c'est indépendant
@@ -12,7 +13,7 @@ public abstract class Effect  {
     {
 
     }
-    protected Effect (Placeable cible, Placeable lanceur)
+    protected Effect(Placeable cible, Placeable lanceur)
     {
         this.cible = cible;
         this.lanceur = lanceur;
@@ -58,5 +59,5 @@ public abstract class Effect  {
 
     // Use this for initialization
     public abstract void Use();
-    
+
 }

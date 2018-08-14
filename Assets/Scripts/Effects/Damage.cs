@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Classe représentant les dégats
 /// </summary>
-public class Damage : Effect {
+public class Damage : Effect
+{
     private float damage;
     /// <summary>
     /// Crée un objet de dégats
@@ -13,9 +14,9 @@ public class Damage : Effect {
     /// <param name="cible">Indique la cible du coup</param>
     /// <param name="lanceur">Indique le lanceur du coup</param>
     /// <param name="damage">Quantité de dégats pris</param>
-    public Damage(Placeable cible, Placeable lanceur,float damage): base(cible,lanceur)
+    public Damage(Placeable cible, Placeable lanceur, float damage) : base(cible, lanceur)
     {
-        this.Damage1 = damage;  
+        this.Damage1 = damage;
     }
 
 
@@ -35,18 +36,18 @@ public class Damage : Effect {
     override
         public void Use()
     {
-       if(this.Cible is LivingPlaceable)
+        if (this.Cible is LivingPlaceable)
         {
             LivingPlaceable Cible = (LivingPlaceable)(this.Cible);
             Cible.PvActuels -= Damage1;
-            if(Cible.PvActuels<=0)
+            if (Cible.PvActuels <= 0)
             {
                 Debug.Log("ouille ouille ouille");
 
                 Cible.Detruire();
             }
 
-           
+
         }
     }
 }
