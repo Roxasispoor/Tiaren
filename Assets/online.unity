@@ -212,10 +212,11 @@ MonoBehaviour:
   prefabPersos:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
   - {fileID: 1320180823792864, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}
-  prefabArmes: []
+  prefabArmes:
+  - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   gridFolder: {fileID: 1154982765}
-  joueur1: {fileID: 0}
-  joueur2: {fileID: 0}
+  player1: {fileID: 0}
+  player2: {fileID: 0}
   prefabMonstres: []
 --- !u!4 &823285885
 Transform:
