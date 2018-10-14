@@ -18,7 +18,7 @@ public class CameraScript : NetworkBehaviour
     public int zoomRate = 70;
     public float panSpeed = 0.3f;
     public float zoomDampening = 5.0f;
-    public Joueur joueur;
+    public Player joueur;
 
     private float xDeg = 0.0f;
     private float yDeg = 0.0f;

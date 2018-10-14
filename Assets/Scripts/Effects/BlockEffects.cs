@@ -13,12 +13,11 @@ public class BlockEffects : Effect
     /// -1 = non dépendant
     /// </summary>
     private int numberToBlock;
-    private GameEffectManager gameEffectManager;
 
-    public BlockEffects(Placeable cible, Placeable lanceur, GameEffectManager gameEffectManager) : base(cible, lanceur)
+
+    public BlockEffects(Placeable cible, Placeable lanceur) : base(cible, lanceur)
     {
-        this.gameEffectManager = gameEffectManager;
-    }
+            }
 
     public List<Effect> ListEffectsToBlock
     {
@@ -62,7 +61,7 @@ public class BlockEffects : Effect
     override
     public void Use()
     {
-        gameEffectManager.ActiveBlocks.Add(this);
+        
     }
 
 

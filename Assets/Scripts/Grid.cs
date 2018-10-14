@@ -10,9 +10,9 @@ using UnityEngine.Networking;
 /// Classe représentant une grille de jeux pour une partie
 /// </summary>
 
-public class Grille : MonoBehaviour
+public class Grid : MonoBehaviour
 {
-    private Game gameManager;
+    public static Grid instance;
     //  50 x 50 x 5 = 12 500 blocs
     public int sizeX = 50;
     public int sizeY = 6;
@@ -24,7 +24,7 @@ public class Grille : MonoBehaviour
     /// Représente la grille de jeux
     /// </summary>
 
-    private Placeable[,,] grid;
+    private Placeable[,,] gridMatrix;
     /// <summary>
     /// Paramètre de génération de la grille
     /// </summary>
@@ -37,31 +37,20 @@ public class Grille : MonoBehaviour
     public GameObject[] prefabsList;
 
 
-    public Placeable[,,] Grid
+    public Placeable[,,] GridMatrix
     {
         get
         {
-            return grid;
+            return gridMatrix;
         }
 
         set
         {
-            grid = value;
+            gridMatrix = value;
         }
     }
 
-    public Game GameManager
-    {
-        get
-        {
-            return gameManager;
-        }
-
-        set
-        {
-            gameManager = value;
-        }
-    }
+   
 
 
 
@@ -79,10 +68,7 @@ public class Grille : MonoBehaviour
                     if (Random.Range(0, 100) < randomParameter && y < sizeY - 2) // la deuxième condition pourrait simplement etre dans le for du Y
                     {
                         GameObject obj = Instantiate(prefabsList[0], new Vector3(x, y, z), Quaternion.identity, parent.transform);
-                        obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
-                        // Debug.Log(obj.GetComponent<Placeable>().Position);
-                        obj.GetComponent<Placeable>().GameManager = this.gameManager;
-                        Grid[x, y, z] = obj.GetComponent<Placeable>();
+                        gridMatrix[x, y, z] = obj.GetComponent<Placeable>();
                         NetworkServer.Spawn(obj);
 
 
@@ -137,11 +123,11 @@ public class Grille : MonoBehaviour
             if (parent.GetDistance() <= deplacement)
             {
 
-                Placeable testa = Grid[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
+                Placeable testa = gridMatrix[posBlocActuel.x, posBlocActuel.y, posBlocActuel.z];
                 if (testa.gameObject.GetComponent<Renderer>() != null)
                 {
                    //On envoie plutot l'id parce que rien n'assure que les blocs soient a la bonne position coté client
-                    gameManager.PlayingPlaceable.Joueur.RpcMakeCubeBlue(testa.netId);
+                    GameManager.instance.PlayingPlaceable.Player.RpcMakeCubeBlue(testa.netId);
                   
                 }
                 //là mettre l'affichage du bloc en bleu
@@ -150,12 +136,12 @@ public class Grille : MonoBehaviour
 
                     if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.x < sizeX - 1 && //au dessus de 0, en dessous du max, dans le terrain en x
                         gridBool[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 && //si on l'a pas dejà vu
-                        Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&        // et si le bloc existe
-                        (Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null  //si le bloc au dessus est vide
-                        || Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLTHROUGH //ou traversable en général
-                        || Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLIESTHROUGH && //ou seulement par un allié
-                        Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Joueur == livingPlaceable.Joueur) //si on est l'allié
-                        && Grid[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].Walkable
+                        gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&        // et si le bloc existe
+                        (gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null  //si le bloc au dessus est vide
+                        || gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLTHROUGH //ou traversable en général
+                        || gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLIESTHROUGH && //ou seulement par un allié
+                        gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Player == livingPlaceable.Player) //si on est l'allié
+                        && gridMatrix[posBlocActuel.x + 1, posBlocActuel.y + yactuel, posBlocActuel.z].Walkable
                         )
                     {//si le sommet n'est pas marqué et qu'il existe, et qu'il n'y a rien au dessus ou que celui du dessus est traversable, que le bloc est walkable
 
@@ -167,12 +153,12 @@ public class Grille : MonoBehaviour
 
                     if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.x > 0 &&
                         gridBool[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z].GetDistance() == -1 &&
-                        Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&
-                        (Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null
-                        || Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLTHROUGH
-                        || Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Joueur == livingPlaceable.Joueur)
-                        && Grid[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z].Walkable)
+                        gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z] != null &&
+                        (gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z] == null
+                        || gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLTHROUGH
+                        || gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].TraversableChar == TraversableType.ALLIESTHROUGH &&
+                        gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel + 1, posBlocActuel.z].Player == livingPlaceable.Player)
+                        && gridMatrix[posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z].Walkable)
                     {//si le sommet n'est pas marqué et qu'il existe, et qu'il n'y a rien au dessus
 
                         queue.Enqueue(new Vector3Int(posBlocActuel.x - 1, posBlocActuel.y + yactuel, posBlocActuel.z));
@@ -184,12 +170,12 @@ public class Grille : MonoBehaviour
                     }
                     if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.z < sizeZ - 1 &&
                         gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1].GetDistance() == -1 &&
-                        Grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1] != null &&
-                        (Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1] == null
-                        || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].Joueur == livingPlaceable.Joueur)
-                        && Grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1].Walkable)
+                        gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1] != null &&
+                        (gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1] == null
+                        || gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].TraversableChar == TraversableType.ALLTHROUGH
+                        || gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
+                        gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z + 1].Player == livingPlaceable.Player)
+                        && gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1].Walkable)
 
                     {//si le sommet n'est pas marqué et qu'il existe et qu'il n'y a rien au dessus
                         queue.Enqueue(new Vector3Int(posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z + 1));
@@ -200,12 +186,12 @@ public class Grille : MonoBehaviour
                     }
                     if (posBlocActuel.y + yactuel >= 0 && posBlocActuel.y + yactuel < sizeY && posBlocActuel.z > 0 &&
                         gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].GetDistance() == -1 &&
-                        Grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1] != null &&
-                        (Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1] == null
-                        || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        Grid[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].Joueur == livingPlaceable.Joueur)
-                        && Grid[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].Walkable)
+                        gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1] != null &&
+                        (gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1] == null
+                        || gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLTHROUGH
+                        || gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
+                        gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel + 1, posBlocActuel.z - 1].Player == livingPlaceable.Player)
+                        && gridMatrix[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].Walkable)
                     {//si le sommet n'est pas marqué et qu'il existe, et qu'il n'y a rien au dessus
                         queue.Enqueue(new Vector3Int(posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1));
                         gridBool[posBlocActuel.x, posBlocActuel.y + yactuel, posBlocActuel.z - 1].SetDistance(
@@ -230,9 +216,9 @@ public class Grille : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Grid[x, y, z] != null)
+                    if (gridMatrix[x, y, z] != null)
                     {
-                        Grid[x, y, z].gameObject.transform.position = new Vector3(x, y, z);
+                        gridMatrix[x, y, z].gameObject.transform.position = new Vector3(x, y, z);
 
                     }
                 }
@@ -240,18 +226,12 @@ public class Grille : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Constructeur standard
-    /// </summary>
-    public Grille()
-    {
-
-    }
+ 
 
     /// <summary>
     /// Fonction qui intitalise la valeur du booléen explored des blocs de la grille
     /// </summary>
-    public void InitialiseExplored(bool value)
+    public void InitializeExplored(bool value)
     {
         for (int x = 0; x < sizeX; x++)
         {
@@ -259,9 +239,9 @@ public class Grille : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Grid[x, y, z] != null)
+                    if (gridMatrix[x, y, z] != null)
                     {
-                        Grid[x, y, z].Explored = value;
+                        gridMatrix[x, y, z].Explored = value;
                     }
                 }
             }
@@ -277,40 +257,40 @@ public class Grille : MonoBehaviour
     /// <param name="positionSommetZ"></param>
 	public void Explore(int positionSommetX, int positionSommetY, int positionSommetZ)
     {
-        if (!Grid[positionSommetX, positionSommetY, positionSommetZ].Explored)
+        if (!gridMatrix[positionSommetX, positionSommetY, positionSommetZ].Explored)
         {
-            Grid[positionSommetX, positionSommetY, positionSommetZ].Explored = true;
-            //Debug.Log("x" + positionSommetX + "y" + positionSommetY + "z" + positionSommetZ + "bool" + Grid[positionSommetX, positionSommetY, positionSommetZ].Explored);
+            gridMatrix[positionSommetX, positionSommetY, positionSommetZ].Explored = true;
+            //Debug.Log("x" + positionSommetX + "y" + positionSommetY + "z" + positionSommetZ + "bool" + gridMatrix[positionSommetX, positionSommetY, positionSommetZ].Explored);
 
             //on considère les 4 à cotés et ceux au dess(o)us ... donc les 6 cotés ?
             //si les voisins sont  non nuls et non explorés et toujours dans la map
-            if (positionSommetX > 0 && Grid[positionSommetX - 1, positionSommetY, positionSommetZ] != null &&
-                !Grid[positionSommetX - 1, positionSommetY, positionSommetZ].Explored)
+            if (positionSommetX > 0 && gridMatrix[positionSommetX - 1, positionSommetY, positionSommetZ] != null &&
+                !gridMatrix[positionSommetX - 1, positionSommetY, positionSommetZ].Explored)
             {
                 Explore(positionSommetX - 1, positionSommetY, positionSommetZ);
             }
-            if (positionSommetX < sizeX - 1 && Grid[positionSommetX + 1, positionSommetY, positionSommetZ] != null &&
-                !Grid[positionSommetX + 1, positionSommetY, positionSommetZ].Explored)
+            if (positionSommetX < sizeX - 1 && gridMatrix[positionSommetX + 1, positionSommetY, positionSommetZ] != null &&
+                !gridMatrix[positionSommetX + 1, positionSommetY, positionSommetZ].Explored)
             {
                 Explore(positionSommetX + 1, positionSommetY, positionSommetZ);
             }
-            if (positionSommetY > 0 && Grid[positionSommetX, positionSommetY - 1, positionSommetZ] != null &&
-                !Grid[positionSommetX, positionSommetY - 1, positionSommetZ].Explored)
+            if (positionSommetY > 0 && gridMatrix[positionSommetX, positionSommetY - 1, positionSommetZ] != null &&
+                !gridMatrix[positionSommetX, positionSommetY - 1, positionSommetZ].Explored)
             {
                 Explore(positionSommetX, positionSommetY - 1, positionSommetZ);
             }
-            if (positionSommetY < sizeY - 1 && Grid[positionSommetX, positionSommetY + 1, positionSommetZ] != null &&
-                !Grid[positionSommetX, positionSommetY + 1, positionSommetZ].Explored)
+            if (positionSommetY < sizeY - 1 && gridMatrix[positionSommetX, positionSommetY + 1, positionSommetZ] != null &&
+                !gridMatrix[positionSommetX, positionSommetY + 1, positionSommetZ].Explored)
             {
                 Explore(positionSommetX, positionSommetY + 1, positionSommetZ);
             }
-            if (positionSommetZ > 0 && Grid[positionSommetX, positionSommetY, positionSommetZ - 1] != null &&
-                !Grid[positionSommetX, positionSommetY, positionSommetZ - 1].Explored)
+            if (positionSommetZ > 0 && gridMatrix[positionSommetX, positionSommetY, positionSommetZ - 1] != null &&
+                !gridMatrix[positionSommetX, positionSommetY, positionSommetZ - 1].Explored)
             {
                 Explore(positionSommetX, positionSommetY, positionSommetZ - 1);
             }
-            if (positionSommetZ < sizeZ - 1 && Grid[positionSommetX, positionSommetY, positionSommetZ + 1] != null &&
-                !Grid[positionSommetX, positionSommetY, positionSommetZ + 1].Explored)
+            if (positionSommetZ < sizeZ - 1 && gridMatrix[positionSommetX, positionSommetY, positionSommetZ + 1] != null &&
+                !gridMatrix[positionSommetX, positionSommetY, positionSommetZ + 1].Explored)
             {
                 Explore(positionSommetX, positionSommetY, positionSommetZ + 1);
             }
@@ -329,7 +309,7 @@ public class Grille : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Grid[x, y, z] != null && !Grid[x, y, z].Explored)
+                    if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored)
                     // si on a des trucs non explorés, c'est à dire qu'ils doivent tomber donc faux
                     {
                         Debug.Log("x" + x + "y" + y + "z" + z);
@@ -345,9 +325,9 @@ public class Grille : MonoBehaviour
     /// <summary>
     /// Seule fonction qui sera appelée pour gérer toute la gravité.
     /// </summary>
-    public void Gravite()
+    public void Gravity()
     {
-        GraviteSimple();
+        SimpleGravity();
 
         //VERIFIER que a la creation explored = false. Tant que tous ne sont pas explorés
         while (!IsGridAllExplored())
@@ -355,7 +335,7 @@ public class Grille : MonoBehaviour
             //  On commence sur tous ceux d'en bas qui ne sont pas marqués, on expand,
             //  puis on passe aux floaties, on expand. Tous les autres tomberont. 
             //  0 = pas vu rien a faire; 1 vu
-            InitialiseExplored(false);
+            InitializeExplored(false);
 
             //On commence sur tous ceux d'en bas qui ne sont pas marqués, on expand , puis on passe aux floaties, on expand. Tous les autres tomberont. 
 
@@ -365,7 +345,7 @@ public class Grille : MonoBehaviour
                 {
                     for (int z = 0; z < sizeZ; z++)
                     {
-                        if (Grid[x, y, z] != null && !Grid[x, y, z].Explored && (y == 0 || Grid[x, y, z].GravityType == GravityType.GRAVITE_NULLE))
+                        if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored && (y == 0 || gridMatrix[x, y, z].GravityType == GravityType.GRAVITE_NULLE))
                         //On lance le dfs sur les non vides qui ne sont pas explorés, au sol ou sans gravité
                         {
                             Explore(x, y, z);
@@ -394,30 +374,30 @@ public class Grille : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Grid[x, y, z] != null && !Grid[x, y, z].Explored) // si le bloc est non nul, que le bloc était sensé tombé
+                    if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored) // si le bloc est non nul, que le bloc était sensé tombé
                                                                           //Alors on tombe.
                     {
 
-                        GereEcrasageBloc(x, y, z, 1); // On peut descendre de 1 il faut juste appliquer le bon ecrasage si besoin
+                        HandleCrush(x, y, z, 1); // On peut descendre de 1 il faut juste appliquer le bon ecrasage si besoin
                     }
                 }
             }
         }
 
     }
-    public void DeplaceBloc(Placeable bloc, Vector3Int positionVoulue)
+    public void DeplaceBloc(Placeable bloc, Vector3Int desiredPosition)
     {
-        if (bloc != null && positionVoulue.x >= 0 && positionVoulue.x < sizeX
-           && positionVoulue.y >= 0 && positionVoulue.y < sizeY
-           && positionVoulue.z >= 0 && positionVoulue.z < sizeZ &&
-           Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y] == null
-         || (Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y] != null
-         && Grid[positionVoulue.x, positionVoulue.y, positionVoulue.y].Destroyable))
+        if (bloc != null && desiredPosition.x >= 0 && desiredPosition.x < sizeX
+           && desiredPosition.y >= 0 && desiredPosition.y < sizeY
+           && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
+           gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] == null
+         || (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] != null
+         && gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y].Destroyable))
         {
-            Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z] = Grid[bloc.Position.x, bloc.Position.y, bloc.Position.z];//met un lien
-            Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z].gameObject.transform.position += (positionVoulue - bloc.Position);//on decale le modèle
-            Grid[bloc.Position.x, bloc.Position.y, bloc.Position.z] = null;//on met a zero l'ancien endroit
-            Grid[positionVoulue.x, positionVoulue.y, positionVoulue.z].Position = positionVoulue;//on change la Position
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z];//met un lien
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].gameObject.transform.position += (desiredPosition - bloc.GetPosition());//on decale le modèle
+            gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z] = null;//on met a zero l'ancien endroit
+
 
         }
     }
@@ -428,41 +408,41 @@ public class Grille : MonoBehaviour
     /// <param name="y"></param>
     /// <param name="z"></param>
     /// <param name="ydescente"></param>
-    public void GereEcrasageBloc(int x, int y, int z, int ydescente)
+    public void HandleCrush(int x, int y, int z, int ydescente)
     {
-        if (Grid[x, y - ydescente, z] == null)// On copie et on détruit
+        if (gridMatrix[x, y - ydescente, z] == null)// On copie et on détruit
         {
-            DeplaceBloc(Grid[x, y, z], new Vector3Int(x, y - ydescente, z));
+            DeplaceBloc(gridMatrix[x, y, z], new Vector3Int(x, y - ydescente, z));
         }
 
-        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
+        else if (gridMatrix[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDESTROYBLOC)// On détruit le bloc et on trigger ses effets
         {
-            Grid[x, y, z].Detruire();
-            Grid[x, y, z] = null;
+            gridMatrix[x, y, z].Detruire();
+            gridMatrix[x, y, z] = null;
 
         }
-        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASELIFT)// On copie et on détruit
+        else if (gridMatrix[x, y - ydescente, z].Ecrasable == EcraseType.ECRASELIFT)// On copie et on détruit
         {
             int ymontee = y;
-            while (ymontee < sizeY && Grid[x, ymontee, z] != null) // la verification devrait être non nécessaire en y mais bon -_-
+            while (ymontee < sizeY && gridMatrix[x, ymontee, z] != null) // la verification devrait être non nécessaire en y mais bon -_-
             {
                 ymontee++;
             }
 
-            Grid[x, ymontee, z] = Grid[x, y - ydescente, z].Cloner();
-            Grid[x, ymontee, z].Position.Set(x, ymontee, z);
+            gridMatrix[x, ymontee, z] = gridMatrix[x, y - ydescente, z].Cloner();
+            //gridMatrix[x, ymontee, z].Position.Set(x, ymontee, z);
 
 
-            Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
-            Grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
-            Grid[x, y, z] = null;
+            gridMatrix[x, y - ydescente, z] = gridMatrix[x, y, z].Cloner();
+            //gridMatrix[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
+            gridMatrix[x, y, z] = null;
         }
-        else if (Grid[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDEATH)
+        else if (gridMatrix[x, y - ydescente, z].Ecrasable == EcraseType.ECRASEDEATH)
         {
-            Grid[x, y - ydescente, z].Detruire();
-            Grid[x, y - ydescente, z] = Grid[x, y, z].Cloner();
-            Grid[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
-            Grid[x, y, z] = null;
+            gridMatrix[x, y - ydescente, z].Detruire();
+            gridMatrix[x, y - ydescente, z] = gridMatrix[x, y, z].Cloner();
+           // gridMatrix[x, y - ydescente, z].Position.Set(x, y - ydescente, z);
+            gridMatrix[x, y, z] = null;
 
         }
 
@@ -474,7 +454,7 @@ public class Grille : MonoBehaviour
     /// <summary>
     /// Gère la gravite des objets de type gravite simple, c'est à dire s'il n'y a rien en dessous on tombe
     /// </summary>
-    public void GraviteSimple()
+    public void SimpleGravity()
     {
         int y = 0;
         while (y < sizeY)
@@ -484,19 +464,19 @@ public class Grille : MonoBehaviour
 
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Grid[x, y, z] != null && Grid[x, y, z].GravityType == GravityType.GRAVITE_SIMPLE)
+                    if (gridMatrix[x, y, z] != null && gridMatrix[x, y, z].GravityType == GravityType.GRAVITE_SIMPLE)
                     {
                         int ydescente = 0;
 
-                        while (y - ydescente > 0 && (Grid[x, y - ydescente - 1, z] == null
-                            || (Grid[x, y - ydescente - 1, z].Ecrasable != EcraseType.ECRASESTAY)))
+                        while (y - ydescente > 0 && (gridMatrix[x, y - ydescente - 1, z] == null
+                            || (gridMatrix[x, y - ydescente - 1, z].Ecrasable != EcraseType.ECRASESTAY)))
 
                         {
                             ydescente++;
                         }
                         if (ydescente > 0)
                         {
-                            GereEcrasageBloc(x, y, z, ydescente);
+                            HandleCrush(x, y, z, ydescente);
 
 
 
@@ -525,8 +505,20 @@ public class Grille : MonoBehaviour
 
     void Awake()
     {
+
+        if (instance == null)
+
+            //if not, set instance to this
+            instance = this;
+
+        //If instance already exists and it's not this:
+        else if (instance != this)
+
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+            Destroy(gameObject);
+
         gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
-        grid = new Placeable[sizeX, sizeY, sizeZ];
+        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
 
 
@@ -536,7 +528,7 @@ public class Grille : MonoBehaviour
     /// Precondition: grille vide jamais remplie
     /// </summary>
     /// <param name="grid"></param>
-    public void FillThisGrilleAndSpawn(GameObject parent)
+    public void FillGridAndSpawn(GameObject parent)
     {
         JaggedGrid jagged = JaggedGrid.FillGridFromJSON();
 
@@ -549,15 +541,12 @@ public class Grille : MonoBehaviour
                     if (jagged.grille[y * sizeZ * sizeX + z * sizeX + x] != 0) //On suppose que la grille était vide et jamais remplie!
                     {
 
-                        GameObject obj = Instantiate(gameManager.networkManager.spawnPrefabs[jagged.grille[y * sizeZ * sizeX + z * sizeX + x] - 1],
+                        GameObject obj = Instantiate(GameManager.instance.networkManager.spawnPrefabs[jagged.grille[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity, parent.transform);
-                        obj.GetComponent<Placeable>().Position = new Vector3Int(x, y, z);
-
+                        
                         // Debug.Log(obj.GetComponent<Placeable>().Position);
-                        obj.GetComponent<Placeable>().GameManager = gameManager;
 
-
-                        Grid[x, y, z] = obj.GetComponent<Placeable>(); //ce qui nous intéresse c'est pas le game object
+                        gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //ce qui nous intéresse c'est pas le game object
                         NetworkServer.Spawn(obj);
 
 

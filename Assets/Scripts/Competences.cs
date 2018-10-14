@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Classe représentant une compétence utilisable par le joueur
 /// </summary>
-public class Competence
+public class Skill
 {
     private int cost;
     private int tourCooldownLeft;
@@ -14,7 +14,7 @@ public class Competence
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
     private CompetenceType competenceType;
-    private Game gameManager;
+    private GameManager gameManager;
     public CompetenceType CompetenceType
     {
         get
@@ -67,7 +67,7 @@ public class Competence
         }
     }
 
-    public Game GameManager
+    public GameManager GameManager
     {
         get
         {
@@ -79,13 +79,10 @@ public class Competence
             gameManager = value;
         }
     }
-    /// <summary>
-    /// Ajoute les effets au gameEffectManager et lance la résolution
-    /// </summary>
+    ///TODO
     public void Use()
     {
-        gameManager.GameEffectManager.ToBeTreated.AddRange(this.effects);
-        gameManager.GameEffectManager.Solve();
+        
         this.tourCooldownLeft = this.cooldown;
     }
 }

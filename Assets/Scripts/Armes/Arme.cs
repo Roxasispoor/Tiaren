@@ -12,7 +12,8 @@ public abstract class Arme : MonoBehaviour
     private float statMultiplier;
     private bool scalesOnForce;
     private List<Effect> passiveEffects;
-    private List<Effect> onShootEffects;
+    private List<Skill> skills;
+   
 
     public float Range
     {
@@ -66,18 +67,7 @@ public abstract class Arme : MonoBehaviour
         }
     }
 
-    public List<Effect> OnShootEffects
-    {
-        get
-        {
-            return onShootEffects;
-        }
-
-        set
-        {
-            onShootEffects = value;
-        }
-    }
+ 
 
     public bool ScalesOnForce
     {
@@ -89,6 +79,19 @@ public abstract class Arme : MonoBehaviour
         set
         {
             scalesOnForce = value;
+        }
+    }
+
+    public List<Skill> Skills
+    {
+        get
+        {
+            return skills;
+        }
+
+        set
+        {
+            skills = value;
         }
     }
 

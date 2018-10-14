@@ -17,7 +17,7 @@ public class JaggedGrid
 
     public int[] grille;
 
-    public void ToJagged(Grille grid)
+    public void ToJagged(Grid grid)
     {
         grille = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
 
@@ -29,14 +29,14 @@ public class JaggedGrid
 
                 for (int z = 0; z < grid.sizeZ; z++)
                 {
-                    if (grid.Grid[x, y, z] == null)
+                    if (grid.GridMatrix[x, y, z] == null)
                     {
                         this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = 0;
 
                     }
                     else
                     {
-                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.Grid[x, y, z].serializeNumber;
+                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.GridMatrix[x, y, z].serializeNumber;
 
                     }
 

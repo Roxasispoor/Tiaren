@@ -15,7 +15,7 @@ public class StandardGun : Arme
         this.StatMultiplier = 0.01f;
         this.ScalesOnForce = false;
         this.PassiveEffects = new List<Effect>();
-        this.OnShootEffects = new List<Effect>();
+        this.Skills = new List<Skill>();
 
     }
 

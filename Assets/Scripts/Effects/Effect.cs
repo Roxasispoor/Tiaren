@@ -18,7 +18,7 @@ public abstract class Effect
         this.cible = cible;
         this.lanceur = lanceur;
     }
-    public Placeable Cible
+    public virtual Placeable Cible
     {
         get
         {
@@ -31,7 +31,7 @@ public abstract class Effect
         }
     }
 
-    public Placeable Lanceur
+    public virtual Placeable Lanceur
     {
         get
         {

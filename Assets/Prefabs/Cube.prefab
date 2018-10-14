@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 23836669232815178}
   - component: {fileID: 114105382873498880}
   - component: {fileID: 114945978310607720}
-  - component: {fileID: 114468354025213840}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -110,31 +109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1e989823256d0438c381cbc3f6ada6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  position: {x: 0, y: 0, z: 0}
+  serializeNumber: 1
   explored: 0
-  joueur: {fileID: 0}
---- !u!114 &114468354025213840
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1032257904305354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.1
-  m_SyncRotationAxis: 7
-  m_RotationSyncCompression: 0
-  m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_VelocityThreshold: 0.0001
-  m_SnapThreshold: 5
-  m_InterpolateRotation: 1
-  m_InterpolateMovement: 1
+  player: {fileID: 0}
 --- !u!114 &114945978310607720
 MonoBehaviour:
   m_ObjectHideFlags: 1

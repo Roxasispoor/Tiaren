@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Représente a peut pres n'importe quoi pouvant occuper un bloc dans le grille
@@ -9,19 +10,19 @@ using UnityEngine.Networking;
 
 public abstract class Placeable : NetworkBehaviour
 {
-    public Game gameManager;
+   // public GameManager gameManager;
 
     public int serializeNumber;
-    public Vector3Int position;
+    //public Vector3Int position;
     private bool walkable;
     private List<Effect> onWalkEffects;
     private bool movable;
     private bool destroyable;
-    private TraversableType traversableChar;
+    private TraversableType tangible;
     private TraversableType traversableBullet;
-
+   
     private GravityType gravityType;
-    private bool pickable;
+//    private bool pickable;
     private EcraseType ecrasable;
     public bool explored;
     private List<Effect> onDestroyEffects;
@@ -31,9 +32,13 @@ public abstract class Placeable : NetworkBehaviour
     /// <summary>
     /// Le joueur a qui appartient le placeable. Les joueurs, équipe neutre(monstres neutres) et null(blocs indépendants)
     /// </summary>
-    public Joueur joueur;
+    public Player player;
 
+    public Vector3Int GetPosition()
+    {
+        throw new NotImplementedException();
 
+    }
 
     public bool Walkable
     {
@@ -61,19 +66,7 @@ public abstract class Placeable : NetworkBehaviour
         }
     }
 
-    public bool Pickable
-    {
-        get
-        {
-            return pickable;
-        }
-
-        set
-        {
-            pickable = value;
-        }
-    }
-
+   
 
     /// <summary>
     /// Indique si on a déja fait nos test de gravité sur ce placeable
@@ -163,12 +156,12 @@ public abstract class Placeable : NetworkBehaviour
     {
         get
         {
-            return traversableChar;
+            return tangible;
         }
 
         set
         {
-            traversableChar = value;
+            tangible = value;
         }
     }
 
@@ -211,31 +204,20 @@ public abstract class Placeable : NetworkBehaviour
         }
     }
 
-    public Joueur Joueur
+    public Player Player
     {
         get
         {
-            return joueur;
+            return player;
         }
 
         set
         {
-            joueur = value;
+            player = value;
         }
     }
 
-    public Vector3Int Position
-    {
-        get
-        {
-            return position;
-        }
-
-        set
-        {
-            position = value;
-        }
-    }
+   
 
     public bool Destroyable
     {
@@ -250,18 +232,7 @@ public abstract class Placeable : NetworkBehaviour
         }
     }
 
-    public Game GameManager
-    {
-        get
-        {
-            return gameManager;
-        }
-
-        set
-        {
-            gameManager = value;
-        }
-    }
+  
 
 
     /// <summary>
@@ -301,7 +272,7 @@ public abstract class Placeable : NetworkBehaviour
             Debug.Log("Hello there");
 
             //Warning: works because only local player is joueur
-            ClientScene.localPlayers[0].gameObject.GetComponent<Joueur>().CmdMoveTo(this.netId);
+            ClientScene.localPlayers[0].gameObject.GetComponent<Player>().CmdMoveTo(this.netId);
 
             //
             //            gameManager.PlayerMove();
@@ -310,7 +281,7 @@ public abstract class Placeable : NetworkBehaviour
         }
         else if (Input.GetMouseButtonUp(2))
         {
-            gameManager.ShotPlaceable = this;
+            GameManager.instance.ShotPlaceable = this;
 
         }
 

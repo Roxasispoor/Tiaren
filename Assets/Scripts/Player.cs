@@ -7,14 +7,12 @@ using UnityEngine.UI;
 /// <summary>
 /// Représente un joueur 
 /// </summary>
-public class Joueur : NetworkBehaviour {
+public class Player : NetworkBehaviour {
     [SyncVar]
     private bool acted;
     [SyncVar]
     private int score;
-    [SyncVar]
-    private float ressource;
-    private bool isReadyToPlay = false;
+     private bool isReadyToPlay = false;
     public List<GameObject> personnages=new List<GameObject>();
     public List<int> numeroPrefab;
     private Vector3Int placeToGo;
@@ -30,8 +28,9 @@ public class Joueur : NetworkBehaviour {
     public Timer clock;
     private Dictionary<GameObject,Color> changedColor; 
 
-    private Game gameManager;
+    
 
+    //Un joueur inutile fait bien l'action, c'est juste que son chrono est non activé / relié a rien sur le canvas.
     [ClientRpc]
     public void RpcStartTimer(float temps)
     {
@@ -93,9 +92,9 @@ public class Joueur : NetworkBehaviour {
     {
         
         Placeable potential= NetworkServer.FindLocalObject(toGo).GetComponent<Placeable>();
-        if(gameManager.PlayingPlaceable.joueur==this)//on update que si c'est à son tour de jouer, on fait les autres vérifs dans la Gamemanager
+        if(GameManager.instance.PlayingPlaceable.player==this)//on update que si c'est à son tour de jouer, on fait les autres vérifs dans la Gamemanager
         {
-            placeToGo = potential.position;
+            placeToGo = potential.GetPosition();
             Debug.Log(placeToGo);
         }         
     }
@@ -112,9 +111,9 @@ public class Joueur : NetworkBehaviour {
         }
     }
     [ClientRpc]
-    public void RpcSetCamera(NetworkInstanceId doitJouer)
+    public void RpcSetCamera(NetworkInstanceId mustPlay)
     {
-        Placeable potential = ClientScene.FindLocalObject(doitJouer).GetComponent<Placeable>();
+        Placeable potential = ClientScene.FindLocalObject(mustPlay).GetComponent<Placeable>();
         
         this.cameraScript.target = potential.gameObject.transform;
         
@@ -187,19 +186,7 @@ public class Joueur : NetworkBehaviour {
         }
     }
 
-    public float Ressource
-    {
-        get
-        {
-            return ressource;
-        }
-
-        set
-        {
-            ressource = value;
-        }
-        
-    }
+  
 
     public Vector3Int PlaceToGo
     {
@@ -227,18 +214,7 @@ public class Joueur : NetworkBehaviour {
         }
     }
 
-    public Game GameManager
-    {
-        get
-        {
-            return gameManager;
-        }
-
-        set
-        {
-            gameManager = value;
-        }
-    }
+ 
 
     public Dictionary<string, Axis> DicoAxis
     {
@@ -298,26 +274,26 @@ public class Joueur : NetworkBehaviour {
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
 
+
     }
 
     // Use this for initialization
     void Start () {
         
-
+        if(GameManager.instance.player1==null)
+        {
+            GameManager.instance.player1 = gameObject;
+        }
+        else
+        {
+            GameManager.instance.player2 = gameObject;
+        }
         if (this.isServer)
         {
-             gameManager = GameObject.Find("GameManager").GetComponent<Game>();
-            if (!gameManager.joueur1)
-            {
-                gameManager.joueur1 = this.gameObject;
-            }
-            else
-            {
-                gameManager.joueur2 = this.gameObject;
-            }
+            
             this.acted = false;
         this.score = 0;
-        this.ressource = 0;
+   
         }
         //Retrieve data 
     }

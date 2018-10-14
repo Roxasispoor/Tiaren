@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class LivingPlaceable : Placeable
+public class LivingPlaceable : Placeable
 {
 
 
@@ -14,26 +14,23 @@ public abstract class LivingPlaceable : Placeable
     private int force;
     private float speed;
     private int dexterity;
-    private int miningPower;
     private float speedStack;
+    private float deathLength;
 
-
-    private List<Competence> competences;
+    private List<Skill> competences;
     private List<GameObject> armes;
     private Arme equipedArm;
-    private float sinMultiplier = 0.66f;
-    private float sinMultiplier2 = 0.66f;
-    private int nbFoisFiredThisTurn;
-    private bool estMort;
+    //private float sinMultiplier = 0.66f;
+    //private float sinMultiplier2 = 0.66f;
+    private int timesFiredThisTurn;
+    private bool isDead;
     private int nbFoisMort;
     private int tourRestantsCimetiere;
     private Vector3 shootPosition;
+    private int capacityinUse;
 
 
-    private void Awake()
-    {
-        SpeedStack = 1 / Speed;
-    }
+
     /// <summary>
     /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
     /// ne vérifie pas si on peut toucher la cible,se cibntente de lire. Ajoute le bonus de hauteur
@@ -75,7 +72,7 @@ public abstract class LivingPlaceable : Placeable
             vect2.Normalize();
 
             float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-            nbDmga = nbDmgs * (1 + sinfactor * sinMultiplier - sinDirection * sinMultiplier2);
+            nbDmga = nbDmgs; //* (1 + sinfactor * sinMultiplier - sinDirection * sinMultiplier2);
             if (nbDmga > maxdmg)
             {
                 maxdmg = nbDmga;
@@ -86,12 +83,8 @@ public abstract class LivingPlaceable : Placeable
         Debug.Log(maxdmg);
 
         //on prépare le damage en conséquence avant
-        this.NbFoisFiredThisTurn++;
-
-        this.GameManager.GameEffectManager.ToBeTreated.AddRange(this.EquipedArm.OnShootEffects);
-        this.GameManager.GameEffectManager.ToBeTreated.Add(new Damage(cible, this, maxdmg));
-
-        this.GameManager.GameEffectManager.Solve();
+        this.TimesFiredThisTurn++;
+        //TODO use gameEffectManager
         return cible.transform.position + maxHit.RelativePosition;
     }
 
@@ -128,7 +121,7 @@ public abstract class LivingPlaceable : Placeable
 
                     Placeable placeableshot = hit.transform.gameObject.GetComponent(typeof(Placeable)) as Placeable;
                     if (!(placeableshot.TraversableBullet == TraversableType.ALLTHROUGH ||
-                        placeableshot.TraversableBullet == TraversableType.ALLIESTHROUGH && placeableshot.Joueur != this.Joueur))
+                        placeableshot.TraversableBullet == TraversableType.ALLIESTHROUGH && placeableshot.Player != this.Player))
                     {
                         significantItemShot++;
                     }
@@ -148,7 +141,43 @@ public abstract class LivingPlaceable : Placeable
         return arenvoyer;
     }
 
+   
 
+    // Use this for initialization
+    void Awake()
+    {
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.GRAVITE_SIMPLE;
+      
+        this.Ecrasable = EcraseType.ECRASEDEATH;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+        {
+            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+        };
+        this.OnDebutTour = new List<Effect>();
+        this.OnFinTour = new List<Effect>();
+        this.PvMax = 100;
+        this.PvActuels = 100;
+        this.PmMax = 3;
+        this.PmActuels = 3;
+        this.Force = 100;
+        this.Speed = 100;
+        this.SpeedStack = 1 / Speed;
+        this.Dexterity = 100;
+        this.Competences = new List<Skill>();
+        this.Armes = new List<GameObject>();
+        this.TimesFiredThisTurn = 0;
+        this.IsDead = false;
+        this.NbFoisMort = 0;
+        this.TourRestantsCimetiere = 0;
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
+
+    }
     public float PvMax
     {
         get
@@ -188,7 +217,7 @@ public abstract class LivingPlaceable : Placeable
         }
     }
 
-    public List<Competence> Competences
+    public List<Skill> Competences
     {
         get
         {
@@ -293,16 +322,16 @@ public abstract class LivingPlaceable : Placeable
         }
     }
 
-    public int NbFoisFiredThisTurn
+    public int TimesFiredThisTurn
     {
         get
         {
-            return nbFoisFiredThisTurn;
+            return timesFiredThisTurn;
         }
 
         set
         {
-            nbFoisFiredThisTurn = value;
+            timesFiredThisTurn = value;
         }
     }
 
@@ -319,16 +348,16 @@ public abstract class LivingPlaceable : Placeable
         }
     }
 
-    public bool EstMort
+    public bool IsDead
     {
         get
         {
-            return estMort;
+            return isDead;
         }
 
         set
         {
-            estMort = value;
+            isDead = value;
         }
     }
 
@@ -358,6 +387,18 @@ public abstract class LivingPlaceable : Placeable
         }
     }
 
+    public int CapacityinUse
+    {
+        get
+        {
+            return capacityinUse;
+        }
+
+        set
+        {
+            capacityinUse = value;
+        }
+    }
 
     void OnMouseOver()
     {
@@ -365,7 +406,7 @@ public abstract class LivingPlaceable : Placeable
 
         if (Input.GetMouseButtonUp(1))
         {
-            GameManager.ShotPlaceable = this;
+            GameManager.instance.ShotPlaceable = this;
         }
 
 
@@ -387,10 +428,11 @@ public abstract class LivingPlaceable : Placeable
             }
         }
 
-        this.EstMort = true;
+        this.IsDead = true;
         this.gameObject.SetActive(false);
-        this.GameManager.GrilleJeu.Grid[Position.x, Position.y, Position.z] = null;
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         NbFoisMort++;
+       //TODO gérer le temps de respawn
     }
 
     // Use this for initialization

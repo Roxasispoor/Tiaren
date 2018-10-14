@@ -8,7 +8,7 @@ public class Push : Effect
 {
     private float damage;
     private int nbCases;
-    private Game gameManager;
+    private GameManager gameManager;
     /// <summary>
     /// Un super push détruit le bloc et augmente les dégats
     /// </summary>
@@ -24,9 +24,11 @@ public class Push : Effect
         this.isSuper = isSuper;
     }
 
-
+    override
+    public void Use() { }
 
     //TODO: a revoir, vieux et mal fait
+    /*
     override
         public void Use()
     {
@@ -97,4 +99,6 @@ public class Push : Effect
             }
         }
     }
+     */
+
 }

@@ -144,9 +144,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4850369285671442}
-  - component: {fileID: 114835329316048954}
   - component: {fileID: 114791878038683066}
   - component: {fileID: 114462364222441842}
+  - component: {fileID: 114887153983755284}
   m_Layer: 0
   m_Name: Joueur 1 1 1
   m_TagString: Untagged
@@ -495,7 +495,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114835329316048954}
+      - m_Target: {fileID: 0}
         m_MethodName: LaunchCommandEndTurn
         m_Mode: 1
         m_Arguments:
@@ -696,7 +696,7 @@ MonoBehaviour:
   zoomRate: 70
   panSpeed: 0.3
   zoomDampening: 5
-  joueur: {fileID: 114835329316048954}
+  joueur: {fileID: 114887153983755284}
 --- !u!114 &114750567834035586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -934,21 +934,6 @@ MonoBehaviour:
     i15: 16
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
---- !u!114 &114835329316048954
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1279931848499750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adc199c3aa1659849bfc610d2a99abe5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  personnages: []
-  numeroPrefab: 00000000
-  cameraScript: {fileID: 114669575655278514}
-  clock: {fileID: 114462364222441842}
 --- !u!114 &114867866458831280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -982,6 +967,21 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Capacite
+--- !u!114 &114887153983755284
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1279931848499750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc199c3aa1659849bfc610d2a99abe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personnages: []
+  numeroPrefab: 01000000
+  cameraScript: {fileID: 114669575655278514}
+  clock: {fileID: 114462364222441842}
 --- !u!114 &114902166166845414
 MonoBehaviour:
   m_ObjectHideFlags: 1

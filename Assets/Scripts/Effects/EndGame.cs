@@ -6,9 +6,9 @@ using UnityEngine;
 /// </summary>
 public class EndGame : Effect
 {
-    private Game game;
-    private Joueur joueur;
-    public EndGame(Game game, Joueur joueur)
+    private GameManager game;
+    private Player joueur;
+    public EndGame(GameManager game, Player joueur)
     {
         this.game = game;
         this.joueur = joueur;

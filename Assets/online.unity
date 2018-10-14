@@ -187,10 +187,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 823285885}
-  - component: {fileID: 823285884}
-  - component: {fileID: 823285883}
   - component: {fileID: 823285887}
   - component: {fileID: 823285890}
+  - component: {fileID: 823285884}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -198,17 +197,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &823285883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 823285882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 705fe0db9038d604d8c216c831d20d67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &823285884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,9 +210,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 829413193}
   prefabPersos:
+  - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
   - {fileID: 1320180823792864, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}
-  prefabArmes:
-  - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
+  prefabArmes: []
   gridFolder: {fileID: 1154982765}
   joueur1: {fileID: 0}
   joueur2: {fileID: 0}

@@ -914,8 +914,8 @@ GameObject:
   - component: {fileID: 95668340335905582}
   - component: {fileID: 114882328610969924}
   - component: {fileID: 114459317413421478}
-  - component: {fileID: 114624198994380336}
   - component: {fileID: 65536682569931500}
+  - component: {fileID: 114870527692426132}
   - component: {fileID: 114965683215545634}
   m_Layer: 0
   m_Name: unitychan 1
@@ -5107,7 +5107,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 4f32f4345ffde43aca2270c41dcf6e81, type: 2}
   - {fileID: 7400000, guid: 73cb3ae8fc1de47a0a307cb5f95ec701, type: 2}
   delayWeight: 0.3
---- !u!114 &114624198994380336
+--- !u!114 &114870527692426132
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5115,14 +5115,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1320180823792864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ebd7baf998d22a4e8aa73015d679990, type: 3}
+  m_Script: {fileID: 11500000, guid: fc2118c1f760df142a86b1f1c81af9b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  serializeNumber: 2
-  position: {x: 0, y: 4, z: 0}
+  serializeNumber: 0
   explored: 0
-  joueur: {fileID: 0}
+  player: {fileID: 0}
   pvActuels: 0
 --- !u!114 &114882328610969924
 MonoBehaviour:

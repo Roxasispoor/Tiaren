@@ -12,7 +12,7 @@ public class StandardCube : Placeable
     void Awake()
     {
         this.serializeNumber = 1;
-        this.Position = new Vector3Int();
+       
 
         this.Walkable = true;
         this.OnWalkEffects = new List<Effect>();
@@ -23,7 +23,7 @@ public class StandardCube : Placeable
         this.TraversableBullet = TraversableType.NOTHROUGH;
 
         this.GravityType = GravityType.GRAVITE_SIMPLE;
-        this.Pickable = false;
+       
         this.Ecrasable = EcraseType.ECRASESTAY;
         this.Explored = false;
         this.OnDestroyEffects = new List<Effect>();
