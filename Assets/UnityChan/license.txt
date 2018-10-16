@@ -62,7 +62,7 @@ The Company may update this License if it determines it is necessary and will po
 ##Article 7. Governing Law
 
 7.1 This License shall be governed by the laws of Japan and the application of the United Nations Convention on Contracts for the International Sale of Goods is expressly disclaimed, even though the goods are sold in relation to this License.  
-7.2 Even if any provision or a part of such provision is held to be invalid or unenforceable pursuant to the Consumer Contract Act or other laws or regulations, the other provisions of this License or the remainder of the provision, when a part thereof is held to be invalid or unenforceable, shall continue in full force and effect and any provision that is held to be invalid or unenforceable shall be amended so that it will have the closest legitimate meaning to the original provision.  
+7.2 Even if any provision or a part of such provision is held to be invalid or unenForceable pursuant to the Consumer Contract Act or other laws or regulations, the other provisions of this License or the remainder of the provision, when a part thereof is held to be invalid or unenForceable, shall continue in full Force and effect and any provision that is held to be invalid or unenForceable shall be amended so that it will have the closest legitimate meaning to the original provision.  
 ##Article 8. Jurisdiction
 
 8.1 The Tokyo District Court shall have exclusive jurisdiction over any dispute arising out of or in connection with this License.  

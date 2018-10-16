@@ -18,7 +18,7 @@ public class CameraScript : NetworkBehaviour
     public int zoomRate = 70;
     public float panSpeed = 0.3f;
     public float zoomDampening = 5.0f;
-    public Player joueur;
+    public Player player;
 
     private float xDeg = 0.0f;
     private float yDeg = 0.0f;
@@ -110,15 +110,15 @@ public class CameraScript : NetworkBehaviour
     {
 
 
-        //0 gauche 1droite 2 milieu
+        //0 left 1 right 2 middle
         // If Middle button? ZOOM!
 
         // If middle mouse and left alt are selected? ORBIT
 
-        if (joueur.DicoCondition["OrbitCamera"]())
+        if (player.DicoCondition["OrbitCamera"]())
         {
-            XDeg += joueur.DicoAxis["AxisXCamera"]() * xSpeed * 0.02f;
-            YDeg -= joueur.DicoAxis["AxisYCamera"]() * ySpeed * 0.02f;
+            XDeg += player.DicoAxis["AxisXCamera"]() * xSpeed * 0.02f;
+            YDeg -= player.DicoAxis["AxisYCamera"]() * ySpeed * 0.02f;
 
             ////////OrbitAngle
 
@@ -132,18 +132,18 @@ public class CameraScript : NetworkBehaviour
             transform.rotation = rotation;
         }
         // otherwise if middle mouse is selected, we pan by way of transforming the target in screenspace
-        else if (joueur.DicoCondition["PanCamera"]())
+        else if (player.DicoCondition["PanCamera"]())
         {
             //grab the rotation of the camera so we can move in a pseudo local XY space
             target.rotation = transform.rotation;
-            target.Translate(Vector3.right * -joueur.DicoAxis["AxisXCamera"]() * panSpeed);
-            target.Translate(transform.up * -joueur.DicoAxis["AxisYCamera"]() * panSpeed, Space.World);
+            target.Translate(Vector3.right * -player.DicoAxis["AxisXCamera"]() * panSpeed);
+            target.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed, Space.World);
         }
 
         ////////Orbit Position
 
         // affect the desired Zoom distance if we roll the scrollwheel
-        DesiredDistance -= joueur.DicoAxis["AxisZoomCamera"]() * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);
+        DesiredDistance -= player.DicoAxis["AxisZoomCamera"]() * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);
         //clamp the zoom min/max
         DesiredDistance = Mathf.Clamp(DesiredDistance, minDistance, maxDistance);
         // For smoothing of the zoom, lerp distance

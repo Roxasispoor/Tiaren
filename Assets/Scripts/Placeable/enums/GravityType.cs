@@ -1,16 +1,16 @@
 ﻿public enum GravityType
 {
     /// <summary>
-    /// gravite de type rien en dessous=> tombe
+    /// simple gravity : nothing below => fall
     /// </summary>
-    GRAVITE_SIMPLE,
+    SIMPLE_GRAVITY,
     /// <summary>
-    /// Gravite de type reste accroché tant qu'un de ses voisin l'est
+    /// related gravity : remains clipped while one of the neighbour is
     /// </summary>
-    GRAVITE_CONNEXE,
+    RELATED_GRAVITY,
     /// <summary>
-    /// Flotte dans les airs, non soumis à la gravité
+    /// null gravity : floating in the air, not impacted by any gravity
     /// </summary>
-    GRAVITE_NULLE
+    NULL_GRAVITY
 
 }

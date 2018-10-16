@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
-/// Permet de lancer des comptes a rebours
+/// Class for timer and countdown
 /// </summary>
 public class Timer : MonoBehaviour
 {

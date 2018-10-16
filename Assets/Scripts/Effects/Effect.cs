@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Les effect doivent être utilisés par le gameEffectManager qui les résoudra 
+/// effects must be used by gameEffectManager which will resolve them
 /// </summary>
 public abstract class Effect
 {
-    private Placeable cible;
-    private Placeable lanceur;
-    private int tourEffetActif; //-1 = inactif 0=on arrête. On utilisera int.MaxValue/2 quand c'est indépendant
+    private Placeable target;
+    private Placeable launcher;
+    private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     protected Effect()
     {
 
     }
-    protected Effect(Placeable cible, Placeable lanceur)
+    protected Effect(Placeable target, Placeable launcher)
     {
-        this.cible = cible;
-        this.lanceur = lanceur;
+        this.target = target;
+        this.launcher = launcher;
     }
-    public virtual Placeable Cible
+    public virtual Placeable Target
     {
         get
         {
-            return cible;
+            return target;
         }
 
         set
         {
-            cible = value;
+            target = value;
         }
     }
 
@@ -35,25 +35,25 @@ public abstract class Effect
     {
         get
         {
-            return lanceur;
+            return launcher;
         }
 
         set
         {
-            lanceur = value;
+            launcher = value;
         }
     }
 
-    public int TourEffetActif
+    public int TurnActiveEffect
     {
         get
         {
-            return tourEffetActif;
+            return turnActiveEffect;
         }
 
         set
         {
-            tourEffetActif = value;
+            turnActiveEffect = value;
         }
     }
 

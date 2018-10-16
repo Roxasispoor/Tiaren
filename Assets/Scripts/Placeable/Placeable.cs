@@ -5,15 +5,12 @@ using UnityEngine.Networking;
 using System;
 
 /// <summary>
-/// Représente a peut pres n'importe quoi pouvant occuper un bloc dans le grille
+/// Represents something able to fill a bloc of the grid
 /// </summary>
 
 public abstract class Placeable : NetworkBehaviour
 {
-   // public GameManager gameManager;
-
     public int serializeNumber;
-    //public Vector3Int position;
     private bool walkable;
     private List<Effect> onWalkEffects;
     private bool movable;
@@ -22,15 +19,14 @@ public abstract class Placeable : NetworkBehaviour
     private TraversableType traversableBullet;
    
     private GravityType gravityType;
-//    private bool pickable;
-    private EcraseType ecrasable;
+    private CrushType crushable;
     public bool explored;
     private List<Effect> onDestroyEffects;
     private List<HitablePoint> hitablePoints;
-    private List<Effect> onDebutTour;
-    private List<Effect> onFinTour;
+    private List<Effect> onStartTurn;
+    private List<Effect> onEndTurn;
     /// <summary>
-    /// Le joueur a qui appartient le placeable. Les joueurs, équipe neutre(monstres neutres) et null(blocs indépendants)
+    /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
     public Player player;
 
@@ -69,7 +65,7 @@ public abstract class Placeable : NetworkBehaviour
    
 
     /// <summary>
-    /// Indique si on a déja fait nos test de gravité sur ce placeable
+    /// indicates if gravity tests have been already done on placeable 
     /// </summary>
     public bool Explored
     {
@@ -87,29 +83,29 @@ public abstract class Placeable : NetworkBehaviour
 
 
 
-    public List<Effect> OnDebutTour
+    public List<Effect> OnStartTurn
     {
         get
         {
-            return onDebutTour;
+            return onStartTurn;
         }
 
         set
         {
-            onDebutTour = value;
+            onStartTurn = value;
         }
     }
 
-    public List<Effect> OnFinTour
+    public List<Effect> OnEndTurn
     {
         get
         {
-            return onFinTour;
+            return onEndTurn;
         }
 
         set
         {
-            onFinTour = value;
+            onEndTurn = value;
         }
     }
 
@@ -191,16 +187,16 @@ public abstract class Placeable : NetworkBehaviour
         }
     }
 
-    public EcraseType Ecrasable
+    public CrushType Crushable
     {
         get
         {
-            return ecrasable;
+            return crushable;
         }
 
         set
         {
-            ecrasable = value;
+            crushable = value;
         }
     }
 
@@ -236,9 +232,9 @@ public abstract class Placeable : NetworkBehaviour
 
 
     /// <summary>
-    /// Copie l'objet
+    /// Copy object
     /// </summary>
-    /// <returns>Retourne une copie de l'objet</returns>
+    /// <returns>Return a copy of the object</returns>
     public virtual Placeable Cloner()
     {
         var copy = (Placeable)this.MemberwiseClone();
@@ -246,9 +242,9 @@ public abstract class Placeable : NetworkBehaviour
     }
 
     /// <summary>
-    /// Méthode a appeler lors de la destruction de l'objet
+    /// method to call for destroying object
     /// </summary>
-    public virtual void Detruire()
+    public virtual void DestroyLivingPlaceable()
     {
         if (this.Destroyable)
         {
@@ -261,7 +257,7 @@ public abstract class Placeable : NetworkBehaviour
         Destroy(this.gameObject);
     }
     /// <summary>
-    /// permet le shoot et le déplacement
+    /// allows shoot and shifting
     /// </summary>
     void OnMouseOver()
     {
@@ -269,15 +265,10 @@ public abstract class Placeable : NetworkBehaviour
 
         if (Input.GetMouseButtonUp(0) && this.walkable)
         {
-            Debug.Log("Hello there");
 
             //Warning: works because only local player is joueur
             ClientScene.localPlayers[0].gameObject.GetComponent<Player>().CmdMoveTo(this.netId);
-
-            //
-            //            gameManager.PlayerMove();
-
-            //GameManager.PlaceToGo = this.Position ;
+            
         }
         else if (Input.GetMouseButtonUp(2))
         {

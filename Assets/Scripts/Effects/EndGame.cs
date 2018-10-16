@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Effet de fin du jeu
+/// Effect of end game
 /// </summary>
 public class EndGame : Effect
 {
     private GameManager game;
-    private Player joueur;
-    public EndGame(GameManager game, Player joueur)
+    private Player player;
+    public EndGame(GameManager game, Player player)
     {
         this.game = game;
-        this.joueur = joueur;
+        this.player = player;
     }
     override
         public void Use()
     {
-        this.game.Winner = joueur;
+        this.game.Winner = player;
     }
 
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Effet permettant de changer la valeur d'un attribut. Nécessite un getter/setter spécialisé, typé java
+/// Effect changing value of an attribute. Need a specialized getter/setter (javatyped)
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class ParameterChange<T> : Effect
@@ -12,7 +12,7 @@ public class ParameterChange<T> : Effect
     private T paramNewValue;
 
 
-    public ParameterChange(Placeable cible, Placeable lanceur, DelegateSetter delegateSetter, T paramNewValue) : base(cible, lanceur)
+    public ParameterChange(Placeable target, Placeable launcher, DelegateSetter delegateSetter, T paramNewValue) : base(target, launcher)
     {
         this.delegateSetter = delegateSetter;
         this.paramNewValue = paramNewValue;

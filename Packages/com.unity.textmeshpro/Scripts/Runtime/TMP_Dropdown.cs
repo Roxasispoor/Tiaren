@@ -314,10 +314,10 @@ namespace TMPro
 
         private static T GetOrAddComponent<T>(GameObject go) where T : Component
         {
-            T comp = go.GetComponent<T>();
-            if (!comp)
-                comp = go.AddComponent<T>();
-            return comp;
+            T sk = go.GetComponent<T>();
+            if (!sk)
+                sk = go.AddComponent<T>();
+            return sk;
         }
 
         public virtual void OnPointerClick(PointerEventData eventData)

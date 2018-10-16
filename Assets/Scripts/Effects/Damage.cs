@@ -3,48 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Classe représentant les dégats
+/// Class representing damage
 /// </summary>
 public class Damage : Effect
 {
-    private float damage;
+    private float damageValue;
     /// <summary>
-    /// Crée un objet de dégats
+    /// create a damage object
     /// </summary>
-    /// <param name="cible">Indique la cible du coup</param>
-    /// <param name="lanceur">Indique le lanceur du coup</param>
-    /// <param name="damage">Quantité de dégats pris</param>
-    public Damage(Placeable cible, Placeable lanceur, float damage) : base(cible, lanceur)
+    /// <param name="target">target of the action</param>
+    /// <param name="launcher">launcher of the action</param>
+    /// <param name="damageValue">quanitity of damage given</param>
+    public Damage(Placeable target, Placeable launcher, float damageValue) : base(target, launcher)
     {
-        this.Damage1 = damage;
+        this.DamageValue = damageValue;
     }
 
 
-    public float Damage1
+    public float DamageValue
     {
         get
         {
-            return damage;
+            return damageValue;
         }
 
         set
         {
-            damage = value;
+            damageValue = value;
         }
     }
 
     override
         public void Use()
     {
-        if (this.Cible is LivingPlaceable)
+        if (this.Target is LivingPlaceable)
         {
-            LivingPlaceable Cible = (LivingPlaceable)(this.Cible);
-            Cible.PvActuels -= Damage1;
-            if (Cible.PvActuels <= 0)
+            LivingPlaceable Target = (LivingPlaceable)(this.Target);
+            Target.currentPV -= DamageValue;
+            if (Target.currentPV <= 0)
             {
-                Debug.Log("ouille ouille ouille");
 
-                Cible.Detruire();
+                Target.DestroyLivingPlaceable();
             }
 
 

@@ -419,7 +419,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to be used to force recomputing of character padding when Shader / Material properties have been changed via script.
+        /// Function to be used to Force recomputing of character padding when Shader / Material properties have been changed via script.
         /// </summary>
         public override void UpdateMeshPadding()
         {
@@ -473,7 +473,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to force regeneration of the mesh before its normal process time. This is useful when changes to the text object properties need to be applied immediately.
+        /// Function to Force regeneration of the mesh before its normal process time. This is useful when changes to the text object properties need to be applied immediately.
         /// </summary>
         public override void ForceMeshUpdate()
         {
@@ -485,7 +485,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to force regeneration of the mesh before its normal process time. This is useful when changes to the text object properties need to be applied immediately.
+        /// Function to Force regeneration of the mesh before its normal process time. This is useful when changes to the text object properties need to be applied immediately.
         /// </summary>
         /// <param name="ignoreInactive">If set to true, the text object will be regenerated regardless of is active state.</param>
         public override void ForceMeshUpdate(bool ignoreInactive)
@@ -536,7 +536,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to force the regeneration of the text object.
+        /// Function to Force the regeneration of the text object.
         /// </summary>
         /// <param name="flags"> Flags to control which portions of the geometry gets uploaded.</param>
         //public override void ForceMeshUpdate(TMP_VertexDataUpdateFlags flags) { }

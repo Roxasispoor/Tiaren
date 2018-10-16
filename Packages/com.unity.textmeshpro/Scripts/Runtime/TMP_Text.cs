@@ -574,7 +574,7 @@ namespace TMPro
         }
         [SerializeField]
         protected float m_lineSpacingMax = 0; // Text Auto Sizing Max Line spacing reduction.
-        //protected bool m_forceLineBreak;
+        //protected bool m_ForceLineBreak;
 
         /// <summary>
         /// The amount of additional spacing to add between each lines of text.
@@ -790,7 +790,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Sets the RenderQueue along with Ztest to force the text to be drawn last and on top of scene elements.
+        /// Sets the RenderQueue along with Ztest to Force the text to be drawn last and on top of scene elements.
         /// </summary>
         public bool isOverlay
         {
@@ -1547,7 +1547,7 @@ namespace TMPro
         // PUBLIC FUNCTIONS
         protected bool m_ignoreActiveState;
         /// <summary>
-        /// Function to force the regeneration of the text object.
+        /// Function to Force the regeneration of the text object.
         /// </summary>
         public virtual void ForceMeshUpdate() { }
 
@@ -1560,7 +1560,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to force the regeneration of the text object.
+        /// Function to Force the regeneration of the text object.
         /// </summary>
         /// <param name="ignoreActiveState">If set to true, the text object will be regenerated regardless of is active state.</param>
         public virtual void ForceMeshUpdate(bool ignoreActiveState) { }
@@ -1579,7 +1579,7 @@ namespace TMPro
         }
 
         /// <summary>
-        /// Function to force the regeneration of the text object.
+        /// Function to Force the regeneration of the text object.
         /// </summary>
         /// <param name="flags"> Flags to control which portions of the geometry gets uploaded.</param>
         //public virtual void ForceMeshUpdate(TMP_VertexDataUpdateFlags flags) { }
@@ -1613,7 +1613,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to be used to force recomputing of character padding when Shader / Material properties have been changed via script.
+        /// Function to be used to Force recomputing of character padding when Shader / Material properties have been changed via script.
         /// </summary>
         public virtual void UpdateMeshPadding() { }
 
@@ -4506,7 +4506,7 @@ namespace TMPro
 
 
         /// <summary>
-        /// Function to force an update of the margin size.
+        /// Function to Force an update of the margin size.
         /// </summary>
         protected virtual void ComputeMarginSize() { }
 
@@ -6318,7 +6318,7 @@ namespace TMPro
 
                         if ((m_fontStyle & FontStyles.Bold) == FontStyles.Bold)
                         {
-                            // Nothing happens since Bold is forced on the text.
+                            // Nothing happens since Bold is Forced on the text.
                             //m_fontWeight = 700;
                             return true;
                         }
@@ -6467,7 +6467,7 @@ namespace TMPro
                     // <BR> tag is now handled inline where it is replaced by a linefeed or \n.
                     //case 544: // <BR>
                     //case 800: // <br>
-                    //    m_forceLineBreak = true;
+                    //    m_ForceLineBreak = true;
                     //    return true;
                     case 43969: // <nobr>
                     case 31169: // <NOBR>

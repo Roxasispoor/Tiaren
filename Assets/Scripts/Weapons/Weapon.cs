@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// classe abstraite pour armes
+/// abstract class for weapons
 /// </summary>
-public abstract class Arme : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
 
     private float range;

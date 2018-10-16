@@ -395,7 +395,7 @@ namespace TMPro
                 // Set RectTransform relative position to top of viewport.
                 AdjustTextPositionRelativeToViewport(0);
 
-                m_forceRectTransformAdjustment = true;
+                m_ForceRectTransformAdjustment = true;
 
                 SendOnValueChangedAndUpdateLabel();
             }
@@ -556,7 +556,7 @@ namespace TMPro
 
         // Content Type related
 
-        public ContentType contentType { get { return m_ContentType; } set { if (SetPropertyUtility.SetStruct(ref m_ContentType, value)) EnforceContentType(); } }
+        public ContentType contentType { get { return m_ContentType; } set { if (SetPropertyUtility.SetStruct(ref m_ContentType, value)) EnForceContentType(); } }
 
         public LineType lineType { get { return m_LineType; } set { if (SetPropertyUtility.SetStruct(ref m_LineType, value)) SetTextComponentWrapMode(); SetToCustomIfContentTypeIsNot(ContentType.Standard, ContentType.Autocorrected); } }
 
@@ -618,7 +618,7 @@ namespace TMPro
         private bool hasSelection { get { return stringPositionInternal != stringSelectPositionInternal; } }
         private bool m_isSelected;
         private bool isStringPositionDirty;
-        private bool m_forceRectTransformAdjustment;
+        private bool m_ForceRectTransformAdjustment;
 
         /// <summary>
         /// Get: Returns the focus position as thats the position that moves around even during selection.
@@ -729,7 +729,7 @@ namespace TMPro
         protected override void OnValidate()
         {
             base.OnValidate();
-            EnforceContentType();
+            EnForceContentType();
 
             m_CharacterLimit = Math.Max(0, m_CharacterLimit);
 
@@ -2828,7 +2828,7 @@ namespace TMPro
             //Debug.Log("String Char [" + m_Text[m_StringPosition] + "] at Index:" + m_StringPosition + "  Caret Char [" + currentCharacter.character + "] at Index:" + caretPositionInternal);
 
             // Adjust the position of the RectTransform based on the caret position in the viewport (only if we have focus).
-            if (isFocused && startPosition != m_LastPosition || m_forceRectTransformAdjustment)
+            if (isFocused && startPosition != m_LastPosition || m_ForceRectTransformAdjustment)
                 AdjustRectTransformRelativeToViewport(startPosition, height, currentCharacter.isVisible);
 
             m_LastPosition = startPosition;
@@ -3053,7 +3053,7 @@ namespace TMPro
                 m_isLastKeyBackspace = false;
             }
 
-            m_forceRectTransformAdjustment = false;
+            m_ForceRectTransformAdjustment = false;
         }
 
         /// <summary>
@@ -3320,13 +3320,13 @@ namespace TMPro
         //        return;
         //}
 
-        private void EnforceContentType()
+        private void EnForceContentType()
         {
             switch (contentType)
             {
                 case ContentType.Standard:
                     {
-                        // Don't enforce line type for this content type.
+                        // Don't enForce line type for this content type.
                         m_InputType = InputType.Standard;
                         m_KeyboardType = TouchScreenKeyboardType.Default;
                         m_CharacterValidation = CharacterValidation.None;
@@ -3334,7 +3334,7 @@ namespace TMPro
                     }
                 case ContentType.Autocorrected:
                     {
-                        // Don't enforce line type for this content type.
+                        // Don't enForce line type for this content type.
                         m_InputType = InputType.AutoCorrect;
                         m_KeyboardType = TouchScreenKeyboardType.Default;
                         m_CharacterValidation = CharacterValidation.None;
@@ -3405,7 +3405,7 @@ namespace TMPro
                     }
                 default:
                     {
-                        // Includes Custom type. Nothing should be enforced.
+                        // Includes Custom type. Nothing should be enForced.
                         return;
                     }
             }

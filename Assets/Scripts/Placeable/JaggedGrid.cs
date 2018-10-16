@@ -7,21 +7,21 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
-/// Classe qui transforme la grille en jagged array a des fins de serialization. 
-/// La serialization se fait en deux temps: On sauvegarde le numero dans la liste préfab correspondant
-/// On ajoute des effets en plus si nécessaires.
+/// Transforms grid in jagged array for serialization
+/// first step, saving number in prefab list 
+/// second step, adding effects if needed
 /// </summary>
 public class JaggedGrid
 {
 
 
-    public int[] grille;
+    public int[] gridTable;
 
     public void ToJagged(Grid grid)
     {
-        grille = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
+        gridTable = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
 
-        //On met y en dernier pour des besoins futurs potentiels de compression
+        // y at last for potential futur need of compression
         for (int y = 0; y < grid.sizeY; y++)
         {
             for (int x = 0; x < grid.sizeX; x++)
@@ -31,12 +31,12 @@ public class JaggedGrid
                 {
                     if (grid.GridMatrix[x, y, z] == null)
                     {
-                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = 0;
+                        this.gridTable[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = 0;
 
                     }
                     else
                     {
-                        this.grille[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.GridMatrix[x, y, z].serializeNumber;
+                        this.gridTable[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.GridMatrix[x, y, z].serializeNumber;
 
                     }
 
@@ -46,11 +46,10 @@ public class JaggedGrid
     }
     public void Save()
     {
-        string blah = JsonUtility.ToJson(this);
+        string text = JsonUtility.ToJson(this);
 
         string path = "Grid.json";
-        Debug.Log("AssetPath:" + path);
-        File.WriteAllText(path, blah);
+        File.WriteAllText(path, text);
     }
 
     public static JaggedGrid FillGridFromJSON()
@@ -65,9 +64,9 @@ public class JaggedGrid
 
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
-        string toreturn = reader.ReadToEnd();
+        string toReturn = reader.ReadToEnd();
         reader.Close();
-        return toreturn;
+        return toReturn;
     }
 
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Classe utile pour le pathfinding et la remontée de chemin
+/// Class useful for pathfinding and ascent of path
 /// </summary>
 public class DistanceAndParent
 {

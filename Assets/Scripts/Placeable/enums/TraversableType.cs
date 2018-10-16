@@ -1,15 +1,15 @@
 ﻿public enum TraversableType
 {
     /// <summary>
-    /// Rien ne passe
+    /// nothing go through
     /// </summary>
     NOTHROUGH,
     /// <summary>
-    /// Tous les éléments peuvent traverser
+    /// all elements go through
     /// </summary>
     ALLTHROUGH,
     /// <summary>
-    /// Seuls les éléments alliés peuvent traverser
+    /// only ally elements go through
     /// </summary>
     ALLIESTHROUGH
 

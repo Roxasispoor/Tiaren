@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Classe représentant une compétence utilisable par le joueur
+/// Class representing a skill usable by player through a character of his team
 /// </summary>
 public class Skill
 {
@@ -13,18 +13,18 @@ public class Skill
     private List<Effect> effects;
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
-    private CompetenceType competenceType;
+    private SkillType skillType;
     private GameManager gameManager;
-    public CompetenceType CompetenceType
+    public SkillType SkillType
     {
         get
         {
-            return competenceType;
+            return skillType;
         }
 
         set
         {
-            competenceType = value;
+            skillType = value;
         }
     }
 

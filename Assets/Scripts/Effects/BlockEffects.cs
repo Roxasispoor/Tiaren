@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Les blocs sont des effets tout ce qu'il y a de plus normal. Quand ils sont utilisés ils sont ajoutés dans la liste des effets bloqués actifs du GameEffectsManager
+// blocs have simple effects. When they are used, they are add to the list of blocked active effect of GameEffectsManager
 /// <summary>
-/// Classe pour effet permettant de contrer d'autres effets.
+/// Class for effect blocking other effects
 /// </summary>
 public class BlockEffects : Effect
 {
     private List<Effect> listEffectsToBlock;
     /// <summary>
-    /// -1 = non dépendant
+    /// -1 = undependent
     /// </summary>
     private int numberToBlock;
 
 
-    public BlockEffects(Placeable cible, Placeable lanceur) : base(cible, lanceur)
+    public BlockEffects(Placeable target, Placeable launcher) : base(target, launcher)
     {
             }
 
@@ -32,11 +32,11 @@ public class BlockEffects : Effect
         }
     }
 
-    public bool ContientEffetType(Effect effet) // vérifie que la liste des effets contient une instance du type de l'objet
+    public bool ContainsEffectType(Effect effect) // check effects list contains instance of type object
     {
-        foreach (Effect a in listEffectsToBlock)
+        foreach (Effect iteEffect in listEffectsToBlock)
         {
-            if (effet.GetType() == a.GetType())
+            if (effect.GetType() == iteEffect.GetType())
             {
                 return true;
             }

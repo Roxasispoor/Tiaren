@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /// <summary>
-/// Représente un joueur 
+/// Represents a player
 /// </summary>
 public class Player : NetworkBehaviour {
     [SyncVar]
@@ -13,8 +13,8 @@ public class Player : NetworkBehaviour {
     [SyncVar]
     private int score;
      private bool isReadyToPlay = false;
-    public List<GameObject> personnages=new List<GameObject>();
-    public List<int> numeroPrefab;
+    public List<GameObject> characters=new List<GameObject>();
+    public List<int> numberPrefab;
     private Vector3Int placeToGo;
 
     
@@ -26,36 +26,33 @@ public class Player : NetworkBehaviour {
     private Dictionary<string, Condition> dicoCondition;
     private bool endPhase;
     public Timer clock;
-    private Dictionary<GameObject,Color> changedColor; 
+    private Dictionary<GameObject,Color> changedColor;
 
-    
 
-    //Un joueur inutile fait bien l'action, c'est juste que son chrono est non activé / relié a rien sur le canvas.
+
+    // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
     [ClientRpc]
-    public void RpcStartTimer(float temps)
+    public void RpcStartTimer(float time)
     {
      
-        clock.StartTimer(temps);
+        clock.StartTimer(time);
     }
        /// <summary>
        /// For reasons works that way
        /// </summary>
     public void LaunchCommandEndTurn()
     {
-      //  Debug.Log("Bonjour je suis" + this);
         CmdEndTurn();
     }
     [ClientRpc]
     public void RpcMakeCubeBlue(NetworkInstanceId cube)
     {
-       // Debug.Log("id client joueur recherché" + concernedJoueur);
-        Debug.Log("et moi je suis" + netId);
         if (isLocalPlayer)
         {
-            GameObject cuube = ClientScene.FindLocalObject(cube);
-            changedColor.Add(cuube, cuube.GetComponent<Renderer>().material.color);
-            //cuube.parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
-            cuube.GetComponent<Renderer>().material.color = Color.cyan;
+            GameObject clientCube = ClientScene.FindLocalObject(cube);
+            changedColor.Add(clientCube, clientCube.GetComponent<Renderer>().material.color);
+            //clientCube.parent.Color = testa.gameObject.GetComponent<Renderer>().material.color;
+            clientCube.GetComponent<Renderer>().material.color = Color.cyan;
 
         }
     }
@@ -80,7 +77,6 @@ public class Player : NetworkBehaviour {
     public void CmdEndTurn()
     {
         this.endPhase = true;
-        Debug.Log("STP phase finie");
     }
 
     /// <summary>
@@ -92,10 +88,9 @@ public class Player : NetworkBehaviour {
     {
         
         Placeable potential= NetworkServer.FindLocalObject(toGo).GetComponent<Placeable>();
-        if(GameManager.instance.PlayingPlaceable.player==this)//on update que si c'est à son tour de jouer, on fait les autres vérifs dans la Gamemanager
+        if(GameManager.instance.PlayingPlaceable.player==this)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             placeToGo = potential.GetPosition();
-            Debug.Log(placeToGo);
         }         
     }
     [Command]
@@ -105,8 +100,7 @@ public class Player : NetworkBehaviour {
         this.shotPlaceable = shotPlaceable.GetComponent<Placeable>();
         if (isServer)
         {
-            Debug.Log("Coucou shot commanded");
-            Debug.Log(shotPlaceable);
+            
 
         }
     }
@@ -123,13 +117,13 @@ public class Player : NetworkBehaviour {
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
-        //On active la camera du joueur et on se dit prêt
+        //activate camera of player, set ready
 
 
     }
 
     /// <summary>
-    /// Permet de savoir si le joueur a agi ce tour ci
+    /// Function to know if the player acted during this turn
     /// </summary>
     public bool Acted
     {
@@ -145,7 +139,7 @@ public class Player : NetworkBehaviour {
     }
 
     /// <summary>
-    /// Score du joueur
+    /// Score of player
     /// </summary>
     public int Score
     {
@@ -160,29 +154,29 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    public List<GameObject> Personnages
+    public List<GameObject> Characters
     {
         get
         {
-            return personnages;
+            return characters;
         }
 
         set
         {
-            personnages = value;
+            characters = value;
         }
     }
 
-    public List<int> NumeroPrefab
+    public List<int> NumberPrefab
     {
         get
         {
-            return numeroPrefab;
+            return numberPrefab;
         }
 
         set
         {
-            numeroPrefab = value;
+            numberPrefab = value;
         }
     }
 
@@ -258,7 +252,7 @@ public class Player : NetworkBehaviour {
 
 
     /// <summary>
-    /// Liste des personnages du joueur
+    /// List of characters of the player
     /// </summary>
 
     private void Awake()

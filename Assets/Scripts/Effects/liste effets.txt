@@ -22,7 +22,7 @@ Arbre => grandit au et a mesure des tours
 Stab => Multiplication plus grande quand tape par derriere
 Sniper => Multiplication plus grande quand tape par derriere
 6eme sens => esquive de devant améliorée (séparée potentiellemenent en cac ou pas)
-Armes contondantes: limite le déplacement
+Weapons contondantes: limite le déplacement
 Débuff de stats dégats/autre
 Sentry / Zombie
 Fast Wall

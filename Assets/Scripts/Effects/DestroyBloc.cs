@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Effet permettant de détruire un bloc
+/// effect to destroy a bloc
 /// </summary>
 public class DestroyBloc : Effect
 {
@@ -11,9 +11,9 @@ public class DestroyBloc : Effect
     override
     public void Use()
     {
-        if (Cible.GetType() != typeof(LivingPlaceable))
+        if (Target.GetType() != typeof(LivingPlaceable))
         {
-            Cible.Detruire();
+            Target.DestroyLivingPlaceable();
         }
     }
 }

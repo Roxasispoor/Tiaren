@@ -7,61 +7,58 @@ public class LivingPlaceable : Placeable
 {
 
 
-    private float pvMax;
-    public float pvActuels;
+    private float maxPV;
+    public float currentPV;
     private int pmMax;
-    private int pmActuels;
+    private int currentPM;
     private int force;
     private float speed;
     private int dexterity;
     private float speedStack;
     private float deathLength;
 
-    private List<Skill> competences;
-    private List<GameObject> armes;
-    private Arme equipedArm;
-    //private float sinMultiplier = 0.66f;
-    //private float sinMultiplier2 = 0.66f;
+    private List<Skill> skills;
+    private List<GameObject> weapons;
+    private Weapon equipedWeapon;
     private int timesFiredThisTurn;
     private bool isDead;
-    private int nbFoisMort;
-    private int tourRestantsCimetiere;
+    private int counterDeaths;
+    private int turnsRemainingCemetery;
     private Vector3 shootPosition;
-    private int capacityinUse;
+    private int capacityInUse;
 
 
 
     /// <summary>
-    /// Crée l'effet Dégat et ajoute tous les effets de l'arme au gameEffectManager puis lance la résolution. 
-    /// ne vérifie pas si on peut toucher la cible,se cibntente de lire. Ajoute le bonus de hauteur
-    /// Choisi le point qui fait le plus mal
+    /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
+    /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
     /// </summary>
-    /// <param name="cible"></param>
+    /// <param name="target"></param>
     /// <param name="gameEffectManager"></param>
-    public Vector3 ShootDamage(Placeable cible)
+    public Vector3 ShootDamage(Placeable target)
     {
 
         float nbDmgs;
 
-        if (EquipedArm.ScalesOnForce)
+        if (EquipedWeapon.ScalesOnForce)
         {
 
-            nbDmgs = EquipedArm.BaseDamage + EquipedArm.StatMultiplier * force;
+            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
         }
         else
         {
-            nbDmgs = EquipedArm.BaseDamage + EquipedArm.StatMultiplier * dexterity;
+            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
 
         }
-        float maxdmg = 0;
+        float maxDamage = 0;
         HitablePoint maxHit = null;
-        float nbDmga;
-        foreach (HitablePoint hitPoint in CanHit(cible))
+        float nbDamagea;
+        foreach (HitablePoint hitPoint in CanHit(target))
         {
 
             Vector3 shotaPos = this.transform.position + shootPosition;
-            Vector3 ciblaPos = cible.transform.position + hitPoint.RelativePosition;
-            float sinfactor = (shotaPos.y - ciblaPos.y) /
+            Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
+            float sinFactor = (shotaPos.y - ciblaPos.y) /
                 (shotaPos - ciblaPos).magnitude;
 
             Vector3 vect1 = this.transform.forward;
@@ -72,56 +69,53 @@ public class LivingPlaceable : Placeable
             vect2.Normalize();
 
             float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-            nbDmga = nbDmgs; //* (1 + sinfactor * sinMultiplier - sinDirection * sinMultiplier2);
-            if (nbDmga > maxdmg)
+            nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
+            if (nbDamagea > maxDamage)
             {
-                maxdmg = nbDmga;
+                maxDamage = nbDamagea;
                 maxHit = hitPoint;
             }
 
-        }        //
-        Debug.Log(maxdmg);
+        }        
 
-        //on prépare le damage en conséquence avant
+        //preparing damage before
         this.TimesFiredThisTurn++;
         //TODO use gameEffectManager
-        return cible.transform.position + maxHit.RelativePosition;
+        return target.transform.position + maxHit.RelativePosition;
     }
 
     /// <summary>
-    /// Retourne les point du placeable sur lesquels il est possible de tirer
+    /// return points of placeable where player can shoot
     /// </summary>
 
     /// <returns></returns>
     public List<HitablePoint> CanHit(Placeable placeable)
     {
-        List<HitablePoint> arenvoyer = new List<HitablePoint>();
+        List<HitablePoint> pointsToSend = new List<HitablePoint>();
 
-        Vector3 depart = this.transform.position + this.shootPosition;
+        Vector3 starting = this.transform.position + this.shootPosition;
 
 
         foreach (HitablePoint x in placeable.HitablePoints)
         {
-            Vector3 arrivee = placeable.transform.position + x.RelativePosition;
-            Vector3 direction = arrivee - depart;
-            if (direction.magnitude > this.EquipedArm.Range)
+            Vector3 arrival = placeable.transform.position + x.RelativePosition;
+            Vector3 direction = arrival - starting;
+            if (direction.magnitude > this.EquipedWeapon.Range)
             {
                 x.Shootable = false;
             }
             else
             {
-
-                Debug.DrawRay(depart,
-                   direction, Color.green, 100);
-                RaycastHit[] hits = Physics.RaycastAll(depart,
-                   direction, (depart - arrivee).magnitude + 0.1f);//les arrondis i guess
+                
+                RaycastHit[] hits = Physics.RaycastAll(starting,
+                   direction, (starting - arrival).magnitude + 0.1f);//les arrondis i guess
                 int significantItemShot = 0;
-                foreach (RaycastHit hit in hits) //pas opti, un while serait mieux
+                foreach (RaycastHit hit in hits) //a while would be better
                 {
 
-                    Placeable placeableshot = hit.transform.gameObject.GetComponent(typeof(Placeable)) as Placeable;
-                    if (!(placeableshot.TraversableBullet == TraversableType.ALLTHROUGH ||
-                        placeableshot.TraversableBullet == TraversableType.ALLIESTHROUGH && placeableshot.Player != this.Player))
+                    Placeable placeableShot = hit.transform.gameObject.GetComponent(typeof(Placeable)) as Placeable;
+                    if (!(placeableShot.TraversableBullet == TraversableType.ALLTHROUGH ||
+                        placeableShot.TraversableBullet == TraversableType.ALLIESTHROUGH && placeableShot.Player != this.Player))
                     {
                         significantItemShot++;
                     }
@@ -129,7 +123,7 @@ public class LivingPlaceable : Placeable
                 if (significantItemShot == 1)
                 {
                     x.Shootable = true;
-                    arenvoyer.Add(x);
+                    pointsToSend.Add(x);
                 }
                 else
                 {
@@ -138,7 +132,7 @@ public class LivingPlaceable : Placeable
             }
         }
 
-        return arenvoyer;
+        return pointsToSend;
     }
 
    
@@ -151,60 +145,60 @@ public class LivingPlaceable : Placeable
         this.Destroyable = true;
         this.TraversableChar = TraversableType.ALLIESTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
-        this.GravityType = GravityType.GRAVITE_SIMPLE;
+        this.GravityType = GravityType.SIMPLE_GRAVITY;
       
-        this.Ecrasable = EcraseType.ECRASEDEATH;
+        this.Crushable = CrushType.CRUSHDEATH;
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>
         {
             new HitablePoint(new Vector3(0, 0.5f, 0), 1)
         };
-        this.OnDebutTour = new List<Effect>();
-        this.OnFinTour = new List<Effect>();
-        this.PvMax = 100;
-        this.PvActuels = 100;
-        this.PmMax = 3;
-        this.PmActuels = 3;
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.MaxPV = 100;
+        this.CurrentPV = 100;
+        this.MaxPM = 3;
+        this.CurrentPM = 3;
         this.Force = 100;
         this.Speed = 100;
         this.SpeedStack = 1 / Speed;
         this.Dexterity = 100;
-        this.Competences = new List<Skill>();
-        this.Armes = new List<GameObject>();
+        this.Skills = new List<Skill>();
+        this.Weapons = new List<GameObject>();
         this.TimesFiredThisTurn = 0;
         this.IsDead = false;
-        this.NbFoisMort = 0;
-        this.TourRestantsCimetiere = 0;
+        this.CounterDeaths = 0;
+        this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
 
     }
-    public float PvMax
+    public float MaxPV
     {
         get
         {
-            return pvMax;
+            return maxPV;
         }
 
         set
         {
-            pvMax = value;
+            maxPV = value;
         }
     }
 
-    public float PvActuels
+    public float CurrentPV
     {
         get
         {
-            return pvActuels;
+            return currentPV;
         }
 
         set
         {
-            pvActuels = value;
+            currentPV = value;
         }
     }
 
-    public int PmMax
+    public int MaxPM
     {
         get
         {
@@ -217,16 +211,16 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public List<Skill> Competences
+    public List<Skill> Skills
     {
         get
         {
-            return competences;
+            return skills;
         }
 
         set
         {
-            competences = value;
+            skills = value;
         }
     }
 
@@ -283,42 +277,42 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public int TourRestantsCimetiere
+    public int TurnsRemaingingCemetery
     {
         get
         {
-            return tourRestantsCimetiere;
+            return turnsRemainingCemetery;
         }
 
         set
         {
-            tourRestantsCimetiere = value;
+            turnsRemainingCemetery = value;
         }
     }
 
-    public int NbFoisMort
+    public int CounterDeaths
     {
         get
         {
-            return nbFoisMort;
+            return counterDeaths;
         }
 
         set
         {
-            nbFoisMort = value;
+            counterDeaths = value;
         }
     }
 
-    public int PmActuels
+    public int CurrentPM
     {
         get
         {
-            return pmActuels;
+            return currentPM;
         }
 
         set
         {
-            pmActuels = value;
+            currentPM = value;
         }
     }
 
@@ -361,29 +355,29 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public List<GameObject> Armes
+    public List<GameObject> Weapons
     {
         get
         {
-            return armes;
+            return weapons;
         }
 
         set
         {
-            armes = value;
+            weapons = value;
         }
     }
 
-    public Arme EquipedArm
+    public Weapon EquipedWeapon
     {
         get
         {
-            return equipedArm;
+            return equipedWeapon;
         }
 
         set
         {
-            equipedArm = value;
+            equipedWeapon = value;
         }
     }
 
@@ -391,12 +385,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return capacityinUse;
+            return capacityInUse;
         }
 
         set
         {
-            capacityinUse = value;
+            capacityInUse = value;
         }
     }
 
@@ -413,11 +407,11 @@ public class LivingPlaceable : Placeable
     }
 
     /// <summary>
-    /// Méthode a appeler lors de la destruction de l'objet
+    /// method to call to destroy the object 
     /// </summary>
     /// 
     override
-    public void Detruire()
+    public void DestroyLivingPlaceable()
     {
 
         if (this.Destroyable)
@@ -431,7 +425,7 @@ public class LivingPlaceable : Placeable
         this.IsDead = true;
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        NbFoisMort++;
+        CounterDeaths++;
        //TODO gérer le temps de respawn
     }
 

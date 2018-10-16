@@ -19,13 +19,10 @@ public class yieldTest : MonoBehaviour {
         while (!clock.IsFinished)
         {
             i++;
-            print("c'est parti");
             yield return StartCoroutine(getInput(KeyCode.Space));
-            print("il a appuyé!"+i);
             yield return StartCoroutine(Waiting());
            
         }
-        print("fin du tour");
     }
     IEnumerator Waiting()
     {

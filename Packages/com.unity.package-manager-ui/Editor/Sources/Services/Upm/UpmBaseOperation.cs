@@ -104,7 +104,7 @@ namespace UnityEditor.PackageManager.UI
         public event Action<Error> OnOperationError = delegate { };
         public event Action OnOperationFinalized = delegate { };
         
-        public Error ForceError { get; set; }                // Allow external component to force an error on the requests (eg: testing)
+        public Error ForceError { get; set; }                // Allow external component to Force an error on the requests (eg: testing)
         public Error Error { get; protected set; }        // Keep last error
         
         public bool IsCompleted { get; protected set; }

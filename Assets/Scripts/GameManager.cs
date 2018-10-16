@@ -14,33 +14,27 @@ public class GameManager : NetworkBehaviour
     private int numberTurn = 0;
 
     private Placeable shotPlaceable;
-    public GameObject[] prefabPersos;
-    public GameObject[] prefabArmes;
+    public GameObject[] prefabCharacs;
+    public GameObject[] prefabWeapons;
     public GameObject gridFolder;
     public GameObject player1; //Should be Object
 
     public GameObject player2; //Should be Object
-    public GameObject[] prefabMonstres;
-
-    //private List<GameObject> listeMonstresNeutres = new List<GameObject>();
+    public GameObject[] prefabMonsters;
+    
 
     private List<LivingPlaceable> turnOrder;
-    //private List<Effect> listeEffectsDebutTour = new List<Effect>();
-    //private List<Effect> listeEffectsFinTour = new List<Effect>();
-    //private int playingPlaceable.CapacityinUse = 0;
-    //private GameEffectManager gameEffectManager;
-    //private Grille Grid.instance;
 
     private Player winner;
     private LivingPlaceable playingPlaceable;
 
     /// <summary>
-    /// Permet de savoir si le jeu est fini
+    /// allows to know if the game ended
     /// </summary>
     /// <returns></returns>
 
     /// <summary>
-    /// indique le numéro du tour actuel
+    /// display number of the current turn
     /// </summary>
     /// 
 
@@ -59,7 +53,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// Indique le joueur en train de jouer
+    /// Indique player having turn
     /// </summary>
 
 
@@ -152,8 +146,7 @@ public class GameManager : NetworkBehaviour
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
         {
-            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // sorte de valeur partagée a tous les préfabs, pas besoin d'etre statique
-
+            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
 
         }
 
@@ -161,15 +154,14 @@ public class GameManager : NetworkBehaviour
    
 
 
-    /** Déroulement 
-1)On reset pm et le bool de tir/compétences
-On applique les effets qui prennent effet en début de tour
-On soustrait un tour aux effets persistants attachés
-
-On laisse la main à l'utilisateur, qui peut utiliser une compétence et ses pm
-A chaque fois qu'un effet se déclenche, il est ajouté au game manager
-Le game manager applique vérifie que l'effet est activable /: pas contré/ autre	puis le use()
-On continue jusqu'à la fin des 30s /
+    /** Running
+1)reset pm and bool for shot/skill
+Apply effects that activate at the beginning of a turn
+Substract a turn to persistent linked effects
+Let the user act, using a skill, pm...
+When an effect trigger, added to gameManager
+gameManager apply, check effect is activable, not stopped, etc... and use()
+ Repeat until the end of 30s
 **/
 
 
@@ -199,15 +191,15 @@ On continue jusqu'à la fin des 30s /
         }
         CreateCharacters(player2);
 
-        //TODO modifier: les monstres neutres seront un autre joueur ne pouvant simplement pas gagner
-/*        foreach (GameObject monstre in listeMonstresNeutres)
+        //TODO modify: neutral monsters will be another player that cannot win
+        /*foreach (GameObject monstre in listeMonstresNeutres)
         {
             LivingPlaceable monstre1 = monstre.GetComponent<Personnage>();
             monstre1.GameManager = this;
             Vector3Int posPers = monstre1.Position;
             this.Grid.instance.Grid[posPers.x, posPers.y, posPers.z] = monstre1;
-            monstre1.Armes.Add(Instantiate(prefabArmes[0], monstre.transform)); // a changer selon l'arme de départ
-            monstre1.EquipedArm = monstre1.Armes[0].GetComponent<Arme>();
+            monstre1.Weapons.Add(Instantiate(prefabWeapons[0], monstre.transform)); // a changer selon l'arme de départ
+            monstre1.EquipedWeapon = monstre1.Weapons[0].GetComponent<Weapon>();
             tourOrder.Add(monstre1);
         }
         */
@@ -222,15 +214,12 @@ On continue jusqu'à la fin des 30s /
             TurnOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack) / (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
             playingPlaceable = TurnOrder[0];
             playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
-            //Petite verif on sait jamais
             if (TurnOrder.Count != 0 && playingPlaceable.Player != null)
             {
-
-
                 playingPlaceable.player.RpcSetCamera(playingPlaceable.netId);
-                playingPlaceable.PmActuels = playingPlaceable.PmMax;
+                playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
                 playingPlaceable.TimesFiredThisTurn = 0;
-                //Ici l'utilisateur a la main, et 30 secondes.
+                //Here user can act during 30s
 
                 if (!playingPlaceable.IsDead)
                 {
@@ -241,50 +230,47 @@ On continue jusqu'à la fin des 30s /
 
                     playingPlaceable.Player.EndPhase = false;
                     //TODO select spawn place
-                    Vector3Int positionDepart = playingPlaceable.GetPosition() - new Vector3Int(0, 1, 0);//le pathfinding commence 1 sous le joueur
+                    Vector3Int positionDepart = playingPlaceable.GetPosition() - new Vector3Int(0, 1, 0);//pathfinding start under the character
 
-                    DistanceAndParent[,,] inPlace = Grid.instance.CanGo(playingPlaceable, playingPlaceable.PmMax, positionDepart);
-                    Debug.Log("Tour de" + playingPlaceable.player);
+                    DistanceAndParent[,,] inPlace = Grid.instance.CanGo(playingPlaceable, playingPlaceable.MaxPM, positionDepart);
                     Vector3Int vecTest = new Vector3Int(-1, -1, -1);
-                    while (!playingPlaceable.Player.EndPhase && !playingPlaceable.Player.clock.IsFinished && (playingPlaceable.TimesFiredThisTurn < 1 || playingPlaceable.PmActuels > 0))
+                    while (!playingPlaceable.Player.EndPhase && !playingPlaceable.Player.clock.IsFinished && (playingPlaceable.TimesFiredThisTurn < 1 || playingPlaceable.CurrentPM > 0))
                     {
                         if (shotPlaceable != null && playingPlaceable.CapacityinUse == 0 && shotPlaceable != playingPlaceable && playingPlaceable.CanHit(shotPlaceable).Count > 0)// si il se tire pas dessus et qu'il a bien sélectionné quelqu'un
                         {
-                            //piew piew
-                            Debug.Log("Piew piew");
-                            Vector3 thePlaceToShoot = playingPlaceable.ShootDamage(shotPlaceable); // TODO: pour les animations
+                            Vector3 thePlaceToShoot = playingPlaceable.ShootDamage(shotPlaceable); // TODO: for animation
                         }
-                        else if (shotPlaceable != null && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Competences[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
-                            playingPlaceable.Competences[playingPlaceable.CapacityinUse].CompetenceType == CompetenceType.ONECLICKLIVING
+                        else if (shotPlaceable != null && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Skills[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
+                            playingPlaceable.Skills[playingPlaceable.CapacityinUse].SkillType == SkillType.ONECLICKLIVING
                           
                             && shotPlaceable.GetType() == typeof(LivingPlaceable)
-                            && playingPlaceable.Competences[playingPlaceable.CapacityinUse].condition())
+                            && playingPlaceable.Skills[playingPlaceable.CapacityinUse].condition())
                         {
-                            playingPlaceable.Competences[playingPlaceable.CapacityinUse].Use();
+                            playingPlaceable.Skills[playingPlaceable.CapacityinUse].Use();
 
                         }
-                        else if (shotPlaceable == playingPlaceable && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Competences[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
-                            playingPlaceable.Competences[playingPlaceable.CapacityinUse].CompetenceType == CompetenceType.SELFCOMPETENCE
+                        else if (shotPlaceable == playingPlaceable && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Skills[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
+                            playingPlaceable.Skills[playingPlaceable.CapacityinUse].SkillType == SkillType.SELFSKILL
                              
-                            && playingPlaceable.Competences[playingPlaceable.CapacityinUse].condition())
+                            && playingPlaceable.Skills[playingPlaceable.CapacityinUse].condition())
                         {
-                            playingPlaceable.Competences[playingPlaceable.CapacityinUse].Use();
+                            playingPlaceable.Skills[playingPlaceable.CapacityinUse].Use();
                           
                         }
-                        else if (shotPlaceable != null && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Competences[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
-                          playingPlaceable.Competences[playingPlaceable.CapacityinUse].CompetenceType == CompetenceType.ONECLICKPLACEABLE
+                        else if (shotPlaceable != null && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Skills[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
+                          playingPlaceable.Skills[playingPlaceable.CapacityinUse].SkillType == SkillType.ONECLICKPLACEABLE
                          
                           && shotPlaceable.GetType() == typeof(Placeable)
-                          && playingPlaceable.Competences[playingPlaceable.CapacityinUse].condition())
+                          && playingPlaceable.Skills[playingPlaceable.CapacityinUse].condition())
                         {
-                            playingPlaceable.Competences[playingPlaceable.CapacityinUse].Use();
+                            playingPlaceable.Skills[playingPlaceable.CapacityinUse].Use();
                           
                         }
 
 
                         else if (playingPlaceable.player.PlaceToGo != vecTest &&
                             inPlace[playingPlaceable.player.PlaceToGo.x, playingPlaceable.player.PlaceToGo.y, playingPlaceable.player.PlaceToGo.z].GetDistance() > 0
-                            && inPlace[playingPlaceable.player.PlaceToGo.x, playingPlaceable.player.PlaceToGo.y, playingPlaceable.player.PlaceToGo.z].GetDistance() <= playingPlaceable.PmActuels)
+                            && inPlace[playingPlaceable.player.PlaceToGo.x, playingPlaceable.player.PlaceToGo.y, playingPlaceable.player.PlaceToGo.z].GetDistance() <= playingPlaceable.CurrentPM)
                         {
                             List<Vector3> listAnimator = new List<Vector3>();
                             DistanceAndParent parent = inPlace[playingPlaceable.player.PlaceToGo.x, playingPlaceable.player.PlaceToGo.y, playingPlaceable.player.PlaceToGo.z];
@@ -295,51 +281,49 @@ On continue jusqu'à la fin des 30s /
                                 parent = parent.GetParent();
                                 listAnimator.Add(parent.Pos);
                             }
-                            listAnimator.Add(playingPlaceable.GetPosition() - new Vector3Int(0, 1, 0)); //on veut l'emplacement dessous en fait
+                            listAnimator.Add(playingPlaceable.GetPosition() - new Vector3Int(0, 1, 0)); //we want the position right below
                             RpcMoveAlongBezier(listAnimator.ToArray(), playingPlaceable.netId, 1);
-                            playingPlaceable.PmActuels -= listAnimator.Count - 1;
+                            playingPlaceable.CurrentPM -= listAnimator.Count - 1;
 
-                            //on actualise les positions
+                            //actualize position
                             Grid.instance.GridMatrix[playingPlaceable.player.PlaceToGo.x, playingPlaceable.player.PlaceToGo.y + 1, playingPlaceable.player.PlaceToGo.z] = playingPlaceable;
-                            Grid.instance.GridMatrix[playingPlaceable.GetPosition().x, playingPlaceable.GetPosition().y, playingPlaceable.GetPosition().z] = null; // on est plus a l'emplacement précédent
+                            Grid.instance.GridMatrix[playingPlaceable.GetPosition().x, playingPlaceable.GetPosition().y, playingPlaceable.GetPosition().z] = null; // we're not at the former position anymore
                             
-                            //On efface les anciens
+                            //erase formers
                             PlayingPlaceable.Player.RpcChangeBackColor();
 
-                            //On se déplace, donc on actualise ce qu'on peut voir, et on remet a 0 le vectest
-                            inPlace = Grid.instance.CanGo(playingPlaceable, playingPlaceable.PmMax, playingPlaceable.player.PlaceToGo);
+                            //moving => actualize what's seen. set vectest to 0 
+                            inPlace = Grid.instance.CanGo(playingPlaceable, playingPlaceable.MaxPM, playingPlaceable.player.PlaceToGo);
                             playingPlaceable.player.PlaceToGo = vecTest;
-                            Debug.Log("runny run");
 
                         }
                         yield return null;
 
                     }
-                    //on diminue de 1 le cooldown de la competence
-                    foreach (Skill comp in playingPlaceable.Competences)
+                    // reducing cooldown of skill by 1
+                    foreach (Skill sk in playingPlaceable.Skills)
                     {
-                        if (comp.TourCooldownLeft > 0)
+                        if (sk.TourCooldownLeft > 0)
                         {
-                            comp.TourCooldownLeft--;
+                            sk.TourCooldownLeft--;
                         }
                     }
                     shotPlaceable = null;
-                    //On efface les bleus encore actifs a la fin
+                    //erasing blue ones still active at the end
                     PlayingPlaceable.Player.RpcChangeBackColor();
 
                     playingPlaceable.player.PlaceToGo = vecTest;
 
 
                     playingPlaceable.Player.clock.IsFinished = false;
-                    Debug.Log("C'est la fin!");
 
-                    //On applique les changements
+                    //apply changes
  
                 }
                 else
                 {
-                    //On fast forward a la prochaine personne
-                    playingPlaceable.TourRestantsCimetiere--;
+                    //fast forward to the next character
+                    playingPlaceable.TurnsRemaingingCemetery--;
                 }
 
 
@@ -435,7 +419,7 @@ On continue jusqu'à la fin des 30s /
     public float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
-        if (isBezier)// si il y a différence de hauteur
+        if (isBezier)// if difference of height
         {
             controlPoint = (nextNode + start + 2 * new Vector3(0, Mathf.Abs(nextNode.y - start.y), 0)) / 2;
 
@@ -451,19 +435,17 @@ On continue jusqu'à la fin des 30s /
     [ClientRpc]
     public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
     {
-        Debug.Log(placeable);
         GameObject plc = ClientScene.FindLocalObject(placeable);
 
         List<Vector3> pathe = new List<Vector3>(path);
         StartCoroutine(MoveAlongBezier(pathe, plc.GetComponent<Placeable>(), speed));
-        Debug.Log("Started on client though");
     }
 
 
     [Client]
     public IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
-        float tempsBezier = 0f;
+        float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[path.Count - 1];
         Vector3 startPosition = path[path.Count - 1];
         Vector3 controlPoint = new Vector3();
@@ -476,12 +458,12 @@ On continue jusqu'à la fin des 30s /
 
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
-        while (tempsBezier < 1)
+        while (timeBezier < 1)
         {
             distanceParcourue += (speed * Time.deltaTime);
-            tempsBezier = distanceParcourue / distance;
+            timeBezier = distanceParcourue / distance;
 
-            while (tempsBezier > 1 && i > 0) //on go through 
+            while (timeBezier > 1 && i > 0) //on go through 
             {
 
 
@@ -492,29 +474,29 @@ On continue jusqu'à la fin des 30s /
                 targetDir.y = 0;// don't move up 
 
                 distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
-                tempsBezier = distanceParcourue / distance; //on recalcule
+                timeBezier = distanceParcourue / distance; //on recalcule
 
             }
-            if (i == 0 && tempsBezier > 1)
+            if (i == 0 && timeBezier > 1)
             {
-                // on est arrivé au dernier node du chemin, dans la boucle précédente
+                // arrived to the last node of path, in precedent loop
                 placeable.transform.position = path[i] + delta;
-                // sortie de la boucle qui yield
+                // exit yield loop
                 break;
             }
             if (isBezier)
             {
-                placeable.transform.position = delta + Mathf.Pow(1 - tempsBezier, 2) * (startPosition) + 2 * (1 - tempsBezier) * tempsBezier * (controlPoint) + Mathf.Pow(tempsBezier, 2) * (path[i]);
+                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
 
             }
             else
             {
-                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, tempsBezier);
+                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
             Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
             placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-            //On change ce qu'on regarde
+            //change what we look at
 
             yield return null;
 
@@ -525,7 +507,8 @@ On continue jusqu'à la fin des 30s /
 
 
     /// <summary>
-    /// déplace le personnage le long du chemin
+    /// moving character across the path
+    /// déplace le characonnage le long du chemin
     /// </summary>
     /// <param name="path"></param>
     /// <param name="placeable"></param>
@@ -534,58 +517,57 @@ On continue jusqu'à la fin des 30s /
     {
         Vector3 delta = placeable.transform.position - path[path.Count - 1];
         float speed = 1;
-        // distance parcourue depuis le point de départ
+        // distance traveled since starting position
         float travelDistance = 0;
 
-        // position de départ
+        
         Vector3 startPosition = path[path.Count - 1] + delta;
 
         Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
         targetDir.y = 0;
-        // boucle sur tous les point du chemin (c'est toujours mieux de stocker le total dans une variable locale)
+        // loop on all points of the path
         for (int i = path.Count - 2, count = path.Count, lastIndex = 0; i >= 0; i--)
         {
             //targetDir = path[i] - placeable.transform.position;
-            // distance entre le point de départ et le point d'arrivée (node actuel, node suivant)
+
+            // distance between starting Position and arrival position (current node, following node)
             float distance = Vector3.Distance(startPosition, path[i] + delta);
 
-            // vecteur directeur entre ces deux points
+            // direction vector between those two
             Vector3 direction = (path[i] + delta - startPosition).normalized;
 
-            // boucle tant qu'on a pas encore dépassé la position du node suivant
+            // looping while position of following node has not been passed
             while (travelDistance < distance)
             {
-
-                // on avance en fonction de la vitesse de déplacement et du temps écoulé
+                // advance in function of speed and time past
                 travelDistance += (speed * Time.deltaTime);
 
-                // si on a dépassé ou atteint la position du node d'arrivée
+                // if arrival node position has been reached / passed
                 if (travelDistance >= distance)
                 {
 
-                    // si on est encore en chemin, 
+                    // if we're still on our way 
                     if (i > lastIndex)
                     {
                         targetDir = path[i - 1] - placeable.transform.position;
                         targetDir.y = 0;
-                        // on se positionne un peu plus loin sur le chemin 
-                        // entre les deux nodes suivants, selon la distance parcourue au delà du node d'arrivée actuel
+                        // positioning a few far away on the way
+                        // between the two following nodes, depending on passed distance beyond current arrival node
                         float distanceNext = Vector3.Distance(path[i - 1], path[i]);
 
                         float ratio = (travelDistance - distance) / distanceNext;
 
-                        // si le ratio est supérieur à 1, c'est que la distance parcourue
-                        // est aussi supérieur à la distance entre les deux node suivants (donc on bouge vite)
-                        // cette boucle va sauter tous les nodes qu'on est censé avoir parcourus en se déplaçant
-                        // à grande vitesse
+                        // if ration > 1, 
+                        // then passed distance >distance between the two following nodes 
+                        // loop jump all nodes we're supposed to have gone through shifting with highspeed
                         while (ratio > 1)
                         {
                             i--;
                             if (i == lastIndex)
                             {
-                                // on est arrivé au dernier node du chemin
+                                // arrived to the last node of the path
                                 placeable.transform.position = path[i] + delta;
-                                // sortie de la boucle
+                                // ending loop
                                 break;
                             }
                             else
@@ -599,7 +581,7 @@ On continue jusqu'à la fin des 30s /
 
                         if (i == lastIndex)
                         {
-                            // on est arrivé au dernier node du chemin dans le while précédent
+                            // arrived to the last node of path during former while
                             break;
                         }
                         else
@@ -611,7 +593,7 @@ On continue jusqu'à la fin des 30s /
                     }
                     else
                     {
-                        // on est arrivé au dernier node du chemin
+                        // arrive to last node of the path
                         placeable.transform.position = path[i] + delta;
 
                         break;
@@ -619,7 +601,7 @@ On continue jusqu'à la fin des 30s /
                 }
                 else
                 {
-                    // sinon on avance en direction du point d'arrivée
+                    // going in direction of the arrival position
                     placeable.transform.position += direction * (speed * Time.deltaTime);
                 }
 
@@ -628,11 +610,10 @@ On continue jusqu'à la fin des 30s /
 
                 yield return null;
             }
-
-            // on retire la distance qu'il y avait à parcourir entre les deux nodes précédents
+            // substract distance to run between two former nodes
             travelDistance -= distance;
 
-            // mise à jour de la position de départ pour l'itération suivante
+            // updating starting position for next iteration
             startPosition = path[i] + delta;
         }
 
@@ -641,69 +622,69 @@ On continue jusqu'à la fin des 30s /
     [Server]
     private void CreateCharacters(GameObject player)
     {
-        for (int i = 0; i < player.GetComponent<Player>().NumeroPrefab.Count; i++)
+        for (int i = 0; i < player.GetComponent<Player>().NumberPrefab.Count; i++)
         {
-            GameObject pers = Instantiate(prefabPersos[player.GetComponent<Player>().NumeroPrefab[i]], new Vector3(0, 4f, 0), Quaternion.identity);
+            GameObject charac = Instantiate(prefabCharacs[player.GetComponent<Player>().NumberPrefab[i]], new Vector3(0, 4f, 0), Quaternion.identity);
 
 
 
-            LivingPlaceable pers1 = pers.GetComponent<LivingPlaceable>();
+            LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
           
-            player.GetComponent<Player>().Personnages.Add(pers);
-            pers1.Player = player.GetComponent<Player>();
+            player.GetComponent<Player>().Characters.Add(charac);
+            charac1.Player = player.GetComponent<Player>();
            
-            Vector3Int posPers = new Vector3Int(0, 5, 0);//POSITION DE DEPART
-            Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = pers1;
-            pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
-            pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+            Vector3Int posPers = new Vector3Int(0, 5, 0);//STARTING POSITION
+            Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
+            charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
+            charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
 
-            TurnOrder.Add(pers1);
-            NetworkServer.Spawn(pers);
-            RpcCreatePerso(pers, player);
+            TurnOrder.Add(charac1);
+            NetworkServer.Spawn(charac);
+            RpcCreatePerso(charac, player);
 
         }
 
     }
     [ClientRpc]
-    public void RpcCreatePerso(GameObject pers, GameObject joueur)
+    public void RpcCreatePerso(GameObject charac, GameObject joueur)
     {
-        LivingPlaceable pers1 = pers.GetComponent<LivingPlaceable>();
-        joueur.GetComponent<Player>().Personnages.Add(pers);
-        pers1.Player = joueur.GetComponent<Player>();
+        LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
+        joueur.GetComponent<Player>().Characters.Add(charac);
+        charac1.Player = joueur.GetComponent<Player>();
         Vector3Int posPers = new Vector3Int(0,4,0);
-        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = pers1;
-        pers1.Armes.Add(Instantiate(prefabArmes[0], pers.transform)); // a changer selon l'arme de départ
-        pers1.EquipedArm = pers1.Armes[0].GetComponent<Arme>();
+        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
+        charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
+        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
     }
 
     /// <summary>
-    /// Fonctions inutilisée qui permet d'appliquer une fonction a tous les personnages visable
+    /// Unused function to apply function to all visible characters
     /// </summary>
     /// <param name="shooter"></param>
     public void Shootable(LivingPlaceable shooter)
     {
-        Vector3 shootpos = shooter.GetPosition() + shooter.ShootPosition;
-        foreach (GameObject pers1b in player1.GetComponent<Player>().Personnages)
+        Vector3 shootPos = shooter.GetPosition() + shooter.ShootPosition;
+        foreach (GameObject iterCharac1 in player1.GetComponent<Player>().Characters)
         {
 
-            LivingPlaceable pers1 = pers1b.GetComponent<LivingPlaceable>();
+            LivingPlaceable charac1 = iterCharac1.GetComponent<LivingPlaceable>();
 
-            if (shooter.CanHit(pers1).Count > 0)
+            if (shooter.CanHit(charac1).Count > 0)
             {
 
-                //typiquement, on change sa couleur
+                //typically, changing color
             }
 
         }
 
-        foreach (GameObject pers2b in player2.GetComponent<Player>().Personnages)
+        foreach (GameObject iterCharac2 in player2.GetComponent<Player>().Characters)
         {
-            LivingPlaceable pers2 = pers2b.GetComponent<LivingPlaceable>();
+            LivingPlaceable charac2 = iterCharac2.GetComponent<LivingPlaceable>();
 
-            if (shooter.CanHit(pers2).Count > 0)
+            if (shooter.CanHit(charac2).Count > 0)
             {
 
-                //typiquement, on change sa couleur
+                //typically, changing color
             }
 
 

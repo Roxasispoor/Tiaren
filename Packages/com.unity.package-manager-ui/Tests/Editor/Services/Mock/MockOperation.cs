@@ -9,7 +9,7 @@ namespace UnityEditor.PackageManager.UI.Tests
         
         public bool IsCompleted { get; protected set; }
 
-        public Error ForceError { protected get; set; } // Allow external component to force an error on the requests (eg: testing)
+        public Error ForceError { protected get; set; } // Allow external component to Force an error on the requests (eg: testing)
 
         protected readonly MockOperationFactory Factory;
 
