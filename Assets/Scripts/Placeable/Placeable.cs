@@ -32,7 +32,7 @@ public abstract class Placeable : NetworkBehaviour
 
     public Vector3Int GetPosition()
     {
-        throw new NotImplementedException();
+        return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
     }
 
@@ -276,5 +276,10 @@ public abstract class Placeable : NetworkBehaviour
 
         }
 
+    }
+    [ClientRpc]
+    public void RpcMoveOnClient(Vector3 position)
+    {
+        this.transform.position = position;
     }
 }

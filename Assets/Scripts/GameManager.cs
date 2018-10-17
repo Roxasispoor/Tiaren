@@ -633,7 +633,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             player.GetComponent<Player>().Characters.Add(charac);
             charac1.Player = player.GetComponent<Player>();
            
-            Vector3Int posPers = new Vector3Int(0, 5, 0);//STARTING POSITION
+            Vector3Int posPers = new Vector3Int(0, 4, 0);//STARTING POSITION
             Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
             charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
             charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();

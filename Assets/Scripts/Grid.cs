@@ -123,7 +123,7 @@ public class Grid : MonoBehaviour
             {
 
                 Placeable testa = gridMatrix[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-                if (testa.gameObject.GetComponent<Renderer>() != null)
+                if (testa.gameObject && testa.gameObject.GetComponent<Renderer>() != null)
                 {
                     //Sending id because nothing assures on client side that blocs are well placed
                     GameManager.instance.PlayingPlaceable.Player.RpcMakeCubeBlue(testa.netId);
@@ -382,17 +382,18 @@ public class Grid : MonoBehaviour
     }
     public void DeplaceBloc(Placeable bloc, Vector3Int desiredPosition)
     {
-        if (bloc != null && desiredPosition.x >= 0 && desiredPosition.x < sizeX
+        if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
            && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
-           gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] == null
-         || (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] != null
-         && gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y].Destroyable))
+         (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
+          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable!=CrushType.CRUSHSTAY))
         {
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z];//adding a link
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].gameObject.transform.position += (desiredPosition - bloc.GetPosition());//shifting model
-            gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z] = null;//put former place to 0
+            Vector3 oldPosition = bloc.transform.position;
 
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
+            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+            bloc.RpcMoveOnClient(desiredPosition);
 
         }
     }
