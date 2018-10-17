@@ -979,7 +979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characters: []
-  numberPrefab: 
+  numberPrefab: 00000000
   cameraScript: {fileID: 114669575655278514}
   clock: {fileID: 114462364222441842}
 --- !u!114 &114902166166845414
