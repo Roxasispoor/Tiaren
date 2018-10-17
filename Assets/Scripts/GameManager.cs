@@ -151,7 +151,7 @@ public class GameManager : NetworkBehaviour
         }
 
     }
-   
+
 
 
     /** Running
@@ -169,7 +169,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     [Server]
     IEnumerator Start()
     {
-
+        //PHASE 0 : SET THE GAME UP
         if (isServer)
         {
             //If you want to create one and save it
@@ -205,13 +205,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         */
         Grid.instance.Gravity();
         Grid.instance.InitializeExplored(false);
+    }
+    /// <summary>
+    /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// </summary>
+    /*
 
-
-        while (Winner == null)
-        {
-            
+            //PHASE 1: BEGINING OF TURN
             //Sort by speedstack, add inverse of speed each time it plays
-            TurnOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack) / (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
             playingPlaceable = TurnOrder[0];
             playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
             if (TurnOrder.Count != 0 && playingPlaceable.Player != null)
@@ -243,7 +244,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                         else if (shotPlaceable != null && playingPlaceable.CapacityinUse != 0 && playingPlaceable.Skills[playingPlaceable.CapacityinUse].TourCooldownLeft == 0 &&
                             playingPlaceable.Skills[playingPlaceable.CapacityinUse].SkillType == SkillType.ONECLICKLIVING
                           
-                            && shotPlaceable.GetType() == typeof(LivingPlaceable)
+                            && shotPlaceable.GetType() == typeof(LivingPlaceable) 
                             && playingPlaceable.Skills[playingPlaceable.CapacityinUse].condition())
                         {
                             playingPlaceable.Skills[playingPlaceable.CapacityinUse].Use();
@@ -300,6 +301,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                         yield return null;
 
                     }
+
+                    //TODO :MOVE IN TOP POSITION
                     // reducing cooldown of skill by 1
                     foreach (Skill sk in playingPlaceable.Skills)
                     {
@@ -339,6 +342,76 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         }
     }
+    */
+
+    private void UpdateTimeline()
+    {
+        TurnOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack) / (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
+    }
+
+    private void BeginningOfTurn()
+    {
+        UpdateTimeline();
+        playingPlaceable = TurnOrder[0];
+        playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// <summary>
     /// See https://www.gamedev.net/forums/topic/551455-length-of-a-generalized-quadratic-bezier-curve-in-3d/
     /// </summary>
@@ -619,6 +692,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
+    //TODO : PUT MOST OF THAT SOMEWHERE CLOSER TO THE LIBVINGPLACEABLE CREATED
     [Server]
     private void CreateCharacters(GameObject player)
     {
@@ -633,7 +707,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             player.GetComponent<Player>().Characters.Add(charac);
             charac1.Player = player.GetComponent<Player>();
            
-            Vector3Int posPers = new Vector3Int(0, 5, 0);//STARTING POSITION
+            Vector3Int posPers = new Vector3Int(0, 4, 0);//STARTING POSITION
             Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
             charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
             charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
@@ -646,11 +720,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
     [ClientRpc]
-    public void RpcCreatePerso(GameObject charac, GameObject joueur)
+    public void RpcCreatePerso(GameObject charac, GameObject player)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-        joueur.GetComponent<Player>().Characters.Add(charac);
-        charac1.Player = joueur.GetComponent<Player>();
+        player.GetComponent<Player>().Characters.Add(charac);
+        charac1.Player = player.GetComponent<Player>();
         Vector3Int posPers = new Vector3Int(0,4,0);
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
