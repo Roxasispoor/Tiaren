@@ -210,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 829413193}
   prefabCharacs:
-  - {fileID: 1320180823792864, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}
+  - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
   prefabWeapons:
   - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   gridFolder: {fileID: 1154982765}
@@ -341,7 +341,7 @@ MonoBehaviour:
   m_OnlineScene: online
   m_SpawnPrefabs:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
-  - {fileID: 1320180823792864, guid: cf74def299c3aec4ba9fdd4fa8b35ad2, type: 2}
+  - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
