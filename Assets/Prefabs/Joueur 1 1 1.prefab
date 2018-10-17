@@ -696,7 +696,7 @@ MonoBehaviour:
   zoomRate: 70
   panSpeed: 0.3
   zoomDampening: 5
-  joueur: {fileID: 114887153983755284}
+  player: {fileID: 114887153983755284}
 --- !u!114 &114750567834035586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -978,8 +978,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc199c3aa1659849bfc610d2a99abe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  personnages: []
-  numeroPrefab: 01000000
+  characters: []
+  numberPrefab: 
   cameraScript: {fileID: 114669575655278514}
   clock: {fileID: 114462364222441842}
 --- !u!114 &114902166166845414
