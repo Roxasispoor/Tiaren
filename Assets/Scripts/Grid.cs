@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 public class NodePath
 {
     public int x, y, z;
-    int distanceFromStart;
+    public int distanceFromStart;
     NodePath parent;
 
     public NodePath(int x, int y, int z, int distanceFromStart, NodePath parent)
@@ -26,9 +26,14 @@ public class NodePath
         this.parent = parent;
     }
 
+    public static NodePath startPath(Vector3 pos)
+    {
+        return startPath((int)pos.x, (int)pos.y, (int)pos.z);
+    }
+
     public static NodePath startPath(int x, int y, int z)
     {
-        return new NodePath(x, y, z, 0, null);
+        return new NodePath(x, y, z-1, 0, null);
     }
 
     public Vector3[] getFullPath()
@@ -41,6 +46,34 @@ public class NodePath
             currentNode = currentNode.parent;
         }
         return path;
+    }
+
+    public Vector3 GetVector3()
+    {
+        return new Vector3(x, y, z);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (obj.GetType() == typeof(NodePath))
+        {
+            return false;
+        }
+        NodePath other = (NodePath)obj;
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = 373119288;
+        hashCode = hashCode * -1521134295 + x.GetHashCode();
+        hashCode = hashCode * -1521134295 + y.GetHashCode();
+        hashCode = hashCode * -1521134295 + z.GetHashCode();
+        return hashCode;
     }
 }
 
@@ -243,9 +276,102 @@ public class Grid : MonoBehaviour
         return gridBool;
     }
 
-    public void CanGo(Vector3 startPosition, int distance, int jumpValue, Player player = null)
+    private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
+        for (int i=0; i < jumpValue; i++)
+        {
+            if (z - i < 0)
+                return -1;
 
+            if (GridMatrix[x,y,z - i] != null)
+            {
+                if (GridMatrix[x, y, z - i].Walkable)
+                {
+                    return z - i;
+                }else
+                {
+                    return -1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private List<int> CheckUp(int x, int y, int z, int x_orig, int y_orig, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
+    {
+        List<int> returnList = new List<int>();
+
+        for (int i = 1; i < jumpValue+1; i++)
+        {
+            if (z + i > sizeZ)
+                return returnList;
+            if (z + i + 1 < sizeZ && GridMatrix[x, y, z + i + 1] != null)
+            {
+                return returnList;
+            }
+            if (GridMatrix[x, y, z + i] != null)
+            {
+                if (GridMatrix[x, y, z + i].Walkable)
+                {
+                    returnList.Add(z+i);
+                }
+                else
+                {
+                    return returnList;
+                }
+            }
+        }
+        return returnList;
+    }
+
+    // startPosition : position du joueur
+    public List<NodePath> CanGo(Vector3 startPosition, int distance, int jumpValue, Player player = null)
+    {
+        Queue<NodePath> toCheck = new Queue<NodePath>();
+        List<NodePath> accessibleBloc = new List<NodePath>();
+
+        toCheck.Enqueue(NodePath.startPath(startPosition));
+
+        while(toCheck.Count > 0)
+        {
+            NodePath current = toCheck.Dequeue();
+            if (current.x - 1 > 0)
+            {
+                if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x - 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x - 1, current.y, heightDown, current.distanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x - 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x - 1, current.y, z, current.distanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+            }
+            if (current.x + 1 > 0)
+            {
+                if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x + 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x + 1, current.y, heightDown, current.distanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x + 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x + 1, current.y, z, current.distanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+            }
+        }
+        
+        return null;
     }
 
     /// <summary>
