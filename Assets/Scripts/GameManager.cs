@@ -23,7 +23,7 @@ public class GameManager : NetworkBehaviour
     public GameObject[] prefabMonsters;
     
 
-    private List<LivingPlaceable> turnOrder;
+    private List<StackAndPlaceable> turnOrder;
 
     private Player winner;
     private LivingPlaceable playingPlaceable;
@@ -100,7 +100,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public List<LivingPlaceable> TurnOrder
+    public List<StackAndPlaceable> TurnOrder
     {
         get
         {
@@ -141,7 +141,7 @@ public class GameManager : NetworkBehaviour
 
 
 
-        TurnOrder = new List<LivingPlaceable>();
+        TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
@@ -184,25 +184,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             yield return null;
         }
 
-        CreateCharacters(player1);
+        CreateCharacters(player1, new Vector3Int(0, 4, 0));
         while (player2 == null)
         {
             yield return null;
         }
-        CreateCharacters(player2);
+        CreateCharacters(player2, new Vector3Int(3, 4, 0));
 
-        //TODO modify: neutral monsters will be another player that cannot win
-        /*foreach (GameObject monstre in listeMonstresNeutres)
-        {
-            LivingPlaceable monstre1 = monstre.GetComponent<Personnage>();
-            monstre1.GameManager = this;
-            Vector3Int posPers = monstre1.Position;
-            this.Grid.instance.Grid[posPers.x, posPers.y, posPers.z] = monstre1;
-            monstre1.Weapons.Add(Instantiate(prefabWeapons[0], monstre.transform)); // a changer selon l'arme de départ
-            monstre1.EquipedWeapon = monstre1.Weapons[0].GetComponent<Weapon>();
-            tourOrder.Add(monstre1);
-        }
-        */
         Grid.instance.Gravity();
         Grid.instance.InitializeExplored(false);
     }
@@ -346,70 +334,88 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private void UpdateTimeline()
     {
+        //add every character once and sort them
+        foreach (GameObject character in player1.GetComponent<Player>().Characters)
+        {
+            LivingPlaceable placeable = character.GetComponent<LivingPlaceable>();
+            StackAndPlaceable newCharacter = new StackAndPlaceable(placeable, placeable.SpeedStack, false);
+            TurnOrder.Add(newCharacter);
+        }
+        foreach (GameObject character in player2.GetComponent<Player>().Characters)
+        {
+            LivingPlaceable placeable = character.GetComponent<LivingPlaceable>();
+            StackAndPlaceable newCharacter = new StackAndPlaceable(placeable, placeable.SpeedStack, false);
+            TurnOrder.Add(newCharacter);
+        }
         TurnOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack) / (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
+
+        //Check for every Character if it has to play more than once in the "Grand Turn"
+
+        int numberOfTurns = 1;
+        for (int i = 0; i < turnOrder.Count -1; i++)
+        {
+            StackAndPlaceable check = turnOrder[i];
+            if (!check.SeenBefore)
+            {
+                for (int j = i + 1; j < turnOrder.Count - 1; j++)
+                {
+                    if (turnOrder[j].SpeedStack > check.SpeedStack + numberOfTurns * 1 / check.Character.Speed)
+                    {
+                        turnOrder.Insert(j, new StackAndPlaceable(check.Character, check.SpeedStack + numberOfTurns * 1 / check.Character.Speed, true));
+                        j++;
+                    }
+                }
+            }
+        }
+
     }
+
 
     private void BeginningOfTurn()
     {
         UpdateTimeline();
-        playingPlaceable = TurnOrder[0];
+        playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+        if (playingPlaceable.IsDead)
+        {
+            playingPlaceable.TurnsRemaingingCemetery--;
+            BeginningOfTurn();
+        }
+        else
+        {
+            //initialise character fields
+
+            // reducing cooldown of skill by 1
+            foreach (Skill sk in playingPlaceable.Skills)
+            {
+                if (sk.TourCooldownLeft > 0)
+                {
+                    sk.TourCooldownLeft--;
+                }
+            }
+            playingPlaceable.player.RpcSetCamera(playingPlaceable.netId);
+            playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
+            playingPlaceable.CurrentPA = playingPlaceable.PaMax;
+            playingPlaceable.Player.clock.IsFinished = false;
+            playingPlaceable.Player.clock.StartTimer(30f);
+            playingPlaceable.Player.RpcStartTimer(30f);
+        }
     }
 
+    public void EndOFTurn()
+    {
+        //cleaning and checks and synchro with banana dancing if needed
+        BeginningOfTurn();
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
+    //Make a copy from model skill in skills, and fill with additional info (caster, targets)
+    public void UseSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
+    {
+        Skill skill = playingPlaceable.Skills[skillID];
+        skill.Use();
+    }
+    
 
 
     /// <summary>
@@ -692,43 +698,42 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    //TODO : PUT MOST OF THAT SOMEWHERE CLOSER TO THE LIBVINGPLACEABLE CREATED
+ 
+    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
+    {
+        LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
+
+        player.GetComponent<Player>().Characters.Add(charac);
+        charac1.Player = player.GetComponent<Player>();
+
+        Vector3Int posPers = (Vector3Int) spawnCoordinates;
+        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
+        charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
+        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
+    }
+
     [Server]
-    private void CreateCharacters(GameObject player)
+    private void CreateCharacters(GameObject player, Vector3Int spawnCoordinates)
     {
         for (int i = 0; i < player.GetComponent<Player>().NumberPrefab.Count; i++)
         {
             GameObject charac = Instantiate(prefabCharacs[player.GetComponent<Player>().NumberPrefab[i]], new Vector3(0, 4f, 0), Quaternion.identity);
 
+            InitialiseCharacter(charac, player, spawnCoordinates);
 
-
-            LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-          
-            player.GetComponent<Player>().Characters.Add(charac);
-            charac1.Player = player.GetComponent<Player>();
-           
-            Vector3Int posPers = new Vector3Int(0, 4, 0);//STARTING POSITION
-            Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
-            charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
-            charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
-
-            TurnOrder.Add(charac1);
             NetworkServer.Spawn(charac);
-            RpcCreatePerso(charac, player);
+            Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
+            RpcCreatePerso(charac, player, realCoordinates);
 
         }
 
     }
+
     [ClientRpc]
-    public void RpcCreatePerso(GameObject charac, GameObject player)
+    public void RpcCreatePerso(GameObject charac, GameObject player, Vector3 spawnCoordinates)
     {
-        LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-        player.GetComponent<Player>().Characters.Add(charac);
-        charac1.Player = player.GetComponent<Player>();
-        Vector3Int posPers = new Vector3Int(0,4,0);
-        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
-        charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
-        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
+        Vector3Int realCoordinates = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
+        InitialiseCharacter(charac, player, realCoordinates);
     }
 
     /// <summary>

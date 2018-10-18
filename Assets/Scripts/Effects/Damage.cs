@@ -39,8 +39,8 @@ public class Damage : Effect
         if (this.Target is LivingPlaceable)
         {
             LivingPlaceable Target = (LivingPlaceable)(this.Target);
-            Target.currentPV -= DamageValue;
-            if (Target.currentPV <= 0)
+            Target.CurrentHP -= DamageValue;
+            if (Target.CurrentHP <= 0)
             {
 
                 Target.DestroyLivingPlaceable();

@@ -7,10 +7,12 @@ public class LivingPlaceable : Placeable
 {
 
 
-    private float maxPV;
-    public float currentPV;
+    private float maxHP;
+    private float currentHP;
     private int pmMax;
     private int currentPM;
+    private float currentPA;
+    private float paMax;
     private int force;
     private float speed;
     private int dexterity;
@@ -20,7 +22,6 @@ public class LivingPlaceable : Placeable
     private List<Skill> skills;
     private List<GameObject> weapons;
     private Weapon equipedWeapon;
-    private int timesFiredThisTurn;
     private bool isDead;
     private int counterDeaths;
     private int turnsRemainingCemetery;
@@ -76,10 +77,8 @@ public class LivingPlaceable : Placeable
                 maxHit = hitPoint;
             }
 
-        }        
+        }
 
-        //preparing damage before
-        this.TimesFiredThisTurn++;
         //TODO use gameEffectManager
         return target.transform.position + maxHit.RelativePosition;
     }
@@ -155,8 +154,8 @@ public class LivingPlaceable : Placeable
         };
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
-        this.MaxPV = 100;
-        this.CurrentPV = 100;
+        this.maxHP = 100;
+        this.CurrentHP = 100;
         this.MaxPM = 3;
         this.CurrentPM = 3;
         this.Force = 100;
@@ -165,36 +164,35 @@ public class LivingPlaceable : Placeable
         this.Dexterity = 100;
         this.Skills = new List<Skill>();
         this.Weapons = new List<GameObject>();
-        this.TimesFiredThisTurn = 0;
         this.IsDead = false;
         this.CounterDeaths = 0;
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
 
     }
-    public float MaxPV
+    public float MaxHP
     {
         get
         {
-            return maxPV;
+            return maxHP;
         }
 
         set
         {
-            maxPV = value;
+            maxHP = value;
         }
     }
 
-    public float CurrentPV
+    public float CurrentHP
     {
         get
         {
-            return currentPV;
+            return currentHP;
         }
 
         set
         {
-            currentPV = value;
+            currentHP = value;
         }
     }
 
@@ -316,19 +314,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public int TimesFiredThisTurn
-    {
-        get
-        {
-            return timesFiredThisTurn;
-        }
-
-        set
-        {
-            timesFiredThisTurn = value;
-        }
-    }
-
     public Vector3 ShootPosition
     {
         get
@@ -391,6 +376,32 @@ public class LivingPlaceable : Placeable
         set
         {
             capacityInUse = value;
+        }
+    }
+
+    public float CurrentPA
+    {
+        get
+        {
+            return currentPA;
+        }
+
+        set
+        {
+            currentPA = value;
+        }
+    }
+
+    public float PaMax
+    {
+        get
+        {
+            return paMax;
+        }
+
+        set
+        {
+            paMax = value;
         }
     }
 
