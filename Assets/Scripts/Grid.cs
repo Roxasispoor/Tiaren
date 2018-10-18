@@ -6,6 +6,44 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 
+
+/// <summary>
+/// Class representing a cube in a path
+/// </summary>
+
+public class NodePath
+{
+    public int x, y, z;
+    int distanceFromStart;
+    NodePath parent;
+
+    public NodePath(int x, int y, int z, int distanceFromStart, NodePath parent)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.distanceFromStart = distanceFromStart;
+        this.parent = parent;
+    }
+
+    public static NodePath startPath(int x, int y, int z)
+    {
+        return new NodePath(x, y, z, 0, null);
+    }
+
+    public Vector3[] getFullPath()
+    {
+        Vector3[] path = new Vector3[distanceFromStart + 1];
+        NodePath currentNode = this;
+        for (int i = distanceFromStart + 1; i > 0; i--)
+        {
+            path[i] = new Vector3(this.x, this.y, this.z);
+            currentNode = currentNode.parent;
+        }
+        return path;
+    }
+}
+
 /// <summary>
 /// Class representing a grid for a game
 /// </summary>
@@ -204,6 +242,12 @@ public class Grid : MonoBehaviour
 
         return gridBool;
     }
+
+    public void CanGo(Vector3 startPosition, int distance, int jumpValue, Player player = null)
+    {
+
+    }
+
     /// <summary>
     /// Update position of every bloc of the grid
     /// </summary>
