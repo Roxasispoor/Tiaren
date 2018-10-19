@@ -34,8 +34,5 @@ public class StandardCube : Placeable
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
+ 
 }
