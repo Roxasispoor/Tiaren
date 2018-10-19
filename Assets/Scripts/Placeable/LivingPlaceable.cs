@@ -17,6 +17,7 @@ public class LivingPlaceable : Placeable
     private float speed;
     private int dexterity;
     private float speedStack;
+    private int jump;
     private float deathLength;
 
     private List<Skill> skills;
@@ -27,6 +28,7 @@ public class LivingPlaceable : Placeable
     private int turnsRemainingCemetery;
     private Vector3 shootPosition;
     private int capacityInUse;
+    private List<NodePath> areaOfMouvement;
 
 
 
@@ -158,6 +160,9 @@ public class LivingPlaceable : Placeable
         this.CurrentHP = 100;
         this.MaxPM = 3;
         this.CurrentPM = 3;
+        this.PaMax = 1;
+        this.CurrentPA = 1;
+        this.Jump = 1;
         this.Force = 100;
         this.Speed = 100;
         this.SpeedStack = 1 / Speed;
@@ -168,6 +173,7 @@ public class LivingPlaceable : Placeable
         this.CounterDeaths = 0;
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
+        this.AreaOfMouvement = new List<NodePath>();
 
     }
     public float MaxHP
@@ -402,6 +408,32 @@ public class LivingPlaceable : Placeable
         set
         {
             paMax = value;
+        }
+    }
+
+    public int Jump
+    {
+        get
+        {
+            return jump;
+        }
+
+        set
+        {
+            jump = value;
+        }
+    }
+
+    public List<NodePath> AreaOfMouvement
+    {
+        get
+        {
+            return areaOfMouvement;
+        }
+
+        set
+        {
+            areaOfMouvement = value;
         }
     }
 

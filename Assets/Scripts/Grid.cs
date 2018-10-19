@@ -102,7 +102,7 @@ public class Grid : MonoBehaviour
     public int sizeX = 50;
     public int sizeY = 6;
     public int sizeZ = 50;
-    public DistanceAndParent[,,] gridBool;
+    //public DistanceAndParent[,,] gridBool;
 
 
     /// <summary>
@@ -174,7 +174,7 @@ public class Grid : MonoBehaviour
     /// <param name="positionBloc">Position of starting bloc (under the character)</param>
     /// <returns>Returns a grid which can give positions of every cube on the path (belonging to floor). Character will be set on top of the cube target</returns>
     /// </summary>
-    public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable, int jumpValue, Vector3Int positionBloc)
+    /* public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable, int jumpValue, Vector3Int positionBloc)
     {
 
         int shifting = livingPlaceable.CurrentPM;
@@ -211,7 +211,7 @@ public class Grid : MonoBehaviour
                 if (testa.gameObject && testa.gameObject.GetComponent<Renderer>() != null)
                 {
                     //Sending id because nothing assures on client side that blocs are well placed
-                    GameManager.instance.PlayingPlaceable.Player.RpcMakeCubeBlue(testa.netId);
+                    GameManager.instance.PlayingPlaceable.Player.MakeCubeBlue(testa.netId);
                   
                 }
                 //then displaying bloc on blue
@@ -289,7 +289,7 @@ public class Grid : MonoBehaviour
 
         return gridBool;
     }
-
+    */
     private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
         for (int i=0; i < jumpValue; i++)
@@ -706,7 +706,7 @@ public class Grid : MonoBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
 
-        gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
+        //gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
         gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
 

@@ -5171,9 +5171,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializeNumber: 2
+  colorOfObject: {r: 0, g: 0, b: 0, a: 0}
   explored: 0
   player: {fileID: 0}
-  currentPV: 0
 --- !u!114 &114659211091831222
 MonoBehaviour:
   m_ObjectHideFlags: 1

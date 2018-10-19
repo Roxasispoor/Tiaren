@@ -17,6 +17,8 @@ public abstract class Placeable : NetworkBehaviour
     private bool destroyable;
     private TraversableType tangible;
     private TraversableType traversableBullet;
+    public Color colorOfObject;
+    private float animationSpeed;
    
     private GravityType gravityType;
     private CrushType crushable;
@@ -228,7 +230,20 @@ public abstract class Placeable : NetworkBehaviour
         }
     }
 
-  
+    public float AnimationSpeed
+    {
+        get
+        {
+            return animationSpeed;
+        }
+
+        set
+        {
+            animationSpeed = value;
+        }
+    }
+
+
 
 
     /// <summary>
@@ -265,10 +280,7 @@ public abstract class Placeable : NetworkBehaviour
 
         if (Input.GetMouseButtonUp(0) && this.walkable)
         {
-
-            //Warning: works because only local player is joueur
-            ClientScene.localPlayers[0].gameObject.GetComponent<Player>().CmdMoveTo(this.netId);
-            
+            GameManager.instance.CheckIfAccessible(this);
         }
         else if (Input.GetMouseButtonUp(2))
         {
@@ -277,6 +289,7 @@ public abstract class Placeable : NetworkBehaviour
         }
 
     }
+
     [ClientRpc]
     public void RpcMoveOnClient(Vector3 position)
     {
