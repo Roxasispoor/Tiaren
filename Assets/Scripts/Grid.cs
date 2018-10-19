@@ -14,15 +14,29 @@ using UnityEngine.Networking;
 public class NodePath
 {
     public int x, y, z;
-    public int distanceFromStart;
     NodePath parent;
+
+    private int distanceFromStart;
+
+    public int DistanceFromStart
+    {
+        get
+        {
+            return distanceFromStart;
+        }
+
+        private set
+        {
+            distanceFromStart = value;
+        }
+    }
 
     public NodePath(int x, int y, int z, int distanceFromStart, NodePath parent)
     {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.distanceFromStart = distanceFromStart;
+        this.DistanceFromStart = distanceFromStart;
         this.parent = parent;
     }
 
@@ -38,9 +52,9 @@ public class NodePath
 
     public Vector3[] getFullPath()
     {
-        Vector3[] path = new Vector3[distanceFromStart + 1];
+        Vector3[] path = new Vector3[DistanceFromStart + 1];
         NodePath currentNode = this;
-        for (int i = distanceFromStart + 1; i > 0; i--)
+        for (int i = DistanceFromStart + 1; i > 0; i--)
         {
             path[i] = new Vector3(this.x, this.y, this.z);
             currentNode = currentNode.parent;
@@ -332,46 +346,55 @@ public class Grid : MonoBehaviour
 
         toCheck.Enqueue(NodePath.startPath(startPosition));
 
+        int n_iteration = 0;
+
         while(toCheck.Count > 0)
         {
+            n_iteration++;
+
+            if (n_iteration%1000 == 0)
+            {
+                Debug.Log("CanGo: iteration " + n_iteration);
+            }
+
             NodePath current = toCheck.Dequeue();
             if (current.x - 1 > 0)
             {
                 if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
                 {
                     int heightDown = CheckUnder(current.x - 1, current.y, current.z, jumpValue);
-                    NodePath newNode = new NodePath(current.x - 1, current.y, heightDown, current.distanceFromStart, current);
+                    NodePath newNode = new NodePath(current.x - 1, current.y, heightDown, current.DistanceFromStart, current);
                     toCheck.Enqueue(newNode);
                     accessibleBloc.Add(newNode);
                 }
                 List<int> HeigthsUp = CheckUp(current.x - 1, current.y, current.z, current.x, current.y, jumpValue);
                 foreach (int z in HeigthsUp)
                 {
-                    NodePath newNode = new NodePath(current.x - 1, current.y, z, current.distanceFromStart, current);
+                    NodePath newNode = new NodePath(current.x - 1, current.y, z, current.DistanceFromStart, current);
                     toCheck.Enqueue(newNode);
                     accessibleBloc.Add(newNode);
                 }
             }
             if (current.x + 1 > 0)
             {
-                if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
+                if (GridMatrix[(int)startPosition.x + 1, (int)startPosition.y, (int)startPosition.z] == null)
                 {
                     int heightDown = CheckUnder(current.x + 1, current.y, current.z, jumpValue);
-                    NodePath newNode = new NodePath(current.x + 1, current.y, heightDown, current.distanceFromStart, current);
+                    NodePath newNode = new NodePath(current.x + 1, current.y, heightDown, current.DistanceFromStart, current);
                     toCheck.Enqueue(newNode);
                     accessibleBloc.Add(newNode);
                 }
                 List<int> HeigthsUp = CheckUp(current.x + 1, current.y, current.z, current.x, current.y, jumpValue);
                 foreach (int z in HeigthsUp)
                 {
-                    NodePath newNode = new NodePath(current.x + 1, current.y, z, current.distanceFromStart, current);
+                    NodePath newNode = new NodePath(current.x + 1, current.y, z, current.DistanceFromStart, current);
                     toCheck.Enqueue(newNode);
                     accessibleBloc.Add(newNode);
                 }
             }
         }
         
-        return null;
+        return accessibleBloc;
     }
 
     /// <summary>
