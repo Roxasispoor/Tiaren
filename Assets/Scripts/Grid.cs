@@ -6,6 +6,91 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 
+
+/// <summary>
+/// Class representing a cube in a path
+/// </summary>
+
+public class NodePath
+{
+    public int x, y, z;
+    NodePath parent;
+
+    private int distanceFromStart;
+
+    public int DistanceFromStart
+    {
+        get
+        {
+            return distanceFromStart;
+        }
+
+        private set
+        {
+            distanceFromStart = value;
+        }
+    }
+
+    public NodePath(int x, int y, int z, int distanceFromStart, NodePath parent)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.DistanceFromStart = distanceFromStart;
+        this.parent = parent;
+    }
+
+    public static NodePath startPath(Vector3 pos)
+    {
+        return startPath((int)pos.x, (int)pos.y, (int)pos.z);
+    }
+
+    public static NodePath startPath(int x, int y, int z)
+    {
+        return new NodePath(x, y, z-1, 0, null);
+    }
+
+    public Vector3[] getFullPath()
+    {
+        Vector3[] path = new Vector3[DistanceFromStart + 1];
+        NodePath currentNode = this;
+        for (int i = DistanceFromStart + 1; i > 0; i--)
+        {
+            path[i] = new Vector3(this.x, this.y, this.z);
+            currentNode = currentNode.parent;
+        }
+        return path;
+    }
+
+    public Vector3 GetVector3()
+    {
+        return new Vector3(x, y, z);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (obj.GetType() == typeof(NodePath))
+        {
+            return false;
+        }
+        NodePath other = (NodePath)obj;
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = 373119288;
+        hashCode = hashCode * -1521134295 + x.GetHashCode();
+        hashCode = hashCode * -1521134295 + y.GetHashCode();
+        hashCode = hashCode * -1521134295 + z.GetHashCode();
+        return hashCode;
+    }
+}
+
 /// <summary>
 /// Class representing a grid for a game
 /// </summary>
@@ -123,7 +208,7 @@ public class Grid : MonoBehaviour
             {
 
                 Placeable testa = gridMatrix[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-                if (testa.gameObject.GetComponent<Renderer>() != null)
+                if (testa.gameObject && testa.gameObject.GetComponent<Renderer>() != null)
                 {
                     //Sending id because nothing assures on client side that blocs are well placed
                     GameManager.instance.PlayingPlaceable.Player.RpcMakeCubeBlue(testa.netId);
@@ -204,6 +289,114 @@ public class Grid : MonoBehaviour
 
         return gridBool;
     }
+
+    private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
+    {
+        for (int i=0; i < jumpValue; i++)
+        {
+            if (z - i < 0)
+                return -1;
+
+            if (GridMatrix[x,y,z - i] != null)
+            {
+                if (GridMatrix[x, y, z - i].Walkable)
+                {
+                    return z - i;
+                }else
+                {
+                    return -1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private List<int> CheckUp(int x, int y, int z, int x_orig, int y_orig, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
+    {
+        List<int> returnList = new List<int>();
+
+        for (int i = 1; i < jumpValue+1; i++)
+        {
+            if (z + i > sizeZ)
+                return returnList;
+            if (z + i + 1 < sizeZ && GridMatrix[x, y, z + i + 1] != null)
+            {
+                return returnList;
+            }
+            if (GridMatrix[x, y, z + i] != null)
+            {
+                if (GridMatrix[x, y, z + i].Walkable)
+                {
+                    returnList.Add(z+i);
+                }
+                else
+                {
+                    return returnList;
+                }
+            }
+        }
+        return returnList;
+    }
+
+    // startPosition : position du joueur
+    public List<NodePath> CanGo(Vector3 startPosition, int distance, int jumpValue, Player player = null)
+    {
+        Queue<NodePath> toCheck = new Queue<NodePath>();
+        List<NodePath> accessibleBloc = new List<NodePath>();
+
+        toCheck.Enqueue(NodePath.startPath(startPosition));
+
+        int n_iteration = 0;
+
+        while(toCheck.Count > 0)
+        {
+            n_iteration++;
+
+            if (n_iteration%1000 == 0)
+            {
+                Debug.Log("CanGo: iteration " + n_iteration);
+            }
+
+            NodePath current = toCheck.Dequeue();
+            if (current.x - 1 > 0)
+            {
+                if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x - 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x - 1, current.y, heightDown, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x - 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x - 1, current.y, z, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+            }
+            if (current.x + 1 > 0)
+            {
+                if (GridMatrix[(int)startPosition.x + 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x + 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x + 1, current.y, heightDown, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x + 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x + 1, current.y, z, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+            }
+        }
+        
+        return accessibleBloc;
+    }
+
     /// <summary>
     /// Update position of every bloc of the grid
     /// </summary>
@@ -382,17 +575,18 @@ public class Grid : MonoBehaviour
     }
     public void DeplaceBloc(Placeable bloc, Vector3Int desiredPosition)
     {
-        if (bloc != null && desiredPosition.x >= 0 && desiredPosition.x < sizeX
+        if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
            && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
-           gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] == null
-         || (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y] != null
-         && gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.y].Destroyable))
+         (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
+          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable!=CrushType.CRUSHSTAY))
         {
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z];//adding a link
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].gameObject.transform.position += (desiredPosition - bloc.GetPosition());//shifting model
-            gridMatrix[bloc.GetPosition().x, bloc.GetPosition().y, bloc.GetPosition().z] = null;//put former place to 0
+            Vector3 oldPosition = bloc.transform.position;
 
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
+            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
+            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+            bloc.RpcMoveOnClient(desiredPosition);
 
         }
     }
