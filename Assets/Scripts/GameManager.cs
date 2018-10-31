@@ -194,8 +194,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
-        isGameStarted = true;
-        RpcStartGame();
+        player1.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
+        player2.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
+        player1.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
+        player2.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
+       isGameStarted = true;
+
+            //Retrieve data 
+
+            RpcStartGame();
 //        BeginningOfTurn();
     }
  }
@@ -333,14 +340,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    [ClientRpc]
-    private void RpcCreateCharacters(GameObject player, Vector3 spawnCoordinates)
-    {
-        Vector3Int spawn = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
-        Debug.Log("From RPC:");
-        CreateCharacters(player, spawn);
-
-    }
+    
     public void CreateCharacters(GameObject player, Vector3Int spawnCoordinates)
     {
         Player playerComponent = player.GetComponent<Player>();
@@ -355,12 +355,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    [ClientRpc]
+   /* [ClientRpc]
     public void RpcCreatePerso(GameObject charac, GameObject player, Vector3 spawnCoordinates)
     {
+        Debug.Log("Please create chars");
         Vector3Int realCoordinates = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
         InitialiseCharacter(charac, player, realCoordinates);
-    }
+    }*/
 
     /// <summary>
     /// Unused function to apply function to all visible characters

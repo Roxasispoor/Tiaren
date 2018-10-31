@@ -166,31 +166,28 @@ public class Player : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
-       
-        Debug.Log("STARTCLIENT!");
-        Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
         if (GameManager.instance.player1 == null)
         {
             GameManager.instance.player1 = gameObject;
-            GameManager.instance.CreateCharacters(gameObject, new Vector3Int(0, 4, 0));
         }
         else
         {
             GameManager.instance.player2 = gameObject;
-            GameManager.instance.CreateCharacters(gameObject, new Vector3Int(3, 4, 0));
-        }
-        if (this.isServer)
+         }
+        if (isLocalPlayer)
         {
-
-            this.acted = false;
-            this.score = 0;
-
+            Debug.Log("STARTCLIENT!");
         }
-        clock.IsFinished = false;
-            //Retrieve data 
     }
-    
-    
+    //Both clients get that
+    [ClientRpc]
+    public void RpcCreateCharacters(Vector3 spawnCoordinates)
+    {
+        Vector3Int spawn = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
+        Debug.Log("From RPC:");
+        GameManager.instance.CreateCharacters(gameObject, spawn);
+
+    }
     private void Update()
     {
         if (GameManager.instance.player1 != null && GameManager.instance.player2 != null)
@@ -302,7 +299,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcLoadMap()
     {
-        if(isClient)
+        if(isLocalPlayer)
         { 
         Debug.Log("From RPC loadMap");
         Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
