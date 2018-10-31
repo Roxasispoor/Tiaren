@@ -13,7 +13,7 @@ public class Player : NetworkBehaviour
     private bool acted;
     [SyncVar]
     private int score;
-    private bool isReadyToPlay = false;
+    public bool isReadyToPlay = false;
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
@@ -166,14 +166,18 @@ public class Player : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
-
+       
+        Debug.Log("STARTCLIENT!");
+        Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
         if (GameManager.instance.player1 == null)
         {
             GameManager.instance.player1 = gameObject;
+            GameManager.instance.CreateCharacters(gameObject, new Vector3Int(0, 4, 0));
         }
         else
         {
             GameManager.instance.player2 = gameObject;
+            GameManager.instance.CreateCharacters(gameObject, new Vector3Int(3, 4, 0));
         }
         if (this.isServer)
         {
@@ -183,16 +187,17 @@ public class Player : NetworkBehaviour
 
         }
         clock.IsFinished = false;
-        //Retrieve data 
+            //Retrieve data 
     }
-
+    
+    
     private void Update()
     {
         if (GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished)
+            if (clock.IsFinished && GameManager.instance.isGameStarted)
             {
-                EndTurn();
+                GameManager.instance.EndOFTurn(); //On évite de le déclencher plusieurs fois pour l'instant
             }
         }
     }
@@ -282,12 +287,27 @@ public class Player : NetworkBehaviour
         }
     }
     [ClientRpc]
-    public void RpcSetCamera(NetworkInstanceId mustPlay)
+    public void RpcMoveOnClient(Vector3 position)
     {
-        Placeable potential = ClientScene.FindLocalObject(mustPlay).GetComponent<Placeable>();
+        this.transform.position = position;
+    }
+    [ClientRpc]
+    public void RpcSetCamera(int mustPlay)
+    {
+        Placeable potential = GameManager.instance.FindLocalObject(mustPlay).GetComponent<Placeable>();
 
         this.cameraScript.target = potential.gameObject.transform;
 
+    }
+    [ClientRpc]
+    public void RpcLoadMap()
+    {
+        if(isClient)
+        { 
+        Debug.Log("From RPC loadMap");
+        Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
+        Debug.Log(Placeable.currentMaxId);
+        }
     }
 
     override

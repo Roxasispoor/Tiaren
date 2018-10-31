@@ -8,8 +8,10 @@ using System;
 /// Represents something able to fill a bloc of the grid
 /// </summary>
 
-public abstract class Placeable : NetworkBehaviour
+public abstract class Placeable:MonoBehaviour
 {
+    public int netId;
+    public static int currentMaxId=0;
     public int serializeNumber;
     private bool walkable;
     private List<Effect> onWalkEffects;
@@ -289,10 +291,10 @@ public abstract class Placeable : NetworkBehaviour
         }
 
     }
-
-    [ClientRpc]
-    public void RpcMoveOnClient(Vector3 position)
+    /*public void Start()
     {
-        this.transform.position = position;
-    }
+        Comma
+        this.netId=this.
+    }*/
+    
 }

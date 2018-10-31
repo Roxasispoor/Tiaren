@@ -586,8 +586,7 @@ public class Grid : MonoBehaviour
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
-            bloc.RpcMoveOnClient(desiredPosition);
-
+            
         }
     }
     /// <summary>
@@ -719,6 +718,7 @@ public class Grid : MonoBehaviour
     /// <param name="grid"></param>
     public void FillGridAndSpawn(GameObject parent)
     {
+        Debug.Log("Load Map");
         JaggedGrid jagged = JaggedGrid.FillGridFromJSON();
 
         for (int y = 0; y < sizeY; y++)
@@ -735,7 +735,10 @@ public class Grid : MonoBehaviour
                         
 
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
-                        NetworkServer.Spawn(obj);
+                        obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
+                        GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
+                        Placeable.currentMaxId++;
+                         // NetworkServer.Spawn(obj);
 
 
                     }
@@ -743,6 +746,8 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+        Debug.Log(Placeable.currentMaxId);
+
     }
 
 }

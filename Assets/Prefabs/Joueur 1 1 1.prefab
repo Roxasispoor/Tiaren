@@ -173,7 +173,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1540130339793606
 GameObject:
   m_ObjectHideFlags: 1
@@ -979,7 +979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characters: []
-  numberPrefab: 
+  numberPrefab: 00000000
   cameraScript: {fileID: 114669575655278514}
   clock: {fileID: 114462364222441842}
 --- !u!114 &114902166166845414

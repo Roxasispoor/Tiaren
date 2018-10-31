@@ -208,7 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf49af35ff6aa47af722136663683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 829413193}
+  networkManager: {fileID: 0}
+  isGameStarted: 0
   prefabCharacs:
   - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
   prefabWeapons:
@@ -217,6 +218,7 @@ MonoBehaviour:
   player1: {fileID: 0}
   player2: {fileID: 0}
   prefabMonsters: []
+  playingPlaceable: {fileID: 0}
 --- !u!4 &823285885
 Transform:
   m_ObjectHideFlags: 0
@@ -247,8 +249,7 @@ MonoBehaviour:
   sizeZ: 50
   randomParameter: 90
   floaties: []
-  prefabsList:
-  - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
+  prefabsList: []
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
