@@ -52,5 +52,5 @@ public class Timer : MonoBehaviour
             textToUpdate.text = targetTime.ToString();
         }
     }
-
+  
 }

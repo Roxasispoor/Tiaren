@@ -294,7 +294,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void EndOFTurn()
     {
         //cleaning and checks and synchro with banana dancing if needed
-  
+        Debug.Log("tour suivaaaaaaaaant");
         BeginningOfTurn();
     }
 

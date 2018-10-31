@@ -307,11 +307,14 @@ public class Player : NetworkBehaviour
         }
     }
 
-    override
-    public void OnStartLocalPlayer()
+    
+    public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
+        Timer timer = GameManager.instance.GetComponentInChildren<Timer>();
+        GameObject go = transform.Find("Canvas").Find("Chrono").gameObject;
+        timer.textToUpdate = go.GetComponent<Text>();
         //activate camera of player, set ready
     }
 
