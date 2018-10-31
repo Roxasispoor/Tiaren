@@ -168,7 +168,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
 
     // Use this for initialization
-    [Server]
+   
     IEnumerator Start()
     {
         //PHASE 0 : SET THE GAME UP
@@ -178,8 +178,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             //Grid.instance.SaveGridFile();
 
             //If you want to load one
-            if(isServer)
-        { 
+        
             Grid.instance.FillGridAndSpawn(gridFolder);
            
         while (player1 == null )
@@ -194,17 +193,19 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
-        player1.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
-        player2.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
-        player1.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
-        player2.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
+        
+        //    Debug.Log("NOW LOAD MAPS");
+        //player1.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
+        //player2.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
+      //  player1.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
+        //player2.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
        isGameStarted = true;
 
             //Retrieve data 
 
-            RpcStartGame();
+            //RpcStartGame();
 //        BeginningOfTurn();
-    }
+    
  }
     [ClientRpc]
     public void RpcStartGame()
