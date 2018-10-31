@@ -192,7 +192,7 @@ public class Player : NetworkBehaviour
     {
         if (GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.isGameStarted)
+            if (clock.IsFinished && GameManager.instance.isGameStarted && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
             {
                 GameManager.instance.EndOFTurn(); //On évite de le déclencher plusieurs fois pour l'instant
             }
@@ -312,9 +312,7 @@ public class Player : NetworkBehaviour
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
-        Timer timer = GameManager.instance.GetComponentInChildren<Timer>();
-        GameObject go = transform.Find("Canvas").Find("Chrono").gameObject;
-        timer.textToUpdate = go.GetComponent<Text>();
+      //  GameManager.instance.GetComponentInChildren<Timer>().textToUpdate= transform.Find("Canvas").Find("Chrono").GetComponent<Text>();
         //activate camera of player, set ready
     }
 

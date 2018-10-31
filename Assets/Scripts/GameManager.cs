@@ -204,7 +204,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             //Retrieve data 
 
             //RpcStartGame();
-//        BeginningOfTurn();
+        BeginningOfTurn();
     
  }
     [ClientRpc]

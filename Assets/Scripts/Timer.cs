@@ -33,6 +33,7 @@ public class Timer : MonoBehaviour
     public void StartTimer(float time)
     {
         this.targetTime = time;
+        
     }
 
     void Update()
