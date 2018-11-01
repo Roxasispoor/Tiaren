@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using UnityEngine;
 
-public class ParameterChangeV2<T, TProperty> : Effect {
+public class ParameterChangeV2<T, TProperty> : EffectOnPlaceable {
     TProperty value;
     Expression<Func<T, TProperty>> expression;
     public override Effect Clone()

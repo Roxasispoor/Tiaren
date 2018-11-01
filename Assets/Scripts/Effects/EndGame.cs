@@ -4,12 +4,12 @@ using UnityEngine;
 /// <summary>
 /// Effect of end game
 /// </summary>
-public class EndGame : Effect
+public class EndGame : EffectOnPlaceable
 {
    
     private Player player;
 
-    public EndGame(Effect other) : base(other)
+    public EndGame(EndGame other) : base(other)
     {
     }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 /// Effect changing value of an attribute. Need a specialized getter/setter (javatyped)
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ParameterChange<T> : Effect
+public class ParameterChange<T> : EffectOnPlaceable
 {
     public delegate void DelegateSetter(T value);
     private DelegateSetter delegateSetter;

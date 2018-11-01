@@ -4,17 +4,12 @@ using UnityEngine;
 /// <summary>
 /// Effect to push a bloc
 /// </summary>
-public class Push : Effect
+public class Push : EffectOnPlaceable
 {
     private float damage;
     private int nbCases;
-    private GameManager gameManager;
-    /// <summary>
-    /// super push destroy bloc and increase damage
-    /// </summary>
-    private bool isSuper;
-
-    public Push(Effect other) : base(other)
+    
+    public Push(Push other) : base(other)
     {
     }
 
@@ -23,11 +18,10 @@ public class Push : Effect
     /// </summary>
     /// <param name="target">target of blow</param>
     /// <param name="launcher">launcher of blow</param>
-    public Push(Placeable target, Placeable launcher, int nbCases, bool isSuper) : base(target, launcher)
+    public Push(Placeable target, Placeable launcher, int nbCases) : base(target, launcher)
     {
         this.nbCases = nbCases;
-        this.isSuper = isSuper;
-    }
+      }
 
     public override Effect Clone()
     {

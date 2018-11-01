@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// effect to destroy a bloc
 /// </summary>
-public class DestroyBloc : Effect
+public class DestroyBloc : EffectOnPlaceable
 {
     public DestroyBloc(DestroyBloc other) : base(other)
     {

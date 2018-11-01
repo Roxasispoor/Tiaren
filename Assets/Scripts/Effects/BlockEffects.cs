@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Class for effect blocking other effects
 /// </summary>
-public class BlockEffects : Effect
+public class BlockEffects : EffectOnPlaceable
 {
     private List<Effect> listEffectsToBlock;
     /// <summary>
