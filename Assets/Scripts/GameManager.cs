@@ -297,7 +297,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void UseSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
     {
         Skill skill = playingPlaceable.Skills[skillID];
-        skill.Use();
+        if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
+        {
+            caster.CurrentPA= caster.CurrentPA - skill.Cost>0? caster.CurrentPA - skill.Cost:0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
+        }
     }
     public Placeable FindLocalObject(int id)
     {

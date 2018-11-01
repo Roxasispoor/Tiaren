@@ -14,8 +14,7 @@ public class Skill
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
     private SkillType skillType;
-    private GameManager gameManager;
-    public SkillType SkillType
+     public SkillType SkillType
     {
         get
         {
@@ -66,23 +65,28 @@ public class Skill
             cost = value;
         }
     }
-
-    public GameManager GameManager
+    
+    ///TODO makes the copy and return if succeeded launching the skill
+    public bool Use(LivingPlaceable caster, List<Placeable> targets)
     {
-        get
+        if(this.tourCooldownLeft>0)
         {
-            return gameManager;
+            return false;
         }
-
-        set
+        if(condition!=null && !condition.Invoke())
         {
-            gameManager = value;
+            return false;
         }
-    }
-    ///TODO
-    public void Use()
-    {
-        
-        this.tourCooldownLeft = this.cooldown;
+        this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
+        foreach(Placeable target in targets)
+        {
+            foreach(Effect effect in effects)
+            {
+                //makes the deep copy, send it to effect manager and zoo
+                Effect effectToConsider = effect.Clone();
+             //   effectToConsider.SetTarget(target);
+            }
+        }
+        return true;
     }
 }

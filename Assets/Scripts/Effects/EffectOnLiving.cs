@@ -22,6 +22,7 @@ public abstract class EffectOnLiving : Effect
         this.target = target;
         this.launcher = launcher;
     }
+    
     public virtual LivingPlaceable Target
     {
         get
