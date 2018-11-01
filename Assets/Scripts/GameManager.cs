@@ -193,13 +193,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
-        
-        //    Debug.Log("NOW LOAD MAPS");
-        //player1.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
-        //player2.GetComponent<Player>().RpcLoadMap();//Should call on both clients 
-      //  player1.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
-        //player2.GetComponent<Player>().RpcCreateCharacters(new Vector3Int(0, 4, 0));
-       isGameStarted = true;
+        isGameStarted = true;
 
             //Retrieve data 
 

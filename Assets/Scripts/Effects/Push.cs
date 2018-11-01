@@ -13,6 +13,11 @@ public class Push : Effect
     /// super push destroy bloc and increase damage
     /// </summary>
     private bool isSuper;
+
+    public Push(Effect other) : base(other)
+    {
+    }
+
     /// <summary>
     /// create a damage object
     /// </summary>
@@ -22,6 +27,11 @@ public class Push : Effect
     {
         this.nbCases = nbCases;
         this.isSuper = isSuper;
+    }
+
+    public override Effect Clone()
+    {
+        throw new System.NotImplementedException();
     }
 
     override

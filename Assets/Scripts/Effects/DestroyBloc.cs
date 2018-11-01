@@ -6,6 +6,14 @@ using UnityEngine;
 /// </summary>
 public class DestroyBloc : Effect
 {
+    public DestroyBloc(DestroyBloc other) : base(other)
+    {
+    }
+
+    public override Effect Clone()
+    {
+        return new DestroyBloc(this);
+    }
 
     // Use this for initialization
     override

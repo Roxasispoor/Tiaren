@@ -13,6 +13,12 @@ public abstract class Effect
     {
 
     }
+    public Effect(Effect other)
+    {
+        this.target = other.target;
+        this.launcher = other.launcher; 
+    }
+    public abstract Effect Clone();
     protected Effect(Placeable target, Placeable launcher)
     {
         this.target = target;

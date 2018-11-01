@@ -6,17 +6,28 @@ using UnityEngine;
 /// </summary>
 public class EndGame : Effect
 {
-    private GameManager game;
+   
     private Player player;
-    public EndGame(GameManager game, Player player)
+
+    public EndGame(Effect other) : base(other)
     {
-        this.game = game;
+    }
+
+    public EndGame( Player player)
+    {
+
         this.player = player;
     }
+
+    public override Effect Clone()
+    {
+        return new EndGame(this);
+    }
+
     override
         public void Use()
     {
-        this.game.Winner = player;
+    //    this.game.Winner = player;
     }
 
 }

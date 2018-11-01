@@ -19,6 +19,14 @@ public class BlockEffects : Effect
     {
             }
 
+    public BlockEffects(BlockEffects other) : base(other)
+    {
+        this.listEffectsToBlock = other.listEffectsToBlock.ConvertAll(effect => effect.Clone());//deep copy the list
+        this.numberToBlock = other.numberToBlock;
+        //this.listEffectsToBlock(other.listEffectsToBlock);
+        
+    }
+
     public List<Effect> ListEffectsToBlock
     {
         get
@@ -64,5 +72,8 @@ public class BlockEffects : Effect
         
     }
 
-
+    public override Effect Clone()
+    {
+        throw new System.NotImplementedException();
+    }
 }

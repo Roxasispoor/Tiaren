@@ -190,15 +190,23 @@ public class Player : NetworkBehaviour
     }
     private void Update()
     {
-        if (GameManager.instance.player1 != null && GameManager.instance.player2 != null)
+        if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
             if (clock.IsFinished && GameManager.instance.isGameStarted && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
             {
-                GameManager.instance.EndOFTurn(); //On évite de le déclencher plusieurs fois pour l'instant
+               
+
+                    RpcEndTurn(); //permet une resynchronisation au rythme server
+                    GameManager.instance.EndOFTurn();
             }
         }
     }
-
+    [ClientRpc]
+    private void RpcEndTurn()
+    {
+        Debug.Log("Oui chef, mon tour est fini!");
+        GameManager.instance.EndOFTurn();
+    }
 
     // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
     [ClientRpc]

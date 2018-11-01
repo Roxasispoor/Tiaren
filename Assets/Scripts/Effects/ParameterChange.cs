@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -12,10 +13,18 @@ public class ParameterChange<T> : Effect
     private T paramNewValue;
 
 
+    
+
     public ParameterChange(Placeable target, Placeable launcher, DelegateSetter delegateSetter, T paramNewValue) : base(target, launcher)
     {
         this.delegateSetter = delegateSetter;
         this.paramNewValue = paramNewValue;
+    }
+
+    public ParameterChange(ParameterChange<T> other) : base(other)
+    {
+        this.delegateSetter = other.delegateSetter;
+        this.paramNewValue = other.paramNewValue;
     }
 
     override
@@ -25,5 +34,8 @@ public class ParameterChange<T> : Effect
         this.delegateSetter(paramNewValue);
     }
 
-
+    public override Effect Clone()
+    {
+        return new ParameterChange<T>(this);
+    }
 }

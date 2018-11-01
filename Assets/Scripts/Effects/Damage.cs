@@ -8,6 +8,22 @@ using UnityEngine;
 public class Damage : Effect
 {
     private float damageValue;
+
+    public Damage()
+    {
+        damageValue = 0;
+    }
+    public Damage(float value)
+    {
+        damageValue = value;
+    }
+
+    public Damage(Damage other) : base(other)
+    {
+        this.damageValue = other.damageValue;
+    }
+
+
     /// <summary>
     /// create a damage object
     /// </summary>
@@ -31,6 +47,11 @@ public class Damage : Effect
         {
             damageValue = value;
         }
+    }
+
+    public override Effect Clone()
+    {
+        return new Damage(this);
     }
 
     override
