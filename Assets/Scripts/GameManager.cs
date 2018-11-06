@@ -325,7 +325,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
 
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
-        
+        //Todo: if necessary chose them by big cube or something
         foreach(MeshFilter meshFilter in meshFilters)
         {
 
