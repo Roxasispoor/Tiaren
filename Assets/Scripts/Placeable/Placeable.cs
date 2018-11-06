@@ -11,6 +11,7 @@ using System;
 public abstract class Placeable:MonoBehaviour
 {
     public int netId;
+    public Batch batch;
     public static int currentMaxId=0;
     public int serializeNumber;
     private bool walkable;
@@ -151,7 +152,14 @@ public abstract class Placeable:MonoBehaviour
             hitablePoints = value;
         }
     }
-
+    /// <summary>
+    /// On dispatch selon Living et placeable
+    /// </summary>
+    /// <param name="effect"></param>
+    public virtual void DispatchEffect(Effect effect)
+    {
+        effect.TargetAndInvokeEffectManager(this);
+    }
     public TraversableType TraversableChar
     {
         get

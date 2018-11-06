@@ -29,6 +29,7 @@ public class GameManager : NetworkBehaviour
     
 
     private List<StackAndPlaceable> turnOrder;
+    Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
 
     private Player winner;
     public LivingPlaceable playingPlaceable;
@@ -198,10 +199,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
         isGameStarted = true;
+        Grid.instance.Gravity();
+        InitialiseBatchFolder();
+        //Retrieve data 
 
-            //Retrieve data 
-
-            //RpcStartGame();
+        //RpcStartGame();
         BeginningOfTurn();
     
  }
@@ -257,13 +259,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// </summary>
     /// <param name="meshFilter"></param>
     /// <param name="dictionaryMaterialsFilling"></param>
-    private void CreateNewBatch(string material, Dictionary<string, List<CombineInstance>> dictionaryMaterialsFilling)
+    private void CreateNewBatch(Batch batch)
     {
         GameObject newBatch = Instantiate(batchPrefab, batchFolder.transform);
         Material saved = null;
+        //get the good material
         foreach (Material mat in newBatch.GetComponent<Renderer>().materials)
         {
-            if(mat.name==material)
+            if(mat.name==batch.material)
             {
                 saved = mat;
                 break;
@@ -274,12 +277,51 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
 
         newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
-            dictionaryMaterialsFilling[material].ToArray(), true, true);
+            batch.combineInstances.ToArray(), true, true);
     }
+    /// <summary>
+    /// Add current combine instance to its batch
+    /// </summary>
+    /// <param name="meshFilter"></param>
+    /// <param name="combineInstance"></param>
+    private void AddMeshToBatches(MeshFilter meshFilter,CombineInstance combineInstance)
+    {
 
+        if (!dictionaryMaterialsFilling.ContainsKey(meshFilter.GetComponent<MeshRenderer>().material.name))
+        {
+            //nouvelle liste de batch, avec un batch de crée dedans
+            dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name] = new List<Batch>
+            {
+                new Batch(meshFilter.GetComponent<MeshRenderer>().material.name)
+            };
+            
+        }
+        if (dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1].combineInstances.Count >= maxBatchVertexes)
+        //hard limit for number of cube ~2370 =>65500 vertexes; Overload
+        //If last batch is full, well new one necessary
+        {
+            Debug.Log("New batch necessary, capacity exceeded");
+            CreateNewBatch(dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1]);
+            dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Add(new Batch(meshFilter.GetComponent<MeshRenderer>().material.name));
+  
+
+        }
+        if(meshFilter.GetComponent<Placeable>())
+        {
+            meshFilter.GetComponent<Placeable>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1];
+        }
+        dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1].combineInstances.Add(combineInstance);
+        // Add the current combine to the last list
+
+        meshFilter.GetComponent<MeshRenderer>().enabled = false;
+    }
     private void InitialiseBatchFolder()
     {
-        Dictionary<string, List<CombineInstance>> dictionaryMaterialsFilling=new Dictionary<string, List<CombineInstance>>();
+        dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
 
 
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
@@ -292,33 +334,20 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 mesh = meshFilter.sharedMesh,
                 transform = meshFilter.transform.localToWorldMatrix
             };
-            if(!dictionaryMaterialsFilling.ContainsKey(meshFilter.GetComponent<MeshRenderer>().material.name))
-            {
-                dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name] = new List<CombineInstance>();
-            }
-            if (dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count>=maxBatchVertexes)//hard limit for number of cube ~2370 =>65500 vertexes; Overload
-            {
-                Debug.Log("New batch necessary, capacity exceeded");
-                CreateNewBatch(meshFilter.GetComponent<MeshRenderer>().material.name, dictionaryMaterialsFilling);
-//Then we empty it not that good, to change if takes long to recreate mesh
-                dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Clear();
-            }
-            dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Add(currentInstance);
-            meshFilter.GetComponent<MeshRenderer>().enabled = false;
+            // If it is the first of this material
+            AddMeshToBatches(meshFilter,currentInstance);
 
         }
-        //Then at the end we draw all the non ended
-        foreach( string materialName in dictionaryMaterialsFilling.Keys)
+        //Then at the end we create all the batches that are not full
+        foreach(List<Batch> batches in dictionaryMaterialsFilling.Values)
         {
-            CreateNewBatch(materialName, dictionaryMaterialsFilling);
+            CreateNewBatch(batches[batches.Count-1]); //instanciate last batch
         }
-
-        
     }
     private void BeginningOfTurn()
     {
         Grid.instance.Gravity();
-        InitialiseBatchFolder();
+//        InitialiseBatchFolder();
 
         Grid.instance.InitializeExplored(false);
 

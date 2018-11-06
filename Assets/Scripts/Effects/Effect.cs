@@ -14,8 +14,9 @@ public abstract class Effect
     }
    
     public abstract Effect Clone();
-  
-    
+    public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
+    public abstract void TargetAndInvokeEffectManager(Placeable placeable);
+
     // Use this for initialization
     public abstract void Use();
 

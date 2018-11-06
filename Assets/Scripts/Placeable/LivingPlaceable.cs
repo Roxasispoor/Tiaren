@@ -84,7 +84,10 @@ public class LivingPlaceable : Placeable
         //TODO use gameEffectManager
         return target.transform.position + maxHit.RelativePosition;
     }
-
+    public override void DispatchEffect(Effect effect)
+    {
+        effect.TargetAndInvokeEffectManager(this);
+    }
     /// <summary>
     /// return points of placeable where player can shoot
     /// </summary>

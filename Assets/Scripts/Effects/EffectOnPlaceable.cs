@@ -6,6 +6,7 @@ public abstract class EffectOnPlaceable : Effect {
 
     private Placeable target;
     private Placeable launcher;
+    private bool placeableOnly;
 
     public EffectOnPlaceable(EffectOnPlaceable other)
     {
@@ -48,4 +49,22 @@ public abstract class EffectOnPlaceable : Effect {
         }
     }
 
+    public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
+    {
+        if(placeableOnly)
+        {
+            return;
+        }
+        else
+        {
+            this.target = placeable;
+            EffectManager.instance.UseEffect(this);
+        }
+    }
+
+    public override void TargetAndInvokeEffectManager(Placeable placeable)
+    {
+        this.target = placeable;
+        EffectManager.instance.UseEffect(this);
+    }
 }
