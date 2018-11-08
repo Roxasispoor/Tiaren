@@ -398,11 +398,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
-        if (isLocalPlayer)
+        if (isClient)
         {
-            GameObject zoneToclear = GameObject.Find("Skill Zone");
+            GameObject zoneToclear = playingPlaceable.player.transform.Find("Canvas").Find("Skill Zone").gameObject;
             uIManager.ClearZone(zoneToclear);
-            zoneToclear = GameObject.Find("Timeline");
+            zoneToclear = playingPlaceable.player.transform.Find("Canvas").Find("Timeline").gameObject;
             uIManager.ClearZone(zoneToclear);
         }
         BeginningOfTurn();
