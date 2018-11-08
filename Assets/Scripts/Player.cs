@@ -525,6 +525,7 @@ public class Player : NetworkBehaviour
 
 
         }
+        anim.SetTrigger("idle");
 
     }
 
