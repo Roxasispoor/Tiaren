@@ -47,5 +47,18 @@ public abstract class EffectOnPlaceable : Effect {
             launcher = value;
         }
     }
+    public override Placeable GetTarget()
+    {
+        return Target;
+    }
+    public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
+    {
+        TargetAndInvokeEffectManager(placeable);
+    }
 
+    public override void TargetAndInvokeEffectManager(Placeable placeable)
+    {
+        this.target = placeable;
+        EffectManager.instance.UseEffect(this);
+    }
 }

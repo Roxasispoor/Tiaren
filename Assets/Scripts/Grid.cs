@@ -164,7 +164,32 @@ public class Grid : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// Instanciate the new cube
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <param name="position"></param>
+    public void InstantiateCube(GameObject prefab, Vector3Int position)
+    {
+        if (CheckNull(position))
+        {
+            GameObject newBlock = Instantiate(prefab, GameManager.instance.gridFolder.transform);
+            gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
+            MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
 
+            if (meshFilter != null)
+            {
+                CombineInstance currentInstance = new CombineInstance
+                {
+                    mesh = newBlock.GetComponent<MeshFilter>().sharedMesh,
+                    transform = meshFilter.transform.localToWorldMatrix
+                };
+
+                GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
+            }
+        }
+
+    }
 
     /// <summary>
     /// Function finding and displaying path from point A to point B
@@ -573,7 +598,18 @@ public class Grid : MonoBehaviour
         }
 
     }
-    public void DeplaceBloc(Placeable bloc, Vector3Int desiredPosition)
+    public bool CheckNull(Vector3Int position)
+    {
+        return CheckRange(position) && gridMatrix[position.x, position.y, position.z] != null;
+    }
+    public bool CheckRange(Vector3Int position)
+    {
+        return position.x > 0 && position.x < sizeX &&
+            position.y > 0 && position.y < sizeY &&
+            position.z > 0 && position.z < sizeZ;
+        
+    }
+    public void MoveBlock(Placeable bloc, Vector3Int desiredPosition)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
@@ -600,12 +636,12 @@ public class Grid : MonoBehaviour
     {
         if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
-            DeplaceBloc(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
+            MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
 
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects
         {
-            gridMatrix[x, y, z].DestroyLivingPlaceable();
+            gridMatrix[x, y, z].Destroy();
             gridMatrix[x, y, z] = null;
 
         }
@@ -627,7 +663,7 @@ public class Grid : MonoBehaviour
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDEATH)
         {
-            gridMatrix[x, y - ydrop, z].DestroyLivingPlaceable();
+            gridMatrix[x, y - ydrop, z].Destroy();
             gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
            // gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
             gridMatrix[x, y, z] = null;

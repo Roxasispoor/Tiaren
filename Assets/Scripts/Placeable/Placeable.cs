@@ -11,6 +11,7 @@ using System;
 public abstract class Placeable:MonoBehaviour
 {
     public int netId;
+    public Batch batch;
     public static int currentMaxId=0;
     public int serializeNumber;
     private bool walkable;
@@ -29,6 +30,7 @@ public abstract class Placeable:MonoBehaviour
     private List<HitablePoint> hitablePoints;
     private List<Effect> onStartTurn;
     private List<Effect> onEndTurn;
+    private List<Effect> attachedEffects;
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -39,7 +41,10 @@ public abstract class Placeable:MonoBehaviour
         return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
     }
-
+    public virtual bool isLiving()
+    {
+        return false;
+    }
     public bool Walkable
     {
         get
@@ -151,7 +156,14 @@ public abstract class Placeable:MonoBehaviour
             hitablePoints = value;
         }
     }
-
+    /// <summary>
+    /// On dispatch selon Living et placeable
+    /// </summary>
+    /// <param name="effect"></param>
+    public virtual void DispatchEffect(Effect effect)
+    {
+        effect.TargetAndInvokeEffectManager(this);
+    }
     public TraversableType TraversableChar
     {
         get
@@ -245,6 +257,19 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
+    public List<Effect> AttachedEffects
+    {
+        get
+        {
+            return attachedEffects;
+        }
+
+        set
+        {
+            attachedEffects = value;
+        }
+    }
+
 
 
 
@@ -261,13 +286,13 @@ public abstract class Placeable:MonoBehaviour
     /// <summary>
     /// method to call for destroying object
     /// </summary>
-    public virtual void DestroyLivingPlaceable()
+    public virtual void Destroy()
     {
         if (this.Destroyable)
         {
-            foreach (var effet in this.OnDestroyEffects)
+            foreach (var effect in this.OnDestroyEffects)
             {
-                effet.Use();
+                EffectManager.instance.UseEffect(effect);
             }
         }
         Destroy(this);
@@ -291,10 +316,20 @@ public abstract class Placeable:MonoBehaviour
         }
 
     }
+    private void Awake()
+    {
+
+        this.OnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+    }
     /*public void Start()
     {
         Comma
         this.netId=this.
     }*/
-    
+
 }

@@ -63,7 +63,7 @@ public class Damage : EffectOnLiving
             if (Target.CurrentHP <= 0)
             {
 
-                Target.DestroyLivingPlaceable();
+                Target.Destroy();
             }
 
 

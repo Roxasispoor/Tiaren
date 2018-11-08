@@ -7,6 +7,7 @@ public abstract class EffectOnLiving : Effect
 
     private LivingPlaceable target;
     private Placeable launcher;
+
     public EffectOnLiving(EffectOnLiving other)
     {
         this.target = other.target;
@@ -48,7 +49,22 @@ public abstract class EffectOnLiving : Effect
             launcher = value;
         }
     }
+    public override Placeable GetTarget()
+    {
+        return Target;
+    }
 
+    public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
+    {
+        this.target = placeable;
+        EffectManager.instance.UseEffect(this);
+        
+    }
+
+    public override void TargetAndInvokeEffectManager(Placeable placeable)
+    {
+       
+    }
 }
 
 

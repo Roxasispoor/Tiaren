@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,10 +13,13 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public NetworkManager networkManager;
+    private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;
     public bool isGameStarted = false;
     public Dictionary<int, Placeable> idPlaceable;
     private Placeable shotPlaceable;
+    public GameObject batchPrefab;
+    public GameObject batchFolder;
     public GameObject[] prefabCharacs;
     public GameObject[] prefabWeapons;
     public GameObject gridFolder;
@@ -26,6 +30,7 @@ public class GameManager : NetworkBehaviour
     
 
     private List<StackAndPlaceable> turnOrder;
+    Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
 
     private Player winner;
     public LivingPlaceable playingPlaceable;
@@ -196,10 +201,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
         isGameStarted = true;
+        Grid.instance.Gravity();
+        InitialiseBatchFolder();
+        //Retrieve data 
 
-            //Retrieve data 
-
-            //RpcStartGame();
+        //RpcStartGame();
         BeginningOfTurn();
     
     }
@@ -250,10 +256,104 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
+    
+
+    /// <summary>
+    /// Creates a new batch from the material given, combines instances in dico 
+    /// </summary>
+    /// <param name="meshFilter"></param>
+    /// <param name="dictionaryMaterialsFilling"></param>
+    private void CreateNewBatch(Batch batch)
+    {
+        GameObject newBatch = Instantiate(batchPrefab, batchFolder.transform);
+        Material saved = null;
+        //get the good material
+        foreach (Material mat in newBatch.GetComponent<Renderer>().materials)
+        {
+            if(mat.name==batch.material)
+            {
+                saved = mat;
+                break;
+            }
+        }
+        newBatch.GetComponent<MeshRenderer>().material = saved;
+        newBatch.GetComponent<MeshFilter>().mesh = new Mesh();
+
+
+        newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
+            batch.combineInstances.ToArray(), true, true);
+    }
+    /// <summary>
+    /// Add current combine instance to its batch
+    /// </summary>
+    /// <param name="meshFilter"></param>
+    /// <param name="combineInstance"></param>
+    public void AddMeshToBatches(MeshFilter meshFilter,CombineInstance combineInstance)
+    {
+
+        if (!dictionaryMaterialsFilling.ContainsKey(meshFilter.GetComponent<MeshRenderer>().material.name))
+        {
+            //nouvelle liste de batch, avec un batch de crée dedans
+            dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name] = new List<Batch>
+            {
+                new Batch(meshFilter.GetComponent<MeshRenderer>().material.name)
+            };
+            
+        }
+        if (dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1].combineInstances.Count >= maxBatchVertexes)
+        //hard limit for number of cube ~2370 =>65500 vertexes; Overload
+        //If last batch is full, well new one necessary
+        {
+            Debug.Log("New batch necessary, capacity exceeded");
+            CreateNewBatch(dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1]);
+            dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Add(new Batch(meshFilter.GetComponent<MeshRenderer>().material.name));
+  
+
+        }
+        if(meshFilter.GetComponent<Placeable>())
+        {
+            meshFilter.GetComponent<Placeable>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1];
+        }
+        dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1].combineInstances.Add(combineInstance);
+        // Add the current combine to the last list
+
+        meshFilter.GetComponent<MeshRenderer>().enabled = false;
+    }
+    private void InitialiseBatchFolder()
+    {
+        dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
+
+
+        MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
+        //Todo: if necessary chose them by big cube or something
+        foreach(MeshFilter meshFilter in meshFilters)
+        {
+
+            CombineInstance currentInstance = new CombineInstance
+            {
+                mesh = meshFilter.sharedMesh,
+                transform = meshFilter.transform.localToWorldMatrix
+            };
+            // If it is the first of this material
+            AddMeshToBatches(meshFilter,currentInstance);
+
+        }
+        //Then at the end we create all the batches that are not full
+        foreach(List<Batch> batches in dictionaryMaterialsFilling.Values)
+        {
+            CreateNewBatch(batches[batches.Count-1]); //instanciate last batch
+        }
+    }
 
     private void BeginningOfTurn()
     {
         Grid.instance.Gravity();
+//        InitialiseBatchFolder();
+
         Grid.instance.InitializeExplored(false);
 
         UpdateTimeline();
@@ -326,7 +426,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             playingPlaceable.Player.CmdMoveTo(realPath);
             List<Vector3> bezierPath = new List<Vector3>(realPath);
-            playingPlaceable.player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed);
+            Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed);
         }
     }
 

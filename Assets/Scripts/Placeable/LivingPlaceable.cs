@@ -85,7 +85,10 @@ public class LivingPlaceable : Placeable
         //TODO use gameEffectManager
         return target.transform.position + maxHit.RelativePosition;
     }
-
+    public override void DispatchEffect(Effect effect)
+    {
+        effect.TargetAndInvokeEffectManager(this);
+    }
     /// <summary>
     /// return points of placeable where player can shoot
     /// </summary>
@@ -137,8 +140,11 @@ public class LivingPlaceable : Placeable
         return pointsToSend;
     }
 
-   
 
+    public override bool isLiving()
+    {
+        return true;
+    }
     // Use this for initialization
     void Awake()
     {
@@ -455,7 +461,7 @@ public class LivingPlaceable : Placeable
     /// </summary>
     /// 
     override
-    public void DestroyLivingPlaceable()
+    public void Destroy()
     {
 
         if (this.Destroyable)
