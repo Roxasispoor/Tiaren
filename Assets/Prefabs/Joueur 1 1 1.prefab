@@ -28,7 +28,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1104211276979470
 GameObject:
   m_ObjectHideFlags: 1
@@ -142,8 +142,8 @@ GameObject:
   - component: {fileID: 20790171057466292}
   - component: {fileID: 124995858457379670}
   - component: {fileID: 81433074417433752}
-  - component: {fileID: 114669575655278514}
   - component: {fileID: 114766424520442780}
+  - component: {fileID: 114270093809156058}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -302,6 +302,30 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &114270093809156058
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469964001485780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c75f34d7ebe058146b538fbf672b4092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetOffset: {x: 0, y: 0, z: 0}
+  distance: 5
+  maxDistance: 20
+  minDistance: 0.6
+  xSpeed: 200
+  ySpeed: 200
+  yMinLimit: -80
+  yMaxLimit: 80
+  zoomRate: 70
+  panSpeed: 0.3
+  zoomDampening: 5
+  player: {fileID: 114887153983755284}
 --- !u!114 &114462364222441842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -314,7 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToUpdate: {fileID: 114910227046878698}
-  TimerSlider: {fileID: 114492195648382202}
+  timerSlider: {fileID: 114492195648382202}
 --- !u!114 &114492195648382202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -390,30 +414,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114669575655278514
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1469964001485780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75f34d7ebe058146b538fbf672b4092, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  targetOffset: {x: 0, y: 0, z: 0}
-  distance: 5
-  maxDistance: 20
-  minDistance: 0.6
-  xSpeed: 200
-  ySpeed: 200
-  yMinLimit: -80
-  yMaxLimit: 80
-  zoomRate: 70
-  panSpeed: 0.3
-  zoomDampening: 5
-  player: {fileID: 114887153983755284}
 --- !u!114 &114713950938067470
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -586,7 +586,7 @@ MonoBehaviour:
   isReadyToPlay: 0
   characters: []
   numberPrefab: 00000000
-  cameraScript: {fileID: 114669575655278514}
+  cameraScript: {fileID: 114270093809156058}
   clock: {fileID: 114462364222441842}
 --- !u!114 &114910227046878698
 MonoBehaviour:
@@ -697,7 +697,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

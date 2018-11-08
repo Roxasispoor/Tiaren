@@ -150,6 +150,10 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
+        if (isLocalPlayer)
+        {
+            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
+        }
         clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
         DicoCondition = new Dictionary<string, Condition>();
@@ -194,10 +198,8 @@ public class Player : NetworkBehaviour
         {
             if (clock.IsFinished && GameManager.instance.isGameStarted && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
             {
-               
-
-                    RpcEndTurn(); //permet une resynchronisation au rythme server
-                    GameManager.instance.EndOFTurn();
+               RpcEndTurn(); //permet une resynchronisation au rythme server
+               GameManager.instance.EndOFTurn();
             }
         }
     }

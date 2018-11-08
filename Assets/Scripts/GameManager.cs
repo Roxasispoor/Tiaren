@@ -398,8 +398,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
-        RectTransform zoneToclear = GameObject.Find("SkillZone").GetComponent<RectTransform>();
-        uIManager.clearZone(zoneToclear);
+        if (isLocalPlayer)
+        {
+            GameObject zoneToclear = GameObject.Find("Skill Zone");
+            uIManager.clearZone(zoneToclear);
+            zoneToclear = GameObject.Find("Timeline");
+            uIManager.clearZone(zoneToclear);
+        }
         BeginningOfTurn();
     }
 

@@ -28,9 +28,9 @@ public class UIManager : MonoBehaviour {
         foreach (Skill skill in character.Skills)
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
-            button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
-            button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
+            //button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            //button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             //button.onClick.AddListener(skill.hightlight());
             numberInstantiated++;
@@ -43,20 +43,21 @@ public class UIManager : MonoBehaviour {
         int numberInstantiated = 0;
         foreach (StackAndPlaceable character in gameManager.TurnOrder)
         {
-            Button button = Instantiate(prefabAbilityButton, TimelineZone);
-            button.GetComponent<RectTransform>().anchorMin = new Vector2 (0.5f, 0.5f);
-            button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector3(120 + 46 * numberInstantiated, 0);
+            Button button = Instantiate(prefabCharacterButton, TimelineZone);
+            //button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+           // button.GetComponent<RectTransform>().anchorMax = new Vector2 (0.5f, 0.5f);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 120 - 46 * numberInstantiated);
             button.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
             numberInstantiated++;
         }
     }
 
-    public void clearZone(RectTransform zoneToClear)
+    public void clearZone(GameObject zoneToClear)
     {
-        while(zoneToClear.childCount > 0)
+
+        foreach (Transform child in zoneToClear.transform)
         {
-            Destroy(zoneToClear.GetChild(0));
+            Destroy(child.gameObject);
         }
     }
 }
