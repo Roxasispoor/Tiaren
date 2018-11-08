@@ -348,7 +348,7 @@ public class Player : NetworkBehaviour
     /// <param name="end"></param>
     /// <param name="control"></param>
     /// <returns></returns>
-    public float LengthQuadraticBezier(Vector3 start, Vector3 end, Vector3 control)
+    public static float LengthQuadraticBezier(Vector3 start, Vector3 end, Vector3 control)
     {
         Vector3[] C = { start, control, end };
         // ASSERT:  C[0], C[1], and C[2] are distinct points.
@@ -418,7 +418,7 @@ public class Player : NetworkBehaviour
     /// <param name="nextNode"></param>
     /// <param name="isBezier"></param>
     /// <returns></returns>
-    public float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
+    public static float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
         if (isBezier)// if difference of height
@@ -445,7 +445,7 @@ public class Player : NetworkBehaviour
 
 
     [Client]
-    public IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[path.Count - 1];

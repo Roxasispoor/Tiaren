@@ -139,8 +139,11 @@ public class LivingPlaceable : Placeable
         return pointsToSend;
     }
 
-   
 
+    public override bool isLiving()
+    {
+        return true;
+    }
     // Use this for initialization
     void Awake()
     {

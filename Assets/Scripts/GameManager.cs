@@ -414,7 +414,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             playingPlaceable.Player.CmdMoveTo(realPath);
             List<Vector3> bezierPath = new List<Vector3>(realPath);
-            playingPlaceable.player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed);
+            Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed);
         }
     }
 

@@ -573,7 +573,18 @@ public class Grid : MonoBehaviour
         }
 
     }
-    public void DeplaceBloc(Placeable bloc, Vector3Int desiredPosition)
+    public bool CheckNull(Vector3Int position)
+    {
+        return CheckRange(position) && gridMatrix[position.x, position.y, position.z] != null;
+    }
+    public bool CheckRange(Vector3Int position)
+    {
+        return position.x > 0 && position.x < sizeX &&
+            position.y > 0 && position.y < sizeY &&
+            position.z > 0 && position.z < sizeZ;
+        
+    }
+    public void MoveBlock(Placeable bloc, Vector3Int desiredPosition)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
@@ -600,7 +611,7 @@ public class Grid : MonoBehaviour
     {
         if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
-            DeplaceBloc(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
+            MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
 
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects

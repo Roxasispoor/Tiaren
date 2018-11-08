@@ -8,9 +8,11 @@ public class Push : EffectOnPlaceable
 {
     private float damage;
     private float nbCases;
-    private Vector3 direction;
+    protected Vector3 direction;
     private bool isDirectionFromPosition;
     private bool doesHeightCount;
+    private const float pushSpeed= 1;
+   
     
     public Push(Push other) : base(other)
     {
@@ -75,6 +77,10 @@ public class Push : EffectOnPlaceable
         }
         return new Vector2Int(dx, dz);
     }
+    public virtual void GetDirection()
+    {
+        direction=Target.GetPosition() - Launcher.GetPosition();
+    }
     /// <summary>
     /// rounds up the angle to 0,45 or 90, does not use bresenham due to complexity and non deterministic
     /// </summary>
@@ -88,8 +94,8 @@ public class Push : EffectOnPlaceable
                 Debug.Log("The hell, push caster is push target");
             }
 
-
-                direction = Target.GetPosition() - Launcher.GetPosition();
+                GetDirection();
+              
                 direction.Normalize();
             if(doesHeightCount)
             {
@@ -106,11 +112,21 @@ public class Push : EffectOnPlaceable
         }
         Placeable directCollision=null ;
         List<Placeable> diagonalCollisions = new List<Placeable>();
-        CheckPath(distance, delta,out directCollision, out diagonalCollisions);
-        //Make damage and chek dodge conditions
-
-
-
+        List<Vector3> path= CheckPath(distance, delta,out directCollision, out diagonalCollisions);
+        //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
+        if (directCollision != null && directCollision.isLiving())
+        {
+            EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,this.Launcher,damage));
+        }
+        foreach(Placeable diagcoll in diagonalCollisions)
+        {
+            if (diagcoll != null && diagcoll.isLiving())
+            {
+                EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, this.Launcher, damage));
+            }
+        }
+        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z));
+        Player.MoveAlongBezier(path, Target, pushSpeed);
 
     }
     //Todo check que ça sort pas du terrain...
@@ -122,22 +138,23 @@ public class Push : EffectOnPlaceable
         bool isDiagonal = delta.x * delta.y != 0;
         for (int i = 0; i < distance; i++)
         {
-            if (Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i] != null)   //we hit something at this place
-            {
+            if (Grid.instance.CheckNull(new Vector3Int(Target.GetPosition().x + delta.x *i,Target.GetPosition().y,
+                Target.GetPosition().z + delta.y * i)))
+               {
                 directCollision=Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i];
             }
             else
             {
                 //check diagonal
-                if (isDiagonal && Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * (i - 1),
-                Target.GetPosition().y, Target.GetPosition().z + delta.y * i] != null)
+                if (isDiagonal && Grid.instance.CheckNull(
+                    new Vector3Int(Target.GetPosition().x + delta.x * (i-1), Target.GetPosition().y, Target.GetPosition().z + delta.y * i)))
                 {
                     diagonalCollisions.Add(Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * (i - 1),
                 Target.GetPosition().y, Target.GetPosition().z + delta.y * i]);
 
                 }
-                if (isDiagonal && Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i,
-               Target.GetPosition().y, Target.GetPosition().z + delta.y * (i - 1)] != null)
+                if (isDiagonal && Grid.instance.CheckNull(
+                    new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * (i-1))))
                 {
                     diagonalCollisions.Add(Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i,
                 Target.GetPosition().y, Target.GetPosition().z + delta.y * (i - 1)]);
@@ -152,7 +169,11 @@ public class Push : EffectOnPlaceable
             }
             else
             {
+                if(Grid.instance.CheckRange(
+                    new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i)))
+                    { 
                 positions.Add(new Vector3(Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i));
+                }
             }
         }
         return positions;
