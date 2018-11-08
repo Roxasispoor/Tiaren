@@ -12,6 +12,11 @@ public class UIManager : MonoBehaviour {
     public RectTransform SkillZone;
     public RectTransform TimelineZone;
 
+    private void Start()
+    {
+        gameManager = GameManager.instance;
+    }
+
     public int UpdateAbilities(LivingPlaceable character)
     {
         if (character == null)
