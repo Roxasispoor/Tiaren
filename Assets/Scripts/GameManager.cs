@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -28,6 +29,7 @@ public class GameManager : NetworkBehaviour
 
     private Player winner;
     public LivingPlaceable playingPlaceable;
+    private UIManager uIManager;
 
     /// <summary>
     /// allows to know if the game ended
@@ -179,17 +181,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             //If you want to load one
         
-            Grid.instance.FillGridAndSpawn(gridFolder);
+        Grid.instance.FillGridAndSpawn(gridFolder);
            
         while (player1 == null )
         {
                
                 yield return null;
         }
-            Debug.Log("Please load on client 1 ffs");
-         while (player2 == null )
-            { 
-                yield return null;
+        Debug.Log("Please load on client 1 ffs");
+        while (player2 == null )
+        { 
+            yield return null;
         }
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
@@ -200,12 +202,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             //RpcStartGame();
         BeginningOfTurn();
     
- }
+    }
+
     [ClientRpc]
     public void RpcStartGame()
     {
         isGameStarted = true; 
     }
+
     private void UpdateTimeline()
     {
         TurnOrder.Clear();
@@ -258,11 +262,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         if (playingPlaceable.IsDead)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
-            BeginningOfTurn();
+            EndOFTurn();
         }
         else
         {
-            //initialise character fields
+
+            //initialise UI
+            uIManager = playingPlaceable.player.GetComponent<UIManager>();
+            uIManager.UpdateAbilities(playingPlaceable);
+            uIManager.UpdateTimeline();
 
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
@@ -276,12 +284,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             {
                 playingPlaceable.player.cameraScript.target = playingPlaceable.gameObject.transform;
             }
-//            playingPlaceable.player.RpcSetCamera(playingPlaceable.netId);
+            //playingPlaceable.player.RpcSetCamera(playingPlaceable.netId);
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
             playingPlaceable.Player.clock.StartTimer(30f);
-  //          playingPlaceable.Player.RpcStartTimer(30f);
+
+            //playingPlaceable.Player.RpcStartTimer(30f);
         }
     }
 
@@ -289,6 +298,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
+        RectTransform zoneToclear = GameObject.Find("SkillZone").GetComponent<RectTransform>();
+        uIManager.clearZone(zoneToclear);
         BeginningOfTurn();
     }
 
@@ -395,6 +406,5 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
       
     }
-
     
 }

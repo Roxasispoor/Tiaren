@@ -13,6 +13,7 @@ public class Skill
     private List<Effect> effects;
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
+    public Sprite abilitySprite;
     private SkillType skillType;
      public SkillType SkillType
     {
