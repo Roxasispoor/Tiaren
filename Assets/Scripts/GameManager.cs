@@ -430,12 +430,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
         NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
+        if(inListDestination!=null)
+        { 
         Vector3[] realPath = inListDestination.getFullPath();
         if (playingPlaceable.AreaOfMouvement.Contains(destination))
         {
             playingPlaceable.Player.CmdMoveTo(realPath);
             List<Vector3> bezierPath = new List<Vector3>(realPath);
-            Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed);
+            StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
+        }
         }
     }
 

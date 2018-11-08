@@ -56,7 +56,7 @@ public class NodePath
         NodePath currentNode = this;
         for (int i = DistanceFromStart; i >= 0; i--)
         {
-            path[i] = new Vector3(this.x, this.y, this.z);
+            path[i] = new Vector3(currentNode.x, currentNode.y, currentNode.z);
             currentNode = currentNode.parent;
         }
         return path;

@@ -21,7 +21,7 @@ public abstract class Placeable:MonoBehaviour
     private TraversableType tangible;
     private TraversableType traversableBullet;
     public Color colorOfObject;
-    private float animationSpeed;
+    private float animationSpeed=1.0f;
    
     private GravityType gravityType;
     private CrushType crushable;
