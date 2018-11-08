@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Skill
 {
+    private string skillName;
     private int cost;
     private int tourCooldownLeft;
     private int cooldown;
@@ -65,6 +66,30 @@ public class Skill
         {
             cost = value;
         }
+    }
+
+    public string SkillName
+    {
+        get
+        {
+            return skillName;
+        }
+
+        set
+        {
+            skillName = value;
+        }
+    }
+
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName)
+    {
+        Cost = cost;
+        Cooldown = cooldown;
+        this.effects = effects;
+        SkillName = skillName;
+        this.abilitySprite = Resources.Load<Sprite>("UI_Images/" + SkillName);
+        SkillType = skillType;
+
     }
     
     ///TODO makes the copy and return if succeeded launching the skill

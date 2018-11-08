@@ -145,6 +145,7 @@ public class LivingPlaceable : Placeable
     {
         return true;
     }
+
     // Use this for initialization
     void Awake()
     {
@@ -181,8 +182,13 @@ public class LivingPlaceable : Placeable
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
-
+        List<Effect> ListEffects = new List<Effect>();
+        ListEffects.Add(new Push(2, 500));
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "push");
+        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "spell2");
+        Skills.Add(skill1);
     }
+
     public float MaxHP
     {
         get

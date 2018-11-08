@@ -52,9 +52,8 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public void clearZone(GameObject zoneToClear)
+    public void ClearZone(GameObject zoneToClear)
     {
-
         foreach (Transform child in zoneToClear.transform)
         {
             Destroy(child.gameObject);
