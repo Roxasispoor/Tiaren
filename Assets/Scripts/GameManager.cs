@@ -388,7 +388,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
-            playingPlaceable.Player.clock.StartTimer(30f);
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
+                playingPlaceable.Jump,playingPlaceable.Player);
+            playingPlaceable.Player.clock.StartTimer(3000f);
 
             //playingPlaceable.Player.RpcStartTimer(30f);
         }
@@ -398,6 +400,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
+        playingPlaceable.AreaOfMouvement.Clear();
         if (isClient)
         {
             GameObject zoneToclear = playingPlaceable.player.transform.Find("Canvas").Find("Skill Zone").gameObject;
@@ -426,7 +429,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void CheckIfAccessible(Placeable arrival)
     {
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
-        Vector3[] realPath = playingPlaceable.AreaOfMouvement.Find(destination.Equals).getFullPath();
+        NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
+        Vector3[] realPath = inListDestination.getFullPath();
         if (playingPlaceable.AreaOfMouvement.Contains(destination))
         {
             playingPlaceable.Player.CmdMoveTo(realPath);

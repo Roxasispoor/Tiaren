@@ -47,14 +47,14 @@ public class NodePath
 
     public static NodePath startPath(int x, int y, int z)
     {
-        return new NodePath(x, y, z - 1, 0, null);
+        return new NodePath(x, y-1, z, 0, null);
     }
 
     public Vector3[] getFullPath()
     {
         Vector3[] path = new Vector3[DistanceFromStart + 1];
         NodePath currentNode = this;
-        for (int i = DistanceFromStart + 1; i > 0; i--)
+        for (int i = DistanceFromStart; i >= 0; i--)
         {
             path[i] = new Vector3(this.x, this.y, this.z);
             currentNode = currentNode.parent;
@@ -73,7 +73,7 @@ public class NodePath
         {
             return false;
         }
-        if (obj.GetType() == typeof(NodePath))
+        if (obj.GetType() != typeof(NodePath))
         {
             return false;
         }
@@ -332,14 +332,14 @@ public class Grid : MonoBehaviour
     {
         for (int i = 0; i < jumpValue; i++)
         {
-            if (z - i < 0)
+            if (y - i < 0)
                 return -1;
 
-            if (GridMatrix[x, y, z - i] != null)
+            if (GridMatrix[x, y - i, z] != null)
             {
-                if (GridMatrix[x, y, z - i].Walkable)
+                if (GridMatrix[x, y - i, z].Walkable)
                 {
-                    return z - i;
+                    return y - i;
                 }
                 else
                 {
@@ -377,15 +377,19 @@ public class Grid : MonoBehaviour
         return returnList;
     }
 
-    void CheckColumn(NodePath current, int shift_x, int shift_y, int shift_z, Queue<NodePath> toCheck, List<NodePath> accessibleBloc, int distance, int jumpValue)
+    void CheckColumn(NodePath current, int shift_x, int shift_y, int shift_z, Queue<NodePath> toCheck, ref List<NodePath> accessibleBloc, int distance, int jumpValue)
     {
-        if (GridMatrix[current.x + shift_x, current.y + shift_y, current.z + shift_z] == null)
+        if (GridMatrix[current.x + shift_x, current.y + shift_y + 1, current.z + shift_z] == null)
         {
             int heightDown = CheckUnder(current.x + shift_x, current.y + shift_y, current.z + shift_z, jumpValue);
-            NodePath newNode = new NodePath(current.x + shift_x, current.y + shift_y, current.z + shift_z, current.DistanceFromStart + 1, current);
-            if (newNode.DistanceFromStart < distance)
-                toCheck.Enqueue(newNode);
-            accessibleBloc.Add(newNode);
+            if (heightDown >= 0)
+            {
+                NodePath newNode = new NodePath(current.x + shift_x, heightDown, current.z + shift_z, current.DistanceFromStart + 1, current);
+                if (newNode.DistanceFromStart < distance)
+                    toCheck.Enqueue(newNode);
+                accessibleBloc.Add(newNode);
+            }
+            
         }
         List<int> HeigthsUp = CheckUp(current.x + shift_x, current.y + shift_y, current.z + shift_z, current.x, current.z, jumpValue);
         foreach (int y in HeigthsUp)
@@ -427,21 +431,21 @@ public class Grid : MonoBehaviour
             }
 
             NodePath current = toCheck.Dequeue();
-            if (current.x - 1 > 0)
+            if (current.x - 1 >= 0)
             {
-                CheckColumn(current, -1, 0, 0, toCheck, accessibleBloc, distance, jumpValue);
+                CheckColumn(current, -1, 0, 0, toCheck, ref accessibleBloc, distance, jumpValue);
             }
-            if (current.x + 1 > 0)
+            if (current.x + 1 < sizeX)
             {
-                CheckColumn(current, +1, 0, 0, toCheck, accessibleBloc, distance, jumpValue);
+                CheckColumn(current, +1, 0, 0, toCheck, ref accessibleBloc, distance, jumpValue);
             }
-            if (current.z - 1 > 0)
+            if (current.z - 1 >= 0)
             {
-                CheckColumn(current, 0, 0, -1, toCheck, accessibleBloc, distance, jumpValue);
+                CheckColumn(current, 0, 0, -1, toCheck, ref accessibleBloc, distance, jumpValue);
             }
-            if (current.z + 1 > 0)
+            if (current.z + 1 < sizeZ)
             {
-                CheckColumn(current, 0, 0, +1, toCheck, accessibleBloc, distance, jumpValue);
+                CheckColumn(current, 0, 0, +1, toCheck, ref accessibleBloc, distance, jumpValue);
             }
         }
 

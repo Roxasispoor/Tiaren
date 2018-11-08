@@ -188,6 +188,7 @@ public class LivingPlaceable : Placeable
         Skill skill2 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "spell2");
         Skills.Add(skill1);
         Skills.Add(skill2);
+        this.AreaOfMouvement = new List<NodePath>();
     }
 
     public float MaxHP
