@@ -401,9 +401,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         if (isLocalPlayer)
         {
             GameObject zoneToclear = GameObject.Find("Skill Zone");
-            uIManager.clearZone(zoneToclear);
+            uIManager.ClearZone(zoneToclear);
             zoneToclear = GameObject.Find("Timeline");
-            uIManager.clearZone(zoneToclear);
+            uIManager.ClearZone(zoneToclear);
         }
         BeginningOfTurn();
     }
