@@ -49,6 +49,10 @@ public abstract class EffectOnLiving : Effect
             launcher = value;
         }
     }
+    public override Placeable GetTarget()
+    {
+        return Target;
+    }
 
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {

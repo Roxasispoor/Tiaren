@@ -17,6 +17,7 @@ public abstract class Effect
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
     public abstract void TargetAndInvokeEffectManager(Placeable placeable);
 
+    public abstract Placeable GetTarget();
     // Use this for initialization
     public abstract void Use();
 

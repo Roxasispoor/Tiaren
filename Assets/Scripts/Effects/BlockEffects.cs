@@ -8,11 +8,11 @@ using UnityEngine;
 /// </summary>
 public class BlockEffects : EffectOnPlaceable
 {
-    private List<Effect> listEffectsToBlock;
+    public List<Effect> listEffectsToBlock;
     /// <summary>
     /// -1 = undependent
     /// </summary>
-    private int numberToBlock;
+    public int numberToBlock;
 
 
     public BlockEffects(Placeable target, Placeable launcher) : base(target, launcher)

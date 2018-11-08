@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// effect to destroy a bloc
 /// </summary>
-public class DestroyBloc : EffectOnPlaceable
+public class DestroyBloc : EffectOnPlaceableOnly
 {
     public DestroyBloc(DestroyBloc other) : base(other)
     {
@@ -19,9 +19,6 @@ public class DestroyBloc : EffectOnPlaceable
     override
     public void Use()
     {
-        if (Target.GetType() != typeof(LivingPlaceable))
-        {
-            Target.DestroyLivingPlaceable();
-        }
+        Target.Destroy();
     }
 }

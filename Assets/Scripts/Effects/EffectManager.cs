@@ -20,15 +20,27 @@ public class EffectManager:MonoBehaviour {
     }
     public void UseEffect(Effect effect)
     {
+        bool isblocked = false;
+        foreach(Effect eff in effect.GetTarget().AttachedEffects)
+        {
+            if(eff.GetType()==typeof(BlockEffects))
+            {
+                BlockEffects block= (BlockEffects)eff;
+                if (block.listEffectsToBlock.Exists((x) => x.GetType() == effect.GetType()) && block.numberToBlock>0)
+                {
+                    block.numberToBlock--;
+                    isblocked = true;
+                }
+
+            }
+          
+        }
+        if(!isblocked)
+        {
+            effect.Use();
+        }
+        //Deletes all nulls blocks
+        effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(BlockEffects) && ((BlockEffects)x).numberToBlock <= 0);
 
     }
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

@@ -460,7 +460,7 @@ public class LivingPlaceable : Placeable
     /// </summary>
     /// 
     override
-    public void DestroyLivingPlaceable()
+    public void Destroy()
     {
 
         if (this.Destroyable)

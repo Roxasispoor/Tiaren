@@ -15,7 +15,7 @@ public class StandardCube : Placeable
        
 
         this.Walkable = true;
-        this.OnWalkEffects = new List<Effect>();
+        
         this.Movable = true;
         this.Destroyable = true;
 
@@ -26,11 +26,6 @@ public class StandardCube : Placeable
        
         this.Crushable = CrushType.CRUSHSTAY;
         this.Explored = false;
-        this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
-
     }
 
     // Update is called once per frame

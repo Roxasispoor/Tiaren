@@ -284,7 +284,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// </summary>
     /// <param name="meshFilter"></param>
     /// <param name="combineInstance"></param>
-    private void AddMeshToBatches(MeshFilter meshFilter,CombineInstance combineInstance)
+    public void AddMeshToBatches(MeshFilter meshFilter,CombineInstance combineInstance)
     {
 
         if (!dictionaryMaterialsFilling.ContainsKey(meshFilter.GetComponent<MeshRenderer>().material.name))
