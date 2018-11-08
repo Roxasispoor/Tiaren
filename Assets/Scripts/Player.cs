@@ -452,6 +452,10 @@ public class Player : NetworkBehaviour
         Vector3 startPosition = path[path.Count - 1];
         Vector3 controlPoint = new Vector3();
         bool isBezier = true;
+        bool isJumping = false;
+        bool hasStarted = false;
+        Animator anim;
+        anim = placeable.gameObject.GetComponent<Animator>();
         //For visual rotation
         Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
         targetDir.y = 0;
@@ -488,11 +492,28 @@ public class Player : NetworkBehaviour
             }
             if (isBezier)
             {
+                if (!isJumping)
+                {
+                    isJumping = true;
+                    anim.SetTrigger("jump");
+                }
+                
+                
                 placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
 
             }
             else
             {
+                if (!hasStarted)
+                {
+                    anim.SetTrigger("walk");
+                    hasStarted = true;
+                }
+                if (isJumping)
+                {
+                    isJumping = false;
+                    anim.SetTrigger("land");
+                }
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
