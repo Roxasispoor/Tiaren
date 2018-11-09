@@ -1,4 +1,4 @@
-﻿
+
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
@@ -28,46 +28,16 @@ public class CameraScript : NetworkBehaviour
     private Quaternion desiredRotation;
     private Quaternion rotation;
     private Vector3 position;
+    private bool freecam = true;  //Is the camera free to move or not
+    private bool skyview = false;   //If watching the field from above
+    private Grid grid;
 
 
-    public float XDeg
-    {
-        get
-        {
-            return xDeg;
-        }
+    public float XDeg { get { return xDeg; } set { xDeg = value; } }
 
-        set
-        {
-            xDeg = value;
-        }
-    }
+    public float YDeg { get { return yDeg; } set { yDeg = value; } }
 
-    public float YDeg
-    {
-        get
-        {
-            return yDeg;
-        }
-
-        set
-        {
-            yDeg = value;
-        }
-    }
-
-    public float DesiredDistance
-    {
-        get
-        {
-            return desiredDistance;
-        }
-
-        set
-        {
-            desiredDistance = value;
-        }
-    }
+    public float DesiredDistance { get { return desiredDistance; } set { desiredDistance = value; } }
 
     void Start()
     {
@@ -75,6 +45,7 @@ public class CameraScript : NetworkBehaviour
         Init();
 
     }
+
     void OnEnable() { Init(); }
 
     public void Init()
@@ -100,6 +71,7 @@ public class CameraScript : NetworkBehaviour
         XDeg = Vector3.Angle(Vector3.right, transform.right);
         YDeg = Vector3.Angle(Vector3.up, transform.up);
 
+        grid = GameObject.Find("GameManager").GetComponent<Grid>();
 
     }
 
@@ -108,6 +80,43 @@ public class CameraScript : NetworkBehaviour
      */
     void LateUpdate()
     {
+        float y = position.y;
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            freecam = !freecam;
+            skyview = false;
+            Debug.Log("Camera mode changed");
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            skyview = !skyview;
+            transform.LookAt(target.position);
+            rotation = transform.rotation;
+
+            if (skyview)
+            {
+                position = new Vector3(grid.sizeX / 2, 50f, grid.sizeZ / 2);
+                freecam = true;
+            }
+            else freecam = false;
+        }
+
+        //Debug.Log(transform.rotation);
+        if (freecam)
+        {
+            if (!skyview)
+            {
+                position += rotation * Vector3.right * Input.GetAxis("Horizontal");
+                position += rotation * Vector3.forward * Input.GetAxis("Vertical");
+                position.y = y;
+            }
+        }
+
+        else
+        {
+            position = target.position;
+        }
 
 
         //0 left 1 right 2 middle
@@ -129,15 +138,18 @@ public class CameraScript : NetworkBehaviour
             currentRotation = transform.rotation;
 
             rotation = Quaternion.Lerp(currentRotation, desiredRotation, Time.deltaTime * zoomDampening);
-            transform.rotation = rotation;
+
         }
         // otherwise if middle mouse is selected, we pan by way of transforming the target in screenspace
-        else if (player.DicoCondition["PanCamera"]())
+        else if (player.DicoCondition["PanCamera"]() && freecam)
         {
             //grab the rotation of the camera so we can move in a pseudo local XY space
-            target.rotation = transform.rotation;
-            target.Translate(Vector3.right * -player.DicoAxis["AxisXCamera"]() * panSpeed);
-            target.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed, Space.World);
+
+            //target.rotation = transform.rotation;
+            //transform.Translate(Vector3.right * -player.DicoAxis["AxisXCamera"]() * panSpeed);
+            position += rotation * Vector3.right * -player.DicoAxis["AxisXCamera"]() * panSpeed;
+            position += transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed;
+            //transform.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed/*, Space.World*/);
         }
 
         ////////Orbit Position
@@ -150,8 +162,8 @@ public class CameraScript : NetworkBehaviour
         currentDistance = Mathf.Lerp(currentDistance, DesiredDistance, Time.deltaTime * zoomDampening);
 
         // calculate position based on the new currentDistance 
-        position = target.position - (rotation * Vector3.forward * currentDistance + targetOffset);
-        transform.position = position;
+        transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset); ;
+        transform.rotation = rotation;
     }
 
     private static float ClampAngle(float angle, float min, float max)
