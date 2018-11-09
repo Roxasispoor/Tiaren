@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -242,7 +242,7 @@ MonoBehaviour:
     type: 2}
   batchFolder: {fileID: 649181390}
   prefabCharacs:
-  - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
+  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
   prefabWeapons:
   - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   gridFolder: {fileID: 1154982765}
@@ -373,6 +373,7 @@ MonoBehaviour:
   m_SpawnPrefabs:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
   - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
+  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
   m_CustomConfig: 1
   m_MaxConnections: 4
   m_ConnectionConfig:
