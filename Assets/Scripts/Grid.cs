@@ -50,7 +50,7 @@ public class NodePath
         return new NodePath(x, y-1, z, 0, null);
     }
 
-    public Vector3[] getFullPath()
+    public Vector3[] GetFullPath()
     {
         Vector3[] path = new Vector3[DistanceFromStart + 1];
         NodePath currentNode = this;

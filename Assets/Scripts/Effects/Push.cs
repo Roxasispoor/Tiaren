@@ -114,13 +114,13 @@ public class Push : EffectOnPlaceable
         List<Placeable> diagonalCollisions = new List<Placeable>();
         List<Vector3> path= CheckPath(distance, delta,out directCollision, out diagonalCollisions);
         //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
-        if (directCollision != null && directCollision.isLiving())
+        if (directCollision != null && directCollision.IsLiving())
         {
             EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,this.Launcher,damage));
         }
         foreach(Placeable diagcoll in diagonalCollisions)
         {
-            if (diagcoll != null && diagcoll.isLiving())
+            if (diagcoll != null && diagcoll.IsLiving())
             {
                 EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, this.Launcher, damage));
             }

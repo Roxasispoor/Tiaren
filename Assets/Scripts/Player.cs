@@ -450,15 +450,15 @@ public class Player : NetworkBehaviour
     public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
         float timeBezier = 0f;
-        Vector3 delta = placeable.transform.position - path[path.Count - 1];
-        Vector3 startPosition = path[path.Count - 1];
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
         bool isBezier = true;
         //For visual rotation
-        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
+        Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
 
-        int i = path.Count - 2;
+        int i = 1;
 
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
@@ -467,13 +467,13 @@ public class Player : NetworkBehaviour
             distanceParcourue += (speed * Time.deltaTime);
             timeBezier = distanceParcourue / distance;
 
-            while (timeBezier > 1 && i > 0) //on go through 
+            while (timeBezier > 1 && i < path.Count - 1) //on go through 
             {
 
 
                 distanceParcourue -= distance;
                 startPosition = path[i];
-                i--;
+                i++;
                 targetDir = path[i] - placeable.transform.position;//next one
                 targetDir.y = 0;// don't move up 
 
@@ -481,7 +481,7 @@ public class Player : NetworkBehaviour
                 timeBezier = distanceParcourue / distance; //on recalcule
 
             }
-            if (i == 0 && timeBezier > 1)
+            if (i == path.Count - 1 && timeBezier > 1)
             {
                 // arrived to the last node of path, in precedent loop
                 placeable.transform.position = path[i] + delta;
@@ -506,7 +506,10 @@ public class Player : NetworkBehaviour
 
 
         }
-
+  
+  
+        Debug.Log("End" + placeable.GetPosition());
+        Debug.Log("End transform" + placeable.transform);
     }
 
 

@@ -141,7 +141,7 @@ public class LivingPlaceable : Placeable
     }
 
 
-    public override bool isLiving()
+    public override bool IsLiving()
     {
         return true;
     }
