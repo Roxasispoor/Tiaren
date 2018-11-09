@@ -41,6 +41,7 @@ public abstract class Placeable:MonoBehaviour
         return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
     }
+   
     public virtual bool IsLiving()
     {
         return false;

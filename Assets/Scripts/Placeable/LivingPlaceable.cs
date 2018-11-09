@@ -486,6 +486,13 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
+    public void ShowAreaOfMovement()
+    {
+        foreach (NodePath node in AreaOfMouvement)
+        {
+            Grid.instance.GridMatrix[node.x,node.y,node.z].GetComponent<MeshRenderer>().material.color = Color.cyan;
+        }
+    }
 
     // Use this for initialization
     void Start()
