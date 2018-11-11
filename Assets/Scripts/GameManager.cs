@@ -391,7 +391,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
             playingPlaceable.ShowAreaOfMovement();
-            playingPlaceable.Player.clock.StartTimer(3000f);
+            playingPlaceable.Player.clock.StartTimer(30f);
 
             //playingPlaceable.Player.RpcStartTimer(30f);
         }
