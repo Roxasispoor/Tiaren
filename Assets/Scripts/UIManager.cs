@@ -44,6 +44,14 @@ public class UIManager : MonoBehaviour {
             Button button = Instantiate(prefabCharacterButton, TimelineZone);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 120 - 46 * numberInstantiated);
             button.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
+            if (character.Character.player.gameObject == gameObject)
+            {
+                button.GetComponent<Image>().color = Color.cyan;
+            }
+            else
+            {
+                button.GetComponent<Image>().color = Color.red;
+            }
             numberInstantiated++;
         }
     }
