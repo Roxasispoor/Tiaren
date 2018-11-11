@@ -368,9 +368,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
 
             //initialise UI
-            uIManager = playingPlaceable.player.GetComponent<UIManager>();
-            uIManager.UpdateAbilities(playingPlaceable);
-            uIManager.UpdateTimeline();
+            
+            player2.GetComponent<UIManager>().ChangeTurn();
+            player1.GetComponent<UIManager>().ChangeTurn();
 
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
@@ -391,8 +391,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
             playingPlaceable.ShowAreaOfMovement();
-            playingPlaceable.Player.clock.StartTimer(3000f);
-
+            player1.GetComponent<Timer>().StartTimer(10f);
+            player2.GetComponent<Timer>().StartTimer(10f);
             //playingPlaceable.Player.RpcStartTimer(30f);
         }
     }
@@ -402,13 +402,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
         playingPlaceable.AreaOfMouvement.Clear();
-        if (isClient)
-        {
-            GameObject zoneToclear = playingPlaceable.player.transform.Find("Canvas").Find("Skill Zone").gameObject;
-            uIManager.ClearZone(zoneToclear);
-            zoneToclear = playingPlaceable.player.transform.Find("Canvas").Find("Timeline").gameObject;
-            uIManager.ClearZone(zoneToclear);
-        }
         BeginningOfTurn();
     }
 
@@ -422,11 +415,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             caster.CurrentPA= caster.CurrentPA - skill.Cost>0? caster.CurrentPA - skill.Cost:0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
         }
     }
+
     public Placeable FindLocalObject(int id)
     {
 
         return idPlaceable[id];
     }
+
     public void CheckIfAccessible(Placeable arrival)
     {
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);

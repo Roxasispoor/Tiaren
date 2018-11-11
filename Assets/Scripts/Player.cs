@@ -204,10 +204,23 @@ public class Player : NetworkBehaviour
         }
     }
     [ClientRpc]
-    private void RpcEndTurn()
+    public void RpcEndTurn()
     {
         Debug.Log("Oui chef, mon tour est fini!");
         GameManager.instance.EndOFTurn();
+    }
+
+    //launcher for end of turn
+    public void EndTurn()
+    {
+        CmdEndTurn();
+    }
+
+    [Command]
+    private void CmdEndTurn()
+    {
+        GameManager.instance.EndOFTurn();
+        RpcEndTurn();
     }
 
     // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
@@ -236,7 +249,6 @@ public class Player : NetworkBehaviour
         }
     }
     
-
     [Client]
     public void ChangeBackColor(LivingPlaceable playingPlaceable)
     {
@@ -247,19 +259,6 @@ public class Player : NetworkBehaviour
                 Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Placeable>().colorOfObject;
             }
         }
-    }
-
-    //launcher for end of turn
-    public void EndTurn()
-    {
-        CmdEndTurn();
-        GameManager.instance.EndOFTurn();
-    }
-
-    [Command]
-    private void CmdEndTurn()
-    {
-        GameManager.instance.EndOFTurn();
     }
 
     /// <summary>
