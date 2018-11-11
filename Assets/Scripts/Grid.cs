@@ -330,7 +330,7 @@ public class Grid : MonoBehaviour
 
     private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
-        for (int i = 0; i < jumpValue; i++)
+        for (int i = 0; i < jumpValue + 1; i++)
         {
             if (y - i < 0)
                 return -1;
