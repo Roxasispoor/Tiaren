@@ -486,14 +486,29 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
-    public void ShowAreaOfMovement()
+    public void ChangeMaterialAreaOfMovement(Material pathfinding)
+    {
+       
+        foreach (NodePath node in AreaOfMouvement)
+        {
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+        }
+        GameManager.instance.ResetAllBatches();
+        
+    }
+    public void ResetAreaOfMovement()
     {
         foreach (NodePath node in AreaOfMouvement)
         {
-            Grid.instance.GridMatrix[node.x,node.y,node.z].GetComponent<MeshRenderer>().material.color = Color.cyan;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
         }
+        AreaOfMouvement.Clear();
     }
-
+    
     // Use this for initialization
     void Start()
     {

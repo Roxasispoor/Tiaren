@@ -12,6 +12,7 @@ public class GameManager : NetworkBehaviour
 {
     //can't be the network manager or isServer can't work
     public static GameManager instance;
+    public Material pathFindingMaterial;
     public NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;
@@ -202,6 +203,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
         isGameStarted = true;
         Grid.instance.Gravity();
+        //To activate for perf, desactivate for pf
+        
         InitialiseBatchFolder();
         //Retrieve data 
 
@@ -276,13 +279,27 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 break;
             }
         }
-        newBatch.GetComponent<MeshRenderer>().material = saved;
-        newBatch.GetComponent<MeshFilter>().mesh = new Mesh();
+        if (saved != null)
+
+        {
+            newBatch.GetComponent<MeshRenderer>().material = saved;
+            newBatch.GetComponent<MeshFilter>().mesh = new Mesh();
 
 
-        newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
-            batch.combineInstances.ToArray(), true, true);
+            newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
+                batch.combineInstances.ToArray(), true, true);
+        }
+
+        }
+    public void ResetAllBatches()
+    { 
+     foreach (Transform child in GameManager.instance.batchFolder.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        GameManager.instance.InitialiseBatchFolder();
     }
+
     /// <summary>
     /// Add current combine instance to its batch
     /// </summary>
@@ -323,7 +340,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         meshFilter.GetComponent<MeshRenderer>().enabled = false;
     }
-    private void InitialiseBatchFolder()
+    public void InitialiseBatchFolder()
     {
         dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
 
@@ -390,9 +407,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.Player.clock.IsFinished = false;
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
-            playingPlaceable.ShowAreaOfMovement();
-            player1.GetComponent<Timer>().StartTimer(10f);
-            player2.GetComponent<Timer>().StartTimer(10f);
+            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            player1.GetComponent<Timer>().StartTimer(30f);
+            player2.GetComponent<Timer>().StartTimer(30f);
             //playingPlaceable.Player.RpcStartTimer(30f);
         }
     }
@@ -401,7 +418,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
-        playingPlaceable.AreaOfMouvement.Clear();
+        playingPlaceable.ResetAreaOfMovement();
         BeginningOfTurn();
     }
 
@@ -436,14 +453,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 Debug.Log("Start" + playingPlaceable.GetPosition());
             StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
                 playingPlaceable.CurrentPM -= realPath.Length - 1;
+                playingPlaceable.ResetAreaOfMovement();
                 playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3(), playingPlaceable.CurrentPM,
          playingPlaceable.Jump, playingPlaceable.Player);
-                playingPlaceable.ShowAreaOfMovement();
+                
+                playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             }
         }
     }
-
- 
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
