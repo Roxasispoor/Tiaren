@@ -454,7 +454,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
                 playingPlaceable.CurrentPM -= realPath.Length - 1;
                 playingPlaceable.ResetAreaOfMovement();
-                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3(), playingPlaceable.CurrentPM,
+
+                Debug.Log("PM: " + playingPlaceable.CurrentPM);
+                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3() + new Vector3(0,1,0), playingPlaceable.CurrentPM,
          playingPlaceable.Jump, playingPlaceable.Player);
                 
                 playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);

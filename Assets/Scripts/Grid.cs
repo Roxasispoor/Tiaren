@@ -330,7 +330,7 @@ public class Grid : MonoBehaviour
 
     private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
-        for (int i = 0; i < jumpValue; i++)
+        for (int i = 0; i < jumpValue + 1; i++)
         {
             if (y - i < 0)
                 return -1;
@@ -415,7 +415,8 @@ public class Grid : MonoBehaviour
         Queue<NodePath> toCheck = new Queue<NodePath>();
         List<NodePath> accessibleBloc = new List<NodePath>();
 
-        
+        if (distance <= 0)
+            return accessibleBloc;
 
         toCheck.Enqueue(NodePath.startPath(startPosition));
 

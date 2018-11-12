@@ -321,8 +321,6 @@ public class Player : NetworkBehaviour
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
-      //  GameManager.instance.GetComponentInChildren<Timer>().textToUpdate= transform.Find("Canvas").Find("Chrono").GetComponent<Text>();
-        //activate camera of player, set ready
     }
 
     public void Translater(int skillID, LivingPlaceable caster, List<LivingPlaceable> targets)
