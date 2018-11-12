@@ -415,7 +415,8 @@ public class Grid : MonoBehaviour
         Queue<NodePath> toCheck = new Queue<NodePath>();
         List<NodePath> accessibleBloc = new List<NodePath>();
 
-        
+        if (distance <= 0)
+            return accessibleBloc;
 
         toCheck.Enqueue(NodePath.startPath(startPosition));
 

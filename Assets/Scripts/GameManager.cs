@@ -391,8 +391,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
             playingPlaceable.ShowAreaOfMovement();
-            player1.GetComponent<Timer>().StartTimer(10f);
-            player2.GetComponent<Timer>().StartTimer(10f);
+            player1.GetComponent<Timer>().StartTimer(30f);
+            player2.GetComponent<Timer>().StartTimer(30f);
             //playingPlaceable.Player.RpcStartTimer(30f);
         }
     }
@@ -436,7 +436,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 Debug.Log("Start" + playingPlaceable.GetPosition());
             StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
                 playingPlaceable.CurrentPM -= realPath.Length - 1;
-                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3(), playingPlaceable.CurrentPM,
+                Debug.Log("PM: " + playingPlaceable.CurrentPM);
+                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3() + new Vector3(0,1,0), playingPlaceable.CurrentPM,
          playingPlaceable.Jump, playingPlaceable.Player);
                 playingPlaceable.ShowAreaOfMovement();
             }
