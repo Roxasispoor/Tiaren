@@ -1,8 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -150,7 +147,7 @@ public class Grid : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (Random.Range(0, 100) < randomParameter && y < sizeY - 2) // second condition could be in fory 
+                    if (UnityEngine.Random.Range(0, 100) < randomParameter && y < sizeY - 2) // second condition could be in fory 
                     {
                         GameObject obj = Instantiate(prefabsList[0], new Vector3(x, y, z), Quaternion.identity, parent.transform);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>();
@@ -163,6 +160,15 @@ public class Grid : MonoBehaviour
             }
         }
 
+    }
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public bool VerifyPath(Vector3[] path)
+    {
+        return true;
     }
 
 
@@ -290,12 +296,12 @@ public class Grid : MonoBehaviour
         return gridBool;
     }
     */
-          /// <summary>
+    /// <summary>
     /// Instanciate the new cube
-      /// </summary>
-      /// <param name="prefab"></param>
-      /// <param name="position"></param>
-      public void InstantiateCube(GameObject prefab, Vector3Int position)
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <param name="position"></param>
+    public void InstantiateCube(GameObject prefab, Vector3Int position)
       {
           if (CheckNull(position))
           {
@@ -455,7 +461,7 @@ public class Grid : MonoBehaviour
 
 
 
-    public bool checkPath(Vector3[] path) // The end is where the Character stand (under him)
+    public bool CheckPath(Vector3[] path) // The end is where the Character stand (under him)
     {
         Vector3 current = path[0];
         //TODO: rajouter le test de current is walkable

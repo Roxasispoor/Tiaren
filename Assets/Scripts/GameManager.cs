@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -259,7 +260,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    
+   
+
+
 
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
@@ -302,6 +305,22 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Destroy(child.gameObject);
         }
         GameManager.instance.InitialiseBatchFolder();
+    }
+
+    public void MoveLogic(List<Vector3> bezierPath)
+    {
+        if(playingPlaceable.player.isLocalPlayer)
+        {
+            playingPlaceable.ResetAreaOfMovement();
+
+            Debug.Log("PM: " + playingPlaceable.CurrentPM);
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
+            playingPlaceable.Jump, playingPlaceable.Player);
+
+            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+
+        }
+
     }
 
     /// <summary>
@@ -409,9 +428,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
+            if(playingPlaceable.Player.isLocalPlayer)
+            { 
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            }
             player1.GetComponent<Timer>().StartTimer(30f);
             player2.GetComponent<Timer>().StartTimer(30f);
             //playingPlaceable.Player.RpcStartTimer(30f);
@@ -422,7 +444,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
+        if(playingPlaceable.Player.isLocalPlayer)
+        { 
         playingPlaceable.ResetAreaOfMovement();
+        }
         BeginningOfTurn();
     }
 
@@ -442,7 +467,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         return idPlaceable[id];
     }
+    public Vector3[] GetPathFromClicked(Placeable arrival)
+    {
 
+        NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
+        NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
+        if (inListDestination != null)
+        {
+            Vector3[] realPath = inListDestination.GetFullPath();
+            return realPath;
+        }
+        return null;
+    }
     /// <summary>
     /// Check if it is accessible and move the position, either by a bezier or directly if server
     /// </summary>

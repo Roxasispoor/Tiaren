@@ -265,7 +265,7 @@ public class Player : NetworkBehaviour
     /// Updates where to go on server, and ask gameManager to do it
     /// </summary>
     /// <param name="toGo"></param>
-    [Command]
+   /* [Command]
     public void CmdMoveTo(Vector3 destination)
     {
         if (GameManager.instance.PlayingPlaceable.player == this)// updating only if it's his turn to play, other checkings are done in GameManager
@@ -273,11 +273,50 @@ public class Player : NetworkBehaviour
             GameManager.instance.CheckIfAccessible(Grid.instance.GridMatrix[(int)destination.x, (int)destination.y, (int)destination.z]);
             
         }
-    }
+    }*/
+    [Command]
+    public void CmdMoveTo(Vector3[] path)
+    {
+        Debug.Log("CheckPath" + Grid.instance.CheckPath(path));
+        if (GameManager.instance.PlayingPlaceable.player == this )// updating only if it's his turn to play, other checkings are done in GameManager
+        {
+            //Move  placeable
+            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+                GameManager.instance.playingPlaceable.GetPosition().z] = null;
+            Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+                (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-    public void MoveTo()
+            GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
+            //Trigger effect the ones after the others
+            foreach (Vector3 current in path)
+            {
+                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+            }
+            GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+            RpcMoveTo(path);
+
+
+
+        }
+    }
+    [ClientRpc]
+    public void RpcMoveTo(Vector3[] path)
     {
 
+        //List<Vector3> bezierPath = new List<Vector3>(realPath);
+        GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+        List<Vector3> bezierPath=new List<Vector3>(path);
+
+        Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+             GameManager.instance.playingPlaceable.GetPosition().z] = null;
+        Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+            (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+
+        StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        GameManager.instance.MoveLogic(bezierPath);
+        
+        
     }
 
     [Command]
