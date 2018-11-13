@@ -850,5 +850,269 @@ public class Grid : MonoBehaviour
         Debug.Log(Placeable.currentMaxId);
 
     }
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    {
+        int remainingrangeYZ;
+        int remainingrangeY;
+        int dirx, diry, dirz;
+        List<Vector3Int> targetableblocs = new List<Vector3Int>();
+        dirx = 0;
+        for (int i = 0; i <= maxrange; i++)
+        {
+            remainingrangeYZ = maxrange - i;
+            int x = (int)Playerposition.x + i;
+            if (x <= sizeX)
+            {
+                dirz = 0;
+                for (int j = 0; j <= remainingrangeYZ; j++)
+                {
+                    if (i + j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ + j;
+                        int z = (int)Playerposition.z + j;
+                        if (z <= sizeZ)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (i + j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (i + j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    dirz = 1;
+                }
+                dirz = -1;
+                for (int j = -1; j >= -remainingrangeYZ; j--)
+                {
+                    if (i - j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ - j;
+                        int z = (int)Playerposition.z + j;
+                        if (z >= 0)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (i - j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (i - j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            dirx = 1;
+        }
+        dirx = -1;
+        for (int i = -1; i >= -maxrange; i++)
+        {
+            remainingrangeYZ = maxrange - i;
+            int x = (int)Playerposition.x + i;
+            if (x >= 0)
+            {
+                dirz = 0;
+                for (int j = 0; j <= remainingrangeYZ; j++)
+                {
+                    if (-i + j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ + j;
+                        int z = (int)Playerposition.z + j;
+                        if (z <= sizeZ)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (-i + j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (-i + j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    dirz = 1;
+                }
+                dirz = -1;
+                for (int j = -1; j >= -remainingrangeYZ; j--)
+                {
+                    if (-i - j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ - j;
+                        int z = (int)Playerposition.z + j;
+                        if (z >= 0)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (-i - j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (-i - j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return targetableblocs;
 
+    }
+
+
+    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+    {
+        /*Vector3 playerside;
+        Vector3 blockside;
+        if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y +diry, (int)Playerposition.z + dirz] != null)
+        {
+            if (dirx != 0) Playerposition.x -= dirx / 2;
+            if (diry != 0) Playerposition.y -= diry / 2;
+            if (dirz != 0) Playerposition.z -= dirz / 2;
+        }
+        if (GridMatrix[x + dirx, y + diry, z + dirz] != null)
+        {
+
+        }
+        playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.5f, Playerposition.z + dirz * 0.5f);
+        blockside = new Vector3(x - dirx * 0.5f, y - diry * 0.5f, z - dirz * 0.5f);
+        if (Physics.Raycast(playerside,blockside, Vector3.Distance(playerside,blockside)-0.2f)) {
+            return false;
+        }*/
+
+        return false;
+    }
+
+
+    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange)
+    {
+        List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
+
+        //TODO
+
+
+        return targetableliving;
+    }
 }

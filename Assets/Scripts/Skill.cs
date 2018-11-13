@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -11,12 +10,16 @@ public class Skill
     private int cost;
     private int tourCooldownLeft;
     private int cooldown;
+    private int maxrange;
+    private int minrange;
     private List<Effect> effects;
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
     public Sprite abilitySprite;
     private SkillType skillType;
-     public SkillType SkillType
+
+
+    public SkillType SkillType
     {
         get
         {
@@ -55,6 +58,32 @@ public class Skill
         }
     }
 
+    public int Maxrange
+    {
+        get
+        {
+            return maxrange;
+        }
+
+        set
+        {
+            maxrange = value;
+        }
+    }
+
+    public int Minrange
+    {
+        get
+        {
+            return minrange;
+        }
+
+        set
+        {
+            minrange = value;
+        }
+    }
+
     public int Cost
     {
         get
@@ -87,34 +116,34 @@ public class Skill
         Cooldown = cooldown;
         this.effects = effects;
         SkillName = skillName;
-        this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
+        this.abilitySprite = Resources.Load<Sprite>("UI_Images/" + SkillName);
         SkillType = skillType;
 
     }
-    
+
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<Placeable> targets)
     {
-        if(this.tourCooldownLeft>0)
+        if (this.tourCooldownLeft > 0)
         {
             return false;
         }
-        if(condition!=null && !condition.Invoke())
+        if (condition != null && !condition.Invoke())
         {
             return false;
         }
         this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
-        foreach(Placeable target in targets)
+        foreach (Placeable target in targets)
         {
-            foreach(Effect effect in effects)
+            foreach (Effect effect in effects)
             {
                 //makes the deep copy, send it to effect manager and zoo
                 Effect effectToConsider = effect.Clone();
 
                 //Double dispatch
                 target.DispatchEffect(effect);
-              
-             }
+
+            }
         }
         return true;
     }

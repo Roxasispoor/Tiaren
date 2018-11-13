@@ -29,6 +29,8 @@ public class LivingPlaceable : Placeable
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
     public Sprite characterSprite;
+    private List<Vector3Int> effectArea;
+    private List<LivingPlaceable> targetableUnits;
 
     public float MaxHP
     {
@@ -291,6 +293,32 @@ public class LivingPlaceable : Placeable
         }
     }
 
+    public List<Vector3Int> EffectArea
+    {
+        get
+        {
+            return effectArea;
+        }
+
+        set
+        {
+            effectArea = value;
+        }
+    }
+
+    public List<LivingPlaceable> TargetableUnits
+    {
+        get
+        {
+            return targetableUnits;
+        }
+
+        set
+        {
+            targetableUnits = value;
+        }
+    }
+
 
     /// <summary>
     /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
@@ -445,8 +473,8 @@ public class LivingPlaceable : Placeable
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
         ListEffects.Add(new Push(2, 500));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "push");
-        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "spell2");
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push");
+        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.LIVING, "spell2");
         Skills.Add(skill1);
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
