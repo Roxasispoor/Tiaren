@@ -237,6 +237,26 @@ public class Player : NetworkBehaviour
         MakeCubeBlue(playingPlaceable);
     }
 
+    public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
+    {
+        
+        if (skill.SkillType==SkillType.BLOCK)
+        {
+            playingPlaceable.EffectArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            MakeCubeRed(playingPlaceable);
+        }
+        else if (skill.SkillType == SkillType.LIVING)
+        {
+            playingPlaceable.Targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+        }
+        else
+        {
+            playingPlaceable.GetComponent<Renderer>().material.color = Color.red;
+        }
+
+    }
+
+
     [Client]
     public void MakeCubeBlue(LivingPlaceable playingPlaceable)
     {
@@ -248,7 +268,20 @@ public class Player : NetworkBehaviour
             }
         }
     }
-    
+
+    [Client]
+    public void MakeCubeRed(LivingPlaceable playingPlaceable)
+    {
+        if (isLocalPlayer)
+        {
+            foreach (Vector3Int cube in playingPlaceable.EffectArea)
+            {
+                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.red;
+            }
+        }
+    }
+
+
     [Client]
     public void ChangeBackColor(LivingPlaceable playingPlaceable)
     {
@@ -657,24 +690,6 @@ public class Player : NetworkBehaviour
 
             // updating starting position for next iteration
             startPosition = path[i] + delta;
-        }
-
-    }
-    public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
-    {
-
-        if (skill.SkillType == SkillType.BLOCK)
-        {
-            playingPlaceable.EffectArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-            //MakeCubeRed(playingPlaceable);
-        }
-        else if (skill.SkillType == SkillType.LIVING)
-        {
-            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-        }
-        else
-        {
-            playingPlaceable.GetComponent<Renderer>().material.color = Color.red;
         }
 
     }

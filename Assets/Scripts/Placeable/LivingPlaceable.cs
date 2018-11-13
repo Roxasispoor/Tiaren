@@ -28,9 +28,11 @@ public class LivingPlaceable : Placeable
     private Vector3 shootPosition;
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
-    public Sprite characterSprite;
+
     private List<Vector3Int> effectArea;
     private List<LivingPlaceable> targetableUnits;
+    public Sprite characterSprite;
+
 
     public float MaxHP
     {
