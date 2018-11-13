@@ -28,9 +28,11 @@ public class UIManager : MonoBehaviour {
         foreach (Skill skill in character.Skills)
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
+            //button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            //button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
-            //button.onClick.AddListener(skill.hightlight(skill));
+            //button.onClick.AddListener(skill.hightlight());
             numberInstantiated++;
         }
         return numberInstantiated;
@@ -42,40 +44,11 @@ public class UIManager : MonoBehaviour {
         foreach (StackAndPlaceable character in gameManager.TurnOrder)
         {
             Button button = Instantiate(prefabCharacterButton, TimelineZone);
+            //button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+           // button.GetComponent<RectTransform>().anchorMax = new Vector2 (0.5f, 0.5f);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 120 - 46 * numberInstantiated);
             button.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
-            if (character.Character.player.gameObject == gameObject)
-            {
-                button.GetComponent<Image>().color = Color.cyan;
-            }
-            else
-            {
-                button.GetComponent<Image>().color = Color.red;
-            }
             numberInstantiated++;
-        }
-    }
-
-    public void ChangeTurn()
-    {
-        if (gameManager.playingPlaceable.player.gameObject == gameObject)
-        {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
-            ClearZone(zoneToclear);
-            UpdateAbilities(gameManager.playingPlaceable);
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
-            ClearZone(zoneToclear);
-            UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(true);
-        }
-        else if (gameManager.playingPlaceable.player.gameObject != gameObject)
-        {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
-            ClearZone(zoneToclear);
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
-            ClearZone(zoneToclear);
-            UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(false);
         }
     }
 

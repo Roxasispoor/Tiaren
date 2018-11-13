@@ -47,16 +47,16 @@ public class NodePath
 
     public static NodePath startPath(int x, int y, int z)
     {
-        return new NodePath(x, y-1, z, 0, null);
+        return new NodePath(x, y, z-1, 0, null);
     }
 
-    public Vector3[] GetFullPath()
+    public Vector3[] getFullPath()
     {
         Vector3[] path = new Vector3[DistanceFromStart + 1];
         NodePath currentNode = this;
-        for (int i = DistanceFromStart; i >= 0; i--)
+        for (int i = DistanceFromStart + 1; i > 0; i--)
         {
-            path[i] = new Vector3(currentNode.x, currentNode.y, currentNode.z);
+            path[i] = new Vector3(this.x, this.y, this.z);
             currentNode = currentNode.parent;
         }
         return path;
@@ -73,7 +73,7 @@ public class NodePath
         {
             return false;
         }
-        if (obj.GetType() != typeof(NodePath))
+        if (obj.GetType() == typeof(NodePath))
         {
             return false;
         }
@@ -135,7 +135,7 @@ public class Grid : MonoBehaviour
         }
     }
 
-
+   
 
 
 
@@ -164,7 +164,32 @@ public class Grid : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// Instanciate the new cube
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <param name="position"></param>
+    public void InstantiateCube(GameObject prefab, Vector3Int position)
+    {
+        if (CheckNull(position))
+        {
+            GameObject newBlock = Instantiate(prefab, GameManager.instance.gridFolder.transform);
+            gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
+            MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
 
+            if (meshFilter != null)
+            {
+                CombineInstance currentInstance = new CombineInstance
+                {
+                    mesh = newBlock.GetComponent<MeshFilter>().sharedMesh,
+                    transform = meshFilter.transform.localToWorldMatrix
+                };
+
+                GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
+            }
+        }
+
+    }
 
     /// <summary>
     /// Function finding and displaying path from point A to point B
@@ -290,58 +315,19 @@ public class Grid : MonoBehaviour
         return gridBool;
     }
     */
-          /// <summary>
-    /// Instanciate the new cube
-      /// </summary>
-      /// <param name="prefab"></param>
-      /// <param name="position"></param>
-      public void InstantiateCube(GameObject prefab, Vector3Int position)
-      {
-          if (CheckNull(position))
-          {
-              GameObject newBlock = Instantiate(prefab, GameManager.instance.gridFolder.transform);
-              gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
-              MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
-
-              if (meshFilter != null)
-              {
-                  CombineInstance currentInstance = new CombineInstance
-                  {
-                      mesh = newBlock.GetComponent<MeshFilter>().sharedMesh,
-                      transform = meshFilter.transform.localToWorldMatrix
-                  };
-
-                  GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
-              }
-          }
-
-      }
-    public bool CheckNull(Vector3Int position)
-      {
-          return CheckRange(position) && gridMatrix[position.x, position.y, position.z] != null;
-      }
-      public bool CheckRange(Vector3Int position)
-      {
-          return position.x > 0 && position.x<sizeX &&
-              position.y> 0 && position.y<sizeY &&
-              position.z> 0 && position.z<sizeZ;
-      }
-
-
     private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
-        for (int i = 0; i < jumpValue + 1; i++)
+        for (int i=0; i < jumpValue; i++)
         {
-            if (y - i < 0)
+            if (z - i < 0)
                 return -1;
 
-            if (GridMatrix[x, y - i, z] != null)
+            if (GridMatrix[x,y,z - i] != null)
             {
-                if (GridMatrix[x, y - i, z].Walkable)
+                if (GridMatrix[x, y, z - i].Walkable)
                 {
-                    return y - i;
-                }
-                else
+                    return z - i;
+                }else
                 {
                     return -1;
                 }
@@ -350,23 +336,23 @@ public class Grid : MonoBehaviour
         return -1;
     }
 
-    private List<int> CheckUp(int x, int y, int z, int x_orig, int z_orig, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
+    private List<int> CheckUp(int x, int y, int z, int x_orig, int y_orig, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur
     {
         List<int> returnList = new List<int>();
 
-        for (int i = 1; i < jumpValue + 1; i++)
+        for (int i = 1; i < jumpValue+1; i++)
         {
-            if (y + i > sizeY)
+            if (z + i > sizeZ)
                 return returnList;
-            if (y + i + 1 < sizeY && GridMatrix[x_orig, y + i + 1, z_orig] != null)
+            if (z + i + 1 < sizeZ && GridMatrix[x, y, z + i + 1] != null)
             {
                 return returnList;
             }
-            if (GridMatrix[x, y + i, z] != null)
+            if (GridMatrix[x, y, z + i] != null)
             {
-                if (GridMatrix[x, y + i, z].Walkable)
+                if (GridMatrix[x, y, z + i].Walkable)
                 {
-                    returnList.Add(y + i);
+                    returnList.Add(z+i);
                 }
                 else
                 {
@@ -377,118 +363,329 @@ public class Grid : MonoBehaviour
         return returnList;
     }
 
-    void CheckColumn(NodePath current, int shift_x, int shift_y, int shift_z, Queue<NodePath> toCheck, ref List<NodePath> accessibleBloc, int distance, int jumpValue)
-    {
-        if (GridMatrix[current.x + shift_x, current.y + shift_y + 1, current.z + shift_z] == null)
-        {
-            int heightDown = CheckUnder(current.x + shift_x, current.y + shift_y, current.z + shift_z, jumpValue);
-            if (heightDown >= 0)
-            {
-                NodePath newNode = new NodePath(current.x + shift_x, heightDown, current.z + shift_z, current.DistanceFromStart + 1, current);
-                if (newNode.DistanceFromStart < distance)
-                    toCheck.Enqueue(newNode);
-                accessibleBloc.Add(newNode);
-            }
-            
-        }
-        List<int> HeigthsUp = CheckUp(current.x + shift_x, current.y + shift_y, current.z + shift_z, current.x, current.z, jumpValue);
-        foreach (int y in HeigthsUp)
-        {
-            NodePath newNode = new NodePath(current.x + shift_x, y, current.z + shift_z, current.DistanceFromStart + 1, current);
-            if (newNode.DistanceFromStart < distance)
-                toCheck.Enqueue(newNode);
-            accessibleBloc.Add(newNode);
-        }
-    }
-
     // startPosition : position du joueur
-    /// <summary>
-    /// Function finding all the block accessible by walking from "startPosition" to a max distance of "distance"
-    /// <param name="startPosition">current position of the character/object who need to move</param>
-    /// <param name="distance">distance max it can move</param>
-    /// <param name="jumpValue">Value of jump for the character</param>
-    /// <param name="player">(Optionnal) The team the object is if necessary</param>
-    /// <returns>Returns a list of "nodePath" corresponding to all the accessible blocs</returns>
-    /// </summary>
     public List<NodePath> CanGo(Vector3 startPosition, int distance, int jumpValue, Player player = null)
     {
         Queue<NodePath> toCheck = new Queue<NodePath>();
         List<NodePath> accessibleBloc = new List<NodePath>();
 
-        if (distance <= 0)
-            return accessibleBloc;
-
         toCheck.Enqueue(NodePath.startPath(startPosition));
 
         int n_iteration = 0;
 
-        while (toCheck.Count > 0)
+        while(toCheck.Count > 0)
         {
             n_iteration++;
 
-            if (n_iteration % 1000 == 0)
+            if (n_iteration%1000 == 0)
             {
                 Debug.Log("CanGo: iteration " + n_iteration);
             }
 
             NodePath current = toCheck.Dequeue();
-            if (current.x - 1 >= 0)
+            if (current.x - 1 > 0)
             {
-                CheckColumn(current, -1, 0, 0, toCheck, ref accessibleBloc, distance, jumpValue);
+                if (GridMatrix[(int)startPosition.x - 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x - 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x - 1, current.y, heightDown, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x - 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x - 1, current.y, z, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
             }
-            if (current.x + 1 < sizeX)
+            if (current.x + 1 > 0)
             {
-                CheckColumn(current, +1, 0, 0, toCheck, ref accessibleBloc, distance, jumpValue);
-            }
-            if (current.z - 1 >= 0)
-            {
-                CheckColumn(current, 0, 0, -1, toCheck, ref accessibleBloc, distance, jumpValue);
-            }
-            if (current.z + 1 < sizeZ)
-            {
-                CheckColumn(current, 0, 0, +1, toCheck, ref accessibleBloc, distance, jumpValue);
+                if (GridMatrix[(int)startPosition.x + 1, (int)startPosition.y, (int)startPosition.z] == null)
+                {
+                    int heightDown = CheckUnder(current.x + 1, current.y, current.z, jumpValue);
+                    NodePath newNode = new NodePath(current.x + 1, current.y, heightDown, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
+                List<int> HeigthsUp = CheckUp(current.x + 1, current.y, current.z, current.x, current.y, jumpValue);
+                foreach (int z in HeigthsUp)
+                {
+                    NodePath newNode = new NodePath(current.x + 1, current.y, z, current.DistanceFromStart, current);
+                    toCheck.Enqueue(newNode);
+                    accessibleBloc.Add(newNode);
+                }
             }
         }
-
+        
         return accessibleBloc;
     }
 
-
-
-    public bool checkPath(Vector3[] path) // The end is where the Character stand (under him)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
     {
-        Vector3 current = path[0];
-        //TODO: rajouter le test de current is walkable
-        for (int i = 1; i < path.Length; i++)
+        int remainingrangeYZ;
+        int remainingrangeY;
+        int dirx, diry, dirz;
+        List<Vector3Int> targetableblocs = new List<Vector3Int>();
+        dirx = 0;
+        for (int i=0; i<=maxrange; i++)
         {
-            Vector3 next = path[i];
-            //TODO: rajouter le test de next is walkable
-            Vector3 diff = next - current;
-            if (Mathf.Abs(diff.x) == 1 ^ Mathf.Abs(diff.z) == 1)
+            remainingrangeYZ = maxrange - i;
+            int x = (int)Playerposition.x + i;
+            if (x <= sizeX)
             {
-                int yTested = (int)current.y;
-                while (yTested < next.y + 1)
+                dirz = 0;
+                for (int j = 0; j <= remainingrangeYZ; j++)
                 {
-                    if (Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != null)
+                    if (i+j < minrange)
                     {
-                        return false;
+                        remainingrangeY = remainingrangeYZ + j;
+                        int z = (int)Playerposition.z + j;
+                        if (z <= sizeZ)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y+1, z] ==null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (i+j+k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i,k,j,dirx,diry,dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (i + j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >=0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    yTested++;
+                    dirz = 1;
                 }
-
-                while (yTested < next.y - 1)
+                dirz = -1;
+                for (int j = -1; j >= -remainingrangeYZ; j--)
                 {
-                    if (Grid.instance.gridMatrix[(int)next.x, (int)yTested, (int)next.z] != null)
+                    if (i - j < minrange)
                     {
-                        return false;
+                        remainingrangeY = remainingrangeYZ - j;
+                        int z = (int)Playerposition.z + j;
+                        if (z >= 0)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (i - j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (i - j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    yTested--;
                 }
             }
-            else return false;
-            current = next;
+            dirx = 1;
         }
-        return true;
+        dirx = -1;
+        for (int i = -1; i >= -maxrange; i++)
+        {
+            remainingrangeYZ = maxrange - i;
+            int x = (int)Playerposition.x + i;
+            if (x >= 0)
+            {
+                dirz = 0;
+                for (int j = 0; j <= remainingrangeYZ; j++)
+                {
+                    if (-i + j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ + j;
+                        int z = (int)Playerposition.z + j;
+                        if (z <= sizeZ)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (-i + j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (-i + j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    dirz = 1;
+                }
+                dirz = -1;
+                for (int j = -1; j >= -remainingrangeYZ; j--)
+                {
+                    if (-i - j < minrange)
+                    {
+                        remainingrangeY = remainingrangeYZ - j;
+                        int z = (int)Playerposition.z + j;
+                        if (z >= 0)
+                        {
+                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
+                            {
+                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
+                                targetableblocs.Add(newblock);
+                            }
+                            diry = 0;
+                            for (int k = 0; k < remainingrangeY; k++)
+                            {
+                                if (-i - j + k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y <= sizeY)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                                diry = 1;
+                            }
+                            diry = -1;
+                            for (int k = -2; k >= -remainingrangeY; k--)
+                            {
+                                if (-i - j - k < minrange)
+                                {
+                                    int y = (int)Playerposition.y + k;
+                                    if (y >= 0)
+                                    {
+                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                                        {
+                                            Vector3Int newblock = new Vector3Int(x, y, z);
+                                            targetableblocs.Add(newblock);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return targetableblocs;
+
+    }
+
+
+    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+    {
+        /*Vector3 playerside;
+        Vector3 blockside;
+        if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y +diry, (int)Playerposition.z + dirz] != null)
+        {
+            if (dirx != 0) Playerposition.x -= dirx / 2;
+            if (diry != 0) Playerposition.y -= diry / 2;
+            if (dirz != 0) Playerposition.z -= dirz / 2;
+        }
+        if (GridMatrix[x + dirx, y + diry, z + dirz] != null)
+        {
+
+        }
+        playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.5f, Playerposition.z + dirz * 0.5f);
+        blockside = new Vector3(x - dirx * 0.5f, y - diry * 0.5f, z - dirz * 0.5f);
+        if (Physics.Raycast(playerside,blockside, Vector3.Distance(playerside,blockside)-0.2f)) {
+            return false;
+        }*/
+
+        return false;
+    }
+
+
+    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange)
+    {
+        List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
+
+        //TODO
+        
+
+        return targetableliving;
     }
 
 
@@ -513,7 +710,7 @@ public class Grid : MonoBehaviour
         }
     }
 
-
+ 
 
     /// <summary>
     /// Initialize value of boolean explored of blocs of the grid
@@ -621,7 +818,7 @@ public class Grid : MonoBehaviour
             //Others will fall
             //  0 = not seen, nothing to do; 1 seen
             InitializeExplored(false);
-
+            
 
             for (int x = 0; x < sizeX; x++)
             {
@@ -658,7 +855,7 @@ public class Grid : MonoBehaviour
                 for (int z = 0; z < sizeZ; z++)
                 {
                     if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored) // if bloc is not null and supposed to fall
-                                                                                      //then fall.
+                                                                          //then fall.
                     {
 
                         HandleCrush(x, y, z, 1); // falling from one, applying right crushing if needed
@@ -668,20 +865,31 @@ public class Grid : MonoBehaviour
         }
 
     }
+    public bool CheckNull(Vector3Int position)
+    {
+        return CheckRange(position) && gridMatrix[position.x, position.y, position.z] != null;
+    }
+    public bool CheckRange(Vector3Int position)
+    {
+        return position.x > 0 && position.x < sizeX &&
+            position.y > 0 && position.y < sizeY &&
+            position.z > 0 && position.z < sizeZ;
+        
+    }
     public void MoveBlock(Placeable bloc, Vector3Int desiredPosition)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
            && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
          (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
-          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable != CrushType.CRUSHSTAY))
+          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable!=CrushType.CRUSHSTAY))
         {
             Vector3 oldPosition = bloc.transform.position;
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
-
+            
         }
     }
     /// <summary>
@@ -724,7 +932,7 @@ public class Grid : MonoBehaviour
         {
             gridMatrix[x, y - ydrop, z].Destroy();
             gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
-            // gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
+           // gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
             gridMatrix[x, y, z] = null;
 
         }
@@ -827,13 +1035,13 @@ public class Grid : MonoBehaviour
 
                         GameObject obj = Instantiate(GameManager.instance.networkManager.spawnPrefabs[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity, parent.transform);
-
+                        
 
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
                         obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
                         Placeable.currentMaxId++;
-                        // NetworkServer.Spawn(obj);
+                         // NetworkServer.Spawn(obj);
 
 
                     }

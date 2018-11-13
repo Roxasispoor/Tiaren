@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 7d1430089afb5854892670b854d1d684, type: 2}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -236,14 +236,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf49af35ff6aa47af722136663683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathFindingMaterial: {fileID: 2100000, guid: 4d1187a41dcd0034fb17864ffa4b55d7, type: 2}
   networkManager: {fileID: 0}
   isGameStarted: 0
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
     type: 2}
   batchFolder: {fileID: 649181390}
   prefabCharacs:
-  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
+  - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
   prefabWeapons:
   - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   gridFolder: {fileID: 1154982765}
@@ -374,7 +373,6 @@ MonoBehaviour:
   m_SpawnPrefabs:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
   - {fileID: 1647946167368326, guid: 925267dbbd502e9458ae65115b81671e, type: 2}
-  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
   m_CustomConfig: 1
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -452,6 +450,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1154982766}
   - component: {fileID: 1154982767}
+  - component: {fileID: 1154982768}
+  - component: {fileID: 1154982769}
   m_Layer: 0
   m_Name: GridFolder
   m_TagString: Untagged
@@ -504,6 +504,48 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
+--- !u!23 &1154982768
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1154982765}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 2100000, guid: d393261edd4f76b4195e245d1d818fca, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1154982769
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1154982765}
+  m_Mesh: {fileID: 0}
 --- !u!1 &1195699359
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,8 +21,8 @@ public abstract class Placeable:MonoBehaviour
     private TraversableType tangible;
     private TraversableType traversableBullet;
     public Color colorOfObject;
-    private float animationSpeed=1.0f;
-    public Material oldMaterial;
+    private float animationSpeed;
+   
     private GravityType gravityType;
     private CrushType crushable;
     public bool explored;
@@ -41,8 +41,7 @@ public abstract class Placeable:MonoBehaviour
         return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
     }
-   
-    public virtual bool IsLiving()
+    public virtual bool isLiving()
     {
         return false;
     }
@@ -308,13 +307,7 @@ public abstract class Placeable:MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && this.walkable)
         {
-            if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
-            {
-                Debug.Log("You have authority to ask for a move");
-                Vector3 destination = this.GetPosition();
-            GameManager.instance.playingPlaceable.Player.CmdMoveTo(destination);//Check and move on server
-                GameManager.instance.CheckIfAccessible(this);
-            }
+            GameManager.instance.CheckIfAccessible(this);
         }
         else if (Input.GetMouseButtonUp(2))
         {
