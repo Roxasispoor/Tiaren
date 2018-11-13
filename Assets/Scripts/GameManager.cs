@@ -289,6 +289,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
                 batch.combineInstances.ToArray(), true, true);
         }
+        else
+        {
+            Debug.Log("erreur,batch material non trouvé" + batch.material);
+        }
 
         }
     public void ResetAllBatches()
@@ -457,7 +461,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
                 Debug.Log("PM: " + playingPlaceable.CurrentPM);
                 playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3() + new Vector3(0,1,0), playingPlaceable.CurrentPM,
-         playingPlaceable.Jump, playingPlaceable.Player);
+                playingPlaceable.Jump, playingPlaceable.Player);
                 
                 playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             }

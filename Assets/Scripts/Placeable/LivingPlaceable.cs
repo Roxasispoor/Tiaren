@@ -493,9 +493,12 @@ public class LivingPlaceable : Placeable
        
         foreach (NodePath node in AreaOfMouvement)
         {
+            if(Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
+            { 
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+        }
         }
         GameManager.instance.ResetAllBatches();
         
@@ -504,9 +507,12 @@ public class LivingPlaceable : Placeable
     {
         foreach (NodePath node in AreaOfMouvement)
         {
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
+            { 
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
+            }
         }
         AreaOfMouvement.Clear();
     }
