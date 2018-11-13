@@ -266,13 +266,12 @@ public class Player : NetworkBehaviour
     /// </summary>
     /// <param name="toGo"></param>
     [Command]
-    public void CmdMoveTo(Vector3[] path)
+    public void CmdMoveTo(Vector3 destination)
     {
         if (GameManager.instance.PlayingPlaceable.player == this)// updating only if it's his turn to play, other checkings are done in GameManager
         {
-            //TODO : call VerifyPath(path) if not send a RPC to synchronise
-            Grid.instance.GridMatrix[GameManager.instance.PlayingPlaceable.GetPosition().x, GameManager.instance.PlayingPlaceable.GetPosition().y, GameManager.instance.PlayingPlaceable.GetPosition().z] = null; ;
-            Grid.instance.GridMatrix[(int)path[path.Length].x, (int)path[path.Length].y + 1, (int)path[path.Length].z] = GameManager.instance.PlayingPlaceable;
+            GameManager.instance.CheckIfAccessible(Grid.instance.GridMatrix[(int)destination.x, (int)destination.y, (int)destination.z]);
+            
         }
     }
 

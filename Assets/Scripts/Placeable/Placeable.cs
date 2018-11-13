@@ -308,7 +308,13 @@ public abstract class Placeable:MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && this.walkable)
         {
-            GameManager.instance.CheckIfAccessible(this);
+            if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+            {
+                Debug.Log("You have authority to ask for a move");
+                Vector3 destination = this.GetPosition();
+            GameManager.instance.playingPlaceable.Player.CmdMoveTo(destination);//Check and move on server
+                GameManager.instance.CheckIfAccessible(this);
+            }
         }
         else if (Input.GetMouseButtonUp(2))
         {

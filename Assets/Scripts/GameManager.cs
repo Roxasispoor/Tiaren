@@ -443,8 +443,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         return idPlaceable[id];
     }
 
+    /// <summary>
+    /// Check if it is accessible and move the position, either by a bezier or directly if server
+    /// </summary>
+    /// <param name="arrival"></param>
     public void CheckIfAccessible(Placeable arrival)
     {
+
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
         NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
         if(inListDestination!=null)
@@ -452,18 +457,35 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Vector3[] realPath = inListDestination.GetFullPath();
         if (playingPlaceable.AreaOfMouvement.Contains(destination))
         {
-            playingPlaceable.Player.CmdMoveTo(realPath);
-            List<Vector3> bezierPath = new List<Vector3>(realPath);
                 Debug.Log("Start" + playingPlaceable.GetPosition());
-            StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
+                Grid.instance.GridMatrix[playingPlaceable.GetPosition().x, playingPlaceable.GetPosition().y, playingPlaceable.GetPosition().z] = null;
+                Grid.instance.GridMatrix[(int)destination.GetVector3().x, (int)destination.GetVector3().y+1, (int)destination.GetVector3().z] = playingPlaceable;
+
+                if (isServer)
+                {
+                    playingPlaceable.transform.position = destination.GetVector3() + new Vector3(0, 1, 0);
+                }
+            else if(isClient)
+                { 
+                     List<Vector3> bezierPath = new List<Vector3>(realPath);
+                
+                  StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
+                }
+
+
                 playingPlaceable.CurrentPM -= realPath.Length - 1;
                 playingPlaceable.ResetAreaOfMovement();
 
                 Debug.Log("PM: " + playingPlaceable.CurrentPM);
                 playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3() + new Vector3(0,1,0), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump, playingPlaceable.Player);
-                
+               
                 playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+                
+            }
+        else if(isServer)
+            {
+                Debug.Log("Warning: client asked to go somewhere it cannot, very weird!");
             }
         }
     }
