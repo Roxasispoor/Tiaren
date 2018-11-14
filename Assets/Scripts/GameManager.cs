@@ -30,6 +30,8 @@ public class GameManager : NetworkBehaviour
 
     public GameObject player2; //Should be Object
     public GameObject[] prefabMonsters;
+    public Skill activeSkill;
+    public States state;
     
 
     private List<StackAndPlaceable> turnOrder;
@@ -412,7 +414,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
-
+            state = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {
@@ -431,9 +433,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.Player.clock.IsFinished = false;
             if(playingPlaceable.Player.isLocalPlayer)
             { 
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
+                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
-            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+                playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             }
             player1.GetComponent<Timer>().StartTimer(30f);
             player2.GetComponent<Timer>().StartTimer(30f);

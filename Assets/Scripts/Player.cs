@@ -160,7 +160,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisXCamera", () => Input.GetAxis("Mouse X"));
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
-
+        DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
 
@@ -240,11 +240,11 @@ public class Player : NetworkBehaviour
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
-        
+        GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         if (skill.SkillType==SkillType.BLOCK)
         {
             playingPlaceable.TargetArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-            MakeCubeRed(playingPlaceable);
+            playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
@@ -505,6 +505,7 @@ public class Player : NetworkBehaviour
         }
 
     }
+
     [ClientRpc]
     public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
     {

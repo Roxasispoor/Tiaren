@@ -18,10 +18,12 @@ public class EffectManager:MonoBehaviour {
             Destroy(gameObject);
 
     }
+
     public void UseEffect(Effect effect)
     {
         bool isblocked = false;
-        foreach(Effect eff in effect.GetTarget().AttachedEffects)
+        Placeable target = effect.GetTarget();
+        foreach(Effect eff in target.AttachedEffects)
         {
             if(eff.GetType()==typeof(BlockEffects))
             {

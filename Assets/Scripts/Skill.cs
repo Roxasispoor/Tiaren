@@ -121,6 +121,13 @@ public class Skill
 
     }
 
+    public void Activate()
+    {
+        GameManager.instance.state = States.UseSkill;
+        GameManager.instance.activeSkill = this;
+        GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
+    }
+
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<Placeable> targets)
     {

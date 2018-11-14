@@ -321,6 +321,19 @@ public class LivingPlaceable : Placeable
         }
     }
 
+    public float DeathLength
+    {
+        get
+        {
+            return deathLength;
+        }
+
+        set
+        {
+            deathLength = value;
+        }
+    }
+
 
     /// <summary>
     /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
@@ -474,14 +487,16 @@ public class LivingPlaceable : Placeable
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
-        ListEffects.Add(new Push(2, 500));
+        ListEffects.Add(new Push(null, this, 2, 500));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push");
         Skill skill2 = new Skill(0, 1, ListEffects, SkillType.LIVING, "spell2");
         Skills.Add(skill1);
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
-    }
+        targetArea = new List<Vector3Int>();
+        targetableUnits = new List<LivingPlaceable>();
+}
 
     
     void OnMouseOver()
@@ -518,6 +533,7 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
+
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
        
@@ -533,6 +549,7 @@ public class LivingPlaceable : Placeable
         GameManager.instance.ResetAllBatches();
         
     }
+
     public void ResetAreaOfMovement()
     {
         foreach (NodePath node in AreaOfMouvement)
@@ -545,22 +562,8 @@ public class LivingPlaceable : Placeable
             }
         }
         AreaOfMouvement.Clear();
-       
-      
-        
     }
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
 
@@ -576,6 +579,7 @@ public class LivingPlaceable : Placeable
         GameManager.instance.ResetAllBatches();
 
     }
+
     public void ResetAreaOfTarget()
     {
         foreach (Vector3Int node in targetArea)

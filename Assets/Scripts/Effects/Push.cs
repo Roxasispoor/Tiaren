@@ -67,11 +67,11 @@ public class Push : EffectOnPlaceable
         {
             dx = -1;
         }
-        if (direction.y > 0.38268343236)
+        if (direction.z > 0.38268343236)
         {
             dz = 1;
         }
-        else if (direction.y < -0.38268343236)
+        else if (direction.z < -0.38268343236)
         {
             dz = -1;
         }

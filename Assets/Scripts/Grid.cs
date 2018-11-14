@@ -674,6 +674,7 @@ public class Grid : MonoBehaviour
         }
 
     }
+
     public void MoveBlock(Placeable bloc, Vector3Int desiredPosition)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
@@ -703,7 +704,7 @@ public class Grid : MonoBehaviour
         {
             MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
-
+        /*
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects
         {
             gridMatrix[x, y, z].Destroy();
@@ -718,7 +719,7 @@ public class Grid : MonoBehaviour
                 ymontee++;
             }
 
-            gridMatrix[x, ymontee, z] = gridMatrix[x, y - ydrop, z].Cloner();
+            gridMatrix[x, ymontee, z] = gridMatrix[x, y - ydrop, z];
             //gridMatrix[x, ymontee, z].Position.Set(x, ymontee, z);
 
 
@@ -734,7 +735,7 @@ public class Grid : MonoBehaviour
             gridMatrix[x, y, z] = null;
 
         }
-
+        */
 
 
         //could be a crushable of type crushstay, or empty
@@ -850,6 +851,7 @@ public class Grid : MonoBehaviour
         Debug.Log(Placeable.currentMaxId);
 
     }
+
     public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
     {
         int remainingrangeYZ;

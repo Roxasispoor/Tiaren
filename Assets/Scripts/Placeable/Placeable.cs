@@ -158,14 +158,7 @@ public abstract class Placeable:MonoBehaviour
             hitablePoints = value;
         }
     }
-    /// <summary>
-    /// On dispatch selon Living et placeable
-    /// </summary>
-    /// <param name="effect"></param>
-    public virtual void DispatchEffect(Effect effect)
-    {
-        effect.TargetAndInvokeEffectManager(this);
-    }
+    
     public TraversableType TraversableChar
     {
         get
@@ -305,40 +298,51 @@ public abstract class Placeable:MonoBehaviour
     /// </summary>
     void OnMouseOver()
     {
-
-       // Debug.Log(EventSystem.current.IsPointerOverGameObject());
-        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
+        if (GameManager.instance.state == States.Move)
         {
-            if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+            // Debug.Log(EventSystem.current.IsPointerOverGameObject());
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                Debug.Log("You have authority to ask for a move");
-                //Vector3 destination = this.GetPosition();
-                Vector3[]path=GameManager.instance.GetPathFromClicked(this);//Check and move on server
-                GameManager.instance.playingPlaceable.Player.CmdMoveTo(path);
-               // GameManager.instance.CheckIfAccessible(this);
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                {
+                    Debug.Log("You have authority to ask for a move");
+                    //Vector3 destination = this.GetPosition();
+                    Vector3[] path = GameManager.instance.GetPathFromClicked(this);//Check and move on server
+                    GameManager.instance.playingPlaceable.Player.CmdMoveTo(path);
+                    // GameManager.instance.CheckIfAccessible(this);
+                }
             }
         }
-        else if (Input.GetMouseButtonUp(2))
+        else if (GameManager.instance.state == States.UseSkill)
         {
-            GameManager.instance.ShotPlaceable = this;
-
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            {
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                {
+                    Debug.Log("You have authority to ask to act");
+                    GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
+                }
+            }
         }
-
     }
+
     private void Awake()
     {
+        //WARNING: NEVER CALLED BY CHILDREN (BECAUSE ABSTRACT?)
 
-        this.OnWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
-        this.AttachedEffects = new List<Effect>();
+     
     }
     /*public void Start()
     {
         Comma
         this.netId=this.
     }*/
-
+    /// <summary>
+    /// On dispatch selon Living et placeable
+    /// </summary>
+    /// <param name="effect"></param>
+    public virtual void DispatchEffect(Effect effect)
+    {
+        effect.TargetAndInvokeEffectManager(this);
+    }
 }
