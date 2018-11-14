@@ -509,7 +509,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             else if(isClient)
                 { 
                      List<Vector3> bezierPath = new List<Vector3>(realPath);
-                
+
                   StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
                 }
 

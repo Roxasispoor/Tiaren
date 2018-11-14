@@ -311,7 +311,7 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        Debug.Log("CheckPath" + Grid.instance.CheckPath(path));
+        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         if (GameManager.instance.PlayingPlaceable.player == this )// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
@@ -342,6 +342,7 @@ public class Player : NetworkBehaviour
         GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
         List<Vector3> bezierPath=new List<Vector3>(path);
 
+        Debug.Log("CheckPath(): " + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
              GameManager.instance.playingPlaceable.GetPosition().z] = null;
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,

@@ -461,7 +461,7 @@ public class Grid : MonoBehaviour
 
 
 
-    public bool CheckPath(Vector3[] path) // The end is where the Character stand (under him)
+    public bool CheckPath(Vector3[] path, LivingPlaceable currentCharacter) // The end is where the Character stand (under him)
     {
         Vector3 current = path[0];
         //TODO: rajouter le test de current is walkable
@@ -472,17 +472,19 @@ public class Grid : MonoBehaviour
             Vector3 diff = next - current;
             if (Mathf.Abs(diff.x) == 1 ^ Mathf.Abs(diff.z) == 1)
             {
-                int yTested = (int)current.y;
+                
+                int yTested = (int)current.y + 1;
                 while (yTested < next.y + 1)
                 {
-                    if (Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != null)
+                    if (Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != currentCharacter
+                         && Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != null)
                     {
                         return false;
                     }
                     yTested++;
                 }
 
-                while (yTested < next.y - 1)
+                while (yTested > next.y)
                 {
                     if (Grid.instance.gridMatrix[(int)next.x, (int)yTested, (int)next.z] != null)
                     {
@@ -852,7 +854,7 @@ public class Grid : MonoBehaviour
 
     }
 
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool dummy)
     {
         int remainingrangeYZ;
         int remainingrangeY;
@@ -1083,8 +1085,36 @@ public class Grid : MonoBehaviour
 
     }
 
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    {
+        List<Vector3Int> targetableBlocks = new List<Vector3Int>();
 
-    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+        for (int x = Mathf.Max((int)Playerposition.x - maxrange, 0);
+                x < Mathf.Min((int)Playerposition.x + maxrange, Grid.instance.sizeX);
+                x++)
+        {
+            for (int y = Mathf.Max((int)Playerposition.y - maxrange, 0);
+                y < Mathf.Min((int)Playerposition.y + maxrange, Grid.instance.sizeY);
+                y++)
+            {
+                for (int z = Mathf.Max((int)Playerposition.z - maxrange, 0);
+                z < Mathf.Min((int)Playerposition.z + maxrange, Grid.instance.sizeZ);
+                z++)
+                {
+                    if (gridMatrix[x, y + 1, z] != null 
+                        && !gridMatrix[x, y + 1, z].IsLiving() 
+                        && (y == sizeY-1 || gridMatrix[x,y+1,z] == null))
+                    {
+                        targetableBlocks.Add(new Vector3Int(x, y, z));
+                    }
+                }
+            }
+        }
+
+        return targetableBlocks;
+    }
+
+        public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
     {
         /*Vector3 playerside;
         Vector3 blockside;
@@ -1113,7 +1143,31 @@ public class Grid : MonoBehaviour
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
         //TODO
+        foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
+        {
+            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            distance.x = Mathf.Abs(distance.x);
+            distance.y = Mathf.Abs(distance.y);
+            distance.z = Mathf.Abs(distance.z);
+            if (distance.x + distance.y + distance.z <= maxrange
+                && distance.x + distance.y + distance.z >= minrange)
+            {
+                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+            }
+        }
 
+        foreach (GameObject gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
+        {
+            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            distance.x = Mathf.Abs(distance.x);
+            distance.y = Mathf.Abs(distance.y);
+            distance.z = Mathf.Abs(distance.z);
+            if (distance.x + distance.y + distance.z <= maxrange
+                && distance.x + distance.y + distance.z >= minrange)
+            {
+                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+            }
+        }
 
         return targetableliving;
     }
