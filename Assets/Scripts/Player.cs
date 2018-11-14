@@ -450,6 +450,15 @@ public class Player : NetworkBehaviour
         Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
         bool isBezier = true;
+
+
+        Animator anim = placeable.gameObject.GetComponent<Animator>();
+        AnimatorClipInfo[] clipInfo = anim.GetCurrentAnimatorClipInfo(0);
+        string clipName = clipInfo[0].clip.name;
+        //anim.SetTrigger("walk");
+        Debug.Log("trigger walk");
+        bool isJumping = false;
+        bool isWalking = false;
         //For visual rotation
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
@@ -484,26 +493,54 @@ public class Player : NetworkBehaviour
                 // exit yield loop
                 break;
             }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+
+            clipInfo = anim.GetCurrentAnimatorClipInfo(0);
+            clipName = clipInfo[0].clip.name;
             if (isBezier)
             {
+                
+                if (!isJumping)
+                {
+                    isJumping = true;
+                    anim.SetTrigger("jump");
+
+                }
+                
+                
                 placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
 
             }
             else
             {
+                
+                if (isJumping)
+                {
+                    isJumping = false;
+                    anim.SetTrigger("land");
+                }
+                else
+                {
+                    anim.SetTrigger("walk");
+                }
+                
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
-            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-            //change what we look at
+            
 
+            
             yield return null;
 
 
         }
-  
-  
+        anim.ResetTrigger("walk");
+        anim.SetTrigger("land");
+        anim.SetTrigger("idle");
+        Debug.Log("trigger idle");
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
     }

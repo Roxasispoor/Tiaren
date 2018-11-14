@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 4100607352403286}
   - component: {fileID: 114844813886085378}
   - component: {fileID: 114801544019923412}
+  - component: {fileID: 95898400531427464}
   m_Layer: 0
   m_Name: ParentModel
   m_TagString: Untagged
@@ -844,6 +845,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!95 &95898400531427464
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1449928830736538}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 67db190c4ad8dfa4da0baaa1c2dd842c, type: 3}
+  m_Controller: {fileID: 9100000, guid: 8f5976d3bda42bc4dbbb61488e9ff940, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114801544019923412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -890,6 +909,7 @@ MonoBehaviour:
   netId: 0
   serializeNumber: 3
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
+  oldMaterial: {fileID: 0}
   explored: 0
   player: {fileID: 0}
   characterSprite: {fileID: 21300000, guid: e247bcf302f5b5d4a8f6fcbc9fe39f60, type: 3}
