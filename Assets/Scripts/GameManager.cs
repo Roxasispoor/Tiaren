@@ -14,6 +14,7 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public Material targetMaterial;
     public NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;

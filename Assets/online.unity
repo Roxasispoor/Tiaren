@@ -237,6 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathFindingMaterial: {fileID: 2100000, guid: 82458a6739f1d9f4b84ff4e3d5981f81, type: 2}
+  targetMaterial: {fileID: 2100000, guid: d526401e971c20e4595b2bccc06da6b8, type: 2}
   networkManager: {fileID: 0}
   isGameStarted: 0
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
