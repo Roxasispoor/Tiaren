@@ -461,7 +461,7 @@ public class Grid : MonoBehaviour
 
 
 
-    public bool CheckPath(Vector3[] path) // The end is where the Character stand (under him)
+    public bool CheckPath(Vector3[] path, LivingPlaceable currentCharacter) // The end is where the Character stand (under him)
     {
         Vector3 current = path[0];
         //TODO: rajouter le test de current is walkable
@@ -472,17 +472,19 @@ public class Grid : MonoBehaviour
             Vector3 diff = next - current;
             if (Mathf.Abs(diff.x) == 1 ^ Mathf.Abs(diff.z) == 1)
             {
-                int yTested = (int)current.y;
+                
+                int yTested = (int)current.y + 1;
                 while (yTested < next.y + 1)
                 {
-                    if (Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != null)
+                    if (Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != currentCharacter
+                         && Grid.instance.gridMatrix[(int)current.x, (int)yTested, (int)current.z] != null)
                     {
                         return false;
                     }
                     yTested++;
                 }
 
-                while (yTested < next.y - 1)
+                while (yTested > next.y)
                 {
                     if (Grid.instance.gridMatrix[(int)next.x, (int)yTested, (int)next.z] != null)
                     {
