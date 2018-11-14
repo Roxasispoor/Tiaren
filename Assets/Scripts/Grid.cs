@@ -852,7 +852,7 @@ public class Grid : MonoBehaviour
         Debug.Log(Placeable.currentMaxId);
 
     }
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool dummy)
     {
         int remainingrangeYZ;
         int remainingrangeY;
@@ -1083,8 +1083,36 @@ public class Grid : MonoBehaviour
 
     }
 
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    {
+        List<Vector3Int> targetableBlocks = new List<Vector3Int>();
 
-    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+        for (int x = Mathf.Max((int)Playerposition.x - maxrange, 0);
+                x < Mathf.Min((int)Playerposition.x + maxrange, Grid.instance.sizeX);
+                x++)
+        {
+            for (int y = Mathf.Max((int)Playerposition.y - maxrange, 0);
+                y < Mathf.Min((int)Playerposition.y + maxrange, Grid.instance.sizeY);
+                y++)
+            {
+                for (int z = Mathf.Max((int)Playerposition.z - maxrange, 0);
+                z < Mathf.Min((int)Playerposition.z + maxrange, Grid.instance.sizeZ);
+                z++)
+                {
+                    if (gridMatrix[x, y + 1, z] != null 
+                        && !gridMatrix[x, y + 1, z].IsLiving() 
+                        && (y == sizeY-1 || gridMatrix[x,y+1,z] == null))
+                    {
+                        targetableBlocks.Add(new Vector3Int(x, y, z));
+                    }
+                }
+            }
+        }
+
+        return targetableBlocks;
+    }
+
+        public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
     {
         /*Vector3 playerside;
         Vector3 blockside;
