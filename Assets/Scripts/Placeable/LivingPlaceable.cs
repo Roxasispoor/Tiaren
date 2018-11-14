@@ -29,7 +29,7 @@ public class LivingPlaceable : Placeable
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
 
-    private List<Vector3Int> effectArea;
+    private List<Vector3Int> targetArea;
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
@@ -295,16 +295,16 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public List<Vector3Int> EffectArea
+    public List<Vector3Int> TargetArea
     {
         get
         {
-            return effectArea;
+            return targetArea;
         }
 
         set
         {
-            effectArea = value;
+            targetArea = value;
         }
     }
 
@@ -533,7 +533,7 @@ public class LivingPlaceable : Placeable
         GameManager.instance.ResetAllBatches();
         
     }
-    public void ResetAreaOfMovement(bool resetBatches=true)
+    public void ResetAreaOfMovement()
     {
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -545,10 +545,9 @@ public class LivingPlaceable : Placeable
             }
         }
         AreaOfMouvement.Clear();
-        if(resetBatches)
-        { 
-        GameManager.instance.ResetAllBatches();
-        }
+       
+      
+        
     }
 
     // Use this for initialization
@@ -563,6 +562,17 @@ public class LivingPlaceable : Placeable
 
     }
 
-
-
+    public void ResetAreaOfTarget()
+    {
+        foreach (Vector3Int node in targetArea)
+        {
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial != null)//if we haven't already reset this one
+            {
+               
+                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
+                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
+            }
+        }
+        AreaOfMouvement.Clear();
+    }
 }

@@ -243,7 +243,7 @@ public class Player : NetworkBehaviour
         
         if (skill.SkillType==SkillType.BLOCK)
         {
-            playingPlaceable.EffectArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            playingPlaceable.TargetArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
             MakeCubeRed(playingPlaceable);
         }
         else if (skill.SkillType == SkillType.LIVING)
@@ -275,7 +275,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            foreach (Vector3Int cube in playingPlaceable.EffectArea)
+            foreach (Vector3Int cube in playingPlaceable.TargetArea)
             {
                 Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.red;
             }

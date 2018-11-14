@@ -311,7 +311,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if(playingPlaceable.player.isLocalPlayer)
         {
-            playingPlaceable.ResetAreaOfMovement(false);
+            playingPlaceable.ResetAreaOfMovement();
 
             Debug.Log("PM: " + playingPlaceable.CurrentPM);
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
@@ -446,7 +446,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Debug.Log("tour suivaaaaaaaaant");
         if (playingPlaceable.player.isLocalPlayer)
         {
-            playingPlaceable.ResetAreaOfMovement(true);
+            playingPlaceable.ResetAreaOfTarget();
+            playingPlaceable.ResetAreaOfMovement();
+            GameManager.instance.ResetAllBatches();
         }
             BeginningOfTurn();
     }
