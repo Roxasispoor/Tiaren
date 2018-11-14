@@ -127,7 +127,7 @@ public class Push : EffectOnPlaceable
         }
         Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z));
         Player.MoveAlongBezier(path, Target, pushSpeed);
-
+        //cmdMoveBlock(Target
     }
     //Todo check que ça sort pas du terrain...
     public List<Vector3> CheckPath(int distance, Vector2Int delta,out Placeable directCollision, out List<Placeable> diagonalCollisions)
@@ -136,7 +136,7 @@ public class Push : EffectOnPlaceable
         List<Vector3> positions = new List<Vector3>();
         diagonalCollisions = new List<Placeable>();
         bool isDiagonal = delta.x * delta.y != 0;
-        for (int i = 0; i < distance; i++)
+        for (int i = 1; i < distance; i++)
         {
             if (Grid.instance.CheckNull(new Vector3Int(Target.GetPosition().x + delta.x *i,Target.GetPosition().y,
                 Target.GetPosition().z + delta.y * i)))

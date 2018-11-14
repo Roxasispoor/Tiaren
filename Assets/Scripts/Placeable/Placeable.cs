@@ -320,7 +320,8 @@ public abstract class Placeable:MonoBehaviour
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
                 {
                     Debug.Log("You have authority to ask to act");
-                    GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
+                    GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);
+                    //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }
         }

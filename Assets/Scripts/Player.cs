@@ -697,4 +697,25 @@ public class Player : NetworkBehaviour
 
     }
 
+    [Command]
+    public void CmdUseSkill(int numSkill, int netidTarget)
+    {
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        if (this == GameManager.instance.playingPlaceable) {
+            if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude < skill.Maxrange
+                && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude > skill.Minrange)
+            {
+                skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+                RpcUseSkill(numSkill, netidTarget);
+            }
+        }
+    }
+
+    [ClientRpc]
+    public void RpcUseSkill(int numSkill, int netidTarget)
+    {
+
+    }
+
 }
