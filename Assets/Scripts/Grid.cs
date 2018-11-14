@@ -1111,7 +1111,31 @@ public class Grid : MonoBehaviour
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
         //TODO
+        foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
+        {
+            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            distance.x = Mathf.Abs(distance.x);
+            distance.y = Mathf.Abs(distance.y);
+            distance.z = Mathf.Abs(distance.z);
+            if (distance.x + distance.y + distance.z <= maxrange
+                && distance.x + distance.y + distance.z >= minrange)
+            {
+                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+            }
+        }
 
+        foreach (GameObject gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
+        {
+            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            distance.x = Mathf.Abs(distance.x);
+            distance.y = Mathf.Abs(distance.y);
+            distance.z = Mathf.Abs(distance.z);
+            if (distance.x + distance.y + distance.z <= maxrange
+                && distance.x + distance.y + distance.z >= minrange)
+            {
+                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+            }
+        }
 
         return targetableliving;
     }
