@@ -304,7 +304,13 @@ public abstract class Placeable:MonoBehaviour
     /// </summary>
     void OnMouseOver()
     {
-
+        if (GameManager.instance.state == GameManager.States.Spawn)
+        {
+            if (Input.GetMouseButtonUp(0) && this.walkable)
+            {
+                
+            }
+        }
 
         if (Input.GetMouseButtonUp(0) && this.walkable)
         {
@@ -317,6 +323,13 @@ public abstract class Placeable:MonoBehaviour
         }
 
     }
+
+    //TODO
+    public void onWalk(LivingPlaceable placeable)
+    {
+
+    }
+
     private void Awake()
     {
 

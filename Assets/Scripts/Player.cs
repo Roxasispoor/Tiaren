@@ -624,4 +624,30 @@ public class Player : NetworkBehaviour
     }
 
 
+    public void HighlightSpawn()
+    {
+        if (isLocalPlayer)
+        {
+            if (gameObject == GameManager.instance.player1)
+            {
+                foreach (Placeable placeable in Grid.instance.SpawnPlayer1)
+                {
+                    placeable.GetComponent<Renderer>().material.color = Color.green;
+                }
+                for (int i = 0; i < Characters.Count; i++)
+                {
+
+                }
+            }
+            else
+            {
+                foreach (Placeable placeable in Grid.instance.SpawnPlayer1)
+                {
+                    placeable.GetComponent<Renderer>().material.color = Color.green;
+                }
+            }
+        }
+    }
+
+
 }

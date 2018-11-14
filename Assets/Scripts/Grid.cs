@@ -103,7 +103,8 @@ public class Grid : MonoBehaviour
     public int sizeY = 6;
     public int sizeZ = 50;
     //public DistanceAndParent[,,] gridBool;
-
+    private List<Placeable> spawnPlayer1;
+    private List<Placeable> spawnPlayer2;
 
     /// <summary>
     /// Represents grid for the game
@@ -132,6 +133,32 @@ public class Grid : MonoBehaviour
         set
         {
             gridMatrix = value;
+        }
+    }
+
+    public List<Placeable> SpawnPlayer1
+    {
+        get
+        {
+            return spawnPlayer1;
+        }
+
+        set
+        {
+            spawnPlayer1 = value;
+        }
+    }
+
+    public List<Placeable> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
+
+        set
+        {
+            spawnPlayer2 = value;
         }
     }
 
@@ -164,132 +191,6 @@ public class Grid : MonoBehaviour
         }
 
     }
-
-
-    /// <summary>
-    /// Function finding and displaying path from point A to point B
-    /// Only cases where the character can go are added
-    /// <param name="livingPlaceable">Character to study</param>
-    /// <param name="jumpValue">Value of jump for the character</param>
-    /// <param name="positionBloc">Position of starting bloc (under the character)</param>
-    /// <returns>Returns a grid which can give positions of every cube on the path (belonging to floor). Character will be set on top of the cube target</returns>
-    /// </summary>
-    /* public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable, int jumpValue, Vector3Int positionBloc)
-    {
-
-        int shifting = livingPlaceable.CurrentPM;
-
-
-
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    gridBool[x, y, z] = new DistanceAndParent(x, y, z);
-                }
-            }
-        }
-
-        Queue<Vector3Int> queue = new Queue<Vector3Int>();
-        queue.Enqueue(positionBloc);
-        DistanceAndParent parent = null;
-        gridBool[positionBloc.x, positionBloc.y, positionBloc.z].SetDistance(0);
-        while (parent == null || ((parent.GetDistance() <= shifting) && queue.Count != 0))
-        {
-            //adding side cubes, top cubes if reachable, bottom cubes if reachable
-
-            Vector3Int posCurrentBloc = queue.Dequeue();
-
-
-            parent = gridBool[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-            if (parent.GetDistance() <= shifting)
-            {
-
-                Placeable testa = gridMatrix[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-                if (testa.gameObject && testa.gameObject.GetComponent<Renderer>() != null)
-                {
-                    //Sending id because nothing assures on client side that blocs are well placed
-                    GameManager.instance.PlayingPlaceable.Player.MakeCubeBlue(testa.netId);
-                  
-                }
-                //then displaying bloc on blue
-                for (int ycurrent = -jumpValue + 1; ycurrent < jumpValue; ycurrent++)
-                {
-
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.x < sizeX - 1 && //above 0, under max, inside terrain in x
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].GetDistance() == -1 && //if not already seen at this point
-                        gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z] != null &&        // and only if the bloc exists
-                        (gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z] == null  //if the bloc on the top is empty
-                        || gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLTHROUGH //or crossable in general
-                        || gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLIESTHROUGH && //or only by an ally
-                        gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].Player == livingPlaceable.Player) //if we are the ally
-                        && gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].Walkable
-                        )
-                    {//if edge is not marked and exists, if there is nothing above it or if the bloc above is crossable, if bloc is walkable
-
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z));
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetParent(parent);
-                    }
-
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.x > 0 &&
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z] != null &&
-                        (gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z] == null
-                        || gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].Walkable)
-                    {//if edge is not marked and exists, if there is nothing above
-
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z));
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetParent(parent);
-
-
-                    }
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.z < sizeZ - 1 &&
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1] != null &&
-                        (gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1] == null
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].Walkable)
-
-                    {//if edge is not marked and exists, if there is nothing above
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1));
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].SetParent(parent);
-
-                    }
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.z > 0 &&
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1] != null &&
-                        (gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1] == null
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].Walkable)
-                    {//if edge is not marked and exists, if there is nothing above
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1));
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].SetParent(parent);
-                    }
-                }
-            }
-
-        }
-
-        return gridBool;
-    }
-    */
           /// <summary>
     /// Instanciate the new cube
       /// </summary>

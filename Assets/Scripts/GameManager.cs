@@ -27,6 +27,8 @@ public class GameManager : NetworkBehaviour
 
     public GameObject player2; //Should be Object
     public GameObject[] prefabMonsters;
+    public enum States { Spawn, Move, Skill};
+    public States state;
     
 
     private List<StackAndPlaceable> turnOrder;
@@ -193,11 +195,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                
                 yield return null;
         }
-        Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
         { 
             yield return null;
         }
+        SelectSpawn();
+        state = States.Spawn;
+
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
         isGameStarted = true;
@@ -210,10 +214,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     
     }
 
+    public void SelectSpawn()
+    {
+        player1.GetComponent<Player>().HighlightSpawn();
+        player2.GetComponent<Player>().HighlightSpawn();
+    }
+
     [ClientRpc]
     public void RpcStartGame()
     {
-        isGameStarted = true; 
+        isGameStarted = true;
     }
 
     private void UpdateTimeline()
