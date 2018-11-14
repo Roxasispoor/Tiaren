@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using System;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Represents something able to fill a bloc of the grid
@@ -305,8 +306,8 @@ public abstract class Placeable:MonoBehaviour
     void OnMouseOver()
     {
 
-
-        if (Input.GetMouseButtonUp(0) && this.walkable)
+       // Debug.Log(EventSystem.current.IsPointerOverGameObject());
+        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
         {
             if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
             {

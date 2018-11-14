@@ -116,7 +116,7 @@ public class Skill
         Cooldown = cooldown;
         this.effects = effects;
         SkillName = skillName;
-        this.abilitySprite = Resources.Load<Sprite>("UI_Images/" + SkillName);
+        this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         SkillType = skillType;
 
     }

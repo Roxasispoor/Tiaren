@@ -311,7 +311,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if(playingPlaceable.player.isLocalPlayer)
         {
-            playingPlaceable.ResetAreaOfMovement();
+            playingPlaceable.ResetAreaOfMovement(false);
 
             Debug.Log("PM: " + playingPlaceable.CurrentPM);
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
@@ -444,11 +444,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant");
-        if(playingPlaceable.Player.isLocalPlayer)
-        { 
-        playingPlaceable.ResetAreaOfMovement();
+        if (playingPlaceable.player.isLocalPlayer)
+        {
+            playingPlaceable.ResetAreaOfMovement(true);
         }
-        BeginningOfTurn();
+            BeginningOfTurn();
     }
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)

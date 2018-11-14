@@ -213,6 +213,7 @@ public class Player : NetworkBehaviour
     //launcher for end of turn
     public void EndTurn()
     {
+        Debug.Log("EndTurn asked");
         CmdEndTurn();
     }
 
@@ -247,7 +248,7 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            playingPlaceable.Targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
         }
         else
         {
