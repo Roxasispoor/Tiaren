@@ -317,6 +317,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
                 batch.combineInstances.ToArray(), true, true);
             newBatch.GetComponent<MeshRenderer>().materials = new Material[] { newBatch.GetComponent<MeshRenderer>().materials[0] };
+
         }
         else
         {

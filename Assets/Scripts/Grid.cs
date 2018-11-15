@@ -374,7 +374,7 @@ public class Grid : MonoBehaviour
             {
                 return returnList;
             }
-            if (GridMatrix[x, y + i, z] != null)
+            if (GridMatrix[x, y + i, z] != null && GridMatrix[x, y + i + 1, z] == null)
             {
                 if (GridMatrix[x, y + i, z].Walkable)
                 {
@@ -469,6 +469,8 @@ public class Grid : MonoBehaviour
 
     public bool CheckPath(Vector3[] path, LivingPlaceable currentCharacter) // The end is where the Character stand (under him)
     {
+        if (path == null || path.Length == 0)
+            return true;
         Vector3 current = path[0];
         //TODO: rajouter le test de current is walkable
         for (int i = 1; i < path.Length; i++)

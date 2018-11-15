@@ -231,24 +231,23 @@ public class Player : NetworkBehaviour
 
         clock.StartTimer(time);
     }
-    
-    public void ShowAreaOfMouvement(LivingPlaceable playingPlaceable)
-    {
-        playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.transform.position, playingPlaceable.CurrentPM, playingPlaceable.Jump, playingPlaceable.player);
-        MakeCubeBlue(playingPlaceable);
-    }
+
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         if (skill.SkillType==SkillType.BLOCK)
         {
+
             List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
             foreach(Vector3Int v3 in vect)
             {
                 playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x,v3.y,v3.z]);
             }
             //playingPlaceable.TargetArea = 
+
+
+            playingPlaceable.ResetAreaOfMovement();
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
         }
         else if (skill.SkillType == SkillType.LIVING)
@@ -263,56 +262,6 @@ public class Player : NetworkBehaviour
     }
 
 
-    [Client]
-    public void MakeCubeBlue(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (NodePath cube in playingPlaceable.AreaOfMouvement)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.cyan;
-            }
-        }
-    }
-
-    [Client]
-    public void MakeCubeRed(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (Placeable cube in playingPlaceable.TargetArea)
-            {
-                Grid.instance.GridMatrix[cube.GetPosition().x, cube.GetPosition().y, cube.GetPosition().z].GetComponent<Renderer>().material.color = Color.red;
-            }
-        }
-    }
-
-
-    [Client]
-    public void ChangeBackColor(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (NodePath cube in playingPlaceable.AreaOfMouvement)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Placeable>().colorOfObject;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Updates where to go on server, and ask gameManager to do it
-    /// </summary>
-    /// <param name="toGo"></param>
-   /* [Command]
-    public void CmdMoveTo(Vector3 destination)
-    {
-        if (GameManager.instance.PlayingPlaceable.player == this)// updating only if it's his turn to play, other checkings are done in GameManager
-        {
-            GameManager.instance.CheckIfAccessible(Grid.instance.GridMatrix[(int)destination.x, (int)destination.y, (int)destination.z]);
-            
-        }
-    }*/
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
@@ -530,7 +479,9 @@ public class Player : NetworkBehaviour
     }
 
     [Client]
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    
+    // ONLY FOR CHARACTER
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
         if (path.Count < 2)
         {
@@ -541,12 +492,17 @@ public class Player : NetworkBehaviour
         Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
         bool isBezier = true;
+
+
+        Animator anim = placeable.gameObject.GetComponent<Animator>();
+        bool isJumping = false;
+        
         //For visual rotation
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
 
         int i = 1;
-
+        int iref = 1;
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
         while (timeBezier < 1)
@@ -560,7 +516,7 @@ public class Player : NetworkBehaviour
 
                 distanceParcourue -= distance;
                 startPosition = path[i];
-                i++;
+                i++; // changing movement
                 targetDir = path[i] - placeable.transform.position;//next one
                 targetDir.y = 0;// don't move up 
 
@@ -575,6 +531,124 @@ public class Player : NetworkBehaviour
                 // exit yield loop
                 break;
             }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+            
+            if (isBezier)
+            {
+                if (!isJumping)
+                {
+                    isJumping = true;
+                    iref = i;
+                    anim.SetTrigger("jump");
+                    anim.ResetTrigger("walk");
+                    yield return new WaitForSeconds(0.3f);
+
+                }
+                else
+                {
+                    if (i != iref)
+                    {
+                        iref = i;
+                        anim.SetTrigger("landAndJump");
+                        yield return new WaitForSeconds(0.3f);
+                        
+                    }
+                }
+                
+                
+                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
+
+            }
+            else
+            {
+                if (isJumping)
+                {
+                    isJumping = false;
+                    anim.SetTrigger("land");
+                    yield return new WaitForSeconds(0.1f);
+                }
+                else
+                {
+                    anim.SetTrigger("walk");
+                }
+                
+                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
+
+            }
+            
+
+            
+            yield return null;
+
+
+        }
+        
+        anim.SetTrigger("land");
+        yield return new WaitForSeconds(0.1f);
+        anim.SetTrigger("idle");
+        Debug.Log("End" + placeable.GetPosition());
+        Debug.Log("End transform" + placeable.transform);
+        anim.ResetTrigger("walk");
+        anim.ResetTrigger("jump");
+        anim.ResetTrigger("land");
+        anim.ResetTrigger("landAndJump");
+    }
+    
+    // ONLY FOR OTHER PLACEABLE
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
+        float timeBezier = 0f;
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 startPosition = path[0];
+        Vector3 controlPoint = new Vector3();
+        bool isBezier = true;
+
+
+        //For visual rotation
+        Vector3 targetDir = path[1] - placeable.transform.position;
+        targetDir.y = 0;
+
+        int i = 1;
+        float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        float distanceParcourue = 0;
+        while (timeBezier < 1)
+        {
+            distanceParcourue += (speed * Time.deltaTime);
+            timeBezier = distanceParcourue / distance;
+
+            while (timeBezier > 1 && i < path.Count - 1) //on go through 
+            {
+
+
+                distanceParcourue -= distance;
+                startPosition = path[i];
+                i++; // changing movement
+                targetDir = path[i] - placeable.transform.position;//next one
+                targetDir.y = 0;// don't move up 
+
+                distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
+                timeBezier = distanceParcourue / distance; //on recalcule
+
+            }
+            if (i == path.Count - 1 && timeBezier > 1)
+            {
+                // arrived to the last node of path, in precedent loop
+                placeable.transform.position = path[i] + delta;
+                // exit yield loop
+                break;
+            }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+            
             if (isBezier)
             {
                 placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
@@ -582,21 +656,20 @@ public class Player : NetworkBehaviour
             }
             else
             {
+                
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
-            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-            //change what we look at
+            
 
+            
             yield return null;
 
 
         }
-  
-  
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
+        
     }
 
 

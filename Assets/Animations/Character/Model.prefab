@@ -410,7 +410,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4921549706017670}
-  - component: {fileID: 95820823188103754}
   - component: {fileID: 114222995213112238}
   m_Layer: 0
   m_Name: Model
@@ -796,24 +795,6 @@ Transform:
   m_Father: {fileID: 4921549706017670}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &95820823188103754
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1949415018267756}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 67db190c4ad8dfa4da0baaa1c2dd842c, type: 3}
-  m_Controller: {fileID: 9100000, guid: 8f5976d3bda42bc4dbbb61488e9ff940, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114222995213112238
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -828,6 +809,7 @@ MonoBehaviour:
   netId: 0
   serializeNumber: 2
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
+  oldMaterial: {fileID: 0}
   explored: 0
   player: {fileID: 0}
   characterSprite: {fileID: 0}
