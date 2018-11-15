@@ -28,7 +28,11 @@ public class LivingPlaceable : Placeable
     private Vector3 shootPosition;
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
+
+    private List<Placeable> targetArea;
+    private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
+
 
     public float MaxHP
     {
@@ -291,6 +295,47 @@ public class LivingPlaceable : Placeable
         }
     }
 
+  
+
+    public List<LivingPlaceable> TargetableUnits
+    {
+        get
+        {
+            return targetableUnits;
+        }
+
+        set
+        {
+            targetableUnits = value;
+        }
+    }
+
+    public float DeathLength
+    {
+        get
+        {
+            return deathLength;
+        }
+
+        set
+        {
+            deathLength = value;
+        }
+    }
+
+    public List<Placeable> TargetArea
+    {
+        get
+        {
+            return targetArea;
+        }
+
+        set
+        {
+            targetArea = value;
+        }
+    }
+
 
     /// <summary>
     /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
@@ -444,14 +489,16 @@ public class LivingPlaceable : Placeable
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
-        ListEffects.Add(new Push(2, 500));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "push");
-        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.ONECLICKLIVING, "spell2");
+        ListEffects.Add(new Push(null, this, 2, 500));
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
+        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.LIVING, "spell2",0,1);
         Skills.Add(skill1);
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
-    }
+        TargetArea = new List<Placeable>();
+        targetableUnits = new List<LivingPlaceable>();
+}
 
     
     void OnMouseOver()
@@ -488,6 +535,7 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
+
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
        
@@ -495,40 +543,60 @@ public class LivingPlaceable : Placeable
         {
             if(Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
             { 
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+           // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
-        }
+            }
         }
         GameManager.instance.ResetAllBatches();
         
     }
+
     public void ResetAreaOfMovement()
     {
         foreach (NodePath node in AreaOfMouvement)
         {
             if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
             { 
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
+           // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
+                    Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
             }
         }
         AreaOfMouvement.Clear();
     }
-    
-    // Use this for initialization
-    void Start()
+
+    public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
+
+        foreach (Placeable placeable in TargetArea)
+        {
+            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
+            {
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
+                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
+            }
+        }
+        GameManager.instance.ResetAllBatches();
 
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ResetAreaOfTarget()
     {
-
+        foreach (Placeable placeable in TargetArea)
+        {
+            
+            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
+            {
+               
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = 
+                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial = null;
+            }
+        }
+        TargetArea.Clear();
     }
-
-
-
 }

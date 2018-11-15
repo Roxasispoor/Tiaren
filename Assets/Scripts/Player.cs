@@ -160,7 +160,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisXCamera", () => Input.GetAxis("Mouse X"));
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
-
+        DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
 
@@ -213,6 +213,7 @@ public class Player : NetworkBehaviour
     //launcher for end of turn
     public void EndTurn()
     {
+        Debug.Log("EndTurn asked");
         CmdEndTurn();
     }
 
@@ -237,6 +238,34 @@ public class Player : NetworkBehaviour
         MakeCubeBlue(playingPlaceable);
     }
 
+    public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
+    {
+        GameManager.instance.playingPlaceable.ResetAreaOfMovement();
+        if (skill.SkillType==SkillType.BLOCK)
+        {
+            List<Vector3Int> toTarget=Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            foreach(Vector3Int vect in toTarget)
+            {
+
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[vect.x, vect.y, vect.z]);
+
+
+            }
+            playingPlaceable.ResetAreaOfMovement();//reset color but no rebatched
+            playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
+        }
+        else if (skill.SkillType == SkillType.LIVING)
+        {
+            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+        }
+        else
+        {
+            playingPlaceable.GetComponent<Renderer>().material.color = Color.red;
+        }
+
+    }
+
+
     [Client]
     public void MakeCubeBlue(LivingPlaceable playingPlaceable)
     {
@@ -248,7 +277,10 @@ public class Player : NetworkBehaviour
             }
         }
     }
-    
+
+ 
+
+
     [Client]
     public void ChangeBackColor(LivingPlaceable playingPlaceable)
     {
@@ -265,7 +297,7 @@ public class Player : NetworkBehaviour
     /// Updates where to go on server, and ask gameManager to do it
     /// </summary>
     /// <param name="toGo"></param>
-    [Command]
+   /* [Command]
     public void CmdMoveTo(Vector3 destination)
     {
         if (GameManager.instance.PlayingPlaceable.player == this)// updating only if it's his turn to play, other checkings are done in GameManager
@@ -273,11 +305,51 @@ public class Player : NetworkBehaviour
             GameManager.instance.CheckIfAccessible(Grid.instance.GridMatrix[(int)destination.x, (int)destination.y, (int)destination.z]);
             
         }
-    }
+    }*/
+    [Command]
+    public void CmdMoveTo(Vector3[] path)
+    {
+        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+        if (GameManager.instance.PlayingPlaceable.player == this )// updating only if it's his turn to play, other checkings are done in GameManager
+        {
+            //Move  placeable
+            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+                GameManager.instance.playingPlaceable.GetPosition().z] = null;
+            Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+                (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-    public void MoveTo()
+            GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
+            //Trigger effect the ones after the others
+            foreach (Vector3 current in path)
+            {
+                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+            }
+            GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+            RpcMoveTo(path);
+
+
+
+        }
+    }
+    [ClientRpc]
+    public void RpcMoveTo(Vector3[] path)
     {
 
+        //List<Vector3> bezierPath = new List<Vector3>(realPath);
+        GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+        List<Vector3> bezierPath=new List<Vector3>(path);
+
+        Debug.Log("CheckPath(): " + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+        Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+             GameManager.instance.playingPlaceable.GetPosition().z] = null;
+        Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+            (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+
+        StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        GameManager.instance.MoveLogic(bezierPath);
+        
+        
     }
 
     [Command]
@@ -432,6 +504,7 @@ public class Player : NetworkBehaviour
         }
 
     }
+
     [ClientRpc]
     public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
     {
@@ -440,11 +513,22 @@ public class Player : NetworkBehaviour
         List<Vector3> pathe = new List<Vector3>(path);
         StartCoroutine(MoveAlongBezier(pathe, plc.GetComponent<Placeable>(), speed));
     }
-
+    [Client]
+    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    {
+         if(path.Count>1)
+        { 
+        StartCoroutine(MoveAlongBezier(path, placeable, speed));
+         }
+    }
 
     [Client]
     public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -668,6 +752,33 @@ public class Player : NetworkBehaviour
         }
 
     }
+    /// <summary>
+    /// Check if use is possible and send rpc
+    /// </summary>
+    /// <param name="numSkill"></param>
+    /// <param name="netidTarget"></param>
+    [Command]
+    public void CmdUseSkill(int numSkill, int netidTarget)
+    {
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        if (this == GameManager.instance.playingPlaceable.Player) {
+            if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
+                && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
+            {
+                skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+                RpcUseSkill(numSkill, netidTarget);
+            }
+        }
+    }
 
+    [ClientRpc]
+    public void RpcUseSkill(int numSkill, int netidTarget)
+    {
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+            
+    }
 
 }

@@ -3,22 +3,30 @@
     /// <summary>
     /// skill used by a character on himself
     /// </summary>
-    SELFSKILL,
+    SELF,
     /// <summary>
-    /// skill needing only one click on a livingPlaceable to be used
+    /// skill targeting a living (character)
     /// </summary>
-    ONECLICKLIVING,
+    LIVING,
     /// <summary>
-    /// skill needing two click on some livingPlaceable to be used
+    /// skill targeting a block
     /// </summary>
-    TWOCLICKLIVING,
+    BLOCK,
     /// <summary>
-    /// skill needing only one click on a placeable to be used
+    /// skill targeting the top of a block
     /// </summary>
+    TOPBLOCK,
+    /// <summary>
+    /// skill targeting a blockside (1 click on the block, then 1 click on the right side)
+    /// </summary>
+    BLOCKSIDE,
+    /// <summary>
+    /// skill can be cast on ether living or ether blocks
+    /// </summary>
+    PLACEABLE,
+    /// <summary>
+    /// skill dealing effect in an area
+    /// </summary>
+    AREA
 
-    ONECLICKPLACEABLE,
-    /// <summary>
-    /// skill needing two click on some placeable to be used
-    /// </summary>
-    TWOCLICKPLACEABLE
 }

@@ -71,7 +71,7 @@ public class CameraScript : NetworkBehaviour
         XDeg = Vector3.Angle(Vector3.right, transform.right);
         YDeg = Vector3.Angle(Vector3.up, transform.up);
 
-        grid = GameObject.Find("GameManager").GetComponent<Grid>();
+        grid = Grid.instance;
 
     }
 
@@ -100,6 +100,18 @@ public class CameraScript : NetworkBehaviour
                 freecam = true;
             }
             else freecam = false;
+        }
+        
+        if (player.DicoCondition["BackToMovement"]())
+        {
+            if (GameManager.instance.playingPlaceable.player == player) {
+                GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+                GameManager.instance.state = States.Move;
+                GameManager.instance.activeSkill = null;
+                GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
+                GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
+                GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
+            }      
         }
 
         //Debug.Log(transform.rotation);

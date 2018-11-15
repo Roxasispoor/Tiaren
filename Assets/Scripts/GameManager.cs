@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using System;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -13,6 +14,7 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public Material targetMaterial;
     public NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;
@@ -28,6 +30,8 @@ public class GameManager : NetworkBehaviour
 
     public GameObject player2; //Should be Object
     public GameObject[] prefabMonsters;
+    public Skill activeSkill;
+    public States state;
     
 
     private List<StackAndPlaceable> turnOrder;
@@ -259,8 +263,26 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    
 
+
+
+    public void Unbatch(Placeable block)
+    {
+        if (!block.IsLiving())
+        {
+            block.batch.combineInstances.Remove(block.MeshInCombined);
+            block.GetComponent<MeshRenderer>().enabled = true;
+            
+            block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
+
+
+            block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
+            block.batch.combineInstances.ToArray(), true, true);
+
+
+
+        }
+    }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
     /// </summary>
@@ -269,6 +291,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     private void CreateNewBatch(Batch batch)
     {
         GameObject newBatch = Instantiate(batchPrefab, batchFolder.transform);
+        batch.batchObject = newBatch;
         Material saved = null;
         //get the good material
         foreach (Material mat in newBatch.GetComponent<Renderer>().materials)
@@ -288,6 +311,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
                 batch.combineInstances.ToArray(), true, true);
+            newBatch.GetComponent<MeshRenderer>().materials=new Material[] { newBatch.GetComponent<MeshRenderer>().materials[0]};
         }
         else
         {
@@ -297,11 +321,27 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     public void ResetAllBatches()
     { 
-     foreach (Transform child in GameManager.instance.batchFolder.transform)
+     foreach (Transform child in batchFolder.transform)
         {
             Destroy(child.gameObject);
         }
         GameManager.instance.InitialiseBatchFolder();
+    }
+
+    public void MoveLogic(List<Vector3> bezierPath)
+    {
+        if(playingPlaceable.player.isLocalPlayer)
+        {
+            playingPlaceable.ResetAreaOfMovement();
+
+            Debug.Log("PM: " + playingPlaceable.CurrentPM);
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
+            playingPlaceable.Jump, playingPlaceable.Player);
+
+            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+
+        }
+
     }
 
     /// <summary>
@@ -361,6 +401,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             };
             // If it is the first of this material
             AddMeshToBatches(meshFilter,currentInstance);
+            meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
 
         }
         //Then at the end we create all the batches that are not full
@@ -392,7 +433,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
-
+            state = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {
@@ -409,9 +450,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
+            if(playingPlaceable.Player.isLocalPlayer)
+            { 
+                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
-            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+                playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            }
             player1.GetComponent<Timer>().StartTimer(30f);
             player2.GetComponent<Timer>().StartTimer(30f);
             //playingPlaceable.Player.RpcStartTimer(30f);
@@ -421,9 +465,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void EndOFTurn()
     {
         //cleaning and checks and synchro with banana dancing if needed
-        Debug.Log("tour suivaaaaaaaaant");
-        playingPlaceable.ResetAreaOfMovement();
-        BeginningOfTurn();
+        Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
+        if (playingPlaceable.Player.isLocalPlayer)
+        {
+            playingPlaceable.ResetAreaOfTarget();
+            playingPlaceable.ResetAreaOfMovement();
+            ResetAllBatches();
+        }
+            BeginningOfTurn();
     }
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
@@ -442,12 +491,23 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         return idPlaceable[id];
     }
+    public Vector3[] GetPathFromClicked(Placeable arrival)
+    {
 
+        NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
+        NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
+        if (inListDestination != null)
+        {
+            Vector3[] realPath = inListDestination.GetFullPath();
+            return realPath;
+        }
+        return null;
+    }
     /// <summary>
     /// Check if it is accessible and move the position, either by a bezier or directly if server
     /// </summary>
     /// <param name="arrival"></param>
-    public void CheckIfAccessible(Placeable arrival)
+   /* public void CheckIfAccessible(Placeable arrival)
     {
 
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
@@ -468,7 +528,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             else if(isClient)
                 { 
                      List<Vector3> bezierPath = new List<Vector3>(realPath);
-                
+
                   StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
                 }
 
@@ -488,7 +548,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 Debug.Log("Warning: client asked to go somewhere it cannot, very weird!");
             }
         }
-    }
+    }*/
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();

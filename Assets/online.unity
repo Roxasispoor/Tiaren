@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 823285887}
   - component: {fileID: 823285890}
   - component: {fileID: 823285884}
+  - component: {fileID: 823285883}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -225,6 +226,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &823285883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 823285882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc4bdb5f3541d2459dd2f139fb1a614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &823285884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,7 +248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf49af35ff6aa47af722136663683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathFindingMaterial: {fileID: 2100000, guid: 4d1187a41dcd0034fb17864ffa4b55d7, type: 2}
+  pathFindingMaterial: {fileID: 2100000, guid: 82458a6739f1d9f4b84ff4e3d5981f81, type: 2}
+  targetMaterial: {fileID: 2100000, guid: d526401e971c20e4595b2bccc06da6b8, type: 2}
   networkManager: {fileID: 0}
   isGameStarted: 0
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
@@ -250,6 +263,7 @@ MonoBehaviour:
   player1: {fileID: 0}
   player2: {fileID: 0}
   prefabMonsters: []
+  state: 0
   playingPlaceable: {fileID: 0}
 --- !u!4 &823285885
 Transform:
