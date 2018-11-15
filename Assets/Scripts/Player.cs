@@ -525,7 +525,7 @@ public class Player : NetworkBehaviour
     [Client]
     
     // ONLY FOR CHARACTER
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, livingPlaceable placeable, float speed)
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
         if (path.Count < 2)
         {
