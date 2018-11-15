@@ -368,7 +368,7 @@ public class Grid : MonoBehaviour
             {
                 return returnList;
             }
-            if (GridMatrix[x, y + i, z] != null)
+            if (GridMatrix[x, y + i, z] != null && GridMatrix[x, y + i + 1, z] == null)
             {
                 if (GridMatrix[x, y + i, z].Walkable)
                 {
