@@ -1104,8 +1104,8 @@ public class Grid : MonoBehaviour
                 z < Mathf.Min((int)Playerposition.z + maxrange, Grid.instance.sizeZ);
                 z++)
                 {
-                    if (gridMatrix[x, y + 1, z] != null 
-                        && !gridMatrix[x, y + 1, z].IsLiving() 
+                    if (gridMatrix[x, y, z] != null 
+                        && !gridMatrix[x, y, z].IsLiving() 
                         && (y == sizeY-1 || gridMatrix[x,y+1,z] == null))
                     {
                         targetableBlocks.Add(new Vector3Int(x, y, z));
