@@ -29,7 +29,7 @@ public class LivingPlaceable : Placeable
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
 
-    private List<Vector3Int> targetArea;
+    private List<Placeable> targetArea;
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
@@ -295,18 +295,7 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public List<Vector3Int> TargetArea
-    {
-        get
-        {
-            return targetArea;
-        }
-
-        set
-        {
-            targetArea = value;
-        }
-    }
+  
 
     public List<LivingPlaceable> TargetableUnits
     {
@@ -331,6 +320,19 @@ public class LivingPlaceable : Placeable
         set
         {
             deathLength = value;
+        }
+    }
+
+    public List<Placeable> TargetArea
+    {
+        get
+        {
+            return targetArea;
+        }
+
+        set
+        {
+            targetArea = value;
         }
     }
 
@@ -494,7 +496,7 @@ public class LivingPlaceable : Placeable
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
-        targetArea = new List<Vector3Int>();
+        TargetArea = new List<Placeable>();
         targetableUnits = new List<LivingPlaceable>();
 }
 
@@ -557,7 +559,8 @@ public class LivingPlaceable : Placeable
             if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
             { 
            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
+            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
+                    Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
             }
         }
@@ -567,13 +570,14 @@ public class LivingPlaceable : Placeable
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
 
-        foreach (Vector3Int position in targetArea)
+        foreach (Placeable placeable in TargetArea)
         {
-            if (Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial == null) //if we haven't seen this one before
+            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
             {
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial = Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material = materialTarget;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
+                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
             }
         }
         GameManager.instance.ResetAllBatches();
@@ -582,15 +586,17 @@ public class LivingPlaceable : Placeable
 
     public void ResetAreaOfTarget()
     {
-        foreach (Vector3Int node in targetArea)
+        foreach (Placeable placeable in TargetArea)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial != null)//if we haven't already reset this one
+            
+            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
             {
                
-                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = 
+                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial;
+                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial = null;
             }
         }
-        targetArea.Clear();
+        TargetArea.Clear();
     }
 }
