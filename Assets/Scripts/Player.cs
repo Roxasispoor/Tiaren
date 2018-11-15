@@ -243,7 +243,15 @@ public class Player : NetworkBehaviour
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         if (skill.SkillType==SkillType.BLOCK)
         {
-            playingPlaceable.TargetArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            List<Vector3Int> toTarget=Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            foreach(Vector3Int vect in toTarget)
+            {
+
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[vect.x, vect.y, vect.z]);
+
+
+            }
+            playingPlaceable.ResetAreaOfMovement();//reset color but no rebatched
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
         }
         else if (skill.SkillType == SkillType.LIVING)
@@ -270,17 +278,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Client]
-    public void MakeCubeRed(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (Vector3Int cube in playingPlaceable.TargetArea)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.red;
-            }
-        }
-    }
+ 
 
 
     [Client]
