@@ -453,18 +453,14 @@ public class Player : NetworkBehaviour
 
 
         Animator anim = placeable.gameObject.GetComponent<Animator>();
-        AnimatorClipInfo[] clipInfo = anim.GetCurrentAnimatorClipInfo(0);
-        string clipName = clipInfo[0].clip.name;
-        //anim.SetTrigger("walk");
-        Debug.Log("trigger walk");
         bool isJumping = false;
-        bool isWalking = false;
+        
         //For visual rotation
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
 
         int i = 1;
-
+        int iref = 1;
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
         while (timeBezier < 1)
@@ -478,7 +474,7 @@ public class Player : NetworkBehaviour
 
                 distanceParcourue -= distance;
                 startPosition = path[i];
-                i++;
+                i++; // changing movement
                 targetDir = path[i] - placeable.transform.position;//next one
                 targetDir.y = 0;// don't move up 
 
@@ -497,17 +493,27 @@ public class Player : NetworkBehaviour
             Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
             placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
             //change what we look at
-
-            clipInfo = anim.GetCurrentAnimatorClipInfo(0);
-            clipName = clipInfo[0].clip.name;
+            
             if (isBezier)
             {
-                
                 if (!isJumping)
                 {
                     isJumping = true;
+                    iref = i;
                     anim.SetTrigger("jump");
+                    anim.ResetTrigger("walk");
+                    yield return new WaitForSeconds(0.3f);
 
+                }
+                else
+                {
+                    if (i != iref)
+                    {
+                        iref = i;
+                        anim.SetTrigger("landAndJump");
+                        yield return new WaitForSeconds(0.3f);
+                        
+                    }
                 }
                 
                 
@@ -516,11 +522,11 @@ public class Player : NetworkBehaviour
             }
             else
             {
-                
                 if (isJumping)
                 {
                     isJumping = false;
                     anim.SetTrigger("land");
+                    yield return new WaitForSeconds(0.1f);
                 }
                 else
                 {
@@ -537,12 +543,16 @@ public class Player : NetworkBehaviour
 
 
         }
-        anim.ResetTrigger("walk");
+        
         anim.SetTrigger("land");
+        yield return new WaitForSeconds(0.1f);
         anim.SetTrigger("idle");
-        Debug.Log("trigger idle");
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
+        anim.ResetTrigger("walk");
+        anim.ResetTrigger("jump");
+        anim.ResetTrigger("land");
+        anim.ResetTrigger("landAndJump");
     }
 
 
