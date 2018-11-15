@@ -307,6 +307,7 @@ public class Grid : MonoBehaviour
         {
             GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, GameManager.instance.gridFolder.transform);
             gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
+            
             if (GameManager.instance.isClient)
             {
                 MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
@@ -324,6 +325,9 @@ public class Grid : MonoBehaviour
                     GameManager.instance.RefreshBatch(newBlock.GetComponent<Placeable>());
                 }
             }
+            newBlock.GetComponent<Placeable>().netId = Placeable.currentMaxId;
+            GameManager.instance.idPlaceable[Placeable.currentMaxId] = newBlock.GetComponent<Placeable>();
+            Placeable.currentMaxId++;
         }
 
     }
