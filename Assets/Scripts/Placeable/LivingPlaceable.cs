@@ -569,13 +569,13 @@ public class LivingPlaceable : Placeable
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
 
-        foreach (NodePath node in AreaOfMouvement)
+        foreach (Vector3Int position in targetArea)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
+            if (Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial == null) //if we haven't seen this one before
             {
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = materialTarget;
+                Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial = Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material;
+                Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material = materialTarget;
             }
         }
         GameManager.instance.ResetAllBatches();

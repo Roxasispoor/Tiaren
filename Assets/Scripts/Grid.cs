@@ -1094,19 +1094,19 @@ public class Grid : MonoBehaviour
         List<Vector3Int> targetableBlocks = new List<Vector3Int>();
 
         for (int x = Mathf.Max((int)Playerposition.x - maxrange, 0);
-                x < Mathf.Min((int)Playerposition.x + maxrange, Grid.instance.sizeX);
+                x < Mathf.Min((int)Playerposition.x + maxrange + 1, Grid.instance.sizeX);
                 x++)
         {
             for (int y = Mathf.Max((int)Playerposition.y - maxrange, 0);
-                y < Mathf.Min((int)Playerposition.y + maxrange, Grid.instance.sizeY);
+                y < Mathf.Min((int)Playerposition.y + maxrange + 1, Grid.instance.sizeY);
                 y++)
             {
                 for (int z = Mathf.Max((int)Playerposition.z - maxrange, 0);
-                z < Mathf.Min((int)Playerposition.z + maxrange, Grid.instance.sizeZ);
+                z < Mathf.Min((int)Playerposition.z + maxrange + 1, Grid.instance.sizeZ);
                 z++)
                 {
-                    if (gridMatrix[x, y + 1, z] != null 
-                        && !gridMatrix[x, y + 1, z].IsLiving() 
+                    if (gridMatrix[x, y, z] != null 
+                        && !gridMatrix[x, y, z].IsLiving() 
                         && (y == sizeY-1 || gridMatrix[x,y+1,z] == null))
                     {
                         targetableBlocks.Add(new Vector3Int(x, y, z));
