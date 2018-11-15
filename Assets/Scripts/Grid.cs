@@ -307,6 +307,7 @@ public class Grid : MonoBehaviour
           {
               GameObject newBlock = Instantiate(prefab, GameManager.instance.gridFolder.transform);
               gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
+              newBlock.gameObject.transform.position = position;
               MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
 
               if (meshFilter != null)
@@ -837,7 +838,7 @@ public class Grid : MonoBehaviour
                     if (jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] != 0) //assuming grid was empty and never filled
                     {
 
-                        GameObject obj = Instantiate(GameManager.instance.networkManager.spawnPrefabs[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
+                        GameObject obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity, parent.transform);
 
 

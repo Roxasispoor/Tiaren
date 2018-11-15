@@ -16,11 +16,13 @@ public class CreateBlock : EffectOnPlaceableOnly {
         this.prefab = other.prefab;
         this.face = other.face;
     } 
+
     public CreateBlock(GameObject prefab,Vector3Int face)
     {
         this.prefab = prefab;
         this.face = face;
     }
+
     public override Effect Clone()
     {
         return new CreateBlock(this);

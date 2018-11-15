@@ -294,7 +294,8 @@ MonoBehaviour:
   sizeZ: 50
   randomParameter: 90
   floaties: []
-  prefabsList: []
+  prefabsList:
+  - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
