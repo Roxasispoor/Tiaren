@@ -263,22 +263,27 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
+    public void RefreshBatch(Placeable block)
+    {
+        block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
+        block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
+        block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
+        block.batch.combineInstances.ToArray(), true, true);
+    }
 
 
-
-    public void Unbatch(Placeable block)
+    /// <summary>
+    /// Removes block From Batch
+    /// </summary>
+    /// <param name="block"></param>
+    public void RemoveBlockFromBatch(Placeable block)
     {
         if (!block.IsLiving())
         {
             block.batch.combineInstances.Remove(block.MeshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
-            
-            block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
 
-
-            block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
-            block.batch.combineInstances.ToArray(), true, true);
-
+            RefreshBatch(block);
 
 
         }
@@ -311,6 +316,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             newBatch.GetComponent<MeshFilter>().mesh.CombineMeshes(
                 batch.combineInstances.ToArray(), true, true);
+            newBatch.GetComponent<MeshRenderer>().materials = new Material[] { newBatch.GetComponent<MeshRenderer>().materials[0] };
         }
         else
         {
@@ -372,7 +378,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
   
 
         }
-        if(meshFilter.GetComponent<Placeable>())
+        if(meshFilter.GetComponent<Placeable>())//Add batch to placeable
         {
             meshFilter.GetComponent<Placeable>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
             [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1];

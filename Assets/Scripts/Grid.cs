@@ -302,37 +302,42 @@ public class Grid : MonoBehaviour
     /// <param name="prefab"></param>
     /// <param name="position"></param>
     public void InstantiateCube(GameObject prefab, Vector3Int position)
-      {
-          if (CheckNull(position))
-          {
-              GameObject newBlock = Instantiate(prefab, GameManager.instance.gridFolder.transform);
-              gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
-              newBlock.gameObject.transform.position = position;
-              MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
+    {
+        if (CheckNull(position))
+        {
+            GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, GameManager.instance.gridFolder.transform);
+            gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
+            if (GameManager.instance.isClient)
+            {
+                MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();
 
-              if (meshFilter != null)
-              {
-                  CombineInstance currentInstance = new CombineInstance
-                  {
-                      mesh = newBlock.GetComponent<MeshFilter>().sharedMesh,
-                      transform = meshFilter.transform.localToWorldMatrix
-                  };
+                if (meshFilter != null)
+                {
+                    CombineInstance currentInstance = new CombineInstance
+                    {
+                        mesh = newBlock.GetComponent<MeshFilter>().sharedMesh,
+                        transform = meshFilter.transform.localToWorldMatrix
+                    };
 
-                  GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
-              }
-          }
+                    GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
+                    newBlock.GetComponent<Placeable>().MeshInCombined = currentInstance;
+                    GameManager.instance.RefreshBatch(newBlock.GetComponent<Placeable>());
+                }
+            }
+        }
 
-      }
+    }
     public bool CheckNull(Vector3Int position)
-      {
-          return CheckRange(position) && gridMatrix[position.x, position.y, position.z] != null;
-      }
-      public bool CheckRange(Vector3Int position)
-      {
-          return position.x > 0 && position.x<sizeX &&
-              position.y> 0 && position.y<sizeY &&
-              position.z> 0 && position.z<sizeZ;
-      }
+    {
+        return CheckRange(position) && (gridMatrix[position.x, position.y, position.z] == null);
+    }
+
+    public bool CheckRange(Vector3Int position)
+    {
+        return position.x >= 0 && position.x < sizeX 
+            && position.y >= 0 && position.y < sizeY 
+            && position.z >= 0 && position.z < sizeZ;
+    }
 
 
     private int CheckUnder(int x, int y, int z, int jumpValue) // z correspond à la hauteur du bloc sur lequel marche le joueur

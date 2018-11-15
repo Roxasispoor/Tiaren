@@ -243,7 +243,12 @@ public class Player : NetworkBehaviour
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         if (skill.SkillType==SkillType.BLOCK)
         {
-            playingPlaceable.TargetArea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            foreach(Vector3Int v3 in vect)
+            {
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x,v3.y,v3.z]);
+            }
+            //playingPlaceable.TargetArea = 
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
         }
         else if (skill.SkillType == SkillType.LIVING)
@@ -275,9 +280,9 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            foreach (Vector3Int cube in playingPlaceable.TargetArea)
+            foreach (Placeable cube in playingPlaceable.TargetArea)
             {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.red;
+                Grid.instance.GridMatrix[cube.GetPosition().x, cube.GetPosition().y, cube.GetPosition().z].GetComponent<Renderer>().material.color = Color.red;
             }
         }
     }
@@ -732,8 +737,8 @@ public class Player : NetworkBehaviour
     {
         Placeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
-        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
-            
+        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });            
     }
 
 }

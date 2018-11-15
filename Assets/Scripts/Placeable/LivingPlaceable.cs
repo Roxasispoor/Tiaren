@@ -29,7 +29,7 @@ public class LivingPlaceable : Placeable
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
 
-    private List<Vector3Int> targetArea;
+    private List<Placeable> targetArea;
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
@@ -295,7 +295,7 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public List<Vector3Int> TargetArea
+    public List<Placeable> TargetArea
     {
         get
         {
@@ -491,12 +491,12 @@ public class LivingPlaceable : Placeable
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,1);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
         Skills.Add(skill1);
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
-        targetArea = new List<Vector3Int>();
+        targetArea = new List<Placeable>();
         targetableUnits = new List<LivingPlaceable>();
 }
 
@@ -569,13 +569,14 @@ public class LivingPlaceable : Placeable
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
 
-        foreach (Vector3Int position in targetArea)
+        foreach (Placeable position in targetArea)
         {
-            if (Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial == null) //if we haven't seen this one before
+            if (Grid.instance.GridMatrix[position.GetPosition().x, position.GetPosition().y, position.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
             {
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                Grid.instance.GridMatrix[position.x, position.y, position.z].oldMaterial = Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[position.x, position.y, position.z].GetComponent<MeshRenderer>().material = materialTarget;
+                Grid.instance.GridMatrix[position.GetPosition().x, position.GetPosition().y, position.GetPosition().z].oldMaterial = 
+                    Grid.instance.GridMatrix[position.GetPosition().x, position.GetPosition().y, position.GetPosition().z].GetComponent<MeshRenderer>().material;
+                Grid.instance.GridMatrix[position.GetPosition().x, position.GetPosition().y, position.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
             }
         }
         GameManager.instance.ResetAllBatches();
@@ -584,14 +585,19 @@ public class LivingPlaceable : Placeable
 
     public void ResetAreaOfTarget()
     {
-        foreach (Vector3Int node in targetArea)
+        foreach (Placeable plac in targetArea)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial != null)//if we haven't already reset this one
+            if (Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
             {
                
-                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
+                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].GetComponent<MeshRenderer>().material = 
+                    Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial;
+                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial = null;
             }
+        }
+        if(targetArea.Count>0)
+        {
+            GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
     }

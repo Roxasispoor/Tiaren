@@ -129,7 +129,7 @@ public class Push : EffectOnPlaceable
         if(path.Count>0)
         { 
         Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
-        GameManager.instance.Unbatch(Target);
+        GameManager.instance.RemoveBlockFromBatch(Target);
             //Could be either player, really...
         path.Insert(0, Target.GetPosition());
         GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed);
