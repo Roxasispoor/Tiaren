@@ -523,7 +523,9 @@ public class Player : NetworkBehaviour
     }
 
     [Client]
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    
+    // ONLY FOR CHARACTER
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, livingPlaceable placeable, float speed)
     {
         if (path.Count < 2)
         {
@@ -637,6 +639,81 @@ public class Player : NetworkBehaviour
         anim.ResetTrigger("jump");
         anim.ResetTrigger("land");
         anim.ResetTrigger("landAndJump");
+    }
+    
+    // ONLY FOR OTHER PLACEABLE
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
+        float timeBezier = 0f;
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 startPosition = path[0];
+        Vector3 controlPoint = new Vector3();
+        bool isBezier = true;
+
+
+        //For visual rotation
+        Vector3 targetDir = path[1] - placeable.transform.position;
+        targetDir.y = 0;
+
+        int i = 1;
+        float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        float distanceParcourue = 0;
+        while (timeBezier < 1)
+        {
+            distanceParcourue += (speed * Time.deltaTime);
+            timeBezier = distanceParcourue / distance;
+
+            while (timeBezier > 1 && i < path.Count - 1) //on go through 
+            {
+
+
+                distanceParcourue -= distance;
+                startPosition = path[i];
+                i++; // changing movement
+                targetDir = path[i] - placeable.transform.position;//next one
+                targetDir.y = 0;// don't move up 
+
+                distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
+                timeBezier = distanceParcourue / distance; //on recalcule
+
+            }
+            if (i == path.Count - 1 && timeBezier > 1)
+            {
+                // arrived to the last node of path, in precedent loop
+                placeable.transform.position = path[i] + delta;
+                // exit yield loop
+                break;
+            }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+            
+            if (isBezier)
+            {
+                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
+
+            }
+            else
+            {
+                
+                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
+
+            }
+            
+
+            
+            yield return null;
+
+
+        }
+        Debug.Log("End" + placeable.GetPosition());
+        Debug.Log("End transform" + placeable.transform);
+        
     }
 
 
