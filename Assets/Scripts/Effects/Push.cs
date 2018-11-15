@@ -11,7 +11,7 @@ public class Push : EffectOnPlaceable
     protected Vector3 direction;
     private bool isDirectionFromPosition;
     private bool doesHeightCount;
-    private const float pushSpeed= 1;
+    private const float pushSpeed= 1f;
    
     
     public Push(Push other) : base(other)
@@ -113,6 +113,7 @@ public class Push : EffectOnPlaceable
         Placeable directCollision=null ;
         List<Placeable> diagonalCollisions = new List<Placeable>();
         List<Vector3> path= CheckPath(distance, delta,out directCollision, out diagonalCollisions);
+        
         //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
         if (directCollision != null && directCollision.IsLiving())
         {
@@ -125,8 +126,15 @@ public class Push : EffectOnPlaceable
                 EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, this.Launcher, damage));
             }
         }
-        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z));
-        Player.MoveAlongBezier(path, Target, pushSpeed);
+        if(path.Count>0)
+        { 
+        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
+        GameManager.instance.Unbatch(Target);
+            //Could be either player, really...
+        path.Insert(0, Target.GetPosition());
+        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed);
+        
+        }
         //cmdMoveBlock(Target
     }
     //Todo check que ça sort pas du terrain...

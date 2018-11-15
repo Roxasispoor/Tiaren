@@ -10,8 +10,8 @@ public class Skill
     private int cost;
     private int tourCooldownLeft;
     private int cooldown;
-    private int maxrange;
-    private int minrange;
+    private int maxRange;
+    private int minRange;
     private List<Effect> effects;
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
@@ -62,12 +62,12 @@ public class Skill
     {
         get
         {
-            return maxrange;
+            return maxRange;
         }
 
         set
         {
-            maxrange = value;
+            maxRange = value;
         }
     }
 
@@ -75,12 +75,12 @@ public class Skill
     {
         get
         {
-            return minrange;
+            return minRange;
         }
 
         set
         {
-            minrange = value;
+            minRange = value;
         }
     }
 
@@ -110,14 +110,17 @@ public class Skill
         }
     }
 
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName)
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax)
     {
         Cost = cost;
         Cooldown = cooldown;
+        tourCooldownLeft = 0;
         this.effects = effects;
         SkillName = skillName;
         this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         SkillType = skillType;
+        this.maxRange = rangeMax;
+        this.minRange = rangeMin;
 
     }
 

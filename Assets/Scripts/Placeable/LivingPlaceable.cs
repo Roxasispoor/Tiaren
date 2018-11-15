@@ -488,8 +488,8 @@ public class LivingPlaceable : Placeable
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push");
-        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.LIVING, "spell2");
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
+        Skill skill2 = new Skill(0, 1, ListEffects, SkillType.LIVING, "spell2",0,1);
         Skills.Add(skill1);
         Skills.Add(skill2);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
@@ -591,6 +591,6 @@ public class LivingPlaceable : Placeable
                 Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
             }
         }
-        AreaOfMouvement.Clear();
+        targetArea.Clear();
     }
 }

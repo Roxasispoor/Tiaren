@@ -515,11 +515,22 @@ public class Player : NetworkBehaviour
         List<Vector3> pathe = new List<Vector3>(path);
         StartCoroutine(MoveAlongBezier(pathe, plc.GetComponent<Placeable>(), speed));
     }
-
+    [Client]
+    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    {
+         if(path.Count>1)
+        { 
+        StartCoroutine(MoveAlongBezier(path, placeable, speed));
+         }
+    }
 
     [Client]
     public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -696,15 +707,19 @@ public class Player : NetworkBehaviour
         }
 
     }
-
+    /// <summary>
+    /// Check if use is possible and send rpc
+    /// </summary>
+    /// <param name="numSkill"></param>
+    /// <param name="netidTarget"></param>
     [Command]
     public void CmdUseSkill(int numSkill, int netidTarget)
     {
         Placeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
-        if (this == GameManager.instance.playingPlaceable) {
-            if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude < skill.Maxrange
-                && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude > skill.Minrange)
+        if (this == GameManager.instance.playingPlaceable.Player) {
+            if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
+                && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
             {
                 skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
                 RpcUseSkill(numSkill, netidTarget);
@@ -715,7 +730,10 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
-
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+            
     }
 
 }

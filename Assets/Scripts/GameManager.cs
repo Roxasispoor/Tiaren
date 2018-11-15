@@ -263,10 +263,26 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-   
 
 
 
+    public void Unbatch(Placeable block)
+    {
+        if (!block.IsLiving())
+        {
+            block.batch.combineInstances.Remove(block.MeshInCombined);
+            block.GetComponent<MeshRenderer>().enabled = true;
+            
+            block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
+
+
+            block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
+            block.batch.combineInstances.ToArray(), true, true);
+
+
+
+        }
+    }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
     /// </summary>
@@ -275,6 +291,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     private void CreateNewBatch(Batch batch)
     {
         GameObject newBatch = Instantiate(batchPrefab, batchFolder.transform);
+        batch.batchObject = newBatch;
         Material saved = null;
         //get the good material
         foreach (Material mat in newBatch.GetComponent<Renderer>().materials)
@@ -303,7 +320,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     public void ResetAllBatches()
     { 
-     foreach (Transform child in GameManager.instance.batchFolder.transform)
+     foreach (Transform child in batchFolder.transform)
         {
             Destroy(child.gameObject);
         }
@@ -383,6 +400,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             };
             // If it is the first of this material
             AddMeshToBatches(meshFilter,currentInstance);
+            meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
 
         }
         //Then at the end we create all the batches that are not full
@@ -446,12 +464,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void EndOFTurn()
     {
         //cleaning and checks and synchro with banana dancing if needed
-        Debug.Log("tour suivaaaaaaaaant");
-        if (playingPlaceable.player.isLocalPlayer)
+        Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
+        if (playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfTarget();
             playingPlaceable.ResetAreaOfMovement();
-            GameManager.instance.ResetAllBatches();
+            ResetAllBatches();
         }
             BeginningOfTurn();
     }
@@ -488,7 +506,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// Check if it is accessible and move the position, either by a bezier or directly if server
     /// </summary>
     /// <param name="arrival"></param>
-    public void CheckIfAccessible(Placeable arrival)
+   /* public void CheckIfAccessible(Placeable arrival)
     {
 
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
@@ -529,7 +547,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 Debug.Log("Warning: client asked to go somewhere it cannot, very weird!");
             }
         }
-    }
+    }*/
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();

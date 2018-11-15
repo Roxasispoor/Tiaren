@@ -677,7 +677,7 @@ public class Grid : MonoBehaviour
 
     }
 
-    public void MoveBlock(Placeable bloc, Vector3Int desiredPosition)
+    public void MoveBlock(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
@@ -688,7 +688,10 @@ public class Grid : MonoBehaviour
             Vector3 oldPosition = bloc.transform.position;
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
+            if(updateTransform)
+            {
+                gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
+            }
             gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
 
         }

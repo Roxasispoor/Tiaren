@@ -32,6 +32,7 @@ public abstract class Placeable:MonoBehaviour
     private List<Effect> onStartTurn;
     private List<Effect> onEndTurn;
     private List<Effect> attachedEffects;
+    private CombineInstance meshInCombined;
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -262,6 +263,19 @@ public abstract class Placeable:MonoBehaviour
         set
         {
             attachedEffects = value;
+        }
+    }
+
+    public CombineInstance MeshInCombined
+    {
+        get
+        {
+            return meshInCombined;
+        }
+
+        set
+        {
+            meshInCombined = value;
         }
     }
 
