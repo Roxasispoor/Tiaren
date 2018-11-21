@@ -657,7 +657,9 @@ public class Player : NetworkBehaviour
         Placeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });            
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+        GameManager.instance.MoveLogic(new List<Vector3>() { GameManager.instance.playingPlaceable.GetPosition() }); //Reput deplacement
+        GameManager.instance.state = States.Move;
     }
 
 }

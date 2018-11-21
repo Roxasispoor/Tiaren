@@ -57,14 +57,14 @@ public class Damage : EffectOnLiving
     override
         public void Use()
     {
-       
-           
-            Target.CurrentHP -= DamageValue;
-            if (Target.CurrentHP <= 0)
-            {
 
-                Target.Destroy();
-            }
+        Debug.Log("Touché!" + damageValue );
+        Target.CurrentHP -= DamageValue;
+        if (Target.CurrentHP <= 0)
+        {
+
+            Target.Destroy();
+        }
 
 
         

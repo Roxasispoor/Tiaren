@@ -491,28 +491,31 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects = new List<Effect>();
         List<Effect> ListEffects2 = new List<Effect>();
         List<Effect> ListEffects3 = new List<Effect>();
+        List<Effect> ListEffects4 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
+        ListEffects4.Add(new Damage(50f));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
         Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 2);
+        Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
+        Skills.Add(skill4);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
         targetableUnits = new List<LivingPlaceable>();
+     //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
     }
-
-    
-    void OnMouseOver()
-    {
-
-    }
-
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>

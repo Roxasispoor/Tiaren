@@ -16,23 +16,23 @@ public abstract class Placeable:MonoBehaviour
     public static int currentMaxId=0;
     public int serializeNumber;
     private bool walkable;
-    private List<Effect> onWalkEffects;
-    private bool movable;
-    private bool destroyable;
-    private TraversableType tangible;
-    private TraversableType traversableBullet;
+    protected List<Effect> onWalkEffects;
+    protected bool movable;
+    protected bool destroyable;
+    protected TraversableType tangible;
+    protected TraversableType traversableBullet;
     public Color colorOfObject;
     private float animationSpeed=1.0f;
     public Material oldMaterial;
-    private GravityType gravityType;
-    private CrushType crushable;
+    protected GravityType gravityType;
+    protected CrushType crushable;
     public bool explored;
-    private List<Effect> onDestroyEffects;
-    private List<HitablePoint> hitablePoints;
-    private List<Effect> onStartTurn;
-    private List<Effect> onEndTurn;
-    private List<Effect> attachedEffects;
-    private CombineInstance meshInCombined;
+    protected List<Effect> onDestroyEffects;
+    protected List<HitablePoint> hitablePoints;
+    protected List<Effect> onStartTurn;
+    protected List<Effect> onEndTurn;
+    protected List<Effect> attachedEffects;
+    protected CombineInstance meshInCombined;
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -310,7 +310,7 @@ public abstract class Placeable:MonoBehaviour
     /// <summary>
     /// allows shoot and shifting
     /// </summary>
-    void OnMouseOver()
+    protected void OnMouseOver()
     {
         if (GameManager.instance.state == States.Move)
         {

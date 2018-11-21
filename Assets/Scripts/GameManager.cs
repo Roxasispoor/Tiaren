@@ -37,7 +37,7 @@ public class GameManager : NetworkBehaviour
 
     private Player winner;
     public LivingPlaceable playingPlaceable;
-    private UIManager uIManager;
+    private UIManager UIManager;
 
     /// <summary>
     /// allows to know if the game ended

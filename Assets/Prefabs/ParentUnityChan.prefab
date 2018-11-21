@@ -1709,6 +1709,7 @@ GameObject:
   - component: {fileID: 4884843629620008}
   - component: {fileID: 114042140695912202}
   - component: {fileID: 114571894709576672}
+  - component: {fileID: 65380517336036122}
   m_Layer: 0
   m_Name: ParentUnityChan
   m_TagString: Untagged
@@ -5095,6 +5096,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.5, z: 1}
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!65 &65380517336036122
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1647946167368326}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1.5, z: 1}
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!95 &95531818902979436
 Animator:
   serializedVersion: 3
@@ -5173,6 +5186,7 @@ MonoBehaviour:
   netId: 0
   serializeNumber: 2
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
+  oldMaterial: {fileID: 0}
   explored: 0
   player: {fileID: 0}
   characterSprite: {fileID: 21300000, guid: e247bcf302f5b5d4a8f6fcbc9fe39f60, type: 3}
