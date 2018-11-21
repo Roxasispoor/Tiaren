@@ -347,11 +347,7 @@ public abstract class Placeable:MonoBehaviour
 
      
     }
-    /*public void Start()
-    {
-        Comma
-        this.netId=this.
-    }*/
+
     /// <summary>
     /// On dispatch selon Living et placeable
     /// </summary>

@@ -9,6 +9,9 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public DestroyBloc(DestroyBloc other) : base(other)
     {
     }
+    public DestroyBloc() : base()
+    {
+    }
 
     public override Effect Clone()
     {
@@ -20,5 +23,10 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public void Use()
     {
         Target.Destroy();
+        if (GameManager.instance.isClient)
+        {
+            GameManager.instance.RemoveBlockFromBatch(Target);
+        }
+            
     }
 }

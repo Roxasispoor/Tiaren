@@ -490,29 +490,26 @@ public class LivingPlaceable : Placeable
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
         List<Effect> ListEffects2 = new List<Effect>();
+        List<Effect> ListEffects3 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
+        ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
+        Skills.Add(skill3);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
         targetableUnits = new List<LivingPlaceable>();
-}
+    }
 
     
     void OnMouseOver()
     {
-
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            GameManager.instance.ShotPlaceable = this;
-        }
-
 
     }
 

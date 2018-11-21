@@ -4,89 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-/// <summary>
-/// Class representing a cube in a path
-/// </summary>
-
-public class NodePath
-{
-    public int x, y, z;
-    NodePath parent;
-
-    private int distanceFromStart;
-
-    public int DistanceFromStart
-    {
-        get
-        {
-            return distanceFromStart;
-        }
-
-        private set
-        {
-            distanceFromStart = value;
-        }
-    }
-
-    public NodePath(int x, int y, int z, int distanceFromStart, NodePath parent)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.DistanceFromStart = distanceFromStart;
-        this.parent = parent;
-    }
-
-    public static NodePath startPath(Vector3 pos)
-    {
-        return startPath((int)pos.x, (int)pos.y, (int)pos.z);
-    }
-
-    public static NodePath startPath(int x, int y, int z)
-    {
-        return new NodePath(x, y-1, z, 0, null);
-    }
-
-    public Vector3[] GetFullPath()
-    {
-        Vector3[] path = new Vector3[DistanceFromStart + 1];
-        NodePath currentNode = this;
-        for (int i = DistanceFromStart; i >= 0; i--)
-        {
-            path[i] = new Vector3(currentNode.x, currentNode.y, currentNode.z);
-            currentNode = currentNode.parent;
-        }
-        return path;
-    }
-
-    public Vector3 GetVector3()
-    {
-        return new Vector3(x, y, z);
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
-        if (obj.GetType() != typeof(NodePath))
-        {
-            return false;
-        }
-        NodePath other = (NodePath)obj;
-        return x == other.x && y == other.y && z == other.z;
-    }
-
-    public override int GetHashCode()
-    {
-        var hashCode = 373119288;
-        hashCode = hashCode * -1521134295 + x.GetHashCode();
-        hashCode = hashCode * -1521134295 + y.GetHashCode();
-        hashCode = hashCode * -1521134295 + z.GetHashCode();
-        return hashCode;
-    }
-}
 
 /// <summary>
 /// Class representing a grid for a game
@@ -161,141 +78,7 @@ public class Grid : MonoBehaviour
         }
 
     }
-    /// <summary>
-    /// TODO
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public bool VerifyPath(Vector3[] path)
-    {
-        return true;
-    }
 
-
-    /// <summary>
-    /// Function finding and displaying path from point A to point B
-    /// Only cases where the character can go are added
-    /// <param name="livingPlaceable">Character to study</param>
-    /// <param name="jumpValue">Value of jump for the character</param>
-    /// <param name="positionBloc">Position of starting bloc (under the character)</param>
-    /// <returns>Returns a grid which can give positions of every cube on the path (belonging to floor). Character will be set on top of the cube target</returns>
-    /// </summary>
-    /* public DistanceAndParent[,,] CanGo(LivingPlaceable livingPlaceable, int jumpValue, Vector3Int positionBloc)
-    {
-
-        int shifting = livingPlaceable.CurrentPM;
-
-
-
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    gridBool[x, y, z] = new DistanceAndParent(x, y, z);
-                }
-            }
-        }
-
-        Queue<Vector3Int> queue = new Queue<Vector3Int>();
-        queue.Enqueue(positionBloc);
-        DistanceAndParent parent = null;
-        gridBool[positionBloc.x, positionBloc.y, positionBloc.z].SetDistance(0);
-        while (parent == null || ((parent.GetDistance() <= shifting) && queue.Count != 0))
-        {
-            //adding side cubes, top cubes if reachable, bottom cubes if reachable
-
-            Vector3Int posCurrentBloc = queue.Dequeue();
-
-
-            parent = gridBool[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-            if (parent.GetDistance() <= shifting)
-            {
-
-                Placeable testa = gridMatrix[posCurrentBloc.x, posCurrentBloc.y, posCurrentBloc.z];
-                if (testa.gameObject && testa.gameObject.GetComponent<Renderer>() != null)
-                {
-                    //Sending id because nothing assures on client side that blocs are well placed
-                    GameManager.instance.PlayingPlaceable.Player.MakeCubeBlue(testa.netId);
-                  
-                }
-                //then displaying bloc on blue
-                for (int ycurrent = -jumpValue + 1; ycurrent < jumpValue; ycurrent++)
-                {
-
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.x < sizeX - 1 && //above 0, under max, inside terrain in x
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].GetDistance() == -1 && //if not already seen at this point
-                        gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z] != null &&        // and only if the bloc exists
-                        (gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z] == null  //if the bloc on the top is empty
-                        || gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLTHROUGH //or crossable in general
-                        || gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLIESTHROUGH && //or only by an ally
-                        gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].Player == livingPlaceable.Player) //if we are the ally
-                        && gridMatrix[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].Walkable
-                        )
-                    {//if edge is not marked and exists, if there is nothing above it or if the bloc above is crossable, if bloc is walkable
-
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z));
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x + 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetParent(parent);
-                    }
-
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.x > 0 &&
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z] != null &&
-                        (gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z] == null
-                        || gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].Walkable)
-                    {//if edge is not marked and exists, if there is nothing above
-
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z));
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x - 1, posCurrentBloc.y + ycurrent, posCurrentBloc.z].SetParent(parent);
-
-
-                    }
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.z < sizeZ - 1 &&
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1] != null &&
-                        (gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1] == null
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z + 1].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].Walkable)
-
-                    {//if edge is not marked and exists, if there is nothing above
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1));
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z + 1].SetParent(parent);
-
-                    }
-                    if (posCurrentBloc.y + ycurrent >= 0 && posCurrentBloc.y + ycurrent < sizeY && posCurrentBloc.z > 0 &&
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].GetDistance() == -1 &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1] != null &&
-                        (gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1] == null
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].TraversableChar == TraversableType.ALLTHROUGH
-                        || gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].TraversableChar == TraversableType.ALLIESTHROUGH &&
-                        gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent + 1, posCurrentBloc.z - 1].Player == livingPlaceable.Player)
-                        && gridMatrix[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].Walkable)
-                    {//if edge is not marked and exists, if there is nothing above
-                        queue.Enqueue(new Vector3Int(posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1));
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].SetDistance(
-                            parent.GetDistance() + 1);
-                        gridBool[posCurrentBloc.x, posCurrentBloc.y + ycurrent, posCurrentBloc.z - 1].SetParent(parent);
-                    }
-                }
-            }
-
-        }
-
-        return gridBool;
-    }
-    */
     /// <summary>
     /// Instanciate the new cube
     /// </summary>
@@ -513,7 +296,7 @@ public class Grid : MonoBehaviour
 
 
     /// <summary>
-    /// Update position of every bloc of the grid
+    /// Update position of every bloc of the grid Can be used for resynchrnisation
     /// </summary>
     public void UpdatePosition()
     {
@@ -721,7 +504,6 @@ public class Grid : MonoBehaviour
         {
             MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
-        /*
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects
         {
             gridMatrix[x, y, z].Destroy();
@@ -752,7 +534,7 @@ public class Grid : MonoBehaviour
             gridMatrix[x, y, z] = null;
 
         }
-        */
+        
 
 
         //could be a crushable of type crushstay, or empty
