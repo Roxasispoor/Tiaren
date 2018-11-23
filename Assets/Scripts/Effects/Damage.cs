@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Damage : EffectOnLiving
 {
+    [SerializeField]
     private float damageValue;
 
     public Damage()

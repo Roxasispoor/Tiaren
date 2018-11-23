@@ -1,16 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// Effect to push a bloc
 /// </summary>
+/// 
+[Serializable]
 public class Push : EffectOnPlaceable
 {
+    [SerializeField]
     private float damage;
+    [SerializeField]
     private float nbCases;
+    [SerializeField]
     protected Vector3 direction;
+    [SerializeField]
     private bool isDirectionFromPosition;
+    [SerializeField]
     private bool doesHeightCount;
+    [SerializeField]
     private const float pushSpeed= 1f;
    
     

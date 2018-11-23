@@ -8,12 +8,15 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Represents something able to fill a bloc of the grid
 /// </summary>
-
+[Serializable]
 public abstract class Placeable:MonoBehaviour
 {
+    [NonSerialized]
     public int netId;
+    [NonSerialized]
     public Batch batch;
     public static int currentMaxId=0;
+    [SerializeField]
     public int serializeNumber;
     private bool walkable;
     protected List<Effect> onWalkEffects;
@@ -23,9 +26,11 @@ public abstract class Placeable:MonoBehaviour
     protected TraversableType traversableBullet;
     public Color colorOfObject;
     private float animationSpeed=1.0f;
+    [NonSerialized]
     public Material oldMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
+    [NonSerialized]
     public bool explored;
     protected List<Effect> onDestroyEffects;
     protected List<HitablePoint> hitablePoints;

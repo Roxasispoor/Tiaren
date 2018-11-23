@@ -1,25 +1,37 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
+[Serializable]
 public class LivingPlaceable : Placeable
 {
-
+    [SerializeField]
     private float maxHP;
     private float currentHP;
+    [SerializeField]
     private int pmMax;
     private int currentPM;
     private float currentPA;
+    [SerializeField]
     private float paMax;
+    [SerializeField]
     private int force;
+    [SerializeField]
     private float speed;
+    [SerializeField]
     private int dexterity;
+    [SerializeField]
     private float speedStack;
+    [SerializeField]
     private int jump;
     private float deathLength;
-
+    [SerializeField]
     private List<Skill> skills;
+    [SerializeField]
     private List<GameObject> weapons;
     private Weapon equipedWeapon;
     private bool isDead;
@@ -497,6 +509,8 @@ public class LivingPlaceable : Placeable
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new Damage(50f));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
+        skill1.Save();
+        skill1.effects[0].Save();
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
         Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 2);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
@@ -515,6 +529,9 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
+        Save();
+        LivingPlaceable tryCreate = FillLiving();
+
     }
     /// <summary>
     /// method to call to destroy the object 
@@ -607,4 +624,75 @@ public class LivingPlaceable : Placeable
         }
         targetArea.Clear();
     }
+    public void Save()
+    {
+        string text = JsonUtility.ToJson(this);
+        foreach(Skill skill in Skills)
+        {
+            text+=skill.Save();
+        }
+        string path = "Living.json";
+        File.WriteAllText(path, text);
+    }
+    public static LivingPlaceable FillLiving()
+    {
+        string path = "Living.json";
+        string line;
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+        System.Type[] types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+        System.Type[] possible = (from System.Type type in types where type.IsSubclassOf(typeof(Effect)) && !type.IsAbstract select type).ToArray();
+
+        if ((line = reader.ReadLine()) == null)
+        {
+            Debug.Log("Empty file while reading living form file!");
+            return null;
+        }
+//        LivingPlaceable newLiving = JsonUtility.FromJson<LivingPlaceable>(line);
+        bool isNewSkill = true;
+        Skill newSkill = null;
+        
+        while ((line = reader.ReadLine()) != null)
+        {
+            if(isNewSkill)
+            {
+                newSkill = JsonUtility.FromJson<Skill>(line);
+                newSkill.effects = new List<Effect>();
+                isNewSkill = false;
+                
+            }
+            else
+            {
+                string typename=line.Substring(0, line.IndexOf("{"));
+                foreach(Type type in possible)
+                {
+                    if(type.ToString()==typename)
+                    {
+                        // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
+                        //MethodInfo generic = method.MakeGenericMethod(type);
+                        //object[] objectArray = new[] { line};
+                        string a = line.Substring(line.IndexOf("{"));
+                        
+                        if (line[line.Length - 1] == ';')
+                        {
+                            a = a.Remove(a.Length - 1);
+                            isNewSkill = true;
+                        }
+                        Debug.Log(a);
+                        Effect eff=(Effect)JsonUtility.FromJson(a, type);
+                        newSkill.effects.Add(eff);
+                      
+                    }
+                }
+               
+
+            }
+          
+        }
+        reader.Close();
+        return null;
+    }
+    
+    
+
 }

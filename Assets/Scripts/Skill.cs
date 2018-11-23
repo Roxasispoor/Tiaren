@@ -1,21 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 /// <summary>
 /// Class representing a skill usable by player through a character of his team
 /// </summary>
 public class Skill
 {
+    [SerializeField]
     private string skillName;
+    [SerializeField]
     private int cost;
+    [SerializeField]
     private int tourCooldownLeft;
+    [SerializeField]
     private int cooldown;
+    [SerializeField]
     private int maxRange;
+    [SerializeField]
     private int minRange;
-    private List<Effect> effects;
+    [SerializeField]
+    public List<Effect> effects;
+    [SerializeField]
     public delegate bool DelegateCondition();
+    [SerializeField]
     public DelegateCondition condition;
+    [SerializeField]
     public Sprite abilitySprite;
+    [SerializeField]
     private SkillType skillType;
 
 
@@ -157,4 +169,20 @@ public class Skill
         }
         return true;
     }
+    public string Save()
+    {
+        string text = JsonUtility.ToJson(this);
+        text = "\n" + text + "\n";
+        foreach (Effect eff in effects)
+        {
+            text+=eff.Save();
+            
+        }
+        text += ";";
+        return text;
+ //       File.WriteAllText(path, text);
+    }
+
+    
+
 }

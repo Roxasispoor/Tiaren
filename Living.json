@@ -1,0 +1,9 @@
+{"serializeNumber":3,"colorOfObject":{"r":0.0,"g":0.0,"b":0.0,"a":0.0},"player":{"instanceID":0},"maxHP":100.0,"pmMax":3,"paMax":1.0,"force":100,"speed":100.0,"dexterity":100,"speedStack":0.009999999776482582,"jump":1,"weapons":[],"characterSprite":{"instanceID":3156}}
+{"skillName":"push","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"abilitySprite":{"instanceID":2644},"skillType":2}
+Push{"turnActiveEffect":0,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
+{"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"instanceID":3702},"skillType":2}
+CreateBlock{"turnActiveEffect":0,"prefab":{"instanceID":2512},"face":{"x":0,"y":1,"z":0}};
+{"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"instanceID":4044},"skillType":2}
+DestroyBloc{"turnActiveEffect":0};
+{"skillName":"damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"instanceID":4274},"skillType":1}
+Damage{"turnActiveEffect":0,"damageValue":50.0};

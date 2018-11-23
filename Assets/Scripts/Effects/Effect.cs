@@ -1,12 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 /// <summary>
 /// effects must be used by gameEffectManager which will resolve them
 /// </summary>
+/// 
+[Serializable]
 public abstract class Effect
 {
-  
+    [SerializeField]
     private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     protected Effect()
     {
@@ -20,5 +24,31 @@ public abstract class Effect
     public abstract Placeable GetTarget();
     // Use this for initialization
     public abstract void Use();
+
+    public string Save()
+    {
+        string text = JsonUtility.ToJson(this);
+        text = GetType() + text ;
+        return text;
+       // string path = "Skill1.json";
+        //File.WriteAllText(path, text);
+    }
+
+    public static JaggedGrid FillGridFromJSON()
+    {
+        return JsonUtility.FromJson<JaggedGrid>(ReadString());
+    }
+
+
+    static string ReadString()
+    {
+        string path = "Skill1.json";
+
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+        string toReturn = reader.ReadToEnd();
+        reader.Close();
+        return toReturn;
+    }
 
 }
