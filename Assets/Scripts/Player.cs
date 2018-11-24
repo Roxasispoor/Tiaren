@@ -17,8 +17,8 @@ public class Player : NetworkBehaviour
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
-
-
+    public bool isWinner = false;
+    public Text winText;
 
     private Placeable shotPlaceable;
     public CameraScript cameraScript;
@@ -650,6 +650,7 @@ public class Player : NetworkBehaviour
                 skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
                 RpcUseSkill(numSkill, netidTarget);
             }
+            
         }
     }
 

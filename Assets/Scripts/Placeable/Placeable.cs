@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 [Serializable]
 public abstract class Placeable:MonoBehaviour
 {
+
     [NonSerialized]
     public int netId;
     [NonSerialized]
@@ -322,7 +323,7 @@ public abstract class Placeable:MonoBehaviour
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
                     Debug.Log("You have authority to ask for a move");
                     //Vector3 destination = this.GetPosition();
@@ -336,7 +337,7 @@ public abstract class Placeable:MonoBehaviour
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
                     Debug.Log("You have authority to ask to act");
                     GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);

@@ -14,6 +14,7 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public GameMode gameMode = GameMode.DEATHMATCH;
     public Material targetMaterial;
     public NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
@@ -203,7 +204,73 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     
     }
 
+    public void CheckWinCondition()
+    {
+            if (gameMode == GameMode.DEATHMATCH)
+        {
+            player2.GetComponent<Player>().isWinner = true;
+            foreach (GameObject character in player1.GetComponent<Player>().characters)
+            {
+                if(!character.GetComponent<LivingPlaceable>().IsDead)
+                {
+                    player2.GetComponent<Player>().isWinner = false;
+                    break;
+                }
+            }
+            player1.GetComponent<Player>().isWinner = true;
+            foreach (GameObject character in player2.GetComponent<Player>().characters)
+            {
+                if (!character.GetComponent<LivingPlaceable>().IsDead)
+                {
+                    player1.GetComponent<Player>().isWinner = false;
+                    break;
+                }
+            }
+            if(player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
+            {
+                //Disable canvas element
+                Canvas c = player1.transform.GetComponentInChildren<Canvas>();
+                if(c!=null)
+                { 
+                foreach (Transform des in c.transform)
+                {
+                    des.gameObject.SetActive(false);
+                }
+                }
+                c = player2.transform.GetComponentInChildren<Canvas>();
+                if (c != null)
+                {
+                    foreach (Transform des in player2.GetComponentInChildren<Canvas>().transform)
+                    {
+                        des.gameObject.SetActive(false);
+                    }
+                }
 
+                player1.GetComponent<Player>().winText.gameObject.SetActive(true);
+                player2.GetComponent<Player>().winText.gameObject.SetActive(true);
+            }
+            if(player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
+            {
+                
+                player1.GetComponent<Player>().winText.text = "VICTORY";
+                player2.GetComponent<Player>().winText.text = "DEFEAT";
+            }
+            else if(player2.GetComponent<Player>().isWinner && !player1.GetComponent<Player>().isWinner)
+            {
+           
+                player2.GetComponent<Player>().winText.text = "VICTORY";
+                player1.GetComponent<Player>().winText.text = "DEFEAT";
+            }
+            else if(player2.GetComponent<Player>().isWinner && player1.GetComponent<Player>().isWinner)
+            {
+                player2.GetComponent<Player>().winText.text = "DRAW";
+                player1.GetComponent<Player>().winText.text = "DRAW";
+            }
+
+        }
+
+        
+    }
     private void UpdateTimeline()
     {
         TurnOrder.Clear();
@@ -455,15 +522,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void EndOFTurn()
     {
+        if(winner==null)
+        { 
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
         if (playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfTarget();
             playingPlaceable.ResetAreaOfMovement();
-            ResetAllBatches();
+            //ResetAllBatches();
         }
             BeginningOfTurn();
+        }
     }
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)

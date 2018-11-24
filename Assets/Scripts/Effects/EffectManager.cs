@@ -43,6 +43,8 @@ public class EffectManager:MonoBehaviour {
         }
         //Deletes all nulls blocks
         effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(BlockEffects) && ((BlockEffects)x).numberToBlock <= 0);
+        GameManager.instance.CheckWinCondition();
 
     }
+   
 }
