@@ -626,6 +626,8 @@ public class Player : NetworkBehaviour
 
 
         }
+
+        GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
         
@@ -658,8 +660,7 @@ public class Player : NetworkBehaviour
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
-        GameManager.instance.MoveLogic(new List<Vector3>() { GameManager.instance.playingPlaceable.GetPosition() }); //Reput deplacement
-        GameManager.instance.state = States.Move;
+
     }
 
 }

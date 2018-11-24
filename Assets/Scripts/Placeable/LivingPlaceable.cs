@@ -530,7 +530,8 @@ public class LivingPlaceable : Placeable
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
         Save();
-        LivingPlaceable tryCreate = FillLiving();
+        force = -5;
+        FillLiving();
 
     }
     /// <summary>
@@ -561,7 +562,7 @@ public class LivingPlaceable : Placeable
        
         foreach (NodePath node in AreaOfMouvement)
         {
-            if(Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
+            if(Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
             { 
            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
@@ -576,7 +577,8 @@ public class LivingPlaceable : Placeable
     {
         foreach (NodePath node in AreaOfMouvement)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
+
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z]!=null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
             { 
            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
@@ -626,7 +628,10 @@ public class LivingPlaceable : Placeable
     }
     public void Save()
     {
-        string text = JsonUtility.ToJson(this);
+        Stats stats = new Stats();
+        stats.FillThis(this);
+
+        string text = JsonUtility.ToJson(stats);
         foreach(Skill skill in Skills)
         {
             text+=skill.Save();
@@ -634,7 +639,7 @@ public class LivingPlaceable : Placeable
         string path = "Living.json";
         File.WriteAllText(path, text);
     }
-    public static LivingPlaceable FillLiving()
+    public void FillLiving()
     {
         string path = "Living.json";
         string line;
@@ -646,9 +651,10 @@ public class LivingPlaceable : Placeable
         if ((line = reader.ReadLine()) == null)
         {
             Debug.Log("Empty file while reading living form file!");
-            return null;
+            return ;
         }
-//        LivingPlaceable newLiving = JsonUtility.FromJson<LivingPlaceable>(line);
+        Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
+        newLivingStats.FillLiving(this);
         bool isNewSkill = true;
         Skill newSkill = null;
         
@@ -656,6 +662,7 @@ public class LivingPlaceable : Placeable
         {
             if(isNewSkill)
             {
+                
                 newSkill = JsonUtility.FromJson<Skill>(line);
                 newSkill.effects = new List<Effect>();
                 isNewSkill = false;
@@ -681,6 +688,10 @@ public class LivingPlaceable : Placeable
                         Debug.Log(a);
                         Effect eff=(Effect)JsonUtility.FromJson(a, type);
                         newSkill.effects.Add(eff);
+                        if(isNewSkill)
+                        {
+                            skills.Add(newSkill);
+                        }
                       
                     }
                 }
@@ -690,7 +701,7 @@ public class LivingPlaceable : Placeable
           
         }
         reader.Close();
-        return null;
+
     }
     
     

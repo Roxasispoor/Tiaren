@@ -330,7 +330,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-
+    public void OnEndAnimationEffectEnd()
+    {
+        if(playingPlaceable.player.isLocalPlayer)
+        { 
+        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() });
+            GameManager.instance.state = States.Move;
+        }
+    }
     /// <summary>
     /// Add current combine instance to its batch
     /// </summary>

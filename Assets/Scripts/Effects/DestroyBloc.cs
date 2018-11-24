@@ -22,11 +22,12 @@ public class DestroyBloc : EffectOnPlaceableOnly
     override
     public void Use()
     {
-        Target.Destroy();
         if (GameManager.instance.isClient)
         {
             GameManager.instance.RemoveBlockFromBatch(Target);
         }
+        Target.Destroy();
+       
             
     }
 }
