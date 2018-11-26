@@ -118,6 +118,9 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
+    private List<Placeable> spawnPlayer1;
+    private List<Placeable> spawnPlayer2;
+
 
     public Placeable[,,] GridMatrix
     {
@@ -129,6 +132,32 @@ public class Grid : MonoBehaviour
         set
         {
             gridMatrix = value;
+        }
+    }
+
+    public List<Placeable> SpawnPlayer1
+    {
+        get
+        {
+            return spawnPlayer1;
+        }
+
+        set
+        {
+            spawnPlayer1 = value;
+        }
+    }
+
+    public List<Placeable> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
+
+        set
+        {
+            spawnPlayer2 = value;
         }
     }
 

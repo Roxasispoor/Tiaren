@@ -5,16 +5,14 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    public Canvas canvas;
+    public GameObject gameCanvas;
+    public GameObject spawnCanvas;
     public Button prefabAbilityButton;
     public Button prefabCharacterButton;
     public RectTransform SkillZone;
     public RectTransform TimelineZone;
 
-    private void Start()
-    {
-
-    }
+   
 
     public int UpdateAbilities(LivingPlaceable character)
     {
@@ -59,22 +57,22 @@ public class UIManager : MonoBehaviour {
     {
         if (GameManager.instance.playingPlaceable.player.gameObject == gameObject)
         {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
+            GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
             UpdateAbilities(GameManager.instance.playingPlaceable);
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
+            zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(true);
+            gameCanvas.transform.Find("SkipButton").gameObject.SetActive(true);
         }
         else if (GameManager.instance.playingPlaceable.player.gameObject != gameObject)
         {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
+            GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
+            zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(false);
+            gameCanvas.transform.Find("SkipButton").gameObject.SetActive(false);
         }
     }
 

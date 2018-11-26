@@ -312,7 +312,36 @@ public abstract class Placeable:MonoBehaviour
     /// </summary>
     void OnMouseOver()
     {
-        if (GameManager.instance.state == States.Move)
+        if (GameManager.instance.state == States.Spawn)
+        {
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            {
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                {
+                    Debug.Log("You have authority to ask to spawn");
+                    if (GameManager.instance.CharacterToSpawn == null)
+                    {
+                        GameManager.instance.CharacterToSpawn = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                    }
+                    else
+                    {
+                        if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                        {
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                        }
+                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] != null &&
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving())
+                        {
+                            Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y + 1,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                        }
+                    }
+                }
+            }
+        }
+        else if (GameManager.instance.state == States.Move)
         {
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)

@@ -113,6 +113,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &62774034
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279931848499750, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &593314017
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathFindingMaterial: {fileID: 2100000, guid: 82458a6739f1d9f4b84ff4e3d5981f81, type: 2}
   targetMaterial: {fileID: 2100000, guid: d526401e971c20e4595b2bccc06da6b8, type: 2}
-  networkManager: {fileID: 0}
+  spawnMaterial: {fileID: 2100000, guid: 5d11303f80d8f3c4595fe051da573f4a, type: 2}
   isGameStarted: 0
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
     type: 2}

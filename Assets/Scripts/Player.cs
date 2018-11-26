@@ -17,6 +17,7 @@ public class Player : NetworkBehaviour
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
+    private bool isready;
 
 
 
@@ -142,6 +143,19 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public bool Isready
+    {
+        get
+        {
+            return isready;
+        }
+
+        set
+        {
+            isready = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -163,6 +177,7 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
+        Isready = false;
 
 
     }
@@ -183,6 +198,25 @@ public class Player : NetworkBehaviour
             Debug.Log("STARTCLIENT!");
         }
     }
+
+    public void displaySpawn()
+    {
+        if (this == GameManager.instance.player1)
+        {
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.SpawnPlayer1[i].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            }
+        }
+        else if (this == GameManager.instance.player2)
+        {
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.SpawnPlayer1[i].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            }
+        }
+    }
+
     //Both clients get that
     [ClientRpc]
     public void RpcCreateCharacters(Vector3 spawnCoordinates)

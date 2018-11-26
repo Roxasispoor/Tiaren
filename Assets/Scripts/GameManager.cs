@@ -15,7 +15,8 @@ public class GameManager : NetworkBehaviour
     public static GameManager instance;
     public Material pathFindingMaterial;
     public Material targetMaterial;
-    public NetworkManager networkManager;
+    public Material spawnMaterial;
+    private NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;
     public bool isGameStarted = false;
@@ -29,6 +30,7 @@ public class GameManager : NetworkBehaviour
     public GameObject player1; //Should be Object
 
     public GameObject player2; //Should be Object
+    private Placeable characterToSpawn;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
@@ -39,7 +41,6 @@ public class GameManager : NetworkBehaviour
 
     private Player winner;
     public LivingPlaceable playingPlaceable;
-    private UIManager uIManager;
 
     /// <summary>
     /// allows to know if the game ended
@@ -126,6 +127,19 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public Placeable CharacterToSpawn
+    {
+        get
+        {
+            return characterToSpawn;
+        }
+
+        set
+        {
+            characterToSpawn = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -203,18 +217,30 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         { 
             yield return null;
         }
+        SpawnCharacters();
         CreateCharacters(player1, new Vector3Int(0, 4, 0));
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
-        isGameStarted = true;
-        Grid.instance.Gravity();
-        //To activate for perf, desactivate for pf
         
+        Grid.instance.Gravity();
+        state = States.Spawn;        
         InitialiseBatchFolder();
-        //Retrieve data 
+        
+    }
 
-        //RpcStartGame();
-        BeginningOfTurn();
-    
+    public void SpawnCharacters()
+    {
+        player1.GetComponent<Player>().displaySpawn();
+        player2.GetComponent<Player>().displaySpawn();
+    }
+
+    [Command]
+    public void CmdGameReady()
+    {
+        if (player1.GetComponent<Player>().Isready && player2.GetComponent<Player>().Isready)
+        {
+            isGameStarted = true;
+            BeginningOfTurn();
+        }
     }
 
     [ClientRpc]
