@@ -8,10 +8,12 @@ using UnityEngine;
 /// </summary>
 public class BlockEffects : EffectOnPlaceable
 {
+    [SerializeField]
     public List<Effect> listEffectsToBlock;
     /// <summary>
     /// -1 = undependent
     /// </summary>
+    [SerializeField]
     public int numberToBlock;
 
 

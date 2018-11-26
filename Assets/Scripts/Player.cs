@@ -18,8 +18,8 @@ public class Player : NetworkBehaviour
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
     private bool isready;
-
-
+    public bool isWinner = false;
+    public Text winText;
 
     private Placeable shotPlaceable;
     public CameraScript cameraScript;
@@ -230,7 +230,7 @@ public class Player : NetworkBehaviour
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.isGameStarted && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
+            if (clock.IsFinished && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
             {
                RpcEndTurn(); //permet une resynchronisation au rythme server
                GameManager.instance.EndOFTurn();
@@ -341,23 +341,8 @@ public class Player : NetworkBehaviour
         
         
     }
+    
 
-    [Command]
-    public void CmdInputShot(GameObject shotPlaceable)
-    {
-
-        this.shotPlaceable = shotPlaceable.GetComponent<Placeable>();
-        if (isServer)
-        {
-
-
-        }
-    }
-    [ClientRpc]
-    public void RpcMoveOnClient(Vector3 position)
-    {
-        this.transform.position = position;
-    }
     [ClientRpc]
     public void RpcSetCamera(int mustPlay)
     {
@@ -366,29 +351,14 @@ public class Player : NetworkBehaviour
         this.cameraScript.target = potential.gameObject.transform;
 
     }
-    [ClientRpc]
-    public void RpcLoadMap()
-    {
-        if(isLocalPlayer)
-        { 
-        Debug.Log("From RPC loadMap");
-        Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
-        Debug.Log(Placeable.currentMaxId);
-        }
-    }
-
+   
     
     public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
     }
-
-    public void Translater(int skillID, LivingPlaceable caster, List<LivingPlaceable> targets)
-    {
-
-    }
-
+    
     public void DispatchSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
     {
         Skill skill = caster.Skills[skillID];
@@ -459,7 +429,7 @@ public class Player : NetworkBehaviour
         return length;
     }
     /// <summary>
-    /// Unused Hacky way to approximate bezierr length
+    /// Unused Hacky way to approximate bezier length
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -495,14 +465,6 @@ public class Player : NetworkBehaviour
 
     }
 
-    [ClientRpc]
-    public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
-    {
-        GameObject plc = ClientScene.FindLocalObject(placeable);
-
-        List<Vector3> pathe = new List<Vector3>(path);
-        StartCoroutine(MoveAlongBezier(pathe, plc.GetComponent<Placeable>(), speed));
-    }
     [Client]
     public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
@@ -679,9 +641,6 @@ public class Player : NetworkBehaviour
                 break;
             }
 
-            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-            //change what we look at
             
             if (isBezier)
             {
@@ -701,124 +660,13 @@ public class Player : NetworkBehaviour
 
 
         }
+
+        GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
         
     }
-
-
-    /// <summary>
-    /// moving character across the path
-    /// déplace le characonnage le long du chemin
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="placeable"></param>
-    /// <returns></returns>
-    public IEnumerator ApplyMove(List<Vector3> path, Placeable placeable)
-    {
-        Vector3 delta = placeable.transform.position - path[path.Count - 1];
-        float speed = 1;
-        // distance traveled since starting position
-        float travelDistance = 0;
-
-
-        Vector3 startPosition = path[path.Count - 1] + delta;
-
-        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
-        targetDir.y = 0;
-        // loop on all points of the path
-        for (int i = path.Count - 2, count = path.Count, lastIndex = 0; i >= 0; i--)
-        {
-            //targetDir = path[i] - placeable.transform.position;
-
-            // distance between starting Position and arrival position (current node, following node)
-            float distance = Vector3.Distance(startPosition, path[i] + delta);
-
-            // direction vector between those two
-            Vector3 direction = (path[i] + delta - startPosition).normalized;
-
-            // looping while position of following node has not been passed
-            while (travelDistance < distance)
-            {
-                // advance in function of speed and time past
-                travelDistance += (speed * Time.deltaTime);
-
-                // if arrival node position has been reached / passed
-                if (travelDistance >= distance)
-                {
-
-                    // if we're still on our way 
-                    if (i > lastIndex)
-                    {
-                        targetDir = path[i - 1] - placeable.transform.position;
-                        targetDir.y = 0;
-                        // positioning a few far away on the way
-                        // between the two following nodes, depending on passed distance beyond current arrival node
-                        float distanceNext = Vector3.Distance(path[i - 1], path[i]);
-
-                        float ratio = (travelDistance - distance) / distanceNext;
-
-                        // if ration > 1, 
-                        // then passed distance >distance between the two following nodes 
-                        // loop jump all nodes we're supposed to have gone through shifting with highspeed
-                        while (ratio > 1)
-                        {
-                            i--;
-                            if (i == lastIndex)
-                            {
-                                // arrived to the last node of the path
-                                placeable.transform.position = path[i] + delta;
-                                // ending loop
-                                break;
-                            }
-                            else
-                            {
-                                travelDistance -= distance;
-                                distance = distanceNext;
-                                distanceNext = Vector3.Distance(path[i - 1], path[i]);
-                                ratio = (travelDistance - distance) / distanceNext;
-                            }
-                        }
-
-                        if (i == lastIndex)
-                        {
-                            // arrived to the last node of path during former while
-                            break;
-                        }
-                        else
-                        {
-
-                            transform.position = Vector3.Lerp(path[i], path[i - 1], ratio);
-                        }
-
-                    }
-                    else
-                    {
-                        // arrive to last node of the path
-                        placeable.transform.position = path[i] + delta;
-
-                        break;
-                    }
-                }
-                else
-                {
-                    // going in direction of the arrival position
-                    placeable.transform.position += direction * (speed * Time.deltaTime);
-                }
-
-                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-                placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-
-                yield return null;
-            }
-            // substract distance to run between two former nodes
-            travelDistance -= distance;
-
-            // updating starting position for next iteration
-            startPosition = path[i] + delta;
-        }
-
-    }
+    
     /// <summary>
     /// Check if use is possible and send rpc
     /// </summary>
@@ -836,6 +684,7 @@ public class Player : NetworkBehaviour
                 skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
                 RpcUseSkill(numSkill, netidTarget);
             }
+            
         }
     }
 
@@ -845,7 +694,8 @@ public class Player : NetworkBehaviour
         Placeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });            
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+
     }
 
 }

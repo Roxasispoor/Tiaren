@@ -14,14 +14,13 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public GameMode gameMode = GameMode.DEATHMATCH;
     public Material targetMaterial;
     public Material spawnMaterial;
     private NetworkManager networkManager;
     private const int maxBatchVertexes= 2300;
     private int numberTurn = 0;
-    public bool isGameStarted = false;
     public Dictionary<int, Placeable> idPlaceable;
-    private Placeable shotPlaceable;
     public GameObject batchPrefab;
     public GameObject batchFolder;
     public GameObject[] prefabCharacs;
@@ -38,7 +37,7 @@ public class GameManager : NetworkBehaviour
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
-
+    private bool isGameStarted = false;
     private Player winner;
     public LivingPlaceable playingPlaceable;
 
@@ -84,21 +83,6 @@ public class GameManager : NetworkBehaviour
             winner = value;
         }
     }
-
-    public Placeable ShotPlaceable
-    {
-        get
-        {
-            return shotPlaceable;
-        }
-
-        set
-        {
-            shotPlaceable = value;
-        }
-    }
-
-    
 
 
     public LivingPlaceable PlayingPlaceable
@@ -243,12 +227,73 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    [ClientRpc]
-    public void RpcStartGame()
+    public void CheckWinCondition()
     {
-        isGameStarted = true; 
-    }
+            if (gameMode == GameMode.DEATHMATCH)
+        {
+            player2.GetComponent<Player>().isWinner = true;
+            foreach (GameObject character in player1.GetComponent<Player>().characters)
+            {
+                if(!character.GetComponent<LivingPlaceable>().IsDead)
+                {
+                    player2.GetComponent<Player>().isWinner = false;
+                    break;
+                }
+            }
+            player1.GetComponent<Player>().isWinner = true;
+            foreach (GameObject character in player2.GetComponent<Player>().characters)
+            {
+                if (!character.GetComponent<LivingPlaceable>().IsDead)
+                {
+                    player1.GetComponent<Player>().isWinner = false;
+                    break;
+                }
+            }
+            if(player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
+            {
+                //Disable canvas element
+                Canvas c = player1.transform.GetComponentInChildren<Canvas>();
+                if(c!=null)
+                { 
+                foreach (Transform des in c.transform)
+                {
+                    des.gameObject.SetActive(false);
+                }
+                }
+                c = player2.transform.GetComponentInChildren<Canvas>();
+                if (c != null)
+                {
+                    foreach (Transform des in player2.GetComponentInChildren<Canvas>().transform)
+                    {
+                        des.gameObject.SetActive(false);
+                    }
+                }
 
+                player1.GetComponent<Player>().winText.gameObject.SetActive(true);
+                player2.GetComponent<Player>().winText.gameObject.SetActive(true);
+            }
+            if(player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
+            {
+                
+                player1.GetComponent<Player>().winText.text = "VICTORY";
+                player2.GetComponent<Player>().winText.text = "DEFEAT";
+            }
+            else if(player2.GetComponent<Player>().isWinner && !player1.GetComponent<Player>().isWinner)
+            {
+           
+                player2.GetComponent<Player>().winText.text = "VICTORY";
+                player1.GetComponent<Player>().winText.text = "DEFEAT";
+            }
+            else if(player2.GetComponent<Player>().isWinner && player1.GetComponent<Player>().isWinner)
+            {
+                player2.GetComponent<Player>().winText.text = "DRAW";
+                player1.GetComponent<Player>().winText.text = "DRAW";
+            }
+
+        }
+
+        
+    }
     private void UpdateTimeline()
     {
         TurnOrder.Clear();
@@ -375,7 +420,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-
+    public void OnEndAnimationEffectEnd()
+    {
+        if(playingPlaceable.player.isLocalPlayer)
+        { 
+        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() });
+            GameManager.instance.state = States.Move;
+        }
+    }
     /// <summary>
     /// Add current combine instance to its batch
     /// </summary>
@@ -446,10 +498,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     private void BeginningOfTurn()
     {
         Grid.instance.Gravity();
-//        InitialiseBatchFolder();
-
-        Grid.instance.InitializeExplored(false);
-
         UpdateTimeline();
         playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
@@ -474,37 +522,41 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
-            if(isClient)
+            if(isClient && playingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.player.cameraScript.target = playingPlaceable.gameObject.transform;
+
+                playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
+
             }
-            //playingPlaceable.player.RpcSetCamera(playingPlaceable.netId);
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
             if(playingPlaceable.Player.isLocalPlayer)
-            { 
+            {
                 playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
                 playingPlaceable.Jump,playingPlaceable.Player);
                 playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             }
             player1.GetComponent<Timer>().StartTimer(30f);
             player2.GetComponent<Timer>().StartTimer(30f);
-            //playingPlaceable.Player.RpcStartTimer(30f);
+
         }
     }
 
     public void EndOFTurn()
     {
+        if(winner==null)
+        { 
         //cleaning and checks and synchro with banana dancing if needed
         Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
         if (playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfTarget();
             playingPlaceable.ResetAreaOfMovement();
-            ResetAllBatches();
+            //ResetAllBatches();
         }
             BeginningOfTurn();
+        }
     }
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
@@ -535,52 +587,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         return null;
     }
-    /// <summary>
-    /// Check if it is accessible and move the position, either by a bezier or directly if server
-    /// </summary>
-    /// <param name="arrival"></param>
-   /* public void CheckIfAccessible(Placeable arrival)
-    {
-
-        NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
-        NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
-        if(inListDestination!=null)
-        { 
-        Vector3[] realPath = inListDestination.GetFullPath();
-        if (playingPlaceable.AreaOfMouvement.Contains(destination))
-        {
-                Debug.Log("Start" + playingPlaceable.GetPosition());
-                Grid.instance.GridMatrix[playingPlaceable.GetPosition().x, playingPlaceable.GetPosition().y, playingPlaceable.GetPosition().z] = null;
-                Grid.instance.GridMatrix[(int)destination.GetVector3().x, (int)destination.GetVector3().y+1, (int)destination.GetVector3().z] = playingPlaceable;
-
-                if (isServer)
-                {
-                    playingPlaceable.transform.position = destination.GetVector3() + new Vector3(0, 1, 0);
-                }
-            else if(isClient)
-                { 
-                     List<Vector3> bezierPath = new List<Vector3>(realPath);
-
-                  StartCoroutine(Player.MoveAlongBezier(bezierPath, playingPlaceable, playingPlaceable.AnimationSpeed));
-                }
-
-
-                playingPlaceable.CurrentPM -= realPath.Length - 1;
-                playingPlaceable.ResetAreaOfMovement();
-
-                Debug.Log("PM: " + playingPlaceable.CurrentPM);
-                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(destination.GetVector3() + new Vector3(0,1,0), playingPlaceable.CurrentPM,
-                playingPlaceable.Jump, playingPlaceable.Player);
-               
-                playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
-                
-            }
-        else if(isServer)
-            {
-                Debug.Log("Warning: client asked to go somewhere it cannot, very weird!");
-            }
-        }
-    }*/
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
@@ -613,15 +619,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-
-   /* [ClientRpc]
-    public void RpcCreatePerso(GameObject charac, GameObject player, Vector3 spawnCoordinates)
-    {
-        Debug.Log("Please create chars");
-        Vector3Int realCoordinates = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
-        InitialiseCharacter(charac, player, realCoordinates);
-    }*/
-
+    
     /// <summary>
     /// Unused function to apply function to all visible characters
     /// </summary>

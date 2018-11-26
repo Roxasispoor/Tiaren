@@ -1,25 +1,37 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
+[Serializable]
 public class LivingPlaceable : Placeable
 {
-
+    [SerializeField]
     private float maxHP;
     private float currentHP;
+    [SerializeField]
     private int pmMax;
     private int currentPM;
     private float currentPA;
+    [SerializeField]
     private float paMax;
+    [SerializeField]
     private int force;
+    [SerializeField]
     private float speed;
+    [SerializeField]
     private int dexterity;
+    [SerializeField]
     private float speedStack;
+    [SerializeField]
     private int jump;
     private float deathLength;
-
+    [SerializeField]
     private List<Skill> skills;
+    [SerializeField]
     private List<GameObject> weapons;
     private Weapon equipedWeapon;
     private bool isDead;
@@ -490,32 +502,38 @@ public class LivingPlaceable : Placeable
         this.AreaOfMouvement = new List<NodePath>();
         List<Effect> ListEffects = new List<Effect>();
         List<Effect> ListEffects2 = new List<Effect>();
+        List<Effect> ListEffects3 = new List<Effect>();
+        List<Effect> ListEffects4 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
+        ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
+        ListEffects4.Add(new Damage(50f));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
+        skill1.Save();
+        skill1.effects[0].Save();
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 2);
+        Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
+        Skills.Add(skill3);
+        Skills.Add(skill4);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
         targetableUnits = new List<LivingPlaceable>();
-}
-
-    
-    void OnMouseOver()
-    {
-
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            GameManager.instance.ShotPlaceable = this;
-        }
-
+     //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+        //Save();
+        //force = -5;
+        //FillLiving();
 
     }
-
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -539,12 +557,12 @@ public class LivingPlaceable : Placeable
        //TODO gérer le temps de respawn
     }
 
-    public void ChangeMaterialAreaOfMovement(Material pathfinding)
+    public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
     {
        
         foreach (NodePath node in AreaOfMouvement)
         {
-            if(Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
+            if(Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
             { 
            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
@@ -554,12 +572,53 @@ public class LivingPlaceable : Placeable
         GameManager.instance.ResetAllBatches();
         
     }
+    public void ChangeMaterialAreaOfMovement(Material pathfinding)
+    {
+        float heightSize = 0.2f;
+        foreach (NodePath node in AreaOfMouvement)
+        {
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
+            {
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
 
-    public void ResetAreaOfMovement()
+                quadUp.SetActive(true);
+
+                quadRight.SetActive(true);
+                quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, heightSize+0.01f, 1);
+                quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0.5f-heightSize/2+0.01f, quadRight.transform.localPosition.z);
+
+                quadLeft.SetActive(true);
+                quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, heightSize + 0.01f, 1);
+                quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadLeft.transform.localPosition.z);
+
+                quadFront.SetActive(true);
+                quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, heightSize + 0.01f, 1);
+                quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadFront.transform.localPosition.z);
+
+                quadBack.SetActive(true);
+                quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, heightSize + 0.01f, 1);
+                quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadBack.transform.localPosition.z);
+                
+                
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
+                //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+            }
+        }
+        //GameManager.instance.ResetAllBatches();
+
+    }
+
+    public void ResetAreaOfMovementBatch()
     {
         foreach (NodePath node in AreaOfMouvement)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
+
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z]!=null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
             { 
            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
@@ -569,6 +628,38 @@ public class LivingPlaceable : Placeable
         }
         AreaOfMouvement.Clear();
     }
+    public void ResetAreaOfMovement()
+    {
+        float heightSize = 1.02f;
+        foreach (NodePath node in AreaOfMouvement)
+        {
+            
+
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
+            {
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+
+                quadUp.SetActive(false);
+                quadRight.SetActive(false);
+                 quadLeft.SetActive(false);
+              
+                quadFront.SetActive(false);
+              
+                quadBack.SetActive(false);
+                
+
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
+                //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+            }
+        }
+        AreaOfMouvement.Clear();
+    }
+
 
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
@@ -607,4 +698,84 @@ public class LivingPlaceable : Placeable
         }
         targetArea.Clear();
     }
+    public void Save()
+    {
+        Stats stats = new Stats();
+        stats.FillThis(this);
+
+        string text = JsonUtility.ToJson(stats);
+        foreach(Skill skill in Skills)
+        {
+            text+=skill.Save();
+        }
+        string path = "Living.json";
+        File.WriteAllText(path, text);
+    }
+    public void FillLiving()
+    {
+        string path = "Living.json";
+        string line;
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+        System.Type[] types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+        System.Type[] possible = (from System.Type type in types where type.IsSubclassOf(typeof(Effect)) && !type.IsAbstract select type).ToArray();
+
+        if ((line = reader.ReadLine()) == null)
+        {
+            Debug.Log("Empty file while reading living form file!");
+            return ;
+        }
+        Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
+        newLivingStats.FillLiving(this);
+        bool isNewSkill = true;
+        Skill newSkill = null;
+        
+        while ((line = reader.ReadLine()) != null)
+        {
+            if(isNewSkill)
+            {
+                
+                newSkill = JsonUtility.FromJson<Skill>(line);
+                newSkill.effects = new List<Effect>();
+                isNewSkill = false;
+                
+            }
+            else
+            {
+                string typename=line.Substring(0, line.IndexOf("{"));
+                foreach(Type type in possible)
+                {
+                    if(type.ToString()==typename)
+                    {
+                        // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
+                        //MethodInfo generic = method.MakeGenericMethod(type);
+                        //object[] objectArray = new[] { line};
+                        string a = line.Substring(line.IndexOf("{"));
+                        
+                        if (line[line.Length - 1] == ';')
+                        {
+                            a = a.Remove(a.Length - 1);
+                            isNewSkill = true;
+                        }
+                        Debug.Log(a);
+                        Effect eff=(Effect)JsonUtility.FromJson(a, type);
+                        newSkill.effects.Add(eff);
+                        if(isNewSkill)
+                        {
+                            skills.Add(newSkill);
+                        }
+                      
+                    }
+                }
+               
+
+            }
+          
+        }
+        reader.Close();
+
+    }
+    
+    
+
 }

@@ -8,31 +8,37 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Represents something able to fill a bloc of the grid
 /// </summary>
-
+[Serializable]
 public abstract class Placeable:MonoBehaviour
 {
+
+    [NonSerialized]
     public int netId;
+    [NonSerialized]
     public Batch batch;
     public static int currentMaxId=0;
+    [SerializeField]
     public int serializeNumber;
     private bool walkable;
-    private List<Effect> onWalkEffects;
-    private bool movable;
-    private bool destroyable;
-    private TraversableType tangible;
-    private TraversableType traversableBullet;
+    protected List<Effect> onWalkEffects;
+    protected bool movable;
+    protected bool destroyable;
+    protected TraversableType tangible;
+    protected TraversableType traversableBullet;
     public Color colorOfObject;
     private float animationSpeed=1.0f;
+    [NonSerialized]
     public Material oldMaterial;
-    private GravityType gravityType;
-    private CrushType crushable;
+    protected GravityType gravityType;
+    protected CrushType crushable;
+    [NonSerialized]
     public bool explored;
-    private List<Effect> onDestroyEffects;
-    private List<HitablePoint> hitablePoints;
-    private List<Effect> onStartTurn;
-    private List<Effect> onEndTurn;
-    private List<Effect> attachedEffects;
-    private CombineInstance meshInCombined;
+    protected List<Effect> onDestroyEffects;
+    protected List<HitablePoint> hitablePoints;
+    protected List<Effect> onStartTurn;
+    protected List<Effect> onEndTurn;
+    protected List<Effect> attachedEffects;
+    protected CombineInstance meshInCombined;
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -310,7 +316,7 @@ public abstract class Placeable:MonoBehaviour
     /// <summary>
     /// allows shoot and shifting
     /// </summary>
-    void OnMouseOver()
+    protected void OnMouseOver()
     {
         if (GameManager.instance.state == States.Spawn)
         {
@@ -346,7 +352,7 @@ public abstract class Placeable:MonoBehaviour
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
                     Debug.Log("You have authority to ask for a move");
                     //Vector3 destination = this.GetPosition();
@@ -360,7 +366,7 @@ public abstract class Placeable:MonoBehaviour
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
                     Debug.Log("You have authority to ask to act");
                     GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);
@@ -376,11 +382,7 @@ public abstract class Placeable:MonoBehaviour
 
      
     }
-    /*public void Start()
-    {
-        Comma
-        this.netId=this.
-    }*/
+
     /// <summary>
     /// On dispatch selon Living et placeable
     /// </summary>

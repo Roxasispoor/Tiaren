@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public abstract class EffectOnLiving : Effect
 {
-
+    private Animation OnPlaceable;
     private LivingPlaceable target;
     private Placeable launcher;
 
