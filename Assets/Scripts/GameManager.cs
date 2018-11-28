@@ -130,7 +130,7 @@ public class GameManager : NetworkBehaviour
     {
 
         //CSVReader.ReadVectors("untitled.txt");
-        MapConverter.ConvertGridFromText("Towers.txt", "Towers.json");
+        //MapConverter.ConvertGridFromText("Towers.txt", "Towers.json");
         if (instance == null)
 
             //if not, set instance to this
