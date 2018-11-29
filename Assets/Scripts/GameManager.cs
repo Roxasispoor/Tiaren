@@ -11,6 +11,9 @@ using System;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
+    [SerializeField]
+    string mapToCharge = "Grid.json";
+
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
@@ -125,6 +128,9 @@ public class GameManager : NetworkBehaviour
     private void Awake()
 
     {
+
+        //CSVReader.ReadVectors("untitled.txt");
+        //MapConverter.ConvertGridFromText("Towers.txt", "Towers.json");
         if (instance == null)
 
             //if not, set instance to this
@@ -168,14 +174,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     IEnumerator Start()
     {
         //PHASE 0 : SET THE GAME UP
-        
-            //If you want to create one and save it
-            // Grid.instance.CreateRandomGrid(gridFolder);
-            //Grid.instance.SaveGridFile();
 
-            //If you want to load one
-        
-        Grid.instance.FillGridAndSpawn(gridFolder);
+        //If you want to create one and save it
+        // Grid.instance.CreateRandomGrid(gridFolder);
+        //Grid.instance.SaveGridFile();
+
+        //If you want to load one
+
+        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
            
         while (player1 == null )
         {

@@ -617,10 +617,15 @@ public class Grid : MonoBehaviour
     /// Precondition: empty grid never filled
     /// </summary>
     /// <param name="grid"></param>
-    public void FillGridAndSpawn(GameObject parent)
+    /// <param name="pathJson"> The path to the map in Json</param>
+    public void FillGridAndSpawn(GameObject parent, string pathJson)
     {
         Debug.Log("Load Map");
-        JaggedGrid jagged = JaggedGrid.FillGridFromJSON();
+        JaggedGrid jagged = JaggedGrid.FillGridFromJSON(pathJson);
+
+        sizeX = jagged.sizeX;
+        sizeY = jagged.sizeY;
+        sizeZ = jagged.sizeZ;
 
         for (int y = 0; y < sizeY; y++)
         {
