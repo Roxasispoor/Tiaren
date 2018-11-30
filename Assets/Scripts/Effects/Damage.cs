@@ -58,13 +58,20 @@ public class Damage : EffectOnLiving
     override
         public void Use()
     {
-
+        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher.SetTrigger("attack");
+        Animator animTarget = Target.gameObject.GetComponent<Animator>();
+        
         Debug.Log("Touché!" + damageValue );
         Target.CurrentHP -= DamageValue;
         if (Target.CurrentHP <= 0)
         {
-
+            animTarget.SetTrigger("die");
             Target.Destroy();
+        }
+        else
+        {
+            animTarget.SetTrigger("hurt");
         }
 
 

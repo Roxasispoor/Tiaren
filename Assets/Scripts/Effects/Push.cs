@@ -96,6 +96,9 @@ public class Push : EffectOnPlaceable
     override
     public void Use()
     {
+        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher.SetTrigger("push");
+
         if (isDirectionFromPosition)
         {
             if (Launcher==Target)
