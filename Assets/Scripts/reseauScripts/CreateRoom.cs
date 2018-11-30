@@ -5,6 +5,9 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 
 namespace Barebones.MasterServer
 {
@@ -14,6 +17,7 @@ namespace Barebones.MasterServer
     /// </summary>
     public class CreateRoom : MonoBehaviour
     {
+        RoomAccessPacket access;
         //Allows the map name and scene to be set in the Inspector as a single object.
         //This is useful if you want to have multiple scenes available to choose from,
         //although, we will only have the one. 
@@ -28,6 +32,7 @@ namespace Barebones.MasterServer
 
         //this will hold the reference to the request for the game instance to spawn
         SpawnRequestController Request;
+        private Coroutine WaitConnectionCoroutine;
 
         //This will be called when we click the button that this script will be attached to
         public void OnCreateClick()
@@ -131,9 +136,23 @@ namespace Barebones.MasterServer
                 });
             }
         }
+       
+        
+      
+    private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
+    {
+            var networkManager = FindObjectOfType<NetworkManagerExtended>();
+            networkManager.networkAddress = access.RoomIp;
+            networkManager.networkPort = access.RoomPort;
 
+            // Start connecting
+            networkManager.StartClient();
+
+            // do whatever you like
+        }
         public void OnFinalizationDataRetrieved(Dictionary<string, string> data)
         {
+            Debug.Log("Start on finalization retrieved");
             //This comes from the "CreateGameProgressUi.cs" script. I'm not sure what could cause 
             //this error at this time, but it feels safer to leave it.
             if (!data.ContainsKey(MsfDictKeys.RoomId))
@@ -155,7 +174,13 @@ namespace Barebones.MasterServer
 
                     return;
                 }
-            });
+                SceneManager.LoadScene("online");
+                this.access = access;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+                //StartCoroutine(WaitSceneLoaded(access));
+            }
+            );
+           
 
             // Quick runthrough of what "GetAccess" does, as I found it complicated to trace:
             // The method is found in "MsfRoomsClient.cs". After checking that the Client is connected to the server,
