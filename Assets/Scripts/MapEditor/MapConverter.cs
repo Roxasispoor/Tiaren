@@ -6,11 +6,15 @@ using UnityEngine;
 public class MapConverter {
 
     static List<CSVReader.BlockCSV> blocks;
+    public static readonly int SPAWNPOINT = 99;
+    private static List<int> spawnPoints;
 
     public static Dictionary<string, int> strColorToSerialize = new Dictionary<string, int>
     {
+        {"fbf236", SPAWNPOINT }, // Spawnpoint
         {"ffffff", 1 },
-        {"000000", 0 }
+        {"000000", 0 },
+
     };
 
     public static void ConvertGridFromText(string inPath, string outPath)
@@ -47,15 +51,26 @@ public class MapConverter {
         int[] gridTable = new int[sizeX * sizeY * sizeZ]; // All elements are initialized to 0
 
 
-        JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ); // Swapping Y and Z for Unity
+        JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ);
+        spawnPoints = new List<int>();
 
         foreach (CSVReader.BlockCSV block in blocks)
         {
             int x = block.Position.x + shiftX,
-                y = block.Position.y + shiftY,  // Still swappin y and z
+                y = block.Position.y + shiftY,
                 z = block.Position.z + shiftZ;
             //gridTable[y * sizeZ * sizeX + z * sizeX + x] = strColorToSerialize[block.Type];
-            jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z); // Still swapping y and z
+            if (strColorToSerialize[block.Type] == SPAWNPOINT)
+            {
+                //Debug.Log("SpawnPoints!!");
+                spawnPoints.Add(x);
+                spawnPoints.Add(z); // swapping z and y for Unity
+                spawnPoints.Add(y); // swapping z and y for Unity
+            } else
+            {
+                //Debug.Log(block.Type);
+                jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
+            }
         }
 
         //Debug.Log(gridTable.ToString());
@@ -67,6 +82,7 @@ public class MapConverter {
         }
         text += ", \"sizeX\" : "
         text += "]}";*/
+        jaggedGrid.SpawnPoints = spawnPoints.ToArray();
         jaggedGrid.Save(outPath);
         //File.WriteAllText(outPath, text);
     }

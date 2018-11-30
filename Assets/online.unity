@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sizeX: 50
-  sizeY: 6
+  sizeY: 10
   sizeZ: 50
   randomParameter: 90
   floaties: []

@@ -20,6 +20,17 @@ public class JaggedGrid
     public int sizeY;
     public int sizeZ;
 
+    private int[] spawnPoints;
+
+    public int[] SpawnPoints
+    {
+
+        set
+        {
+            spawnPoints = value;
+        }
+    }
+
     public JaggedGrid()
     {
     }
@@ -92,4 +103,13 @@ public class JaggedGrid
         return toReturn;
     }
 
+    public List<Vector3Int> getListSpawns()
+    {
+        List<Vector3Int> toReturn = new List<Vector3Int>();
+        for (int i = 0; i < spawnPoints.Length; i += 3)
+        {
+            toReturn.Add(new Vector3Int(spawnPoints[i], spawnPoints[i + 1], spawnPoints[i + 2]));
+        }
+        return toReturn;
+    }
 }
