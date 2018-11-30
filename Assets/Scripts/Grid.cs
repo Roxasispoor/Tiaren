@@ -35,8 +35,8 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
-    private List<Placeable> spawnPlayer1;
-    private List<Placeable> spawnPlayer2;
+    private List<Vector3Int> spawnPlayer1;
+    private List<Vector3Int> spawnPlayer2;
 
 
     public Placeable[,,] GridMatrix
@@ -52,7 +52,20 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public List<Placeable> SpawnPlayer1
+    public List<Vector3Int> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
+
+        set
+        {
+            spawnPlayer2 = value;
+        }
+    }
+
+    public List<Vector3Int> SpawnPlayer1
     {
         get
         {
@@ -65,18 +78,7 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public List<Placeable> SpawnPlayer2
-    {
-        get
-        {
-            return spawnPlayer2;
-        }
 
-        set
-        {
-            spawnPlayer2 = value;
-        }
-    }
 
 
 

@@ -166,7 +166,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
+            gameObject.transform.Find("SpawnCanvas").gameObject.SetActive(true);
         }
         clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
@@ -179,7 +179,12 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
         Isready = false;
 
-
+        //creation of the characters list -> pre build of the team
+        for (int i = 0; i < 2; i++)
+        {
+            LivingPlaceable character = new LivingPlaceable();
+            Characters.Add(character.gameObject);
+        }
     }
 
     // Use this for initialization
@@ -201,19 +206,77 @@ public class Player : NetworkBehaviour
 
     public void displaySpawn()
     {
-        if (this == GameManager.instance.player1)
+        for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
         {
-            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            if (i < Characters.Count)
             {
-                Grid.instance.SpawnPlayer1[i].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                GameObject character = Instantiate(Characters[i], Grid.instance.SpawnPlayer1[i], Quaternion.identity);
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y, 
+                    Grid.instance.SpawnPlayer1[i].z] = character.GetComponent<LivingPlaceable>();
+                character.GetComponent<LivingPlaceable>().EquipedWeapon = Characters[i].GetComponent<LivingPlaceable>().Weapons[0].GetComponent<Weapon>();
+                character.GetComponent<LivingPlaceable>().netId = Placeable.currentMaxId;
+                GameManager.instance.idPlaceable[character.GetComponent<LivingPlaceable>().netId] = character.GetComponent<LivingPlaceable>();
+                Placeable.currentMaxId++;
+                character.GetComponent<LivingPlaceable>().Player = this;
+                if (gameObject == GameManager.instance.player2)
+                {
+                    Characters[i].SetActive(false);
+                }
             }
         }
-        else if (this == GameManager.instance.player2)
+        for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
         {
-            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                   Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            GameObject character = Instantiate(Characters[i], Grid.instance.SpawnPlayer2[i], Quaternion.identity);
+            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y,
+                Grid.instance.SpawnPlayer2[i].z] = Characters[i].GetComponent<LivingPlaceable>();
+            Characters[i].GetComponent<LivingPlaceable>().EquipedWeapon = Characters[i].GetComponent<LivingPlaceable>().Weapons[0].GetComponent<Weapon>();
+            Characters[i].GetComponent<LivingPlaceable>().netId = Placeable.currentMaxId;
+            GameManager.instance.idPlaceable[Characters[i].GetComponent<LivingPlaceable>().netId] = Characters[i].GetComponent<LivingPlaceable>();
+            Placeable.currentMaxId++;
+            if (gameObject == GameManager.instance.player1)
             {
-                Grid.instance.SpawnPlayer1[i].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                Characters[i].SetActive(false);
             }
+        }
+    }
+
+
+    public void GameReady()
+    {
+        Isready = true;
+        Vector3[] positions = new Vector3[Characters.Count];
+        int[] ids = new int[Characters.Count];
+        for(int i = 0; i < Characters.Count; i++)
+        {
+            positions[i] = Characters[i].transform.position;
+            ids[i] = Characters[i].GetComponent<LivingPlaceable>().netId;
+        }
+        CmdGameReady(positions, ids);
+    }
+
+
+    [Command]
+    public void CmdGameReady(Vector3[] positions, int[] ids)
+    {
+        Isready = true;
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                Vector3Int groundSpace = new Vector3Int((int)positions[i].x, (int)positions[i].y - 1, (int)positions[i].z);
+                Vector3Int space = new Vector3Int((int)positions[i].x, (int)positions[i].y, (int)positions[i].z);
+                if(Grid.instance.SpawnPlayer1.Find(groundSpace.Equals) == null)
+                {
+                    Debug.Log("error in character " + i.ToString() + "of player" + this.ToString());
+                }
+                Grid.instance.MoveBlock(GameManager.instance.FindLocalObject(ids[i]), space, true);
+            }
+            GameManager.instance.IsGameStarted = true;
+            GameManager.instance.BeginningOfTurn();
         }
     }
 

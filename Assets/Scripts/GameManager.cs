@@ -124,6 +124,19 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public bool IsGameStarted
+    {
+        get
+        {
+            return isGameStarted;
+        }
+
+        set
+        {
+            isGameStarted = value;
+        }
+    }
+
 
 
     /// <summary>
@@ -202,8 +215,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             yield return null;
         }
         SpawnCharacters();
-        CreateCharacters(player1, new Vector3Int(0, 4, 0));
-        CreateCharacters(player2, new Vector3Int(3, 4, 0));
         
         Grid.instance.Gravity();
         state = States.Spawn;        
@@ -215,16 +226,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         player1.GetComponent<Player>().displaySpawn();
         player2.GetComponent<Player>().displaySpawn();
-    }
-
-    [Command]
-    public void CmdGameReady()
-    {
-        if (player1.GetComponent<Player>().Isready && player2.GetComponent<Player>().Isready)
-        {
-            isGameStarted = true;
-            BeginningOfTurn();
-        }
     }
 
     public void CheckWinCondition()
@@ -294,6 +295,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         
     }
+
     private void UpdateTimeline()
     {
         TurnOrder.Clear();
@@ -495,7 +497,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    private void BeginningOfTurn()
+
+
+    public void BeginningOfTurn()
     {
         Grid.instance.Gravity();
         UpdateTimeline();
@@ -542,6 +546,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         }
     }
+
 
     public void EndOFTurn()
     {
@@ -602,7 +607,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Debug.Log(charac1.netId);
         idPlaceable[charac1.netId]= charac1;
         Placeable.currentMaxId++;
-
     }
 
     

@@ -43,6 +43,8 @@ public abstract class Placeable:MonoBehaviour
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
     public Player player;
+    [SerializeField]
+    private bool isSpawnPoint;
 
     public Vector3Int GetPosition()
     {
@@ -285,6 +287,19 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
+    public bool IsSpawnPoint
+    {
+        get
+        {
+            return isSpawnPoint;
+        }
+
+        set
+        {
+            isSpawnPoint = value;
+        }
+    }
+
 
 
 
@@ -324,24 +339,33 @@ public abstract class Placeable:MonoBehaviour
             {
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
                 {
-                    Debug.Log("You have authority to ask to spawn");
-                    if (GameManager.instance.CharacterToSpawn == null)
+                    if (this.IsSpawnPoint == true)
                     {
-                        GameManager.instance.CharacterToSpawn = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
-                    }
-                    else
-                    {
-                        if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                        Debug.Log("You have authority to ask to spawn");
+                        if (GameManager.instance.CharacterToSpawn == null)
                         {
-                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            GameManager.instance.CharacterToSpawn = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
                         }
-                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] != null &&
-                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving())
+                        else
                         {
-                            Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
-                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y + 1,
-                                GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
-                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                            {
+                                Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                                Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                    GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
+                                GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                            }
+                            else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] != null &&
+                                Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving())
+                            {
+                                Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                                Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y + 1,
+                                    GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
+                                Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                                temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y + 1,
+                                    GameManager.instance.CharacterToSpawn.GetPosition().z);
+                                GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                            }
                         }
                     }
                 }

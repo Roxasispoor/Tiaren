@@ -10,9 +10,33 @@ public class UIManager : MonoBehaviour {
     public Button prefabAbilityButton;
     public Button prefabCharacterButton;
     public RectTransform SkillZone;
+    public RectTransform SpawnZone;
     public RectTransform TimelineZone;
 
-   
+    public void SpawnUI()
+    {
+        int numberInstantiated = 0;
+        if (gameObject == GameManager.instance.player1)
+        {
+            foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters) {
+                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
+                button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+            }
+        }
+        if (gameObject == GameManager.instance.player2)
+        {
+            foreach (GameObject character in GameManager.instance.player2.GetComponent<Player>().Characters)
+            {
+                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
+                button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+                //button.onClick.AddListener(() => { button.GetComponent<Image>().color = new Color(1, 1, 1, 0.7f); });
+            }
+        }
+    }
 
     public int UpdateAbilities(LivingPlaceable character)
     {

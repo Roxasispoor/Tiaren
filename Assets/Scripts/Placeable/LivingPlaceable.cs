@@ -402,6 +402,12 @@ public class LivingPlaceable : Placeable
         return target.transform.position + maxHit.RelativePosition;
     }
 
+
+    public void ChangeSpawnCharacter() //method called by the ui buttons during spawn
+    {
+        GameManager.instance.CharacterToSpawn = this;
+    }
+
     public override void DispatchEffect(Effect effect)
     {
         effect.TargetAndInvokeEffectManager(this);
