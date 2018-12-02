@@ -77,6 +77,7 @@ public class UnetGameRoom : NetworkBehaviour
         NetworkServer.RegisterHandler(AccessMsgType, HandleReceivedAccess);
 
         Msf.Server.Rooms.Connection.Disconnected += OnDisconnectedFromMaster;
+        Debug.Log("Test debug");
     }
 
     public bool IsRoomRegistered { get; protected set; }
@@ -269,6 +270,7 @@ public class UnetGameRoom : NetworkBehaviour
 
     protected virtual void HandleReceivedAccess(NetworkMessage netmsg)
     {
+        Debug.LogError("a player asked to handle accesss");
         var token = netmsg.ReadMessage<StringMessage>().value;
 
         Controller.ValidateAccess(token, (validatedAccess, error) =>
@@ -308,7 +310,8 @@ public class UnetGameRoom : NetworkBehaviour
         PlayersByPeerId[player.PeerId] = player;
         PlayersByUsername[player.Username] = player;
         PlayersByConnectionId[player.Connection.connectionId] = player;
-
+        Debug.LogError("a player joined");
+        Debug.LogError(player);
         if (PlayerJoined != null)
             PlayerJoined.Invoke(player);
     }

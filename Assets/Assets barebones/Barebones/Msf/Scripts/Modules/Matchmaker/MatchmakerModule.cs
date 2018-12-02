@@ -30,6 +30,7 @@ namespace Barebones.MasterServer
 
             // Add handlers
             server.SetHandler((short)MsfOpCodes.FindGames, HandleFindGames);
+           
         }
 
         public void AddProvider(IGamesProvider provider)
@@ -39,6 +40,7 @@ namespace Barebones.MasterServer
 
         private void HandleFindGames(IIncommingMessage message)
         {
+            
             var list = new List<GameInfoPacket>();
 
             var filters = new Dictionary<string, string>().FromBytes(message.AsBytes());
@@ -52,6 +54,10 @@ namespace Barebones.MasterServer
             var bytes = list.Select(l => (ISerializablePacket)l).ToBytes();
 
             message.Respond(bytes, ResponseStatus.Success);
+        }
+        public virtual void FindAppropriateMatch(IIncommingMessage message)
+        {
+
         }
     }
 }

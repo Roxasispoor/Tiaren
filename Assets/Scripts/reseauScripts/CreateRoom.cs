@@ -33,6 +33,88 @@ namespace Barebones.MasterServer
         //this will hold the reference to the request for the game instance to spawn
         SpawnRequestController Request;
         private Coroutine WaitConnectionCoroutine;
+        private void Awake()
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
+
+
+        public void OnJoinGameOrCreate()
+        {
+            //LOG IN AS GUEST
+            //This is part of the error in judgment. In order for the serverside code to work
+            //and the gameServer to connect to the client properly, it needs to be authenticated. 
+            //To get around this, we're going to trigger the "Guest access" by default before we 
+            //spawn the gameserver.
+            //I will provide a tutorial at a later date to explain how the authModule works and how
+            //to write your own.
+            var promise = Msf.Events.FireWithPromise(Msf.EventNames.ShowLoading, "Logging in");
+            Msf.Client.Auth.LogInAsGuest((accInfo, error) =>
+            {
+                promise.Finish();
+
+                if (accInfo == null)
+                {
+                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox, DialogBoxData.CreateError(error));
+                    Logs.Error(error);
+                }
+            });
+
+
+            //There can be more or fewer settings included, we're going to keep this simple.
+            var settings = new Dictionary<string, string>
+            {
+                {MsfDictKeys.MaxPlayers, "2"},
+                {MsfDictKeys.RoomName, map.Name},
+                {MsfDictKeys.MapName, map.Name},
+                {MsfDictKeys.SceneName, map.Scene.SceneName}
+            };
+
+            //The actual request message sent to the Spawner.
+            //This returns a callback containing the SpawnRequestController that will allow us to track 
+            //the progress of the spawn request
+            Msf.Client.Matchmaker.FindAppropriateMatch(settings, (gameInfo) =>
+                {
+                if (gameInfo == null)
+                {
+                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
+                        DialogBoxData.CreateError("Failed to find a game: "));
+
+                    Logs.Error("Failed to find a game: " );
+                }
+                else
+                    {
+                  
+                        Debug.Log("Start on found game");
+                        
+
+
+                        //The request has finished, the game instance is made. Now we need to actually get access to the room.
+                        Msf.Client.Rooms.GetAccess(gameInfo.Id, (access, error) =>
+                        {
+                            if (access == null)
+                            {
+                                Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
+                                        DialogBoxData.CreateInfo("Failed to get access to room: " + error));
+
+                                Logs.Error("Failed to get access to room: " + error);
+
+                                return;
+                            }
+                            SceneManager.LoadScene("online");
+                            this.access = access;
+                            SceneManager.sceneLoaded += OnSceneLoaded;
+                            //StartCoroutine(WaitSceneLoaded(access));
+                        }
+                        );
+                    }
+                        
+
+                
+            });
+        
+            
+        }
 
         //This will be called when we click the button that this script will be attached to
         public void OnCreateClick()
@@ -69,6 +151,7 @@ namespace Barebones.MasterServer
             //The actual request message sent to the Spawner.
             //This returns a callback containing the SpawnRequestController that will allow us to track 
             //the progress of the spawn request
+        
             Msf.Client.Spawners.RequestSpawn(settings, "", (requestController, errorMsg) =>
             {
                 //If something went wrong, the request will return "null" and an error will be included
@@ -144,13 +227,39 @@ namespace Barebones.MasterServer
             var networkManager = FindObjectOfType<NetworkManagerExtended>();
             networkManager.networkAddress = access.RoomIp;
             networkManager.networkPort = access.RoomPort;
-
+        
             // Start connecting
             networkManager.StartClient();
-
-            // do whatever you like
+            if (WaitConnectionCoroutine != null)
+                StopCoroutine(WaitConnectionCoroutine);
+           
+            // Wait until connected to server
+            WaitConnectionCoroutine = StartCoroutine(WaitForConnection(() =>
+            {
+                // Client connected to server
+                var tokenMsg = new StringMessage(access.Token);
+               
+                // Send the token to unet server
+                networkManager.client.connection.Send(UnetGameRoom.AccessMsgType, tokenMsg);
+                
+            }));
         }
-        public void OnFinalizationDataRetrieved(Dictionary<string, string> data)
+
+
+        public IEnumerator WaitForConnection(Action callback)
+        {
+            var networkManager = FindObjectOfType<NetworkManagerExtended>();
+
+            // This will keep skipping frames until client connects
+            while (!networkManager.IsClientConnected())
+                yield return null;
+
+            callback.Invoke();
+        }
+        // do whatever you like
+     
+
+            public void OnFinalizationDataRetrieved(Dictionary<string, string> data)
         {
             Debug.Log("Start on finalization retrieved");
             //This comes from the "CreateGameProgressUi.cs" script. I'm not sure what could cause 

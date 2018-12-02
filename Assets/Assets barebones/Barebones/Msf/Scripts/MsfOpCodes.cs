@@ -37,7 +37,6 @@
 
         // Matchmaker
         FindGames,
-
         // Auth
         LogIn,
         RegisterAccount,
@@ -94,5 +93,8 @@
         ServerProfileRequest,
         UpdateServerProfile,
         UpdateClientProfile,
+
+        FindAppropriateGame,
+
     }
 }

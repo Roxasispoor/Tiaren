@@ -8,7 +8,7 @@ namespace Barebones.MasterServer
 
         public MsfSpawnersClient Spawners { get; private set; }
 
-        public MsfMatchmakerClient Matchmaker { get; private set; }
+        public AdaptedMsfMatchMakerClient Matchmaker { get; private set; }
 
         public MsfAuthClient Auth { get; private set; }
 
@@ -22,7 +22,7 @@ namespace Barebones.MasterServer
         {
             Rooms = new MsfRoomsClient(connection);
             Spawners = new MsfSpawnersClient(connection);
-            Matchmaker = new MsfMatchmakerClient(connection);
+            Matchmaker = new AdaptedMsfMatchMakerClient(connection);
             Auth = new MsfAuthClient(connection);
             Chat = new MsfChatClient(connection);
             Lobbies = new MsfLobbiesClient(connection);

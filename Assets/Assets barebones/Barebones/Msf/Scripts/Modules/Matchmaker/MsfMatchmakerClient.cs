@@ -11,14 +11,14 @@ namespace Barebones.MasterServer
         public MsfMatchmakerClient(IClientSocket connection) : base(connection)
         {
         }
-
         /// <summary>
-        /// Retrieves a list of all public games
+        /// Retrieves a list of public games, which pass a provided filter.
+        /// (You can implement your own filtering by extending modules or "classes" 
+        /// that implement <see cref="IGamesProvider"/>)
         /// </summary>
-        /// <param name="callback"></param>
         public void FindGames(FindGamesCallback callback)
         {
-            FindGames(new Dictionary<string, string>(), callback, Connection);
+            FindGames(new Dictionary<string, string> (), callback, Connection);
         }
 
         /// <summary>
