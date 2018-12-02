@@ -40,8 +40,7 @@ public class NetworkManagerExtended : NetworkManager
         // Create an instance of the player prefab we made earlier
         var playerObj = Instantiate(playerPrefab);
 
-        //find all spawn points, we just have the one, but you can add more if you like
-
+        
         //add the connection to the game server to make sure the player can update on the client and the gameserver
         NetworkServer.AddPlayerForConnection(player.Connection, playerObj.gameObject, 0);
 
