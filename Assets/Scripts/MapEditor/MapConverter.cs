@@ -3,11 +3,15 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapConverter {
+public class MapConverter : MonoBehaviour {
 
-    static List<CSVReader.BlockCSV> blocks;
+    List<CSVReader.BlockCSV> blocks;
     public static readonly int SPAWNPOINT = 99;
-    private static List<int> spawnPoints;
+    private List<int> spawnPoints;
+
+
+    public string inPath;
+    public string outPath;
 
     public static Dictionary<string, int> strColorToSerialize = new Dictionary<string, int>
     {
@@ -17,10 +21,17 @@ public class MapConverter {
 
     };
 
-    public static void ConvertGridFromText(string inPath, string outPath)
+    public void ConvertGridFromText(string _inPath, string _outPath)
     {
+        /*if (System.IO.File.Exists(_inPath))
+        {
+            Debug.Log("MapConverter: File " + _inPath + "does not exist");
+            return;
+        }*/
 
-        blocks = CSVReader.ReadBlocks(inPath);
+        Debug.Log("MapConverter: opening " + _inPath);
+
+        blocks = CSVReader.ReadBlocks(_inPath);
 
         int minX = blocks[0].Position.x,
             minY = blocks[0].Position.y,
@@ -68,22 +79,20 @@ public class MapConverter {
                 spawnPoints.Add(y); // swapping z and y for Unity
             } else
             {
-                //Debug.Log(block.Type);
                 jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
             }
         }
-
-        //Debug.Log(gridTable.ToString());
-        /*
-        string text = "{\"gridTable\":[" + gridTable[0];
-        for (int i = 1; i < gridTable.Length; i++)
-        {
-            text += "," + gridTable[i];
-        }
-        text += ", \"sizeX\" : "
-        text += "]}";*/
+        
         jaggedGrid.SpawnPoints = spawnPoints.ToArray();
-        jaggedGrid.Save(outPath);
-        //File.WriteAllText(outPath, text);
+        jaggedGrid.Save(_outPath);
+        Debug.Log("MapConverter: successfully converted to " + _outPath);
+    }
+
+    public void ConvertFromGUI()
+    {
+        if (inPath != "" && outPath != "")
+        {
+            ConvertGridFromText(inPath, outPath);
+        }
     }
 }
