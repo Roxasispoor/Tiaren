@@ -32,8 +32,14 @@ public class CreateBlock : EffectOnPlaceableOnly {
     public override void Use()
     {
 
+        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher.SetTrigger("create");
         Grid.instance.InstantiateCube(prefab, Target.GetPosition() + face);
-       
+
     }
-    
+
+    private void Generate()
+    {
+        
+    }
 }

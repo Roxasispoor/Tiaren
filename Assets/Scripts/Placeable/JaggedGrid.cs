@@ -16,9 +16,39 @@ public class JaggedGrid
 
 
     public int[] gridTable;
+    public int sizeX;
+    public int sizeY;
+    public int sizeZ;
+
+    private int[] spawnPoints;
+
+    public int[] SpawnPoints
+    {
+
+        set
+        {
+            spawnPoints = value;
+        }
+    }
+
+    public JaggedGrid()
+    {
+    }
+
+    public JaggedGrid(int sizeX, int sizeY, int sizeZ)
+    {
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
+        gridTable = new int[sizeX * sizeY * sizeZ];
+    }
 
     public void ToJagged(Grid grid)
     {
+        sizeX = grid.sizeX;
+        sizeY = grid.sizeY;
+        sizeZ = grid.sizeZ;
+
         gridTable = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
 
         // y at last for potential futur need of compression
@@ -44,23 +74,27 @@ public class JaggedGrid
             }
         }
     }
-    public void Save()
+
+    public void SetCell (int value, int x, int y, int z)
+    {
+        this.gridTable[y * sizeZ * sizeX + z * sizeX + x] = value;
+    }
+
+    public void Save(string path = "Grid.json")
     {
         string text = JsonUtility.ToJson(this);
 
-        string path = "Grid.json";
         File.WriteAllText(path, text);
     }
 
-    public static JaggedGrid FillGridFromJSON()
+    public static JaggedGrid FillGridFromJSON(string path)
     {
-        return JsonUtility.FromJson<JaggedGrid>(ReadString());
+        return JsonUtility.FromJson<JaggedGrid>(ReadString(path));
     }
 
 
-    static string ReadString()
+    static string ReadString(string path = "Grid.json")
     {
-        string path = "Grid.json";
 
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
@@ -69,4 +103,13 @@ public class JaggedGrid
         return toReturn;
     }
 
+    public List<Vector3Int> getListSpawns()
+    {
+        List<Vector3Int> toReturn = new List<Vector3Int>();
+        for (int i = 0; i < spawnPoints.Length; i += 3)
+        {
+            toReturn.Add(new Vector3Int(spawnPoints[i], spawnPoints[i + 1], spawnPoints[i + 2]));
+        }
+        return toReturn;
+    }
 }

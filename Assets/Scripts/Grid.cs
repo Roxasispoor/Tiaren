@@ -617,10 +617,16 @@ public class Grid : MonoBehaviour
     /// Precondition: empty grid never filled
     /// </summary>
     /// <param name="grid"></param>
-    public void FillGridAndSpawn(GameObject parent)
+    /// <param name="pathJson"> The path to the map in Json</param>
+    public void FillGridAndSpawn(GameObject parent, string pathJson)
     {
         Debug.Log("Load Map");
-        JaggedGrid jagged = JaggedGrid.FillGridFromJSON();
+        JaggedGrid jagged = JaggedGrid.FillGridFromJSON(pathJson);
+
+        sizeX = jagged.sizeX;
+        sizeY = jagged.sizeY;
+        sizeZ = jagged.sizeZ;
+        //gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
         for (int y = 0; y < sizeY; y++)
         {
@@ -634,7 +640,7 @@ public class Grid : MonoBehaviour
                         GameObject obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity, parent.transform);
 
-
+                        Debug.Log(x + "-" + y + "-" + z);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
                         obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
