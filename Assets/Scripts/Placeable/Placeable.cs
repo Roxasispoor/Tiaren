@@ -323,7 +323,9 @@ public abstract class Placeable:MonoBehaviour
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner 
+                    && this.GetPosition()+new Vector3Int(0,1,0) !=GameManager.instance.playingPlaceable.GetPosition())
+                    
                 {
                     Debug.Log("You have authority to ask for a move");
                     //Vector3 destination = this.GetPosition();
