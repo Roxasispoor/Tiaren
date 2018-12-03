@@ -161,7 +161,7 @@ public class Skill
             {
                 //makes the deep copy, send it to effect manager and zoo
                 Effect effectToConsider = effect.Clone();
-
+                effectToConsider.Launcher = caster;
                 //Double dispatch
                 target.DispatchEffect(effect);
 

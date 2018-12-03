@@ -8,7 +8,7 @@ public abstract class EffectOnLiving : Effect
 {
     private Animation OnPlaceable;
     private LivingPlaceable target;
-    private Placeable launcher;
+  
 
     public EffectOnLiving(EffectOnLiving other)
     {
@@ -39,18 +39,7 @@ public abstract class EffectOnLiving : Effect
         }
     }
 
-    public virtual Placeable Launcher
-    {
-        get
-        {
-            return launcher;
-        }
-
-        set
-        {
-            launcher = value;
-        }
-    }
+  
     public override Placeable GetTarget()
     {
         return Target;

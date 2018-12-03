@@ -11,7 +11,20 @@ using UnityEngine;
 public abstract class Effect
 {
     [SerializeField]
+    protected Placeable launcher;
     private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    public virtual Placeable Launcher
+    {
+        get
+        {
+            return launcher;
+        }
+
+        set
+        {
+            launcher = value;
+        }
+    }
     protected Effect()
     {
 

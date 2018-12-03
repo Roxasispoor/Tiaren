@@ -407,7 +407,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if(playingPlaceable.player.isLocalPlayer)
         { 
-        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() });
+        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;
         }
     }

@@ -266,7 +266,7 @@ public class Player : NetworkBehaviour
     public void CmdMoveTo(Vector3[] path)
     {
         Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
-        if (GameManager.instance.PlayingPlaceable.player == this )// updating only if it's his turn to play, other checkings are done in GameManager
+        if (GameManager.instance.PlayingPlaceable.player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
             Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
