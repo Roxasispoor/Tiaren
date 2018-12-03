@@ -574,6 +574,7 @@ public class LivingPlaceable : Placeable
     }
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
+        player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -630,6 +631,7 @@ public class LivingPlaceable : Placeable
     }
     public void ResetAreaOfMovement()
     {
+       
         float heightSize = 1.02f;
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -697,6 +699,7 @@ public class LivingPlaceable : Placeable
             GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
+      
     }
     public void Save()
     {
