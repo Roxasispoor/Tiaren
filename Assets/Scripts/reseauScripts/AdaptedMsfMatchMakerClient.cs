@@ -27,7 +27,7 @@ public class AdaptedMsfMatchMakerClient : MsfMatchmakerClient
             if (status != ResponseStatus.Success)
             {
                 Logs.Error(response.AsString("Unknown error while requesting a list of games"));
-                callback.Invoke(null);
+                callback.Invoke(new GameInfoPacket());
                 return;
             }
 

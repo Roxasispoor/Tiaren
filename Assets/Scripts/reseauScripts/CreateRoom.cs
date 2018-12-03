@@ -18,6 +18,7 @@ namespace Barebones.MasterServer
     public class CreateRoom : MonoBehaviour
     {
         RoomAccessPacket access;
+        EventsChannel.Promise promise;
         //Allows the map name and scene to be set in the Inspector as a single object.
         //This is useful if you want to have multiple scenes available to choose from,
         //although, we will only have the one. 
@@ -38,16 +39,8 @@ namespace Barebones.MasterServer
             DontDestroyOnLoad(this.gameObject);
         }
 
-
-        public void OnJoinGameOrCreate()
+        void OnGuestLogin()
         {
-            //LOG IN AS GUEST
-            //This is part of the error in judgment. In order for the serverside code to work
-            //and the gameServer to connect to the client properly, it needs to be authenticated. 
-            //To get around this, we're going to trigger the "Guest access" by default before we 
-            //spawn the gameserver.
-            //I will provide a tutorial at a later date to explain how the authModule works and how
-            //to write your own.
             var promise = Msf.Events.FireWithPromise(Msf.EventNames.ShowLoading, "Logging in");
             Msf.Client.Auth.LogInAsGuest((accInfo, error) =>
             {
@@ -59,6 +52,17 @@ namespace Barebones.MasterServer
                     Logs.Error(error);
                 }
             });
+        }
+        public void OnJoinGameOrCreate()
+        {
+            //LOG IN AS GUEST
+            //This is part of the error in judgment. In order for the serverside code to work
+            //and the gameServer to connect to the client properly, it needs to be authenticated. 
+            //To get around this, we're going to trigger the "Guest access" by default before we 
+            //spawn the gameserver.
+            //I will provide a tutorial at a later date to explain how the authModule works and how
+            //to write your own.
+            OnGuestLogin();
 
 
             //There can be more or fewer settings included, we're going to keep this simple.
@@ -75,13 +79,11 @@ namespace Barebones.MasterServer
             //the progress of the spawn request
             Msf.Client.Matchmaker.FindAppropriateMatch(settings, (gameInfo) =>
                 {
-                if (gameInfo == null)
+                if (gameInfo.Address == "")
                 {
-                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
-                        DialogBoxData.CreateError("Failed to find a game: "));
-
-                    Logs.Error("Failed to find a game: " );
-                }
+                        Debug.Log("Failed to find a ssuitable game creating one: ");
+                        OnCreateClick();
+}
                 else
                     {
                   
@@ -126,17 +128,10 @@ namespace Barebones.MasterServer
             //spawn the gameserver.
             //I will provide a tutorial at a later date to explain how the authModule works and how
             //to write your own.
-            var promise = Msf.Events.FireWithPromise(Msf.EventNames.ShowLoading, "Logging in");
-            Msf.Client.Auth.LogInAsGuest((accInfo, error) =>
+           if(promise==null)
             {
-                promise.Finish();
-
-                if (accInfo == null)
-                {
-                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox, DialogBoxData.CreateError(error));
-                    Logs.Error(error);
-                }
-            });
+                OnGuestLogin();
+            }
 
 
             //There can be more or fewer settings included, we're going to keep this simple.

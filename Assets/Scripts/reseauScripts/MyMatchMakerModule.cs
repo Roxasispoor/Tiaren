@@ -46,7 +46,7 @@ public class MyMatchMakerModule : MatchmakerModule
         }
         else
         {
-            message.Respond(toreturn.ToBytes(), ResponseStatus.Failed);
+            message.Respond("", ResponseStatus.Failed);
         }
       
             // Convert to generic list and serialize to bytes
