@@ -249,13 +249,16 @@ public class Player : NetworkBehaviour
 
             playingPlaceable.ResetAreaOfMovement();
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
             playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
         }
         else
         {
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Everything");
             playingPlaceable.GetComponent<Renderer>().material.color = Color.red;
         }
 
@@ -266,7 +269,7 @@ public class Player : NetworkBehaviour
     public void CmdMoveTo(Vector3[] path)
     {
         Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
-        if (GameManager.instance.PlayingPlaceable.player == this )// updating only if it's his turn to play, other checkings are done in GameManager
+        if (GameManager.instance.PlayingPlaceable.player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
             Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());

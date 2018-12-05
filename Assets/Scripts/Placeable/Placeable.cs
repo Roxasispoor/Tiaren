@@ -313,17 +313,16 @@ public abstract class Placeable:MonoBehaviour
         Destroy(this);
         Destroy(this.gameObject);
     }
-    /// <summary>
-    /// allows shoot and shifting
-    /// </summary>
-    protected void OnMouseOver()
+    public void OnMouseOverWithLayer()
     {
         if (GameManager.instance.state == States.Move)
         {
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
+                    && this.GetPosition() + new Vector3Int(0, 1, 0) != GameManager.instance.playingPlaceable.GetPosition())
+
                 {
                     Debug.Log("You have authority to ask for a move");
                     //Vector3 destination = this.GetPosition();
@@ -337,7 +336,9 @@ public abstract class Placeable:MonoBehaviour
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
+                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
+                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+
                 {
                     Debug.Log("You have authority to ask to act");
                     GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);
@@ -345,6 +346,13 @@ public abstract class Placeable:MonoBehaviour
                 }
             }
         }
+    }
+    /// <summary>
+    /// allows shoot and shifting
+    /// </summary>
+    protected void OnMouseOver()
+    {
+       
     }
 
     private void Awake()
