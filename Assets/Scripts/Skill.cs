@@ -167,6 +167,7 @@ public class Skill
 
             }
         }
+        GameManager.instance.activeSkill = null;
         return true;
     }
     public string Save()

@@ -17,6 +17,7 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public Material highlightingMaterial;
     public GameMode gameMode = GameMode.DEATHMATCH;
     public Material targetMaterial;
     public NetworkManager networkManager;
@@ -34,7 +35,7 @@ public class GameManager : NetworkBehaviour
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
-    
+    public Placeable hovered;
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
@@ -380,8 +381,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         }
     public void ResetAllBatches()
-    { 
-     foreach (Transform child in batchFolder.transform)
+    {
+        if(hovered != null)
+        {
+            hovered.UnHighlight();
+        }
+        foreach (Transform child in batchFolder.transform)
         {
             Destroy(child.gameObject);
         }
@@ -468,8 +473,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             };
             // If it is the first of this material
             AddMeshToBatches(meshFilter,currentInstance);
+            if(meshFilter.GetComponent<Placeable>()!=null)
+            { 
             meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
-
+            }
         }
         //Then at the end we create all the batches that are not full
         foreach(List<Batch> batches in dictionaryMaterialsFilling.Values)
