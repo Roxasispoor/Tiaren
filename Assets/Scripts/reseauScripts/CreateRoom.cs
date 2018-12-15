@@ -53,6 +53,16 @@ namespace Barebones.MasterServer
                 }
             });
         }
+        public void RegisterUser()
+        {
+            //Msf.Client.Auth.Register(new Dictionary<string, string>() { {"username", "PATATE"},
+            //  {"password", "potato"},{"email", "potato@yopmail.com"} }, (accInfo, error) => { Debug.Log(error); });
+            Msf.Client.Auth.LogIn("PATATE", "potato", (accInfo, error) => {
+                Debug.Log(accInfo.Properties);
+                Debug.Log(accInfo.Username);
+            });
+//            Msf.Client.Auth.RequestEmailConfirmationCode
+        }
         public void OnJoinGameOrCreate()
         {
             //LOG IN AS GUEST

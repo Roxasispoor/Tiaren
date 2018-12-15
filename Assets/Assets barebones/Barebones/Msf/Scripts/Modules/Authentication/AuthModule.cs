@@ -509,6 +509,7 @@ namespace Barebones.MasterServer
 
             var encryptedData = message.AsBytes();
             var securityExt = message.Peer.GetExtension<PeerSecurityExtension>();
+            //Debug.Log("AES KEY" + securityExt.AesKey);
             var aesKey = securityExt.AesKey;
 
             if (aesKey == null)
@@ -567,7 +568,7 @@ namespace Barebones.MasterServer
                 var password = data["password"];
 
                 accountData = db.GetAccount(username);
-
+                Debug.LogError("isMail confirmed?" + accountData.IsEmailConfirmed);
                 if (accountData == null)
                 {
                     // Couldn't find an account with this name
