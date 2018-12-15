@@ -658,6 +658,7 @@ public class LivingPlaceable : Placeable
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
                 //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
             }
+
         }
         AreaOfMouvement.Clear();
     }

@@ -14,6 +14,8 @@ public class RaycastSelector : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(GameManager.instance.playingPlaceable!=null)
+        { 
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit,100000,layerMask ))
@@ -21,8 +23,20 @@ public class RaycastSelector : MonoBehaviour {
             if(hit.transform.GetComponent<Placeable>()!=null)
             {
                 hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
+               
+                if(GameManager.instance.hovered !=null )
+                { 
+                     GameManager.instance.hovered.UnHighlight();
+
+                }
+                GameManager.instance.hovered = hit.transform.GetComponent<Placeable>();
+                if (GameManager.instance.hovered != null)
+                {
+                    GameManager.instance.hovered.Highlight();
+                }
+
             }
         }
-          
+        }
     }
 }
