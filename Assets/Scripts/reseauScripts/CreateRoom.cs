@@ -232,9 +232,10 @@ namespace Barebones.MasterServer
             var networkManager = FindObjectOfType<NetworkManagerExtended>();
             networkManager.networkAddress = access.RoomIp;
             networkManager.networkPort = access.RoomPort;
-        
+            networkManager.launchedFromMaster = true;
             // Start connecting
             networkManager.StartClient();
+
             if (WaitConnectionCoroutine != null)
                 StopCoroutine(WaitConnectionCoroutine);
            

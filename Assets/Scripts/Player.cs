@@ -230,6 +230,7 @@ public class Player : NetworkBehaviour
     {
 
         clock.StartTimer(time);
+        
     }
 
 

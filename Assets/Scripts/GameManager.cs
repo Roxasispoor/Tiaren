@@ -143,7 +143,7 @@ public class GameManager : NetworkBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
 
-
+        
         idPlaceable = new Dictionary<int, Placeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
@@ -154,7 +154,6 @@ public class GameManager : NetworkBehaviour
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
 
         }
-
     }
 
 
