@@ -22,6 +22,9 @@ public class JaggedGrid
 
     private int[] spawnPoints;
 
+    private int[] spawnPlayer1;
+    private int[] spawnPlayer2;
+
     public int[] SpawnPoints
     {
 
@@ -75,7 +78,7 @@ public class JaggedGrid
         }
     }
 
-    public void SetCell (int value, int x, int y, int z)
+    public void SetCell(int value, int x, int y, int z)
     {
         this.gridTable[y * sizeZ * sizeX + z * sizeX + x] = value;
     }
@@ -103,6 +106,26 @@ public class JaggedGrid
         return toReturn;
     }
 
+    public List<Vector3Int> GetSpawnsJ1()
+    {
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i<spawnPoints.Length; i += 3)
+        {
+            spawns.Add(new Vector3Int(spawnPlayer1[i], spawnPlayer1[i + 1], spawnPlayer1[i + 2]));
+        }
+        return spawns;
+    }
+
+    public List<Vector3Int> GetSpawnsJ2()
+    {
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i < spawnPoints.Length; i += 3)
+        {
+            spawns.Add(new Vector3Int(spawnPlayer2[i], spawnPlayer2[i + 1], spawnPlayer2[i + 2]));
+        }
+        return spawns;
+    }
+
     public List<Vector3Int> getListSpawns()
     {
         List<Vector3Int> toReturn = new List<Vector3Int>();
@@ -112,4 +135,8 @@ public class JaggedGrid
         }
         return toReturn;
     }
+
+   
+   
+
 }
