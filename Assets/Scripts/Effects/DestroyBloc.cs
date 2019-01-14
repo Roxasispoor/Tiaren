@@ -26,6 +26,8 @@ public class DestroyBloc : EffectOnPlaceableOnly
         {
             GameManager.instance.RemoveBlockFromBatch(Target);
         }
+        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher.SetTrigger("destroy");
         Target.Destroy();
        
             
