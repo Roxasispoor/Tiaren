@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class UIManager : MonoBehaviour {
 
@@ -9,9 +10,120 @@ public class UIManager : MonoBehaviour {
     public GameObject spawnCanvas;
     public Button prefabAbilityButton;
     public Button prefabCharacterButton;
+    public Button prefabTeamButton;
     public RectTransform SkillZone;
     public RectTransform SpawnZone;
     public RectTransform TimelineZone;
+    public RectTransform characterZone;
+    public Image prefabCharacterChoices;
+
+    private List<SpriteAndName> possibleCharacters;
+    private List<int> currentCharacters;
+
+    public List<int> CurrentCharacters
+    {
+        get
+        {
+            return currentCharacters;
+        }
+
+        set
+        {
+            currentCharacters = value;
+        }
+    }
+
+    public List<SpriteAndName> PossibleCharacters
+    {
+        get
+        {
+            return possibleCharacters;
+        }
+
+        set
+        {
+            possibleCharacters = value;
+        }
+    }
+
+    private void Start()
+    {
+        
+    }
+
+    int mod(int x, int m)
+    {
+        return (x % m + m) % m;
+    }
+
+    public void TeamSelectUI()
+    {
+        if (gameObject == GameManager.instance.player1)
+        {
+            //init Posiible characters
+            string path = "Teams.json";
+            string line;
+
+            StreamReader reader = new StreamReader(path);
+            while ((line = reader.ReadLine()) != null)
+            {
+                SpriteAndName spriteAndName = JsonUtility.FromJson<SpriteAndName>(line);
+                PossibleCharacters.Add(spriteAndName);
+            }
+
+            //display UI
+            for (int i = 0; i < 5; ++i)
+            {
+                //display Sprite
+                Vector3 position = new Vector3(-700 + 350 * i, 0);
+                Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity);
+                image.sprite = PossibleCharacters[CurrentCharacters[i]].Sprite;
+
+                //display Buttons
+                Button buttonUp = Instantiate(prefabTeamButton, image.transform);
+                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 300);
+                buttonUp.GetComponentInChildren<Text>().text = "^";
+                buttonUp.onClick.AddListener(delegate { UpChoice(i); });
+                Button buttonDown = Instantiate(prefabTeamButton, image.transform);
+                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -300);
+                buttonDown.GetComponentInChildren<Text>().text = "!^";
+                buttonUp.onClick.AddListener(delegate { DownChoice(i); });
+
+            }
+        }
+        else if (gameObject == GameManager.instance.player2)
+        {
+            //Display UI
+            for (int i = 0; i < 5; ++i)
+            {
+                //display Sprite
+                Vector3 position = new Vector3(-700 + 350 * i, 0);
+                Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity);
+                image.sprite = PossibleCharacters[CurrentCharacters[i]].Sprite;
+
+                //display Buttons
+                Button buttonUp = Instantiate(prefabTeamButton, image.transform);
+                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 300);
+                buttonUp.GetComponentInChildren<Text>().text = "^";
+                buttonUp.onClick.AddListener(delegate { UpChoice(i); });
+                Button buttonDown = Instantiate(prefabTeamButton, image.transform);
+                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -300);
+                buttonDown.GetComponentInChildren<Text>().text = "!^";
+                buttonUp.onClick.AddListener(delegate { DownChoice(i); });
+
+            }
+        }
+    }
+
+    public void UpChoice(int i)
+    {
+        CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, PossibleCharacters.Count);
+    }
+
+    public void DownChoice(int i)
+    {
+        CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, PossibleCharacters.Count);
+    }
 
     public void SpawnUI()
     {
@@ -80,7 +192,7 @@ public class UIManager : MonoBehaviour {
     public void ChangeTurn()
     {
         if (GameManager.instance.playingPlaceable.player.gameObject == gameObject)
-        {
+         {
             GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
             UpdateAbilities(GameManager.instance.playingPlaceable);

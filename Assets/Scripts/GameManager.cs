@@ -172,7 +172,6 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
-
         }
 
     }
@@ -205,8 +204,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Grid.instance.FillGridAndSpawn(gridFolder);
            
         while (player1 == null )
-        {
-               
+        {               
                 yield return null;
         }
         Debug.Log("Please load on client 1 ffs");
@@ -217,9 +215,22 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         SpawnCharacters();
         
         Grid.instance.Gravity();
-        state = States.Spawn;        
+        state = States.TeamSelect;
+        TeamSelectDisplay();
         InitialiseBatchFolder();
         
+    }
+
+    public void TeamSelectDisplay()
+    {
+        player1.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+        player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+    }
+
+    public void StartSpawn()
+    {
+        state = States.Spawn;
+        SpawnCharacters();
     }
 
     public void SpawnCharacters()
@@ -397,10 +408,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Debug.Log("erreur,batch material non trouvé" + batch.material);
         }
 
-        }
+    }
+
     public void ResetAllBatches()
     { 
-     foreach (Transform child in batchFolder.transform)
+        foreach (Transform child in batchFolder.transform)
         {
             Destroy(child.gameObject);
         }
@@ -473,7 +485,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void InitialiseBatchFolder()
     {
         dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
-
 
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
@@ -592,14 +603,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         return null;
     }
-    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
+    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
         player.GetComponent<Player>().Characters.Add(charac);
         charac1.Player = player.GetComponent<Player>();
-
-        Vector3Int posPers = (Vector3Int) spawnCoordinates;
+        //charac1.FillLiving(className);
+        Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
         charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
@@ -608,16 +619,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         idPlaceable[charac1.netId]= charac1;
         Placeable.currentMaxId++;
     }
-
-    
-    public void CreateCharacters(GameObject player, Vector3Int spawnCoordinates)
+        
+    public void CreateCharacters(GameObject player, Vector3Int spawnCoordinates, int prefaToSpawn)
     {
         Player playerComponent = player.GetComponent<Player>();
         for (int i = 0; i < playerComponent.NumberPrefab.Count; i++)
         {
-            GameObject charac = Instantiate(prefabCharacs[player.GetComponent<Player>().NumberPrefab[i]], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
+            GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-            InitialiseCharacter(charac, player, spawnCoordinates);
+            InitialiseCharacter(charac, player, spawnCoordinates, player.GetComponent<UIManager>().PossibleCharacters[i].className);
 
             Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
         }

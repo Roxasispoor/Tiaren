@@ -538,6 +538,7 @@ public class LivingPlaceable : Placeable
         //Save();
         //force = -5;
         //FillLiving();
+        //TODO Read from JSON properly
 
     }
     /// <summary>
@@ -704,6 +705,7 @@ public class LivingPlaceable : Placeable
         }
         targetArea.Clear();
     }
+
     public void Save()
     {
         Stats stats = new Stats();
@@ -717,7 +719,8 @@ public class LivingPlaceable : Placeable
         string path = "Living.json";
         File.WriteAllText(path, text);
     }
-    public void FillLiving()
+
+    public void FillLiving(string className)
     {
         string path = "Living.json";
         string line;

@@ -204,26 +204,23 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void TeamSelect()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            
+        }
+    }
+
     public void displaySpawn()
     {
         for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
         {
             Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-            if (i < Characters.Count)
+            Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            if (i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
-                GameObject character = Instantiate(Characters[i], Grid.instance.SpawnPlayer1[i], Quaternion.identity);
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y, 
-                    Grid.instance.SpawnPlayer1[i].z] = character.GetComponent<LivingPlaceable>();
-                character.GetComponent<LivingPlaceable>().EquipedWeapon = Characters[i].GetComponent<LivingPlaceable>().Weapons[0].GetComponent<Weapon>();
-                character.GetComponent<LivingPlaceable>().netId = Placeable.currentMaxId;
-                GameManager.instance.idPlaceable[character.GetComponent<LivingPlaceable>().netId] = character.GetComponent<LivingPlaceable>();
-                Placeable.currentMaxId++;
-                character.GetComponent<LivingPlaceable>().Player = this;
-                if (gameObject == GameManager.instance.player2)
-                {
-                    Characters[i].SetActive(false);
-                }
+                GameManager.instance.CreateCharacters(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
             }
         }
         for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
