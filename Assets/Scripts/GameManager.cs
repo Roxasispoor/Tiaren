@@ -620,18 +620,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Placeable.currentMaxId++;
     }
         
-    public void CreateCharacters(GameObject player, Vector3Int spawnCoordinates, int prefaToSpawn)
+    public void CreateCharacter(GameObject player, Vector3Int spawnCoordinates, int prefaToSpawn)
     {
         Player playerComponent = player.GetComponent<Player>();
-        for (int i = 0; i < playerComponent.NumberPrefab.Count; i++)
-        {
-            GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
+        
+        GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-            InitialiseCharacter(charac, player, spawnCoordinates, player.GetComponent<UIManager>().PossibleCharacters[i].className);
+        player.GetComponent<Player>().characters.Add(charac);
 
-            Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
-        }
+        InitialiseCharacter(charac, player, spawnCoordinates, player.GetComponent<UIManager>().PossibleCharacters[prefaToSpawn].className);
 
+        Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
     }
     
     /// <summary>

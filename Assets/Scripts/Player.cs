@@ -178,13 +178,6 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
         Isready = false;
-
-        //creation of the characters list -> pre build of the team
-        for (int i = 0; i < 2; i++)
-        {
-            LivingPlaceable character = new LivingPlaceable();
-            Characters.Add(character.gameObject);
-        }
     }
 
     // Use this for initialization
@@ -204,13 +197,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void TeamSelect()
-    {
-        for(int i = 0; i < 5; i++)
-        {
-            
-        }
-    }
 
     public void displaySpawn()
     {
@@ -220,21 +206,22 @@ public class Player : NetworkBehaviour
             Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
             if (i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
-                GameManager.instance.CreateCharacters(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+                GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+            if (gameObject == GameManager.instance.player2)
+            {
+                Characters[i].SetActive(false);
             }
         }
         for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
         {
-            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                   Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-            GameObject character = Instantiate(Characters[i], Grid.instance.SpawnPlayer2[i], Quaternion.identity);
-            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y,
-                Grid.instance.SpawnPlayer2[i].z] = Characters[i].GetComponent<LivingPlaceable>();
-            Characters[i].GetComponent<LivingPlaceable>().EquipedWeapon = Characters[i].GetComponent<LivingPlaceable>().Weapons[0].GetComponent<Weapon>();
-            Characters[i].GetComponent<LivingPlaceable>().netId = Placeable.currentMaxId;
-            GameManager.instance.idPlaceable[Characters[i].GetComponent<LivingPlaceable>().netId] = Characters[i].GetComponent<LivingPlaceable>();
-            Placeable.currentMaxId++;
-            if (gameObject == GameManager.instance.player1)
+            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+            Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+            if (i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            {
+                GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+            if (gameObject == GameManager.instance.player2)
             {
                 Characters[i].SetActive(false);
             }
@@ -277,15 +264,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    //Both clients get that
-    [ClientRpc]
-    public void RpcCreateCharacters(Vector3 spawnCoordinates)
-    {
-        Vector3Int spawn = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
-        Debug.Log("From RPC:");
-        GameManager.instance.CreateCharacters(gameObject, spawn);
-
-    }
     private void Update()
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)

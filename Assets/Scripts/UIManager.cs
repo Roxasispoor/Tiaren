@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour {
 
     public GameObject gameCanvas;
     public GameObject spawnCanvas;
+    public GameObject TeamCanvas;
     public Button prefabAbilityButton;
     public Button prefabCharacterButton;
     public Button prefabTeamButton;
@@ -17,6 +18,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform characterZone;
     public Image prefabCharacterChoices;
 
+    private List<GameObject> TeamParents;
     private List<SpriteAndName> possibleCharacters;
     private List<int> currentCharacters;
 
@@ -74,18 +76,28 @@ public class UIManager : MonoBehaviour {
             //display UI
             for (int i = 0; i < 5; ++i)
             {
-                //display Sprite
+
+                //display all sprites and hide them
                 Vector3 position = new Vector3(-700 + 350 * i, 0);
-                Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity);
-                image.sprite = PossibleCharacters[CurrentCharacters[i]].Sprite;
+                TeamParents.Add(new GameObject("Parent" + i.ToString()));
+                TeamParents[i].transform.parent = TeamCanvas.transform;
+                for (int j = 0; j < PossibleCharacters.Count; j++)
+                {                    
+                    Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity, TeamParents[i].transform);
+                    image.sprite = PossibleCharacters[j].Sprite;
+                    if (j != currentCharacters[i])
+                    {
+                        image.gameObject.SetActive(false);
+                    }
+                }
 
                 //display Buttons
-                Button buttonUp = Instantiate(prefabTeamButton, image.transform);
-                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 300);
+                Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
                 buttonUp.GetComponentInChildren<Text>().text = "^";
                 buttonUp.onClick.AddListener(delegate { UpChoice(i); });
-                Button buttonDown = Instantiate(prefabTeamButton, image.transform);
-                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -300);
+                Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
                 buttonDown.GetComponentInChildren<Text>().text = "!^";
                 buttonUp.onClick.AddListener(delegate { DownChoice(i); });
 
@@ -96,18 +108,26 @@ public class UIManager : MonoBehaviour {
             //Display UI
             for (int i = 0; i < 5; ++i)
             {
-                //display Sprite
+                //display all sprites and hide them
                 Vector3 position = new Vector3(-700 + 350 * i, 0);
-                Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity);
-                image.sprite = PossibleCharacters[CurrentCharacters[i]].Sprite;
+                TeamParents.Add(new GameObject("Parent" + i.ToString()));
+                for (int j = 0; j < PossibleCharacters.Count; j++)
+                {
+                    Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity, TeamParents[i].transform);
+                    image.sprite = PossibleCharacters[j].Sprite;
+                    if (j != currentCharacters[i])
+                    {
+                        image.gameObject.SetActive(false);
+                    }
+                }
 
                 //display Buttons
-                Button buttonUp = Instantiate(prefabTeamButton, image.transform);
-                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 300);
+                Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
                 buttonUp.GetComponentInChildren<Text>().text = "^";
                 buttonUp.onClick.AddListener(delegate { UpChoice(i); });
-                Button buttonDown = Instantiate(prefabTeamButton, image.transform);
-                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, -300);
+                Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
                 buttonDown.GetComponentInChildren<Text>().text = "!^";
                 buttonUp.onClick.AddListener(delegate { DownChoice(i); });
 
@@ -117,16 +137,24 @@ public class UIManager : MonoBehaviour {
 
     public void UpChoice(int i)
     {
+        Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
+        images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, PossibleCharacters.Count);
+        images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
 
     public void DownChoice(int i)
     {
+        Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
+        images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, PossibleCharacters.Count);
+        images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
 
     public void SpawnUI()
     {
+        TeamCanvas.SetActive(false);
+        spawnCanvas.SetActive(true);
         int numberInstantiated = 0;
         if (gameObject == GameManager.instance.player1)
         {
@@ -145,7 +173,6 @@ public class UIManager : MonoBehaviour {
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
                 button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
-                //button.onClick.AddListener(() => { button.GetComponent<Image>().color = new Color(1, 1, 1, 0.7f); });
             }
         }
     }
