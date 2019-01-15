@@ -18,9 +18,9 @@ public class UIManager : MonoBehaviour {
     public RectTransform characterZone;
     public Image prefabCharacterChoices;
 
-    private List<GameObject> TeamParents;
-    private List<SpriteAndName> possibleCharacters;
-    private List<int> currentCharacters;
+    private List<GameObject> TeamParents = new List<GameObject>();
+    private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>();
+    private List<int> currentCharacters = new List<int>();
 
     public List<int> CurrentCharacters
     {
@@ -60,8 +60,9 @@ public class UIManager : MonoBehaviour {
 
     public void TeamSelectUI()
     {
-        if (gameObject == GameManager.instance.player1)
+        if (gameObject.GetComponent<Player>().isLocalPlayer)
         {
+            TeamCanvas.SetActive(true);
             //init Posiible characters
             string path = "Teams.json";
             string line;
@@ -74,17 +75,21 @@ public class UIManager : MonoBehaviour {
             }
 
             //display UI
-            for (int i = 0; i < 5; ++i)
+            for (int i = 0; i < 5; i++)
             {
-
+                currentCharacters.Add(mod(i, possibleCharacters.Count));
                 //display all sprites and hide them
                 Vector3 position = new Vector3(-700 + 350 * i, 0);
                 TeamParents.Add(new GameObject("Parent" + i.ToString()));
                 TeamParents[i].transform.parent = TeamCanvas.transform;
+                TeamParents[i].transform.localPosition = Vector3.zero;
+                TeamParents[i].transform.localScale = Vector3.one;
                 for (int j = 0; j < PossibleCharacters.Count; j++)
                 {                    
-                    Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity, TeamParents[i].transform);
-                    image.sprite = PossibleCharacters[j].Sprite;
+                    Image image = Instantiate(prefabCharacterChoices, TeamParents[i].transform);
+                    image.GetComponent<RectTransform>().transform.localPosition = position;
+                    Sprite sprite = Resources.Load<Sprite>(PossibleCharacters[j].spritePath);
+                    image.sprite = sprite;
                     if (j != currentCharacters[i])
                     {
                         image.gameObject.SetActive(false);
@@ -95,52 +100,26 @@ public class UIManager : MonoBehaviour {
                 Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
                 buttonUp.GetComponentInChildren<Text>().text = "^";
-                buttonUp.onClick.AddListener(delegate { UpChoice(i); });
+                Debug.Log(i.ToString());
+                int tmp = i;
+                buttonUp.onClick.AddListener( ()=> { UpChoice(tmp); });
                 Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
                 buttonDown.GetComponentInChildren<Text>().text = "!^";
-                buttonUp.onClick.AddListener(delegate { DownChoice(i); });
+                buttonDown.onClick.AddListener(delegate { DownChoice(tmp); });
 
-            }
-        }
-        else if (gameObject == GameManager.instance.player2)
-        {
-            //Display UI
-            for (int i = 0; i < 5; ++i)
-            {
-                //display all sprites and hide them
-                Vector3 position = new Vector3(-700 + 350 * i, 0);
-                TeamParents.Add(new GameObject("Parent" + i.ToString()));
-                for (int j = 0; j < PossibleCharacters.Count; j++)
-                {
-                    Image image = Instantiate(prefabCharacterChoices, position, Quaternion.identity, TeamParents[i].transform);
-                    image.sprite = PossibleCharacters[j].Sprite;
-                    if (j != currentCharacters[i])
-                    {
-                        image.gameObject.SetActive(false);
-                    }
-                }
-
-                //display Buttons
-                Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
-                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
-                buttonUp.GetComponentInChildren<Text>().text = "^";
-                buttonUp.onClick.AddListener(delegate { UpChoice(i); });
-                Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
-                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
-                buttonDown.GetComponentInChildren<Text>().text = "!^";
-                buttonUp.onClick.AddListener(delegate { DownChoice(i); });
-
+                TeamCanvas.gameObject.transform.Find("GoTeam").GetComponent<Button>().onClick.AddListener(GameManager.instance.StartSpawn);
             }
         }
     }
 
     public void UpChoice(int i)
-    {
+    {        
         Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
         images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
+        Debug.Log(currentCharacters[i]);
     }
 
     public void DownChoice(int i)
@@ -149,6 +128,7 @@ public class UIManager : MonoBehaviour {
         images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
+        Debug.Log(currentCharacters[i]);
     }
 
     public void SpawnUI()

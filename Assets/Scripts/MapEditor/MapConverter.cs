@@ -82,7 +82,10 @@ public class MapConverter {
         }
         text += ", \"sizeX\" : "
         text += "]}";*/
-        jaggedGrid.SpawnPoints = spawnPoints.ToArray();
+        //jaggedGrid.SpawnPoints = spawnPoints.ToArray();
+
+        //TODO: METTRE LE SPAWNJ1 ET J2
+
         jaggedGrid.Save(outPath);
         //File.WriteAllText(outPath, text);
     }

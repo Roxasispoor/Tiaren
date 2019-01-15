@@ -33,6 +33,7 @@ public class LivingPlaceable : Placeable
     private List<Skill> skills;
     [SerializeField]
     private List<GameObject> weapons;
+    private String characterName;
     private Weapon equipedWeapon;
     private bool isDead;
     private int counterDeaths;
@@ -472,7 +473,7 @@ public class LivingPlaceable : Placeable
     // Use this for initialization
     void Awake()
     {
-        this.name = "default";
+        this.characterName = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -524,7 +525,7 @@ public class LivingPlaceable : Placeable
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 

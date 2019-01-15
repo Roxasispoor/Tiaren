@@ -164,10 +164,6 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
-        if (isLocalPlayer)
-        {
-            gameObject.transform.Find("SpawnCanvas").gameObject.SetActive(true);
-        }
         clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
         DicoCondition = new Dictionary<string, Condition>();
@@ -200,6 +196,7 @@ public class Player : NetworkBehaviour
 
     public void displaySpawn()
     {
+        gameObject.GetComponent<UIManager>().SpawnUI();
         for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
         {
             Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
@@ -394,7 +391,7 @@ public class Player : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
-        transform.Find("Canvas").gameObject.SetActive(true);
+        transform.Find("TeamCanvas").gameObject.SetActive(true);
     }
     
     public void DispatchSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)

@@ -218,10 +218,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         { 
             yield return null;
         }
-        SpawnCharacters();
         
         Grid.instance.Gravity();
         state = States.TeamSelect;
+        Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
         
