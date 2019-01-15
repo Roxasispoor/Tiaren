@@ -237,6 +237,8 @@ public class Player : NetworkBehaviour
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
+        GameManager.instance.playingPlaceable.ResetHighlightSkill();
+        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         if (skill.SkillType==SkillType.BLOCK)
         {
 

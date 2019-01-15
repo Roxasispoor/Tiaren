@@ -45,6 +45,12 @@ public class LivingPlaceable : Placeable
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
+    //Shaders (used for the highlight)
+    private Renderer rend;
+    [SerializeField]
+    private Shader originalShader;
+    private Shader outlineShader;
+
 
     public float MaxHP
     {
@@ -318,6 +324,14 @@ public class LivingPlaceable : Placeable
 
         set
         {
+            foreach (LivingPlaceable living in targetableUnits)
+            {
+                living.UnHighlightForSkill();
+            }
+            foreach (LivingPlaceable living in value)
+            {
+                living.HighlightForSkill();
+            }
             targetableUnits = value;
         }
     }
@@ -533,6 +547,10 @@ public class LivingPlaceable : Placeable
         //force = -5;
         //FillLiving();
 
+
+        rend = GetComponentInChildren<Renderer>();
+        originalShader = Shader.Find("Standard");
+        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
     }
     /// <summary>
     /// method to call to destroy the object 
@@ -555,6 +573,17 @@ public class LivingPlaceable : Placeable
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
        //TODO gérer le temps de respawn
+    }
+    
+ 
+    public void HighlightForSkill()
+    {
+        rend.material.shader = outlineShader;
+    }
+
+    public void UnHighlightForSkill()
+    {
+        rend.material.shader = originalShader;
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
@@ -663,6 +692,10 @@ public class LivingPlaceable : Placeable
         AreaOfMouvement.Clear();
     }
 
+    public void ResetHighlightSkill()
+    {
+        TargetableUnits = new List<LivingPlaceable>();
+    }
 
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
