@@ -6,8 +6,10 @@ using UnityEngine;
 public class MapConverter : MonoBehaviour {
 
     List<CSVReader.BlockCSV> blocks;
-    public static readonly int SPAWNPOINT = 99;
-    private List<int> spawnPoints;
+    public static readonly int SPAWNPOINTP1 = 99;
+    public static readonly int SPAWNPOINTP2 = 98;
+    private List<int> spawnPointsJ1;
+    private List<int> spawnPointsJ2;
 
 
     public string inPath;
@@ -15,7 +17,8 @@ public class MapConverter : MonoBehaviour {
 
     public static Dictionary<string, int> strColorToSerialize = new Dictionary<string, int>
     {
-        {"fbf236", SPAWNPOINT }, // Spawnpoint
+        {"639bff", SPAWNPOINTP1 }, // Spawnpoint
+        {"ac3232", SPAWNPOINTP2 }, // Spawnpoint
         {"ffffff", 1 },
         {"000000", 0 },
 
@@ -63,7 +66,7 @@ public class MapConverter : MonoBehaviour {
 
 
         JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ);
-        spawnPoints = new List<int>();
+        spawnPointsJ1 = new List<int>();
 
         foreach (CSVReader.BlockCSV block in blocks)
         {
@@ -71,19 +74,26 @@ public class MapConverter : MonoBehaviour {
                 y = block.Position.y + shiftY,
                 z = block.Position.z + shiftZ;
             //gridTable[y * sizeZ * sizeX + z * sizeX + x] = strColorToSerialize[block.Type];
-            if (strColorToSerialize[block.Type] == SPAWNPOINT)
+            if (strColorToSerialize[block.Type] == SPAWNPOINTP1)
             {
                 //Debug.Log("SpawnPoints!!");
-                spawnPoints.Add(x);
-                spawnPoints.Add(z); // swapping z and y for Unity
-                spawnPoints.Add(y); // swapping z and y for Unity
-            } else
+                spawnPointsJ1.Add(x);
+                spawnPointsJ1.Add(z); // swapping z and y for Unity
+                spawnPointsJ1.Add(y); // swapping z and y for Unity
+            } else if (strColorToSerialize[block.Type] == SPAWNPOINTP2)
+            {
+                //Debug.Log("SpawnPoints!!");
+                spawnPointsJ2.Add(x);
+                spawnPointsJ2.Add(z); // swapping z and y for Unity
+                spawnPointsJ2.Add(y); // swapping z and y for Unity
+            }
             {
                 jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
             }
         }
         
-        jaggedGrid.SpawnPoints = spawnPoints.ToArray();
+        jaggedGrid.spawnPlayerOne = spawnPointsJ1.ToArray();
+        jaggedGrid.spawnPlayerTwo = spawnPointsJ2.ToArray();
         jaggedGrid.Save(_outPath);
         Debug.Log("MapConverter: successfully converted to " + _outPath);
     }

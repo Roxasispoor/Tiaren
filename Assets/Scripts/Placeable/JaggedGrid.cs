@@ -16,20 +16,16 @@ public class JaggedGrid
 
 
     public int[] gridTable;
+
+
+    public int[] spawnPlayerOne;
+    public int[] spawnPlayerTwo;
+
     public int sizeX;
     public int sizeY;
     public int sizeZ;
 
-    private int[] spawnPoints;
 
-    public int[] SpawnPoints
-    {
-
-        set
-        {
-            spawnPoints = value;
-        }
-    }
 
     public JaggedGrid()
     {
@@ -75,7 +71,7 @@ public class JaggedGrid
         }
     }
 
-    public void SetCell (int value, int x, int y, int z)
+    public void SetCell(int value, int x, int y, int z)
     {
         this.gridTable[y * sizeZ * sizeX + z * sizeX + x] = value;
     }
@@ -103,13 +99,27 @@ public class JaggedGrid
         return toReturn;
     }
 
-    public List<Vector3Int> getListSpawns()
+    public List<Vector3Int> GetSpawnsP1()
     {
-        List<Vector3Int> toReturn = new List<Vector3Int>();
-        for (int i = 0; i < spawnPoints.Length; i += 3)
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i < spawnPlayerOne.Length; i += 3)
         {
-            toReturn.Add(new Vector3Int(spawnPoints[i], spawnPoints[i + 1], spawnPoints[i + 2]));
+            spawns.Add(new Vector3Int(spawnPlayerOne[i], spawnPlayerOne[i + 1], spawnPlayerOne[i + 2]));
         }
-        return toReturn;
+        return spawns;
     }
+
+    public List<Vector3Int> GetSpawnsP2()
+    {
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i < spawnPlayerTwo.Length; i += 3)
+        {
+            spawns.Add(new Vector3Int(spawnPlayerTwo[i], spawnPlayerTwo[i + 1], spawnPlayerTwo[i + 2]));
+        }
+        return spawns;
+    }
+
+
+
+
 }
