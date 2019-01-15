@@ -17,6 +17,7 @@ namespace Barebones.MasterServer
     /// </summary>
     public class CreateRoom : MonoBehaviour
     {
+        public PlayerAccount account;
         RoomAccessPacket access;
         EventsChannel.Promise promise;
         //Allows the map name and scene to be set in the Inspector as a single object.
@@ -98,27 +99,10 @@ namespace Barebones.MasterServer
                     {
                   
                         Debug.Log("Start on found game");
-                        
 
 
-                        //The request has finished, the game instance is made. Now we need to actually get access to the room.
-                        Msf.Client.Rooms.GetAccess(gameInfo.Id, (access, error) =>
-                        {
-                            if (access == null)
-                            {
-                                Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
-                                        DialogBoxData.CreateInfo("Failed to get access to room: " + error));
 
-                                Logs.Error("Failed to get access to room: " + error);
-
-                                return;
-                            }
-                            SceneManager.LoadScene("online");
-                            this.access = access;
-                            SceneManager.sceneLoaded += OnSceneLoaded;
-                            //StartCoroutine(WaitSceneLoaded(access));
-                        }
-                        );
+                        GetAccess(gameInfo.Id);
                     }
                         
 
@@ -127,7 +111,27 @@ namespace Barebones.MasterServer
         
             
         }
+        public void GetAccess(int id)
+        {
+            Msf.Client.Rooms.GetAccess(id, (access, error) =>
+            {
+                if (access == null)
+                {
+                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
+                            DialogBoxData.CreateInfo("Failed to get access to room: " + error));
 
+                    Logs.Error("Failed to get access to room: " + error);
+
+                    return;
+                }
+                SceneManager.LoadScene("online");
+                this.access = access;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+                //StartCoroutine(WaitSceneLoaded(access));
+            }
+                       );
+        
+    }
         //This will be called when we click the button that this script will be attached to
         public void OnCreateClick()
         {
@@ -233,6 +237,7 @@ namespace Barebones.MasterServer
             networkManager.networkAddress = access.RoomIp;
             networkManager.networkPort = access.RoomPort;
             networkManager.launchedFromMaster = true;
+            //networkManager.username=
             // Start connecting
             networkManager.StartClient();
 
@@ -249,6 +254,7 @@ namespace Barebones.MasterServer
                 networkManager.client.connection.Send(UnetGameRoom.AccessMsgType, tokenMsg);
                 
             }));
+
         }
 
 
@@ -278,24 +284,8 @@ namespace Barebones.MasterServer
             var roomId = int.Parse(data[MsfDictKeys.RoomId]);
 
             //The request has finished, the game instance is made. Now we need to actually get access to the room.
-            Msf.Client.Rooms.GetAccess(roomId, (access, error) =>
-            {
-                if (access == null)
-                {
-                    Msf.Events.Fire(Msf.EventNames.ShowDialogBox,
-                            DialogBoxData.CreateInfo("Failed to get access to room: " + error));
+            GetAccess(roomId);
 
-                    Logs.Error("Failed to get access to room: " + error);
-
-                    return;
-                }
-                SceneManager.LoadScene("online");
-                this.access = access;
-                SceneManager.sceneLoaded += OnSceneLoaded;
-                //StartCoroutine(WaitSceneLoaded(access));
-            }
-            );
-           
 
             // Quick runthrough of what "GetAccess" does, as I found it complicated to trace:
             // The method is found in "MsfRoomsClient.cs". After checking that the Client is connected to the server,

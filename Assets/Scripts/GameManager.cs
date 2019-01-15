@@ -30,8 +30,11 @@ public class GameManager : NetworkBehaviour
     public GameObject[] prefabWeapons;
     public GameObject gridFolder;
     public GameObject player1; //Should be Object
-
+    public PlayerAccount disconnectedAccount;
+    public bool zabraf;
     public GameObject player2; //Should be Object
+    public string player1Username="";
+    public string player2Username=""; //TODOShould instead be account and serialize 
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
@@ -39,7 +42,7 @@ public class GameManager : NetworkBehaviour
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
-
+    public TransmitterNoThread transmitter;
     private Player winner;
     public LivingPlaceable playingPlaceable;
     private UIManager UIManager;
@@ -154,6 +157,7 @@ public class GameManager : NetworkBehaviour
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
 
         }
+        transmitter = GetComponent<TransmitterNoThread>();
     }
 
 
@@ -182,7 +186,19 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //If you want to load one
 
         Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        transmitter.networkManager = networkManager;
+       /*if (isServer)
+        {
+            Debug.LogError("Transmitter started");
+            StartCoroutine(transmitter.AcceptTcp());
            
+        }
+        if (isClient)
+        {
+            Debug.Log("Client listen to data start coroutine");
+            StartCoroutine(transmitter.ListenToData());
+            //receive data from server
+        }*/
         while (player1 == null )
         {
                
@@ -198,17 +214,28 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         
         Grid.instance.Gravity();
         //To activate for perf, desactivate for pf
+        transmitter.networkManager = networkManager;
+       /* if (isServer)
+        {
+            transmitter.initServer();
+        }*/
         if (isClient)
         {
             InitialiseBatchFolder();
+            
+
+            //receive data from server
         }
+       
         
             //Retrieve data 
-
+       
         //RpcStartGame();
+        
         BeginningOfTurn();
     
     }
+
 
     public void CheckWinCondition()
     {
@@ -608,8 +635,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-    
-    /// <summary>
+    private void Update()
+    {
+      
+    }// <summary>
     /// Unused function to apply function to all visible characters
     /// </summary>
     /// <param name="shooter"></param>

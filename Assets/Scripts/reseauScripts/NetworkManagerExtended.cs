@@ -7,7 +7,7 @@ public class NetworkManagerExtended : NetworkManager
     public UnetGameRoom GameRoom;
     [NonSerialized]
     public bool launchedFromMaster = false;
-//    public GameObject playerPrefab;
+    //    public GameObject playerPrefab;
     void Awake()
     {
         string[] arguments = Environment.GetCommandLineArgs();
@@ -65,6 +65,7 @@ public class NetworkManagerExtended : NetworkManager
     {
         Debug.LogError("onserveraddplayercalled");
         var player = Instantiate(playerPrefab);
+       // player.GetComponent<Player>().username = username; //Not very secured, session could be highjacked, should be instead a token given when game is launched
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
     /// <summary>

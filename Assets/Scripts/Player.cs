@@ -19,7 +19,7 @@ public class Player : NetworkBehaviour
     private Vector3Int placeToGo;
     public bool isWinner = false;
     public Text winText;
-
+    public PlayerAccount account;
     private Placeable shotPlaceable;
     public CameraScript cameraScript;
     public delegate float Axis();
@@ -143,6 +143,64 @@ public class Player : NetworkBehaviour
     }
 
 
+    [Command]
+    public void CmdSetName(string username)
+    {
+        Debug.LogError("Bienvenue dans cmd setname");  
+        Debug.LogError(GameManager.instance.player1);  
+        Debug.LogError(GameManager.instance.player1Username);  
+        if(GameManager.instance.player1==null && GameManager.instance.player1Username=="" )
+        {
+                GameManager.instance.player1 = gameObject;
+                Debug.LogError("player1 is " + username);
+            GameManager.instance.player1Username = username;
+        }
+       else if (GameManager.instance.player2 == null  && GameManager.instance.player2Username=="")
+        {
+
+            GameManager.instance.player2 = gameObject;
+            Debug.LogError("player2 is " + username);
+            GameManager.instance.player2Username = username;
+        }
+        else if(GameManager.instance.player1 == null && GameManager.instance.player1Username == username)
+        {
+            Debug.LogError("Player1 reconnect!");
+           
+            Debug.LogError("Transmitter started");
+            StartCoroutine(GameManager.instance.transmitter.AcceptTcp());
+            RpcListen();
+            
+
+           
+            GameManager.instance.player1 = gameObject;
+            Debug.LogError("player1 is " + username);
+            GameManager.instance.player1Username = username;
+        }
+        else if (GameManager.instance.player2 == null && GameManager.instance.player2Username == username)
+        {
+            Debug.LogError("Player2 reconnect!");
+            Debug.LogError("Transmitter started");
+            StartCoroutine(GameManager.instance.transmitter.AcceptTcp());
+            RpcListen();
+
+            GameManager.instance.player2 = gameObject;
+            Debug.LogError("player2 is " + username);
+            GameManager.instance.player2Username = username;
+        }
+        else
+        {
+            Debug.LogError("Who dis? GTFO"); ;
+        }
+
+
+    }
+    
+    [ClientRpc]
+    public void RpcListen()
+    {
+        Debug.Log("Client listen to data start coroutine");
+        StartCoroutine(GameManager.instance.transmitter.ListenToData());
+    }
 
     /// <summary>
     /// List of characters of the player
@@ -150,10 +208,7 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
-        if (isLocalPlayer)
-        {
-            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
-        }
+       
         clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
         DicoCondition = new Dictionary<string, Condition>();
@@ -163,24 +218,41 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
-
-
+       
     }
 
     // Use this for initialization
     void Start()
     {
-        if (GameManager.instance.player1 == null)
-        {
-            GameManager.instance.player1 = gameObject;
-        }
-        else
-        {
-            GameManager.instance.player2 = gameObject;
-         }
         if (isLocalPlayer)
         {
-            Debug.Log("STARTCLIENT!");
+            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
+        }
+        if (isClient)
+        { 
+            if (GameManager.instance.player1 == null) //Initialize on client and ask server if this was possible
+            {
+                GameManager.instance.player1 = gameObject;
+            }
+            else
+            {
+                GameManager.instance.player2 = gameObject;
+            }
+        }
+        Debug.Log("STARTCLIENT!");
+        if (isLocalPlayer)
+        {
+
+            account = FindObjectOfType<PlayerAccount>();
+            if (account != null && account.AccountInfoPacket.Username != null)
+            {
+                CmdSetName(account.AccountInfoPacket.Username);
+            }
+            else
+            {
+                CmdSetName("Patate");
+            }
+
         }
     }
     //Both clients get that
