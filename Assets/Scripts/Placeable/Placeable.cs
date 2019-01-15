@@ -351,6 +351,8 @@ public abstract class Placeable:MonoBehaviour
     }
     public void UnHighlight()
     {
+        if (IsLiving()) return;
+
         //Put back the default material
         foreach (Transform fils in transform)
         {
