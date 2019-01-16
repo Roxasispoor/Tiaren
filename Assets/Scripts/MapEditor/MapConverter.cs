@@ -8,8 +8,8 @@ public class MapConverter : MonoBehaviour {
     List<CSVReader.BlockCSV> blocks;
     public static readonly int SPAWNPOINTP1 = 99;
     public static readonly int SPAWNPOINTP2 = 98;
-    private List<int> spawnPointsJ1;
-    private List<int> spawnPointsJ2;
+    private List<int> spawnPointsP1;
+    private List<int> spawnPointsP2;
 
 
     public string inPath;
@@ -66,7 +66,8 @@ public class MapConverter : MonoBehaviour {
 
 
         JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ);
-        spawnPointsJ1 = new List<int>();
+        spawnPointsP1 = new List<int>();
+        spawnPointsP2 = new List<int>();
 
         foreach (CSVReader.BlockCSV block in blocks)
         {
@@ -77,23 +78,23 @@ public class MapConverter : MonoBehaviour {
             if (strColorToSerialize[block.Type] == SPAWNPOINTP1)
             {
                 //Debug.Log("SpawnPoints!!");
-                spawnPointsJ1.Add(x);
-                spawnPointsJ1.Add(z); // swapping z and y for Unity
-                spawnPointsJ1.Add(y); // swapping z and y for Unity
+                spawnPointsP1.Add(x);
+                spawnPointsP1.Add(z); // swapping z and y for Unity
+                spawnPointsP1.Add(y); // swapping z and y for Unity
             } else if (strColorToSerialize[block.Type] == SPAWNPOINTP2)
             {
                 //Debug.Log("SpawnPoints!!");
-                spawnPointsJ2.Add(x);
-                spawnPointsJ2.Add(z); // swapping z and y for Unity
-                spawnPointsJ2.Add(y); // swapping z and y for Unity
+                spawnPointsP2.Add(x);
+                spawnPointsP2.Add(z); // swapping z and y for Unity
+                spawnPointsP2.Add(y); // swapping z and y for Unity
             }
-            {
+            else {
                 jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
             }
         }
         
-        jaggedGrid.spawnPlayerOne = spawnPointsJ1.ToArray();
-        jaggedGrid.spawnPlayerTwo = spawnPointsJ2.ToArray();
+        jaggedGrid.spawnPlayerOne = spawnPointsP1.ToArray();
+        jaggedGrid.spawnPlayerTwo = spawnPointsP2.ToArray();
         jaggedGrid.Save(_outPath);
         Debug.Log("MapConverter: successfully converted to " + _outPath);
     }

@@ -656,6 +656,9 @@ public class Grid : MonoBehaviour
         }
         Debug.Log(Placeable.currentMaxId);
 
+        Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
+        Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
+
     }
 
     public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool dummy)
