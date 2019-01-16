@@ -26,10 +26,13 @@ public class DestroyBloc : EffectOnPlaceableOnly
         {
             GameManager.instance.RemoveBlockFromBatch(Target);
         }
+
         Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
-        animLauncher.SetTrigger("destroy");
-        Target.Destroy();
-       
+        animLauncher.Play("destroyBlock");
+        AnimatorClipInfo[] m_CurrentClipInfo = animLauncher.GetCurrentAnimatorClipInfo(0);
+        float timeAnim = m_CurrentClipInfo[0].clip.length;
+
+        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndDestroyBlock(Target, timeAnim));
             
     }
 }

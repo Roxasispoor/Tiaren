@@ -16,9 +16,9 @@ public class CreateBlock : EffectOnPlaceableOnly {
     {
         this.prefab = other.prefab;
         this.face = other.face;
-    } 
+    }
 
-    public CreateBlock(GameObject prefab,Vector3Int face)
+    public CreateBlock(GameObject prefab, Vector3Int face)
     {
         this.prefab = prefab;
         this.face = face;
@@ -33,13 +33,11 @@ public class CreateBlock : EffectOnPlaceableOnly {
     {
 
         Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
-        animLauncher.SetTrigger("create");
-        Grid.instance.InstantiateCube(prefab, Target.GetPosition() + face);
+        animLauncher.Play("createBlock");
+        AnimatorClipInfo[] m_CurrentClipInfo = animLauncher.GetCurrentAnimatorClipInfo(0);
+        float timeAnim = m_CurrentClipInfo[0].clip.length;
+        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face,timeAnim));
 
     }
-
-    private void Generate()
-    {
-        
-    }
+    
 }
