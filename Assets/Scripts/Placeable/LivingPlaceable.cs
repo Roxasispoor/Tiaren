@@ -46,6 +46,12 @@ public class LivingPlaceable : Placeable
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
+    //Shaders (used for the highlight)
+    private Renderer rend;
+    [SerializeField]
+    private Shader originalShader;
+    private Shader outlineShader;
+
 
     public float MaxHP
     {
@@ -319,6 +325,14 @@ public class LivingPlaceable : Placeable
 
         set
         {
+            foreach (LivingPlaceable living in targetableUnits)
+            {
+                living.UnHighlightForSkill();
+            }
+            foreach (LivingPlaceable living in value)
+            {
+                living.HighlightForSkill();
+            }
             targetableUnits = value;
         }
     }
@@ -541,6 +555,10 @@ public class LivingPlaceable : Placeable
         //FillLiving();
         //TODO Read from JSON properly
 
+
+        rend = GetComponentInChildren<Renderer>();
+        originalShader = Shader.Find("Standard");
+        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
     }
     /// <summary>
     /// method to call to destroy the object 
@@ -564,6 +582,17 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
+    
+ 
+    public void HighlightForSkill()
+    {
+        rend.material.shader = outlineShader;
+    }
+
+    public void UnHighlightForSkill()
+    {
+        rend.material.shader = originalShader;
+    }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
     {
@@ -582,6 +611,7 @@ public class LivingPlaceable : Placeable
     }
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
+        player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -638,6 +668,7 @@ public class LivingPlaceable : Placeable
     }
     public void ResetAreaOfMovement()
     {
+       
         float heightSize = 1.02f;
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -664,10 +695,15 @@ public class LivingPlaceable : Placeable
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
                 //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
             }
+
         }
         AreaOfMouvement.Clear();
     }
 
+    public void ResetHighlightSkill()
+    {
+        TargetableUnits = new List<LivingPlaceable>();
+    }
 
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
@@ -705,6 +741,7 @@ public class LivingPlaceable : Placeable
             GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
+      
     }
 
     public void Save()

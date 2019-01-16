@@ -514,11 +514,12 @@ public class Grid : MonoBehaviour
             Vector3 oldPosition = bloc.transform.position;
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
-            if(updateTransform)
+            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+            if (updateTransform)
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+          
 
         }
     }
@@ -694,6 +695,9 @@ public class Grid : MonoBehaviour
         SpawnPlayer1.Add(new Vector3Int(0, 2, 2));
         SpawnPlayer1.Add(new Vector3Int(2, 2, 0));
         Debug.Log(Placeable.currentMaxId);
+
+        Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
+        Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
 
     }
 

@@ -16,16 +16,16 @@ public class JaggedGrid
 
 
     public int[] gridTable;
-
-
-    private int[] spawnPlayerOne;
-    private int[] spawnPlayerTwo;
+    
+    public int[] spawnPlayerOne;
+    public int[] spawnPlayerTwo;
 
     public int sizeX;
     public int sizeY;
     public int sizeZ;
 
-    
+
+
 
     public JaggedGrid()
     {
@@ -99,17 +99,17 @@ public class JaggedGrid
         return toReturn;
     }
 
-    public List<Vector3Int> GetSpawnsJ1()
+    public List<Vector3Int> GetSpawnsP1()
     {
         List<Vector3Int> spawns = new List<Vector3Int>();
-        for (int i = 0; i< spawnPlayerOne.Length; i += 3)
+        for (int i = 0; i < spawnPlayerOne.Length; i += 3)
         {
             spawns.Add(new Vector3Int(spawnPlayerOne[i], spawnPlayerOne[i + 1], spawnPlayerOne[i + 2]));
         }
         return spawns;
     }
 
-    public List<Vector3Int> GetSpawnsJ2()
+    public List<Vector3Int> GetSpawnsP2()
     {
         List<Vector3Int> spawns = new List<Vector3Int>();
         for (int i = 0; i < spawnPlayerTwo.Length; i += 3)
@@ -118,8 +118,5 @@ public class JaggedGrid
         }
         return spawns;
     }
-
-   
-   
 
 }
