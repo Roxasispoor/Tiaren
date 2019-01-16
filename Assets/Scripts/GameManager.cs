@@ -17,6 +17,7 @@ public class GameManager : NetworkBehaviour
     //can't be the network manager or isServer can't work
     public static GameManager instance;
     public Material pathFindingMaterial;
+    public Material highlightingMaterial;
     public GameMode gameMode = GameMode.DEATHMATCH;
     public Material targetMaterial;
     public Material spawnMaterial;
@@ -36,7 +37,7 @@ public class GameManager : NetworkBehaviour
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
-    
+    public Placeable hovered;
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
@@ -156,7 +157,7 @@ public class GameManager : NetworkBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
 
-
+        
         idPlaceable = new Dictionary<int, Placeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
@@ -167,7 +168,6 @@ public class GameManager : NetworkBehaviour
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
 
         }
-
     }
 
 
@@ -403,8 +403,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         }
     public void ResetAllBatches()
-    { 
-     foreach (Transform child in batchFolder.transform)
+    {
+        if(hovered != null)
+        {
+            hovered.UnHighlight();
+        }
+        foreach (Transform child in batchFolder.transform)
         {
             Destroy(child.gameObject);
         }
@@ -430,7 +434,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if(playingPlaceable.player.isLocalPlayer)
         { 
-        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() });
+        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;
         }
     }
@@ -491,8 +495,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             };
             // If it is the first of this material
             AddMeshToBatches(meshFilter,currentInstance);
+            if(meshFilter.GetComponent<Placeable>()!=null)
+            { 
             meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
-
+            }
         }
         //Then at the end we create all the batches that are not full
         foreach(List<Batch> batches in dictionaryMaterialsFilling.Values)
@@ -559,6 +565,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             playingPlaceable.ResetAreaOfTarget();
             playingPlaceable.ResetAreaOfMovement();
+            playingPlaceable.ResetHighlightSkill();
             //ResetAllBatches();
         }
             BeginningOfTurn();

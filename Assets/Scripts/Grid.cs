@@ -512,11 +512,12 @@ public class Grid : MonoBehaviour
             Vector3 oldPosition = bloc.transform.position;
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
-            if(updateTransform)
+            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+            if (updateTransform)
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+          
 
         }
     }
@@ -669,7 +670,7 @@ public class Grid : MonoBehaviour
                         GameObject obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
                             new Vector3(x, y, z), Quaternion.identity, parent.transform);
 
-                        Debug.Log(x + "-" + y + "-" + z);
+                        //Debug.Log(x + "-" + y + "-" + z);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
                         obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
@@ -683,6 +684,9 @@ public class Grid : MonoBehaviour
             }
         }
         Debug.Log(Placeable.currentMaxId);
+
+        Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
+        Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
 
     }
 

@@ -55,7 +55,8 @@ public abstract class EffectOnPlaceable : Effect {
     }
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
-        TargetAndInvokeEffectManager(placeable);
+        this.target = placeable;
+        EffectManager.instance.UseEffect(this);
     }
 
     public override void TargetAndInvokeEffectManager(Placeable placeable)

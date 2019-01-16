@@ -3,24 +3,38 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapConverter {
+public class MapConverter : MonoBehaviour {
 
-    static List<CSVReader.BlockCSV> blocks;
-    public static readonly int SPAWNPOINT = 99;
-    private static List<int> spawnPoints;
+    List<CSVReader.BlockCSV> blocks;
+    public static readonly int SPAWNPOINTP1 = 99;
+    public static readonly int SPAWNPOINTP2 = 98;
+    private List<int> spawnPointsP1;
+    private List<int> spawnPointsP2;
+
+
+    public string inPath;
+    public string outPath;
 
     public static Dictionary<string, int> strColorToSerialize = new Dictionary<string, int>
     {
-        {"fbf236", SPAWNPOINT }, // Spawnpoint
+        {"639bff", SPAWNPOINTP1 }, // Spawnpoint
+        {"ac3232", SPAWNPOINTP2 }, // Spawnpoint
         {"ffffff", 1 },
         {"000000", 0 },
 
     };
 
-    public static void ConvertGridFromText(string inPath, string outPath)
+    public void ConvertGridFromText(string _inPath, string _outPath)
     {
+        /*if (System.IO.File.Exists(_inPath))
+        {
+            Debug.Log("MapConverter: File " + _inPath + "does not exist");
+            return;
+        }*/
 
-        blocks = CSVReader.ReadBlocks(inPath);
+        Debug.Log("MapConverter: opening " + _inPath);
+
+        blocks = CSVReader.ReadBlocks(_inPath);
 
         int minX = blocks[0].Position.x,
             minY = blocks[0].Position.y,
@@ -52,7 +66,8 @@ public class MapConverter {
 
 
         JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ);
-        spawnPoints = new List<int>();
+        spawnPointsP1 = new List<int>();
+        spawnPointsP2 = new List<int>();
 
         foreach (CSVReader.BlockCSV block in blocks)
         {
@@ -60,30 +75,35 @@ public class MapConverter {
                 y = block.Position.y + shiftY,
                 z = block.Position.z + shiftZ;
             //gridTable[y * sizeZ * sizeX + z * sizeX + x] = strColorToSerialize[block.Type];
-            if (strColorToSerialize[block.Type] == SPAWNPOINT)
+            if (strColorToSerialize[block.Type] == SPAWNPOINTP1)
             {
                 //Debug.Log("SpawnPoints!!");
-                spawnPoints.Add(x);
-                spawnPoints.Add(z); // swapping z and y for Unity
-                spawnPoints.Add(y); // swapping z and y for Unity
-            } else
+                spawnPointsP1.Add(x);
+                spawnPointsP1.Add(z); // swapping z and y for Unity
+                spawnPointsP1.Add(y); // swapping z and y for Unity
+            } else if (strColorToSerialize[block.Type] == SPAWNPOINTP2)
             {
-                //Debug.Log(block.Type);
+                //Debug.Log("SpawnPoints!!");
+                spawnPointsP2.Add(x);
+                spawnPointsP2.Add(z); // swapping z and y for Unity
+                spawnPointsP2.Add(y); // swapping z and y for Unity
+            }
+            else {
                 jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
             }
         }
+        
+        jaggedGrid.spawnPlayerOne = spawnPointsP1.ToArray();
+        jaggedGrid.spawnPlayerTwo = spawnPointsP2.ToArray();
+        jaggedGrid.Save(_outPath);
+        Debug.Log("MapConverter: successfully converted to " + _outPath);
+    }
 
-        //Debug.Log(gridTable.ToString());
-        /*
-        string text = "{\"gridTable\":[" + gridTable[0];
-        for (int i = 1; i < gridTable.Length; i++)
+    public void ConvertFromGUI()
+    {
+        if (inPath != "" && outPath != "")
         {
-            text += "," + gridTable[i];
+            ConvertGridFromText(inPath, outPath);
         }
-        text += ", \"sizeX\" : "
-        text += "]}";*/
-        jaggedGrid.SpawnPoints = spawnPoints.ToArray();
-        jaggedGrid.Save(outPath);
-        //File.WriteAllText(outPath, text);
     }
 }
