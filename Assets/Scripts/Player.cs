@@ -224,7 +224,29 @@ public class Player : NetworkBehaviour
             }
         }
     }
+    
+    [Command]
+    public void CmdTeamReady()
+    {
+        Isready = true;
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            GameManager.instance.player1.GetComponent<Player>().Isready = false;
+            GameManager.instance.player2.GetComponent<Player>().Isready = false;
+            RpcStartSpawn();
+        }
+    }
 
+    public void TeamReady()
+    {
+        CmdTeamReady();
+    }
+
+    [ClientRpc]
+    public void RpcStartSpawn()
+    {
+        displaySpawn();
+    }
 
     public void GameReady()
     {

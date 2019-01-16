@@ -48,11 +48,6 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    private void Start()
-    {
-        
-    }
-
     int mod(int x, int m)
     {
         return (x % m + m) % m;
@@ -107,8 +102,6 @@ public class UIManager : MonoBehaviour {
                 buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
                 buttonDown.GetComponentInChildren<Text>().text = "!^";
                 buttonDown.onClick.AddListener(delegate { DownChoice(tmp); });
-
-                TeamCanvas.gameObject.transform.Find("GoTeam").GetComponent<Button>().onClick.AddListener(GameManager.instance.StartSpawn);
             }
         }
     }
@@ -119,7 +112,6 @@ public class UIManager : MonoBehaviour {
         images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
-        Debug.Log(currentCharacters[i]);
     }
 
     public void DownChoice(int i)
@@ -128,7 +120,6 @@ public class UIManager : MonoBehaviour {
         images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
-        Debug.Log(currentCharacters[i]);
     }
 
     public void SpawnUI()

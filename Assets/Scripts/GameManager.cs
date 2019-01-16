@@ -233,18 +233,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
     }
 
-    public void StartSpawn()
-    {
-        state = States.Spawn;
-        SpawnCharacters();
-    }
-
-    public void SpawnCharacters()
-    {
-        player1.GetComponent<Player>().displaySpawn();
-        player2.GetComponent<Player>().displaySpawn();
-    }
-
+    
     public void CheckWinCondition()
     {
             if (gameMode == GameMode.DEATHMATCH)
