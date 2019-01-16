@@ -317,6 +317,7 @@ public abstract class Placeable:MonoBehaviour
     {
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
+            if (IsLiving()) return;
             GameObject quadUp = transform.Find("QuadUp").gameObject;
             GameObject quadRight = transform.Find("QuadRight").gameObject;
             GameObject quadLeft = transform.Find("QuadLeft").gameObject;
