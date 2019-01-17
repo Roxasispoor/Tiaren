@@ -69,6 +69,7 @@ public class TransmitterNoThread : MonoBehaviour {
         }
         else
         {
+            //WARNING: Do not have the file open in notepad or whatsoever
             Grid.instance.SaveGridNetwork();
 
             try
