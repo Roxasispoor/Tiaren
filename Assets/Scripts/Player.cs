@@ -194,57 +194,81 @@ public class Player : NetworkBehaviour
     }
 
 
+
     public void displaySpawn()
     {
-        gameObject.GetComponent<UIManager>().SpawnUI();
-        for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+        if (isLocalPlayer)
         {
-            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-            Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-            if (i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            gameObject.GetComponent<UIManager>().SpawnUI();
+            Debug.Log(gameObject.name);
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
-                GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                    Debug.Log(i);
+                }
             }
-            if (gameObject == GameManager.instance.player2)
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
             {
-                Characters[i].SetActive(false);
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
             }
-        }
-        for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
-        {
-            Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-            Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-            if (i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
-            {
-                GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
-            }
-            if (gameObject == GameManager.instance.player2)
-            {
-                Characters[i].SetActive(false);
-            }
+            GameManager.instance.ResetAllBatches();
         }
     }
     
     [Command]
-    public void CmdTeamReady()
+    public void CmdTeamReady(int[] characterChoices)
     {
         Isready = true;
+        List<int> numbers = new List<int>(characterChoices);
+        gameObject.GetComponent<UIManager>().CurrentCharacters = numbers;
+
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
             GameManager.instance.player1.GetComponent<Player>().Isready = false;
             GameManager.instance.player2.GetComponent<Player>().Isready = false;
-            RpcStartSpawn();
+            GameManager.instance.state = States.Spawn;
+
+            int[] choicesP1 = new int[GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP1[i] = GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            int[] choicesP2 = new int[GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
+            GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
         }
     }
 
     public void TeamReady()
     {
-        CmdTeamReady();
+        int[] characterChoices = new int[gameObject.GetComponent<UIManager>().CurrentCharacters.Count];
+        for (int i = 0; i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+        {
+            characterChoices[i] = gameObject.GetComponent<UIManager>().CurrentCharacters[i];
+        }
+        CmdTeamReady(characterChoices);
     }
 
     [ClientRpc]
-    public void RpcStartSpawn()
+    public void RpcStartSpawn(int[] otherPlayerChoices)
     {
+        List<int> numbers = new List<int>(otherPlayerChoices);
+        GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
         displaySpawn();
     }
 

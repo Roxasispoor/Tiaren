@@ -686,14 +686,8 @@ public class Grid : MonoBehaviour
             }
         }
 
-        SpawnPlayer1 = new List<Vector3Int>();
-        SpawnPlayer1.Add(new Vector3Int(0, 1, 0));
-        SpawnPlayer1.Add(new Vector3Int(0, 1, 2));
-        SpawnPlayer1.Add(new Vector3Int(2, 1, 0));
-        SpawnPlayer2 = new List<Vector3Int>();
-        SpawnPlayer1.Add(new Vector3Int(0, 2, 0));
-        SpawnPlayer1.Add(new Vector3Int(0, 2, 2));
-        SpawnPlayer1.Add(new Vector3Int(2, 2, 0));
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
         Debug.Log(Placeable.currentMaxId);
 
         Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);

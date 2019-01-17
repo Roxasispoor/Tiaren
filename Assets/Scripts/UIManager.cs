@@ -95,7 +95,6 @@ public class UIManager : MonoBehaviour {
                 Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
                 buttonUp.GetComponentInChildren<Text>().text = "^";
-                Debug.Log(i.ToString());
                 int tmp = i;
                 buttonUp.onClick.AddListener( ()=> { UpChoice(tmp); });
                 Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);

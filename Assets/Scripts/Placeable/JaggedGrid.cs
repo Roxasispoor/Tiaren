@@ -104,7 +104,7 @@ public class JaggedGrid
         List<Vector3Int> spawns = new List<Vector3Int>();
         for (int i = 0; i < spawnPlayerOne.Length; i += 3)
         {
-            spawns.Add(new Vector3Int(spawnPlayerOne[i], spawnPlayerOne[i + 1], spawnPlayerOne[i + 2]));
+            spawns.Add(new Vector3Int(spawnPlayerOne[i], spawnPlayerOne[i + 2], spawnPlayerOne[i + 1]));
         }
         return spawns;
     }
@@ -114,7 +114,7 @@ public class JaggedGrid
         List<Vector3Int> spawns = new List<Vector3Int>();
         for (int i = 0; i < spawnPlayerTwo.Length; i += 3)
         {
-            spawns.Add(new Vector3Int(spawnPlayerTwo[i], spawnPlayerTwo[i + 1], spawnPlayerTwo[i + 2]));
+            spawns.Add(new Vector3Int(spawnPlayerTwo[i], spawnPlayerTwo[i + 2], spawnPlayerTwo[i + 1]));
         }
         return spawns;
     }

@@ -210,8 +210,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
            
         while (player1 == null )
-        {               
-                yield return null;
+        {
+            yield return null;
         }
         Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
@@ -224,7 +224,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
-        
+        player1.gameObject.name = "player1";
+        player2.gameObject.name = "player2";
     }
 
     public void TeamSelectDisplay()
@@ -232,7 +233,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player1.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
         player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
     }
-
+    
+    public GameObject GetOtherPlayer(GameObject player)
+    {
+        if(player != player1)
+        {
+            return player1;
+        }
+        else
+        {
+            return player2;
+        }
+    }
     
     public void CheckWinCondition()
     {
@@ -387,7 +399,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
         }
         if (saved != null)
-
         {
             newBatch.GetComponent<MeshRenderer>().material = saved;
             newBatch.GetComponent<MeshFilter>().mesh = new Mesh();
