@@ -315,6 +315,7 @@ public abstract class Placeable:MonoBehaviour
     }
     public void Highlight()
     {
+        if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
             GameObject quadUp = transform.Find("QuadUp").gameObject;
@@ -351,6 +352,8 @@ public abstract class Placeable:MonoBehaviour
     }
     public void UnHighlight()
     {
+        if (IsLiving()) return;
+
         //Put back the default material
         foreach (Transform fils in transform)
         {

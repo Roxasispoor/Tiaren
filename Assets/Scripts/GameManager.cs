@@ -608,6 +608,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             playingPlaceable.ResetAreaOfTarget();
             playingPlaceable.ResetAreaOfMovement();
+            playingPlaceable.ResetHighlightSkill();
             //ResetAllBatches();
         }
             BeginningOfTurn();
