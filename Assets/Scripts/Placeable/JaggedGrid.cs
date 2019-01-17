@@ -43,7 +43,7 @@ public class JaggedGrid
         gridTable = new int[sizeX * sizeY * sizeZ];
     }
 
-    public void ToJagged(Grid grid)
+    public virtual void ToJagged(Grid grid)
     {
         sizeX = grid.sizeX;
         sizeY = grid.sizeY;

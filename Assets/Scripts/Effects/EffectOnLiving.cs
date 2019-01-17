@@ -8,12 +8,13 @@ public abstract class EffectOnLiving : Effect
 {
     private Animation OnPlaceable;
     private LivingPlaceable target;
+    public int netIdTarget=-1;
   
 
     public EffectOnLiving(EffectOnLiving other)
     {
-        this.target = other.target;
-        this.launcher = other.launcher;
+        Target = other.target;
+        Launcher = other.Launcher;
     }
 
     protected EffectOnLiving()
@@ -22,10 +23,12 @@ public abstract class EffectOnLiving : Effect
 
     protected EffectOnLiving(LivingPlaceable target, Placeable launcher)
     {
-        this.target = target;
-        this.launcher = launcher;
+        Target = target;
+        Launcher = launcher;
     }
-    
+    /// <summary>
+    /// Also sets netId of launcher
+    /// </summary>
     public virtual LivingPlaceable Target
     {
         get
@@ -36,6 +39,10 @@ public abstract class EffectOnLiving : Effect
         set
         {
             target = value;
+            if (target != null)
+            {
+                netIdTarget = target.netId;
+            }
         }
     }
 
@@ -47,7 +54,7 @@ public abstract class EffectOnLiving : Effect
 
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
-        this.target = placeable;
+        Target = placeable;
         EffectManager.instance.UseEffect(this);
         
     }

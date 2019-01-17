@@ -10,8 +10,9 @@ using UnityEngine;
 [Serializable]
 public abstract class Effect
 {
+    public int netIdLauncher=-1;
     [SerializeField]
-    protected Placeable launcher;
+    private Placeable launcher;
     private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     public virtual Placeable Launcher
     {
@@ -23,6 +24,10 @@ public abstract class Effect
         set
         {
             launcher = value;
+            if(launcher!=null)
+            { 
+            netIdLauncher = launcher.netId;
+            }
         }
     }
     protected Effect()

@@ -590,6 +590,16 @@ public class Grid : MonoBehaviour
         jagged.Save();
 
     }
+    /// <summary>
+    /// Save grid in json file using jaggedarray
+    /// </summary>
+    public void SaveGridNetwork()
+    {
+        JaggedGrid jagged = new NetworkJaggedGrid();
+        jagged.ToJagged(this);
+        jagged.Save("NewGrid.json");
+
+    }
 
 
 
@@ -613,13 +623,50 @@ public class Grid : MonoBehaviour
 
 
     }
+    public void FillGridAndSpawnNetwork(GameObject parent, string json)
+    {
+        Debug.Log("Load Map");
+        NetworkJaggedGrid jagged = JsonUtility.FromJson<NetworkJaggedGrid>(json);
 
-    /// <summary>
-    /// Precondition: empty grid never filled
-    /// </summary>
-    /// <param name="grid"></param>
-    /// <param name="pathJson"> The path to the map in Json</param>
-    public void FillGridAndSpawn(GameObject parent, string pathJson)
+        sizeX = jagged.sizeX;
+        sizeY = jagged.sizeY;
+        sizeZ = jagged.sizeZ;
+        int maxfound = -1;
+        for (int y = 0; y < sizeY; y++)
+        {
+            for (int x = 0; x < sizeX; x++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    if (jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] != 0) //assuming grid was empty and never filled
+                    {
+                       /* Debug.Log("Instanciating prefab numberd" + (y * sizeZ * sizeX + z * sizeX + x));
+                        Debug.Log("Its associated numberpprefab is" + jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x]);*/
+                        GameObject obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
+                            new Vector3(x, y, z), Quaternion.identity, parent.transform);
+
+                        gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
+                        obj.GetComponent<Placeable>().netId = jagged.netId[y * sizeZ * sizeX + z * sizeX + x];
+                        if(maxfound < jagged.netId[y * sizeZ * sizeX + z * sizeX + x])
+                        {
+                            maxfound = jagged.netId[y * sizeZ * sizeX + z * sizeX + x];
+                        }
+                        GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
+
+
+                    }
+                }
+            }
+        }
+
+        Placeable.currentMaxId=Mathf.Max(Placeable.currentMaxId,maxfound+1);
+    }
+                    /// <summary>
+                    /// Precondition: empty grid never filled
+                    /// </summary>
+                    /// <param name="grid"></param>
+                    /// <param name="pathJson"> The path to the map in Json</param>
+                    public void FillGridAndSpawn(GameObject parent, string pathJson)
     {
         Debug.Log("Load Map");
         JaggedGrid jagged = JaggedGrid.FillGridFromJSON(pathJson);
@@ -657,6 +704,8 @@ public class Grid : MonoBehaviour
         Debug.Log(Placeable.currentMaxId);
 
     }
+
+
 
     public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool dummy)
     {

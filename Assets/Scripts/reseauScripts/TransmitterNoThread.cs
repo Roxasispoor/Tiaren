@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,12 +14,17 @@ public class TransmitterNoThread : MonoBehaviour {
     public TcpListener tcpListener;
     public TcpClient server;
     public NetworkManager networkManager;
+    String betweenFilesChar = "///";
+    String endChar = "bite";
 
     // Use this for initialization
     void Start () {
 		
 	}
-    //TcpClient client
+/// <summary>
+/// Listen to tcp request. When clients connects, imediately close listenning socket, connect to client and send him files. Non-blocking  
+/// </summary>
+/// <returns></returns>
     public IEnumerator AcceptTcp()
     {
 
@@ -26,6 +32,11 @@ public class TransmitterNoThread : MonoBehaviour {
         if (adress == "localhost")
         {
             adress = "127.0.0.1";
+        }
+        if(tcpListener!=null)
+        {
+            tcpListener.Stop();
+            tcpListener = null;
         }
         tcpListener = new TcpListener(IPAddress.Parse(adress), networkManager.matchPort);
         tcpListener.Start();
@@ -47,6 +58,9 @@ public class TransmitterNoThread : MonoBehaviour {
             }
         }
     }
+    /// <summary>
+    /// Save the current grid and send it with predefined files to client
+    /// </summary>
     public void SendData()
     {
         if (client == null)
@@ -54,7 +68,8 @@ public class TransmitterNoThread : MonoBehaviour {
             Debug.LogError("Client was null when sending data");
         }
         else
-        { 
+        {
+            Grid.instance.SaveGridNetwork();
 
             try
             {
@@ -62,11 +77,16 @@ public class TransmitterNoThread : MonoBehaviour {
                 NetworkStream stream = client.GetStream();
                 if (stream.CanWrite)
                 {
-                    string serverMessage = "This is a message from your server.";
-                    // Convert string message to byte array.                 
-                    byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(serverMessage);
+
+                    String path = "NewGrid.json";
+                    SendFile(path,stream,"Grid");
+                    SendFile("Living.json",stream,"Living");
+                    //Open
+                    byte[] endOfFileByte = Encoding.ASCII.GetBytes(endChar);
                     // Write byte array to socketConnection stream.               
-                    stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
+                    stream.Write(endOfFileByte, 0, endOfFileByte.Length);
+
+
                     Debug.LogError("Server sent his message - should be received by client");
                     stream.Close();
                 }
@@ -76,6 +96,29 @@ public class TransmitterNoThread : MonoBehaviour {
                 Debug.Log("Socket exception: " + socketException);
             }
         }
+    }
+    /// <summary>
+    /// Sends the file specified in path, from build location.
+    /// Format will be File => type => /// (in ascii)
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="stream"></param>
+    /// <param name="type"></param>
+    private void SendFile(string path, NetworkStream stream,string type)
+    {
+        StreamReader reader = new StreamReader(path);
+
+        string serverMessage = reader.ReadToEnd();
+        // Convert string message to byte array.                 
+        byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(serverMessage);
+        byte[] betweenFilesByte = Encoding.ASCII.GetBytes(betweenFilesChar);
+        byte[] typeByte = Encoding.ASCII.GetBytes(type);
+        // Write byte array to socketConnection stream.               
+        stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
+        stream.Write(typeByte, 0, typeByte.Length);
+        stream.Write(betweenFilesByte, 0, betweenFilesByte.Length);
+        reader.Close();
+
     }
 
     /// <summary>
@@ -87,12 +130,14 @@ public class TransmitterNoThread : MonoBehaviour {
               server = new TcpClient("localhost", networkManager.matchPort);
             Byte[] bytes = new Byte[1024];
             string serverMessage="";
+        string totalMessage = "";
         using (NetworkStream stream = server.GetStream())
         {
-            while (!serverMessage.EndsWith("///"))
+            while (!serverMessage.EndsWith(endChar))
             {
-            try
-            {
+               
+                    try
+                    {
                     int length;
                     // Read incomming stream into byte arrary. 					
                     while (stream.DataAvailable && (length = stream.Read(bytes, 0, bytes.Length)) != 0)
@@ -101,6 +146,7 @@ public class TransmitterNoThread : MonoBehaviour {
                         Array.Copy(bytes, 0, incommingData, 0, length);
                         // Convert byte array to string message. 						
                         serverMessage = Encoding.ASCII.GetString(incommingData);
+                        totalMessage += serverMessage;
                         Debug.Log("server message received as: " + serverMessage);
                     }
                 
@@ -111,9 +157,28 @@ public class TransmitterNoThread : MonoBehaviour {
             }
             yield return null;
         }
+
+            Debug.Log("Coroutine, splitting now");
+            string[] files = totalMessage.Split(betweenFilesChar.ToCharArray());
+            Debug.Log(files);
+            //Parse type to see what to create
+            foreach(string str in files)
+            {
+                string stringGrid = "Grid";
+                
+                if(str.EndsWith("Grid"))
+                {
+                    Debug.Log("File grid detected");
+                    string strCopy =str.TrimEnd(stringGrid.ToCharArray());
+
+                    GameManager.instance.ResetGrid();
+                    //Deletes old grid, fill it anew
+
+                    Grid.instance.FillGridAndSpawnNetwork(GameManager.instance.gridFolder, strCopy);
+                }
+            }
+
         }
-        Debug.Log("Coroutine ended");
 
     }
-
 }

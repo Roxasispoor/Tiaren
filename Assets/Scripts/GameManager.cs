@@ -14,24 +14,54 @@ public class GameManager : NetworkBehaviour
     [SerializeField]
     string mapToCharge = "Grid.json";
 
-    //can't be the network manager or isServer can't work
+   /// <summary>
+   /// Enforce singleton pattern
+   /// </summary>
     public static GameManager instance;
+    /// <summary>
+    /// Material used to highlight pathfinding
+    /// </summary>
     public Material pathFindingMaterial;
+    /// <summary>
+    /// Material used to highlight target cubes quads when mouse hover it
+    /// </summary>
     public Material highlightingMaterial;
+    /// <summary>
+    /// Specifies current GameMode
+    /// </summary>
     public GameMode gameMode = GameMode.DEATHMATCH;
+    /// <summary>
+    ///  Material used to highlight target cubes (not quads) when skill is used
+    /// </summary>
     public Material targetMaterial;
+    /// <summary>
+    /// Manages all the network part once in game
+    /// </summary>
     public NetworkManager networkManager;
+    /// <summary>
+    /// Max number of vertexes by batch and enforce the limit of 65536 when combining them
+    /// </summary>
     private const int maxBatchVertexes= 2300;
+    /// <summary>
+    /// Turn number
+    /// </summary>
     private int numberTurn = 0;
+    /// <summary>
+    /// Allows to find very fast placeable corresponding to netId
+    /// </summary>
     public Dictionary<int, Placeable> idPlaceable;
+    /// <summary>
+    /// Prefab that will be the placeholder for batches of cubes
+    /// </summary>
     public GameObject batchPrefab;
+    /// <summary>
+    /// Parent of batches in hierarchy
+    /// </summary>
     public GameObject batchFolder;
     public GameObject[] prefabCharacs;
     public GameObject[] prefabWeapons;
     public GameObject gridFolder;
     public GameObject player1; //Should be Object
-    public PlayerAccount disconnectedAccount;
-    public bool zabraf;
     public GameObject player2; //Should be Object
     public string player1Username="";
     public string player2Username=""; //TODOShould instead be account and serialize 
@@ -152,11 +182,6 @@ public class GameManager : NetworkBehaviour
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         networkManager = (NetworkManager) FindObjectOfType(typeof(NetworkManager));
-        for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
-        {
-            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
-
-        }
         transmitter = GetComponent<TransmitterNoThread>();
     }
 
@@ -236,6 +261,20 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     
     }
 
+    public void ResetGrid()
+    {
+        foreach (Transform child in GameManager.instance.batchFolder.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        Grid.instance.GridMatrix = new Placeable[Grid.instance.sizeX, Grid.instance.sizeY, Grid.instance.sizeZ];
+        foreach (Transform child in GameManager.instance.gridFolder.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        idPlaceable = new Dictionary<int, Placeable>();
+        TurnOrder = new List<StackAndPlaceable>();
+    }
 
     public void CheckWinCondition()
     {
