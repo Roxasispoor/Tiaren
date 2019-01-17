@@ -14,9 +14,12 @@ public class TransmitterNoThread : MonoBehaviour {
     public TcpListener tcpListener;
     public TcpClient server;
     public NetworkManager networkManager;
-    String betweenFilesChar = "///";
-    String endChar = "bite";
-
+    string betweenFilesChar = "///";
+    string endChar = "bite";
+    string stringGrid = "Grid";
+    string stringLiving = "Living";
+    string pathNewGrid = "NewGrid.json";
+    string pathNewLiving = "Living.json";
     // Use this for initialization
     void Start () {
 		
@@ -79,9 +82,15 @@ public class TransmitterNoThread : MonoBehaviour {
                 if (stream.CanWrite)
                 {
 
-                    String path = "NewGrid.json";
-                    SendFile(path,stream,"Grid");
-                    SendFile("Living.json",stream,"Living");
+                    
+                    SendFile(pathNewGrid,stream,stringGrid);
+                    LivingPlaceable[] livings=FindObjectsOfType<LivingPlaceable>();
+                    foreach (LivingPlaceable living in livings)
+                    {
+                        living.Save();
+                        SendFile(pathNewLiving, stream, stringLiving);
+
+                    }
                     //Open
                     byte[] endOfFileByte = Encoding.ASCII.GetBytes(endChar);
                     // Write byte array to socketConnection stream.               
@@ -124,9 +133,11 @@ public class TransmitterNoThread : MonoBehaviour {
 
     /// <summary>
     /// Connect to server and listen for the data incoming until it receive EOF
+    /// player is localClient that reconnects
+    /// WARNING: prefabList must be kept up to date and contain all living with index being their serialize id
     /// </summary>
     /// <returns></returns>
-    public IEnumerator ListenToData()
+    public IEnumerator ListenToData(Player player)
     {
               server = new TcpClient("localhost", networkManager.matchPort);
             Byte[] bytes = new Byte[1024];
@@ -165,9 +176,9 @@ public class TransmitterNoThread : MonoBehaviour {
             //Parse type to see what to create
             foreach(string str in files)
             {
-                string stringGrid = "Grid";
-                
-                if(str.EndsWith("Grid"))
+               
+
+                if (str.EndsWith(stringGrid))
                 {
                     Debug.Log("File grid detected");
                     string strCopy =str.TrimEnd(stringGrid.ToCharArray());
@@ -177,8 +188,79 @@ public class TransmitterNoThread : MonoBehaviour {
 
                     Grid.instance.FillGridAndSpawnNetwork(GameManager.instance.gridFolder, strCopy);
                 }
-            }
 
+                if (str.EndsWith(stringLiving))
+                {
+                    Debug.Log("Living detected");
+                    string strCopy = str.TrimEnd(stringLiving.ToCharArray());
+
+                    string line = "";
+                    StreamReader reader = new StreamReader(LivingPlaceable.GenerateStreamFromString(strCopy));
+                    if ((line = reader.ReadLine()) == null)
+                    {
+                        Debug.Log("Empty file while reading living form file!");
+                        yield return null;
+                    }
+                    Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
+
+                    //Spawns
+                    if(newLivingStats.playerPosesser=="player1")
+                    {
+                        GameManager.instance.player1.GetComponent<Player>().Characters.Clear();
+                        Debug.LogError("Create perso 1" + newLivingStats.serializeNumber);
+                        GameObject charac = Instantiate(Grid.instance.prefabsList[newLivingStats.serializeNumber - 1],
+                           newLivingStats.positionSave, Quaternion.identity);
+                            LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
+
+                        GameManager.instance.player1.GetComponent<Player>().Characters.Add(charac);
+                        charac1.Player = GameManager.instance.player1.GetComponent<Player>();
+                        Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
+                                (int)newLivingStats.positionSave.z);
+                        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
+                        charac1.Weapons.Add(Instantiate(GameManager.instance.prefabWeapons[0], charac.transform)); // to change in function of the start weapon
+                        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
+                        charac1.Skills = new List<Skill>();
+                        charac1.LoadFromString(strCopy);
+                        GameManager.instance.idPlaceable[charac1.netId] = charac1;
+
+                    }
+                    else if(newLivingStats.playerPosesser == "player2" )
+                    {
+                        GameManager.instance.player2.GetComponent<Player>().Characters.Clear();
+                        Debug.LogError("Create perso 2" + newLivingStats.serializeNumber);
+                        GameObject charac = Instantiate(Grid.instance.prefabsList[newLivingStats.serializeNumber - 1],
+                           newLivingStats.positionSave, Quaternion.identity);
+                        LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
+
+                        GameManager.instance.player2.GetComponent<Player>().Characters.Add(charac);
+                        charac1.Player = GameManager.instance.player2.GetComponent<Player>();
+                        Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
+                                (int)newLivingStats.positionSave.z);
+                        Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
+                        charac1.Weapons.Add(Instantiate(GameManager.instance.prefabWeapons[0], charac.transform)); // to change in function of the start weapon
+                        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
+                        charac1.Skills = new List<Skill>();
+                        charac1.LoadFromString(strCopy);
+
+                        GameManager.instance.idPlaceable[charac1.netId] = charac1;
+
+
+
+                    }
+                    
+                }
+            }
+            Debug.Log("I ended the coroutine reconnect me now");
+            player.CmdReconnectMe();//We suppose we found back our initial place thanks to start
+
+            /* Player[] players = FindObjectsOfType<Player>();
+             foreach(Player player in players)
+             {
+                 if(player.isLocalPlayer)//Contact everyone to tell them
+                 {
+                     player.CmdReconnectMe();
+                 }
+             }*/
         }
 
     }

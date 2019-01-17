@@ -104,7 +104,7 @@ public class CameraScript : NetworkBehaviour
         
         if (player.DicoCondition["BackToMovement"]())
         {
-            if (GameManager.instance.playingPlaceable.player == player) {
+            if (GameManager.instance.playingPlaceable.Player == player) {
                 GameManager.instance.playingPlaceable.ResetAreaOfTarget();
                 GameManager.instance.state = States.Move;
                 GameManager.instance.activeSkill = null;
@@ -127,7 +127,10 @@ public class CameraScript : NetworkBehaviour
 
         else
         {
+            if(target != null)
+            { 
             position = target.position;
+            }
         }
 
 

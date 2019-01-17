@@ -274,6 +274,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         idPlaceable = new Dictionary<int, Placeable>();
         TurnOrder = new List<StackAndPlaceable>();
+        //TODO CHECK WITH new spawner
+        LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
+        foreach(LivingPlaceable living in livings)
+        {
+            Destroy(living.gameObject);
+        }
     }
 
     public void CheckWinCondition()
@@ -460,7 +466,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void MoveLogic(List<Vector3> bezierPath)
     {
-        if(playingPlaceable.player.isLocalPlayer)
+        if(playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfMovement();
 
@@ -475,7 +481,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void OnEndAnimationEffectEnd()
     {
-        if(playingPlaceable.player.isLocalPlayer)
+        if(playingPlaceable.Player.isLocalPlayer)
         { 
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;

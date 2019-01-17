@@ -638,7 +638,9 @@ public class Grid : MonoBehaviour
             {
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] != 0) //assuming grid was empty and never filled
+                    if (jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] != 0 
+                        && (prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1].GetComponent<Placeable>()== null ||
+                        !prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1].GetComponent<Placeable>().IsLiving())) //not zero, and is either not a placeable, or not a living one
                     {
                        /* Debug.Log("Instanciating prefab numberd" + (y * sizeZ * sizeX + z * sizeX + x));
                         Debug.Log("Its associated numberpprefab is" + jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x]);*/
@@ -651,7 +653,9 @@ public class Grid : MonoBehaviour
                         {
                             maxfound = jagged.netId[y * sizeZ * sizeX + z * sizeX + x];
                         }
-                        GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
+
+
+                        GameManager.instance.idPlaceable[obj.GetComponent<Placeable>().netId] = obj.GetComponent<Placeable>();
 
 
                     }

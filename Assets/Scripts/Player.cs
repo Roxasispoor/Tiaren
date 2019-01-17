@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -171,10 +172,11 @@ public class Player : NetworkBehaviour
             RpcListen();
             
 
-           
+           /*
             GameManager.instance.player1 = gameObject;
             Debug.LogError("player1 is " + username);
-            GameManager.instance.player1Username = username;
+            GameManager.instance.player1Username = username;*/
+            //GameManager.instance.player2.GetComponent<Player>().RpcReconnectPlayer();
         }
         else if (GameManager.instance.player2 == null && GameManager.instance.player2Username == username)
         {
@@ -182,10 +184,10 @@ public class Player : NetworkBehaviour
             Debug.LogError("Transmitter started");
             StartCoroutine(GameManager.instance.transmitter.AcceptTcp());
             RpcListen();
-
+/*
             GameManager.instance.player2 = gameObject;
             Debug.LogError("player2 is " + username);
-            GameManager.instance.player2Username = username;
+            GameManager.instance.player2Username = username;*/
         }
         else
         {
@@ -194,12 +196,58 @@ public class Player : NetworkBehaviour
 
 
     }
-    
+/// <summary>
+/// Reconnects player and gives ALL livings without owner to new
+/// </summary>
+    [ClientRpc]
+    public void RpcReconnectPlayer()
+    {
+        if(!isLocalPlayer)
+        { 
+        Reforge();
+        }
+    }
+    public void Reforge()
+    {
+        Debug.LogError("p1 is"+GameManager.instance.player1 + ". Is it me?"+ (GameManager.instance.player1 == gameObject));
+        Debug.LogError("p2 is"+GameManager.instance.player2 + ". Is it me?" + (GameManager.instance.player2 == gameObject));
+        if (GameManager.instance.player1 == null)
+        {
+            GameManager.instance.player1 = gameObject;
+            Debug.LogError("Player 1 reconnects, trying to reforge links");
+            if(isServer) 
+            {
+                GameManager.instance.player1.GetComponent<Player>().RpcReconnectPlayer(); //sent to the two new players, only the old one must do it though
+            }
+        }
+        if (GameManager.instance.player2 == null)
+        {
+            GameManager.instance.player2 = gameObject;
+            Debug.LogError("Player 2 reconnects, trying to reforge links");
+            if (isServer)
+            {
+                GameManager.instance.player2.GetComponent<Player>().RpcReconnectPlayer(); //sent to the two new players, only the old one must do it though
+            }
+        }
+        LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
+        foreach (LivingPlaceable living in livings)
+        {
+            if (living.Player == null)
+            {
+                living.Player = this;
+                Characters.Add(living.gameObject);
+            }
+        }
+    }
+
     [ClientRpc]
     public void RpcListen()
     {
-        Debug.Log("Client listen to data start coroutine");
-        StartCoroutine(GameManager.instance.transmitter.ListenToData());
+        if(isLocalPlayer)
+        { 
+        Debug.LogError("Client listen to data start coroutine");
+        StartCoroutine(GameManager.instance.transmitter.ListenToData(this));
+        }
     }
 
     /// <summary>
@@ -228,18 +276,6 @@ public class Player : NetworkBehaviour
         {
             gameObject.transform.Find("Canvas").gameObject.SetActive(true);
         }
-        if (isClient)
-        { 
-            if (GameManager.instance.player1 == null) //Initialize on client and ask server if this was possible
-            {
-                GameManager.instance.player1 = gameObject;
-            }
-            else
-            {
-                GameManager.instance.player2 = gameObject;
-            }
-        }
-        Debug.Log("STARTCLIENT!");
         if (isLocalPlayer)
         {
 
@@ -254,6 +290,19 @@ public class Player : NetworkBehaviour
             }
 
         }
+        if (isClient)
+        { 
+            if (GameManager.instance.player1 == null) //Initialize on client and ask server if this was possible
+            {
+                GameManager.instance.player1 = gameObject;
+            }
+            else
+            {
+                GameManager.instance.player2 = gameObject;
+            }
+        }
+        Debug.Log("STARTCLIENT!");
+
     }
     //Both clients get that
     [ClientRpc]
@@ -264,6 +313,27 @@ public class Player : NetworkBehaviour
         GameManager.instance.CreateCharacters(gameObject, spawn);
 
     }
+    [ClientRpc]
+    public void RpcGivePlayingPlaceable(int netId)
+    {
+        if(isLocalPlayer)
+        {
+            GameManager.instance.playingPlaceable = (LivingPlaceable)GameManager.instance.idPlaceable[netId];
+        }
+    }
+
+
+
+    [Command]
+    public void CmdReconnectMe()
+    {
+        Reforge();
+        RpcGivePlayingPlaceable(GameManager.instance.playingPlaceable.netId);
+        //Reforge server links
+        //Reforge on the good player on both clients
+        
+    }
+
     private void Update()
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
@@ -344,7 +414,7 @@ public class Player : NetworkBehaviour
     public void CmdMoveTo(Vector3[] path)
     {
         Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
-        if (GameManager.instance.PlayingPlaceable.player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
+        if (GameManager.instance.PlayingPlaceable.Player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
             Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());

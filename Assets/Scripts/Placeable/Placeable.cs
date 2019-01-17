@@ -39,10 +39,11 @@ public abstract class Placeable:MonoBehaviour
     protected List<Effect> onEndTurn;
     protected List<Effect> attachedEffects;
     protected CombineInstance meshInCombined;
+    [SerializeField]
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
-    public Player player;
+    private Player player;
 
     public Vector3Int GetPosition()
     {
@@ -218,7 +219,7 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
-    public Player Player
+    public virtual Player Player
     {
         get
         {

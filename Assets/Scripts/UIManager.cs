@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour {
             Button button = Instantiate(prefabCharacterButton, TimelineZone);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 120 - 46 * numberInstantiated);
             button.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
-            if (character.Character.player.gameObject == gameObject)
+            if (character.Character.Player.gameObject == gameObject)
             {
                 button.GetComponent<Image>().color = Color.cyan;
             }
@@ -57,7 +57,7 @@ public class UIManager : MonoBehaviour {
 
     public void ChangeTurn()
     {
-        if (GameManager.instance.playingPlaceable.player.gameObject == gameObject)
+        if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
         {
             GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour {
             UpdateTimeline();
             gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(true);
         }
-        else if (GameManager.instance.playingPlaceable.player.gameObject != gameObject)
+        else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
             GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
