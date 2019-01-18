@@ -406,7 +406,10 @@ public abstract class Placeable:MonoBehaviour
                     Debug.Log("You have authority to ask to spawn");
                     if (GameManager.instance.CharacterToSpawn == null)
                     {
-                        GameManager.instance.CharacterToSpawn = (LivingPlaceable) Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                        LivingPlaceable charaClicked = (LivingPlaceable)Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+
+                        if (charaClicked.player == GameManager.instance.GetLocalPlayer())
+                            GameManager.instance.CharacterToSpawn = charaClicked;
                     }
                     else
                     {
@@ -417,7 +420,8 @@ public abstract class Placeable:MonoBehaviour
                                 GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
                             GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
                         }
-                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving())
+                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving() 
+                            && Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].player == GameManager.instance.GetLocalPlayer())
                         {
                             Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
                             Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,

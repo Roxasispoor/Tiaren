@@ -643,7 +643,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         playerComponent.characters.Add(charac);
 
-        InitialiseCharacter(charac, player, spawnCoordinates, player.GetComponent<UIManager>().PossibleCharacters[prefaToSpawn].className);
+        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.GetLocalPlayer().GetComponent<UIManager>().PossibleCharacters[prefaToSpawn].className);
 
         Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
     }

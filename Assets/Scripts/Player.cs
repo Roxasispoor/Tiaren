@@ -211,7 +211,7 @@ public class Player : NetworkBehaviour
                     Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
                 if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
-                    GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
                     Debug.Log(i);
                 }
             }
@@ -223,7 +223,7 @@ public class Player : NetworkBehaviour
                     Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
                 if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
-                    GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
                 }
             }
             GameManager.instance.ResetAllBatches();
