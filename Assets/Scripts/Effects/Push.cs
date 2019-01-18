@@ -1,17 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// Effect to push a bloc
 /// </summary>
+/// 
+[Serializable]
 public class Push : EffectOnPlaceable
 {
+    [SerializeField]
     private float damage;
+    [SerializeField]
     private float nbCases;
+    [SerializeField]
     protected Vector3 direction;
+    [SerializeField]
     private bool isDirectionFromPosition;
+    [SerializeField]
     private bool doesHeightCount;
-    private const float pushSpeed= 1;
+    [SerializeField]
+    private const float pushSpeed= 1f;
    
     
     public Push(Push other) : base(other)
@@ -67,11 +76,11 @@ public class Push : EffectOnPlaceable
         {
             dx = -1;
         }
-        if (direction.y > 0.38268343236)
+        if (direction.z > 0.38268343236)
         {
             dz = 1;
         }
-        else if (direction.y < -0.38268343236)
+        else if (direction.z < -0.38268343236)
         {
             dz = -1;
         }
@@ -87,6 +96,9 @@ public class Push : EffectOnPlaceable
     override
     public void Use()
     {
+        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher.SetTrigger("push");
+
         if (isDirectionFromPosition)
         {
             if (Launcher==Target)
@@ -113,21 +125,33 @@ public class Push : EffectOnPlaceable
         Placeable directCollision=null ;
         List<Placeable> diagonalCollisions = new List<Placeable>();
         List<Vector3> path= CheckPath(distance, delta,out directCollision, out diagonalCollisions);
+        
         //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
-        if (directCollision != null && directCollision.isLiving())
+        if (directCollision != null && directCollision.IsLiving())
         {
             EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,this.Launcher,damage));
         }
         foreach(Placeable diagcoll in diagonalCollisions)
         {
-            if (diagcoll != null && diagcoll.isLiving())
+            if (diagcoll != null && diagcoll.IsLiving())
             {
                 EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, this.Launcher, damage));
             }
         }
-        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z));
-        Player.MoveAlongBezier(path, Target, pushSpeed);
-
+        if(path.Count>0)
+        { 
+        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
+        if(GameManager.instance.isClient)
+        { 
+        GameManager.instance.RemoveBlockFromBatch(Target);
+            //Could be either player, really...
+        path.Insert(0, Target.GetPosition());
+        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed);
+            }
+        }
+        Vector3 pos = Target.transform.position;
+        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
+        //cmdMoveBlock(Target
     }
     //Todo check que ça sort pas du terrain...
     public List<Vector3> CheckPath(int distance, Vector2Int delta,out Placeable directCollision, out List<Placeable> diagonalCollisions)
@@ -136,24 +160,25 @@ public class Push : EffectOnPlaceable
         List<Vector3> positions = new List<Vector3>();
         diagonalCollisions = new List<Placeable>();
         bool isDiagonal = delta.x * delta.y != 0;
-        for (int i = 0; i < distance; i++)
+        for (int i = 1; i < distance; i++)
         {
-            if (Grid.instance.CheckNull(new Vector3Int(Target.GetPosition().x + delta.x *i,Target.GetPosition().y,
-                Target.GetPosition().z + delta.y * i)))
+            Vector3Int positionCurrent = new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y,
+                Target.GetPosition().z + delta.y * i);
+            if (!Grid.instance.CheckNull(positionCurrent)) 
                {
                 directCollision=Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i];
             }
             else
             {
                 //check diagonal
-                if (isDiagonal && Grid.instance.CheckNull(
+                if (isDiagonal && !Grid.instance.CheckNull(
                     new Vector3Int(Target.GetPosition().x + delta.x * (i-1), Target.GetPosition().y, Target.GetPosition().z + delta.y * i)))
                 {
                     diagonalCollisions.Add(Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * (i - 1),
                 Target.GetPosition().y, Target.GetPosition().z + delta.y * i]);
 
                 }
-                if (isDiagonal && Grid.instance.CheckNull(
+                if (isDiagonal && !Grid.instance.CheckNull(
                     new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * (i-1))))
                 {
                     diagonalCollisions.Add(Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i,
@@ -178,78 +203,5 @@ public class Push : EffectOnPlaceable
         }
         return positions;
     }
-    //TODO: a revoir, vieux et mal fait
-    /*
-    override
-        public void Use()
-    {
-        if (Cible != Lanceur)
-        {
-            Vector3Int vectDiff = Cible.Position - Lanceur.Position;
-            if (vectDiff.magnitude == 1)
-            {
-                for (int i = 0; i < nbCases; i++)
-                {
-                    //Si il y a de la place derrière la target on la déplace
-                    Vector3Int posConsidered = Cible.Position + vectDiff;
-                    if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z] == null)
-                    {
-                        gameManager.GrilleJeu.DeplaceBloc(Cible, posConsidered);
-
-                    }
-                    //si derrière il y avait un placeable il prend des dégats
-                    else if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z].GetType() == typeof(LivingPlaceable))
-                    {
-                        if (isSuper)
-                        {
-                            if (Cible.GetType() == typeof(LivingPlaceable))
-                            {
-                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 35));
-                            }
-                            gameManager.GameEffectManager.ToBeTreated.Add(new Damage(gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z], Cible, nbCases * 35));
-                            break;
-                        }
-                        else
-                        {
-                            if (Cible.GetType() == typeof(LivingPlaceable))
-                            {
-                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 20));
-                            }
-                            gameManager.GameEffectManager.ToBeTreated.Add(new Damage(gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z], Cible, nbCases * 20));
-                            break;
-                        }
-                    }
-                    else if (gameManager.GrilleJeu.Grid[posConsidered.x, posConsidered.y, posConsidered.z].GetType() == typeof(Placeable))
-                    {
-
-                        if (isSuper)
-                        {
-                            //on deplace le placeable
-                            gameManager.GrilleJeu.DeplaceBloc(Cible, posConsidered);
-                            if (Cible.GetType() == typeof(LivingPlaceable))
-                            {
-                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 35));
-                            }
-                        }
-                        else //on applique des dommages réduit si il y a lieu
-                        {
-                            if (Cible.GetType() == typeof(LivingPlaceable))
-                            {
-                                gameManager.GameEffectManager.ToBeTreated.Add(new Damage(Cible, Lanceur, nbCases * 20));
-                            }
-
-                            break;
-                        }
-                    }
-
-                }
-
-
-
-
-            }
-        }
-    }
-     */
 
 }

@@ -28,8 +28,7 @@ public class CameraScript : NetworkBehaviour
     private Quaternion desiredRotation;
     private Quaternion rotation;
     private Vector3 position;
-    private bool freecam = true;  //Is the camera free to move or not
-    private bool skyview = false;   //If watching the field from above
+    private int freecam = 0;  //Is the camera free to move or locked on player, or in skyview
     private Grid grid;
 
 
@@ -84,39 +83,26 @@ public class CameraScript : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            freecam = !freecam;
-            skyview = false;
-            Debug.Log("Camera mode changed");
-        }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            skyview = !skyview;
-            transform.LookAt(target.position);
-            rotation = transform.rotation;
-
-            if (skyview)
+            freecam += 1;
+            if (freecam == 3) freecam = 0;
+            else if (freecam == 2)
             {
+                transform.LookAt(target.position);
+                rotation = transform.rotation;
                 position = new Vector3(grid.sizeX / 2, 50f, grid.sizeZ / 2);
-                freecam = true;
             }
-            else freecam = false;
+            Debug.Log("Camera mode changed");
         }
 
         //Debug.Log(transform.rotation);
-        if (freecam)
+        if (freecam == 1)
         {
-            if (!skyview)
-            {
-                position += rotation * Vector3.right * Input.GetAxis("Horizontal");
-                position += rotation * Vector3.forward * Input.GetAxis("Vertical");
-                position.y = y;
-            }
+            position += rotation * Vector3.right * Input.GetAxis("Horizontal");
+            position += rotation * Vector3.forward * Input.GetAxis("Vertical");
+            position.y = y;
         }
 
-        else
-        {
-            position = target.position;
-        }
+        else if (freecam == 0) position = target.position;
 
 
         //0 left 1 right 2 middle
@@ -141,7 +127,7 @@ public class CameraScript : NetworkBehaviour
 
         }
         // otherwise if middle mouse is selected, we pan by way of transforming the target in screenspace
-        else if (player.DicoCondition["PanCamera"]() && freecam)
+        else if (player.DicoCondition["PanCamera"]() && freecam == 1)
         {
             //grab the rotation of the camera so we can move in a pseudo local XY space
 

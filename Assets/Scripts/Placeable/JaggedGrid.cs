@@ -17,8 +17,34 @@ public class JaggedGrid
 
     public int[] gridTable;
 
+
+    public int[] spawnPlayerOne;
+    public int[] spawnPlayerTwo;
+
+    public int sizeX;
+    public int sizeY;
+    public int sizeZ;
+
+
+
+    public JaggedGrid()
+    {
+    }
+
+    public JaggedGrid(int sizeX, int sizeY, int sizeZ)
+    {
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
+        gridTable = new int[sizeX * sizeY * sizeZ];
+    }
+
     public void ToJagged(Grid grid)
     {
+        sizeX = grid.sizeX;
+        sizeY = grid.sizeY;
+        sizeZ = grid.sizeZ;
+
         gridTable = new int[grid.sizeX * grid.sizeY * grid.sizeZ];
 
         // y at last for potential futur need of compression
@@ -44,23 +70,27 @@ public class JaggedGrid
             }
         }
     }
-    public void Save()
+
+    public void SetCell(int value, int x, int y, int z)
+    {
+        this.gridTable[y * sizeZ * sizeX + z * sizeX + x] = value;
+    }
+
+    public void Save(string path = "Grid.json")
     {
         string text = JsonUtility.ToJson(this);
 
-        string path = "Grid.json";
         File.WriteAllText(path, text);
     }
 
-    public static JaggedGrid FillGridFromJSON()
+    public static JaggedGrid FillGridFromJSON(string path)
     {
-        return JsonUtility.FromJson<JaggedGrid>(ReadString());
+        return JsonUtility.FromJson<JaggedGrid>(ReadString(path));
     }
 
 
-    static string ReadString()
+    static string ReadString(string path = "Grid.json")
     {
-        string path = "Grid.json";
 
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
@@ -68,5 +98,28 @@ public class JaggedGrid
         reader.Close();
         return toReturn;
     }
+
+    public List<Vector3Int> GetSpawnsP1()
+    {
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i < spawnPlayerOne.Length; i += 3)
+        {
+            spawns.Add(new Vector3Int(spawnPlayerOne[i], spawnPlayerOne[i + 1], spawnPlayerOne[i + 2]));
+        }
+        return spawns;
+    }
+
+    public List<Vector3Int> GetSpawnsP2()
+    {
+        List<Vector3Int> spawns = new List<Vector3Int>();
+        for (int i = 0; i < spawnPlayerTwo.Length; i += 3)
+        {
+            spawns.Add(new Vector3Int(spawnPlayerTwo[i], spawnPlayerTwo[i + 1], spawnPlayerTwo[i + 2]));
+        }
+        return spawns;
+    }
+
+
+
 
 }

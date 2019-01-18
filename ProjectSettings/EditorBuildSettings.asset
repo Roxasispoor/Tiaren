@@ -8,6 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/connect.unity
     guid: f8f860490c63f5e4d95dde7784bf6445
+  - enabled: 0
+    path: Assets/masterServer.unity
+    guid: 2e3c93dd5acc882428eba5de1cbd1584
+  - enabled: 0
+    path: Assets/scratchClient.unity
+    guid: fb85a55383acd1d4280f4fe26d460dc7
   - enabled: 1
     path: Assets/online.unity
     guid: b53b3305559a05747bf8c3c8f16b2467

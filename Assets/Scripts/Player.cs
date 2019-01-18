@@ -17,8 +17,8 @@ public class Player : NetworkBehaviour
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
-
-
+    public bool isWinner = false;
+    public Text winText;
 
     private Placeable shotPlaceable;
     public CameraScript cameraScript;
@@ -160,7 +160,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisXCamera", () => Input.GetAxis("Mouse X"));
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
-
+        DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
 
@@ -196,7 +196,7 @@ public class Player : NetworkBehaviour
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.isGameStarted && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
+            if (clock.IsFinished && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player==this)
             {
                RpcEndTurn(); //permet une resynchronisation au rythme server
                GameManager.instance.EndOFTurn();
@@ -204,10 +204,24 @@ public class Player : NetworkBehaviour
         }
     }
     [ClientRpc]
-    private void RpcEndTurn()
+    public void RpcEndTurn()
     {
         Debug.Log("Oui chef, mon tour est fini!");
         GameManager.instance.EndOFTurn();
+    }
+
+    //launcher for end of turn
+    public void EndTurn()
+    {
+        Debug.Log("EndTurn asked");
+        CmdEndTurn();
+    }
+
+    [Command]
+    private void CmdEndTurn()
+    {
+        GameManager.instance.EndOFTurn();
+        RpcEndTurn();
     }
 
     // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
@@ -216,118 +230,91 @@ public class Player : NetworkBehaviour
     {
 
         clock.StartTimer(time);
-    }
-    
-    public void ShowAreaOfMouvement(LivingPlaceable playingPlaceable)
-    {
-        playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.transform.position, playingPlaceable.CurrentPM, playingPlaceable.Jump, playingPlaceable.player);
-        MakeCubeBlue(playingPlaceable);
+        
     }
 
-    public void ShowSkillEffecTarget(LivingPlaceable playingPlaceable, Skill skill)
+
+    public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
-        
+        GameManager.instance.playingPlaceable.ResetAreaOfMovement();
+        GameManager.instance.playingPlaceable.ResetHighlightSkill();
+        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         if (skill.SkillType==SkillType.BLOCK)
         {
-            playingPlaceable.Effectarea = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-            MakeCubeRed(playingPlaceable);
+
+            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            foreach(Vector3Int v3 in vect)
+            {
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x,v3.y,v3.z]);
+            }
+            //playingPlaceable.TargetArea = 
+
+
+            playingPlaceable.ResetAreaOfMovement();
+            playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            playingPlaceable.Targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
         }
         else
         {
+            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Everything");
             playingPlaceable.GetComponent<Renderer>().material.color = Color.red;
         }
 
     }
 
-    [Client]
-    public void MakeCubeBlue(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (NodePath cube in playingPlaceable.AreaOfMouvement)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.cyan;
-            }
-        }
-    }
 
-    [Client]
-    public void MakeCubeRed(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (Vector3Int cube in playingPlaceable.Effectarea)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Color.red;
-            }
-        }
-    }
-
-    [Client]
-    public void ChangeBackColor(LivingPlaceable playingPlaceable)
-    {
-        if (isLocalPlayer)
-        {
-            foreach (NodePath cube in playingPlaceable.AreaOfMouvement)
-            {
-                Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Renderer>().material.color = Grid.instance.GridMatrix[cube.x, cube.y, cube.z].GetComponent<Placeable>().colorOfObject;
-            }
-        }
-    }
-
-    //launcher for end of turn
-    public void EndTurn()
-    {
-        CmdEndTurn();
-        GameManager.instance.EndOFTurn();
-    }
-
-    [Command]
-    private void CmdEndTurn()
-    {
-        GameManager.instance.EndOFTurn();
-    }
-
-    /// <summary>
-    /// Updates where to go on server, and ask gameManager to do it
-    /// </summary>
-    /// <param name="toGo"></param>
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        if (GameManager.instance.PlayingPlaceable.player == this)// updating only if it's his turn to play, other checkings are done in GameManager
+        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+        if (GameManager.instance.PlayingPlaceable.player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
-            //TODO : call VerifyPath(path) if not send a RPC to synchronise
-            Grid.instance.GridMatrix[GameManager.instance.PlayingPlaceable.GetPosition().x, GameManager.instance.PlayingPlaceable.GetPosition().y, GameManager.instance.PlayingPlaceable.GetPosition().z] = null; ;
-            Grid.instance.GridMatrix[(int)path[path.Length].x, (int)path[path.Length].y + 1, (int)path[path.Length].z] = GameManager.instance.PlayingPlaceable;
-        }
-    }
+            //Move  placeable
+            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+                GameManager.instance.playingPlaceable.GetPosition().z] = null;
+            Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+                (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-    public void MoveTo()
-    {
+            GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
+            //Trigger effect the ones after the others
+            foreach (Vector3 current in path)
+            {
+                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+            }
+            GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+            RpcMoveTo(path);
 
-    }
-
-    [Command]
-    public void CmdInputShot(GameObject shotPlaceable)
-    {
-
-        this.shotPlaceable = shotPlaceable.GetComponent<Placeable>();
-        if (isServer)
-        {
 
 
         }
     }
     [ClientRpc]
-    public void RpcMoveOnClient(Vector3 position)
+    public void RpcMoveTo(Vector3[] path)
     {
-        this.transform.position = position;
+
+        //List<Vector3> bezierPath = new List<Vector3>(realPath);
+        GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+        List<Vector3> bezierPath=new List<Vector3>(path);
+
+        Debug.Log("CheckPath(): " + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+        Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+             GameManager.instance.playingPlaceable.GetPosition().z] = null;
+        Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+            (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+
+        StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        GameManager.instance.MoveLogic(bezierPath);
+        
+        
     }
+    
+
     [ClientRpc]
     public void RpcSetCamera(int mustPlay)
     {
@@ -336,31 +323,14 @@ public class Player : NetworkBehaviour
         this.cameraScript.target = potential.gameObject.transform;
 
     }
-    [ClientRpc]
-    public void RpcLoadMap()
-    {
-        if(isLocalPlayer)
-        { 
-        Debug.Log("From RPC loadMap");
-        Grid.instance.FillGridAndSpawn(GameManager.instance.gridFolder);
-        Debug.Log(Placeable.currentMaxId);
-        }
-    }
-
+   
     
     public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
         transform.Find("Canvas").gameObject.SetActive(true);
-      //  GameManager.instance.GetComponentInChildren<Timer>().textToUpdate= transform.Find("Canvas").Find("Chrono").GetComponent<Text>();
-        //activate camera of player, set ready
     }
-
-    public void Translater(int skillID, LivingPlaceable caster, List<LivingPlaceable> targets)
-    {
-
-    }
-
+    
     public void DispatchSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
     {
         Skill skill = caster.Skills[skillID];
@@ -431,7 +401,7 @@ public class Player : NetworkBehaviour
         return length;
     }
     /// <summary>
-    /// Unused Hacky way to approximate bezierr length
+    /// Unused Hacky way to approximate bezier length
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -466,30 +436,41 @@ public class Player : NetworkBehaviour
         }
 
     }
-    [ClientRpc]
-    public void RpcMoveAlongBezier(Vector3[] path, NetworkInstanceId placeable, float speed)
-    {
-        GameObject plc = ClientScene.FindLocalObject(placeable);
-
-        List<Vector3> pathe = new List<Vector3>(path);
-        StartCoroutine(MoveAlongBezier(pathe, plc.GetComponent<Placeable>(), speed));
-    }
-
 
     [Client]
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
+         if(path.Count>1)
+        { 
+        StartCoroutine(MoveAlongBezier(path, placeable, speed));
+         }
+    }
+
+    [Client]
+    
+    // ONLY FOR CHARACTER
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
+    {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
         float timeBezier = 0f;
-        Vector3 delta = placeable.transform.position - path[path.Count - 1];
-        Vector3 startPosition = path[path.Count - 1];
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
         bool isBezier = true;
+
+
+        Animator anim = placeable.gameObject.GetComponent<Animator>();
+        bool isJumping = false;
+        
         //For visual rotation
-        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
+        Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
 
-        int i = path.Count - 2;
-
+        int i = 1;
+        int iref = 1;
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
         while (timeBezier < 1)
@@ -497,13 +478,13 @@ public class Player : NetworkBehaviour
             distanceParcourue += (speed * Time.deltaTime);
             timeBezier = distanceParcourue / distance;
 
-            while (timeBezier > 1 && i > 0) //on go through 
+            while (timeBezier > 1 && i < path.Count - 1) //on go through 
             {
 
 
                 distanceParcourue -= distance;
                 startPosition = path[i];
-                i--;
+                i++; // changing movement
                 targetDir = path[i] - placeable.transform.position;//next one
                 targetDir.y = 0;// don't move up 
 
@@ -511,13 +492,128 @@ public class Player : NetworkBehaviour
                 timeBezier = distanceParcourue / distance; //on recalcule
 
             }
-            if (i == 0 && timeBezier > 1)
+            if (i == path.Count - 1 && timeBezier > 1)
             {
                 // arrived to the last node of path, in precedent loop
                 placeable.transform.position = path[i] + delta;
                 // exit yield loop
                 break;
             }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+            
+            if (isBezier)
+            {
+                if (!isJumping)
+                {
+                    isJumping = true;
+                    iref = i;
+                    anim.SetTrigger("jump");
+                    anim.ResetTrigger("walk");
+                    yield return new WaitForSeconds(0.3f);
+
+                }
+                else
+                {
+                    if (i != iref)
+                    {
+                        iref = i;
+                        anim.SetTrigger("landAndJump");
+                        yield return new WaitForSeconds(0.3f);
+                        
+                    }
+                }
+                
+                
+                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
+
+            }
+            else
+            {
+                if (isJumping)
+                {
+                    isJumping = false;
+                    anim.SetTrigger("land");
+                    yield return new WaitForSeconds(0.1f);
+                }
+                else
+                {
+                    anim.SetTrigger("walk");
+                }
+                
+                placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
+
+            }
+            
+
+            
+            yield return null;
+
+
+        }
+        
+        anim.SetTrigger("land");
+        yield return new WaitForSeconds(0.1f);
+        anim.SetTrigger("idle");
+        Debug.Log("End" + placeable.GetPosition());
+        Debug.Log("End transform" + placeable.transform);
+        anim.ResetTrigger("walk");
+        anim.ResetTrigger("jump");
+        anim.ResetTrigger("land");
+        anim.ResetTrigger("landAndJump");
+    }
+    
+    // ONLY FOR OTHER PLACEABLE
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
+        float timeBezier = 0f;
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 startPosition = path[0];
+        Vector3 controlPoint = new Vector3();
+        bool isBezier = true;
+
+
+        //For visual rotation
+        Vector3 targetDir = path[1] - placeable.transform.position;
+        targetDir.y = 0;
+
+        int i = 1;
+        float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        float distanceParcourue = 0;
+        while (timeBezier < 1)
+        {
+            distanceParcourue += (speed * Time.deltaTime);
+            timeBezier = distanceParcourue / distance;
+
+            while (timeBezier > 1 && i < path.Count - 1) //on go through 
+            {
+
+
+                distanceParcourue -= distance;
+                startPosition = path[i];
+                i++; // changing movement
+                targetDir = path[i] - placeable.transform.position;//next one
+                targetDir.y = 0;// don't move up 
+
+                distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
+                timeBezier = distanceParcourue / distance; //on recalcule
+
+            }
+            if (i == path.Count - 1 && timeBezier > 1)
+            {
+                // arrived to the last node of path, in precedent loop
+                placeable.transform.position = path[i] + delta;
+                // exit yield loop
+                break;
+            }
+
+            
             if (isBezier)
             {
                 placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (startPosition) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[i]);
@@ -525,133 +621,53 @@ public class Player : NetworkBehaviour
             }
             else
             {
+                
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
-            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-            //change what we look at
+            
 
+            
             yield return null;
 
 
         }
 
+        GameManager.instance.OnEndAnimationEffectEnd();
+        Debug.Log("End" + placeable.GetPosition());
+        Debug.Log("End transform" + placeable.transform);
+        
     }
-
-
+    
     /// <summary>
-    /// moving character across the path
-    /// déplace le characonnage le long du chemin
+    /// Check if use is possible and send rpc
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="placeable"></param>
-    /// <returns></returns>
-    public IEnumerator ApplyMove(List<Vector3> path, Placeable placeable)
+    /// <param name="numSkill"></param>
+    /// <param name="netidTarget"></param>
+    [Command]
+    public void CmdUseSkill(int numSkill, int netidTarget)
     {
-        Vector3 delta = placeable.transform.position - path[path.Count - 1];
-        float speed = 1;
-        // distance traveled since starting position
-        float travelDistance = 0;
-
-
-        Vector3 startPosition = path[path.Count - 1] + delta;
-
-        Vector3 targetDir = path[path.Count - 2] - placeable.transform.position;
-        targetDir.y = 0;
-        // loop on all points of the path
-        for (int i = path.Count - 2, count = path.Count, lastIndex = 0; i >= 0; i--)
-        {
-            //targetDir = path[i] - placeable.transform.position;
-
-            // distance between starting Position and arrival position (current node, following node)
-            float distance = Vector3.Distance(startPosition, path[i] + delta);
-
-            // direction vector between those two
-            Vector3 direction = (path[i] + delta - startPosition).normalized;
-
-            // looping while position of following node has not been passed
-            while (travelDistance < distance)
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        if (this == GameManager.instance.playingPlaceable.Player) {
+            if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
+                && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
             {
-                // advance in function of speed and time past
-                travelDistance += (speed * Time.deltaTime);
-
-                // if arrival node position has been reached / passed
-                if (travelDistance >= distance)
-                {
-
-                    // if we're still on our way 
-                    if (i > lastIndex)
-                    {
-                        targetDir = path[i - 1] - placeable.transform.position;
-                        targetDir.y = 0;
-                        // positioning a few far away on the way
-                        // between the two following nodes, depending on passed distance beyond current arrival node
-                        float distanceNext = Vector3.Distance(path[i - 1], path[i]);
-
-                        float ratio = (travelDistance - distance) / distanceNext;
-
-                        // if ration > 1, 
-                        // then passed distance >distance between the two following nodes 
-                        // loop jump all nodes we're supposed to have gone through shifting with highspeed
-                        while (ratio > 1)
-                        {
-                            i--;
-                            if (i == lastIndex)
-                            {
-                                // arrived to the last node of the path
-                                placeable.transform.position = path[i] + delta;
-                                // ending loop
-                                break;
-                            }
-                            else
-                            {
-                                travelDistance -= distance;
-                                distance = distanceNext;
-                                distanceNext = Vector3.Distance(path[i - 1], path[i]);
-                                ratio = (travelDistance - distance) / distanceNext;
-                            }
-                        }
-
-                        if (i == lastIndex)
-                        {
-                            // arrived to the last node of path during former while
-                            break;
-                        }
-                        else
-                        {
-
-                            transform.position = Vector3.Lerp(path[i], path[i - 1], ratio);
-                        }
-
-                    }
-                    else
-                    {
-                        // arrive to last node of the path
-                        placeable.transform.position = path[i] + delta;
-
-                        break;
-                    }
-                }
-                else
-                {
-                    // going in direction of the arrival position
-                    placeable.transform.position += direction * (speed * Time.deltaTime);
-                }
-
-                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-                placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
-
-                yield return null;
+                skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+                RpcUseSkill(numSkill, netidTarget);
             }
-            // substract distance to run between two former nodes
-            travelDistance -= distance;
-
-            // updating starting position for next iteration
-            startPosition = path[i] + delta;
+            
         }
-
     }
 
+    [ClientRpc]
+    public void RpcUseSkill(int numSkill, int netidTarget)
+    {
+        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+
+    }
 
 }

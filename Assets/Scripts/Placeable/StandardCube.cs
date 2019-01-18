@@ -11,6 +11,7 @@ public class StandardCube : Placeable
 
     void Awake()
     {
+        
         this.serializeNumber = 1;
        
 
@@ -22,10 +23,18 @@ public class StandardCube : Placeable
         this.TraversableChar = TraversableType.NOTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
 
-        this.GravityType = GravityType.SIMPLE_GRAVITY;
+        this.GravityType = GravityType.RELATED_GRAVITY;
        
         this.Crushable = CrushType.CRUSHSTAY;
         this.Explored = false;
+        this.Grounded = false;
+        this.OnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+
     }
 
     // Update is called once per frame

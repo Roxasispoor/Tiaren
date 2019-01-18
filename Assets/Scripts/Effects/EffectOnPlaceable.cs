@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public abstract class EffectOnPlaceable : Effect {
 
     private Placeable target;
@@ -53,7 +55,8 @@ public abstract class EffectOnPlaceable : Effect {
     }
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
-        TargetAndInvokeEffectManager(placeable);
+        this.target = placeable;
+        EffectManager.instance.UseEffect(this);
     }
 
     public override void TargetAndInvokeEffectManager(Placeable placeable)

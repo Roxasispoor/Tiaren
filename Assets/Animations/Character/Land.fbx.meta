@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e952da1dae3e16144a3c63d0a74cba2f
+guid: c6d33ab0a9e19994897410ba8696ee1e
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -93,8 +93,8 @@ ModelImporter:
     - serializedVersion: 16
       name: land
       takeName: mixamo.com
-      firstFrame: 91
-      lastFrame: 193
+      firstFrame: 30
+      lastFrame: 50
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

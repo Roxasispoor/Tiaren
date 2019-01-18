@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c6f646258c0816e498374e6581b8465f
+guid: e5f96671092f28441b2d6f5fc8c8ec13
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -94,7 +94,7 @@ ModelImporter:
       name: jump
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 90
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
