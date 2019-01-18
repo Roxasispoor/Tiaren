@@ -12,6 +12,10 @@ public abstract class Effect
 {
     [SerializeField]
     protected Placeable launcher;
+
+    // for animation
+    protected Animator animLauncher;
+
     private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     public virtual Placeable Launcher
     {
@@ -62,6 +66,16 @@ public abstract class Effect
         string toReturn = reader.ReadToEnd();
         reader.Close();
         return toReturn;
+    }
+
+    public void GetLauncherAnimation()
+    {
+        animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+    }
+
+    public float GetTimeOfLauncherAnimation()
+    {
+        return animLauncher.GetCurrentAnimatorClipInfo(0)[0].clip.length;
     }
 
 }

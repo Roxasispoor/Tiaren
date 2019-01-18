@@ -30,4 +30,16 @@ public class AnimationHandler : MonoBehaviour
         go.Destroy();
     }
 
+    public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time)
+    {
+        yield return new WaitForSeconds(time/2);
+        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed);
+
+    }
+
+    public IEnumerator WaitAndDamageIsDone()
+    {
+        yield return null;
+    }
+
 }

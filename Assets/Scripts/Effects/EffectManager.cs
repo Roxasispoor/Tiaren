@@ -23,6 +23,7 @@ public class EffectManager:MonoBehaviour {
     {
         bool isblocked = false;
         Placeable target = effect.GetTarget();
+        
         foreach(Effect eff in target.AttachedEffects)
         {
             if(eff.GetType()==typeof(BlockEffects))
@@ -39,6 +40,7 @@ public class EffectManager:MonoBehaviour {
         }
         if(!isblocked)
         {
+            effect.GetLauncherAnimation();
             effect.Use();
         }
         //Deletes all nulls blocks

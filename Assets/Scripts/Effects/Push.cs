@@ -96,9 +96,6 @@ public class Push : EffectOnPlaceable
     override
     public void Use()
     {
-        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
-        animLauncher.SetTrigger("push");
-
         if (isDirectionFromPosition)
         {
             if (Launcher==Target)
@@ -139,14 +136,18 @@ public class Push : EffectOnPlaceable
             }
         }
         if(path.Count>0)
-        { 
-        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
-        if(GameManager.instance.isClient)
+        {
+            
+            Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
+            if (GameManager.instance.isClient)
         { 
         GameManager.instance.RemoveBlockFromBatch(Target);
             //Could be either player, really...
         path.Insert(0, Target.GetPosition());
-        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed);
+            // trigger visual effect and physics consequences
+             animLauncher.Play("pushBlock");
+             AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
+             
             }
         }
         //cmdMoveBlock(Target

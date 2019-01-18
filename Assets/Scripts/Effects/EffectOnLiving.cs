@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public abstract class EffectOnLiving : Effect
 {
-    private Animation OnPlaceable;
     private LivingPlaceable target;
   
 

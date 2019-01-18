@@ -31,12 +31,8 @@ public class CreateBlock : EffectOnPlaceableOnly {
 
     public override void Use()
     {
-
-        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
         animLauncher.Play("createBlock");
-        AnimatorClipInfo[] m_CurrentClipInfo = animLauncher.GetCurrentAnimatorClipInfo(0);
-        float timeAnim = m_CurrentClipInfo[0].clip.length;
-        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face,timeAnim));
+        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face, GetTimeOfLauncherAnimation()));
 
     }
     

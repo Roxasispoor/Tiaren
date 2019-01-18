@@ -510,9 +510,7 @@ public class Player : NetworkBehaviour
                 {
                     isJumping = true;
                     iref = i;
-                    anim.SetTrigger("jump");
-                    anim.ResetTrigger("walk");
-                    yield return new WaitForSeconds(0.3f);
+                    anim.Play("jump");
 
                 }
                 else
@@ -520,9 +518,9 @@ public class Player : NetworkBehaviour
                     if (i != iref)
                     {
                         iref = i;
-                        anim.SetTrigger("landAndJump");
-                        yield return new WaitForSeconds(0.3f);
-                        
+                        anim.Play("land 0");
+                        yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+
                     }
                 }
                 
@@ -535,34 +533,34 @@ public class Player : NetworkBehaviour
                 if (isJumping)
                 {
                     isJumping = false;
-                    anim.SetTrigger("land");
-                    yield return new WaitForSeconds(0.1f);
+                    anim.Play("land 1");
+                    yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
                 }
                 else
                 {
-                    anim.SetTrigger("walk");
+                    anim.Play("walking");
                 }
                 
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
 
             }
-            
 
-            
+
+
+
             yield return null;
 
-
         }
-        
-        anim.SetTrigger("land");
-        yield return new WaitForSeconds(0.1f);
-        anim.SetTrigger("idle");
+        if (isJumping)
+        {
+            anim.Play("land 2");
+        }
+        else
+        {
+            anim.SetTrigger("idle");
+        }
         Debug.Log("End" + placeable.GetPosition());
         Debug.Log("End transform" + placeable.transform);
-        anim.ResetTrigger("walk");
-        anim.ResetTrigger("jump");
-        anim.ResetTrigger("land");
-        anim.ResetTrigger("landAndJump");
     }
     
     // ONLY FOR OTHER PLACEABLE
