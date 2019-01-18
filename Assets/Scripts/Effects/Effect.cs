@@ -42,8 +42,9 @@ public abstract class Effect
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
     public abstract void TargetAndInvokeEffectManager(Placeable placeable);
+    public abstract void TargetAndInvokeEffectManager(ObjectOnBloc placeable);
 
-    public abstract Placeable GetTarget();
+    public abstract NetIdeable GetTarget();
     // Use this for initialization
     public abstract void Use();
 

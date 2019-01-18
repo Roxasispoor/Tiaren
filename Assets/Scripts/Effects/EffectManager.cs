@@ -22,7 +22,7 @@ public class EffectManager:MonoBehaviour {
     public void UseEffect(Effect effect)
     {
         bool isblocked = false;
-        Placeable target = effect.GetTarget();
+        NetIdeable target = effect.GetTarget();
         
         foreach(Effect eff in target.AttachedEffects)
         {

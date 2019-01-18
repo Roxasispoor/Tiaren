@@ -473,7 +473,7 @@ public class Player : NetworkBehaviour
         transform.Find("Canvas").gameObject.SetActive(true);
     }
     
-    public void DispatchSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
+    public void DispatchSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
     {
         Skill skill = caster.Skills[skillID];
         if (skill.Cooldown == 0 && GameManager.instance.PlayingPlaceable == caster)
@@ -787,13 +787,13 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdUseSkill(int numSkill, int netidTarget)
     {
-        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         if (this == GameManager.instance.playingPlaceable.Player) {
             if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
                 && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
             {
-                skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+                skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
                 RpcUseSkill(numSkill, netidTarget);
             }
             
@@ -803,10 +803,10 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
-        Placeable target = GameManager.instance.FindLocalObject(netidTarget);
+        NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-        skill.Use(GameManager.instance.playingPlaceable, new List<Placeable>() { target });
+        skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
 
     }
 

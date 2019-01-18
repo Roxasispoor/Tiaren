@@ -9,11 +9,9 @@ using UnityEngine.EventSystems;
 /// Represents something able to fill a bloc of the grid
 /// </summary>
 [Serializable]
-public abstract class Placeable:MonoBehaviour
+public abstract class Placeable:NetIdeable
 {
     const float sizeChild = 1.02f;
-    [NonSerialized]
-    public int netId;
     [NonSerialized]
     public Batch batch;
     public static int currentMaxId=0;
@@ -37,7 +35,7 @@ public abstract class Placeable:MonoBehaviour
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
-    protected List<Effect> attachedEffects;
+
     protected CombineInstance meshInCombined;
     [SerializeField]
     /// <summary>
@@ -45,11 +43,7 @@ public abstract class Placeable:MonoBehaviour
     /// </summary>
     private Player player;
 
-    public Vector3Int GetPosition()
-    {
-        return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
-    }
    
     public virtual bool IsLiving()
     {
@@ -260,18 +254,6 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
-    public List<Effect> AttachedEffects
-    {
-        get
-        {
-            return attachedEffects;
-        }
-
-        set
-        {
-            attachedEffects = value;
-        }
-    }
 
     public CombineInstance MeshInCombined
     {
@@ -429,7 +411,7 @@ public abstract class Placeable:MonoBehaviour
     /// On dispatch selon Living et placeable
     /// </summary>
     /// <param name="effect"></param>
-    public virtual void DispatchEffect(Effect effect)
+    public override void DispatchEffect(Effect effect)
     {
         effect.TargetAndInvokeEffectManager(this);
     }

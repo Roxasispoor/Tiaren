@@ -144,7 +144,7 @@ public class Skill
     }
 
     ///TODO makes the copy and return if succeeded launching the skill
-    public bool Use(LivingPlaceable caster, List<Placeable> targets)
+    public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
         if (this.tourCooldownLeft > 0)
         {

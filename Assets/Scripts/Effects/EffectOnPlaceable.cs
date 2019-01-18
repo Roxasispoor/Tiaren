@@ -54,7 +54,7 @@ public abstract class EffectOnPlaceable : Effect {
             launcher = value;
         }
     }
-    public override Placeable GetTarget()
+    public override NetIdeable GetTarget()
     {
         return Target;
     }
@@ -68,5 +68,9 @@ public abstract class EffectOnPlaceable : Effect {
     {
         Target = placeable;
         EffectManager.instance.UseEffect(this);
+    }
+    public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)
+    {
+
     }
 }

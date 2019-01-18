@@ -46,7 +46,7 @@ public abstract class EffectOnLiving : Effect
     }
 
   
-    public override Placeable GetTarget()
+    public override NetIdeable GetTarget()
     {
         return Target;
     }
@@ -61,6 +61,10 @@ public abstract class EffectOnLiving : Effect
     public override void TargetAndInvokeEffectManager(Placeable placeable)
     {
        
+    }
+    public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)
+    {
+
     }
 }
 

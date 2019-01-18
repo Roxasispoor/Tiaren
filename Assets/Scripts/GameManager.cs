@@ -49,7 +49,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// Allows to find very fast placeable corresponding to netId
     /// </summary>
-    public Dictionary<int, Placeable> idPlaceable;
+    public Dictionary<int, NetIdeable> idPlaceable;
     /// <summary>
     /// Prefab that will be the placeholder for batches of cubes
     /// </summary>
@@ -177,7 +177,7 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
 
         
-        idPlaceable = new Dictionary<int, Placeable>();
+        idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
@@ -272,7 +272,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             GameObject.Destroy(child.gameObject);
         }
-        idPlaceable = new Dictionary<int, Placeable>();
+        idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //TODO CHECK WITH new spawner
         LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
@@ -623,7 +623,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
     //Make a copy from model skill in skills, and fill with additional info (caster, targets)
-    public void UseSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
+    public void UseSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
     {
         Skill skill = playingPlaceable.Skills[skillID];
         if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
@@ -632,7 +632,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    public Placeable FindLocalObject(int id)
+    public NetIdeable FindLocalObject(int id)
     {
 
         return idPlaceable[id];
