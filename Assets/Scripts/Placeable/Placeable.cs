@@ -31,15 +31,15 @@ public abstract class Placeable:MonoBehaviour
     public Material oldMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
-    [NonSerialized]
-    public bool explored;
+    private bool explored;
+    private bool grounded;
     protected List<Effect> onDestroyEffects;
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
     protected List<Effect> attachedEffects;
     protected CombineInstance meshInCombined;
-    [SerializeField]
+
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -99,7 +99,18 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
+    public bool Grounded
+    {
+        get
+        {
+            return grounded;
+        }
 
+        set
+        {
+            grounded = value;
+        }
+    }
 
 
     public List<Effect> OnStartTurn
