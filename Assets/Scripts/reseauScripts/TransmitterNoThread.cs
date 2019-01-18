@@ -222,7 +222,11 @@ public class TransmitterNoThread : MonoBehaviour {
                         charac1.Skills = new List<Skill>();
                         charac1.LoadFromString(strCopy);
                         GameManager.instance.idPlaceable[charac1.netId] = charac1;
+                        foreach(Skill skill in charac1.Skills)
+                        {
 
+                            skill.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                        }
                     }
                     else if(newLivingStats.playerPosesser == "player2" )
                     {
@@ -243,13 +247,18 @@ public class TransmitterNoThread : MonoBehaviour {
                         charac1.LoadFromString(strCopy);
 
                         GameManager.instance.idPlaceable[charac1.netId] = charac1;
+                        foreach (Skill skill in charac1.Skills)
+                        {
 
+                            skill.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                        }
 
 
                     }
                     
                 }
             }
+            GameManager.instance.ResetAllBatches();
             Debug.Log("I ended the coroutine reconnect me now");
             player.CmdReconnectMe();//We suppose we found back our initial place thanks to start
 

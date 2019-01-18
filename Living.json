@@ -2,7 +2,7 @@
 {"skillName":"push","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"abilitySprite":{"m_FileID":1398,"m_PathID":0},"skillType":2}
 Push{"netIdLauncher":-1,"launcher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
 {"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"m_FileID":1410,"m_PathID":0},"skillType":2}
-CreateBlock{"netIdLauncher":-1,"launcher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"prefab":{"m_FileID":1590,"m_PathID":0},"face":{"x":0,"y":1,"z":0}};
+CreateBlock{"netIdLauncher":-1,"launcher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"m_FileID":1590,"m_PathID":0},"face":{"x":0,"y":1,"z":0}};
 {"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"m_FileID":1394,"m_PathID":0},"skillType":2}
 DestroyBloc{"netIdLauncher":-1,"launcher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1};
 {"skillName":"damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"abilitySprite":{"m_FileID":1390,"m_PathID":0},"skillType":1}

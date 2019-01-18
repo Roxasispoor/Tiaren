@@ -846,6 +846,7 @@ public class LivingPlaceable : Placeable
                         }
                         Debug.Log(a);
                         Effect eff=(Effect)JsonUtility.FromJson(a, type);
+                        eff.Initialize();
                         newSkill.effects.Add(eff);
                         if(isNewSkill)
                         {

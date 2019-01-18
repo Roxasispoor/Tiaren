@@ -68,5 +68,9 @@ public abstract class Effect
         reader.Close();
         return toReturn;
     }
+    public virtual void Initialize()
+    {
+
+    }
 
 }
