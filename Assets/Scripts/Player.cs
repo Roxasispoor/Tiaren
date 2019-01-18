@@ -204,7 +204,11 @@ public class Player : NetworkBehaviour
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
                 Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-                Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
                 if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -214,7 +218,9 @@ public class Player : NetworkBehaviour
             for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
             {
                 Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                    Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
                 if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(gameObject, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -249,6 +255,7 @@ public class Player : NetworkBehaviour
                 choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
             }
 
+            GameManager.instance.state = States.Spawn;
             GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
             GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
         }
@@ -269,6 +276,7 @@ public class Player : NetworkBehaviour
     {
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
+        GameManager.instance.state = States.Spawn;
         displaySpawn();
     }
 

@@ -559,6 +559,8 @@ public class LivingPlaceable : Placeable
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+        rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.03f);
     }
     /// <summary>
     /// method to call to destroy the object 
@@ -582,8 +584,19 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
        //TODO gérer le temps de respawn
     }
-    
- 
+
+
+    public void HighlightForSpawn()
+    {
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_OutlineColor" ,Color.green);
+    }
+
+    public void UnHighlightForSpawn()
+    {
+        rend.material.shader = originalShader;
+    }
+
     public void HighlightForSkill()
     {
         rend.material.shader = outlineShader;

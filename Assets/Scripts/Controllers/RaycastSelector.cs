@@ -14,7 +14,7 @@ public class RaycastSelector : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(GameManager.instance.playingPlaceable!=null)
+        if(GameManager.instance.playingPlaceable!=null || GameManager.instance.state == States.Spawn)
         { 
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);

@@ -33,7 +33,7 @@ public class GameManager : NetworkBehaviour
     public GameObject player1; //Should be Object
 
     public GameObject player2; //Should be Object
-    private Placeable characterToSpawn;
+    private LivingPlaceable characterToSpawn;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
@@ -115,7 +115,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public Placeable CharacterToSpawn
+    public LivingPlaceable CharacterToSpawn
     {
         get
         {
@@ -124,6 +124,8 @@ public class GameManager : NetworkBehaviour
 
         set
         {
+            if (characterToSpawn != null) characterToSpawn.UnHighlightForSpawn();
+            if (value != null) value.HighlightForSpawn();
             characterToSpawn = value;
         }
     }
@@ -639,7 +641,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         
         GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-        player.GetComponent<Player>().characters.Add(charac);
+        playerComponent.characters.Add(charac);
 
         InitialiseCharacter(charac, player, spawnCoordinates, player.GetComponent<UIManager>().PossibleCharacters[prefaToSpawn].className);
 
