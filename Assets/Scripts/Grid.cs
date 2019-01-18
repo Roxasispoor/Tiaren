@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
-
 /// <summary>
 /// Class representing a grid for a game
 /// </summary>
@@ -318,7 +316,7 @@ public class Grid : MonoBehaviour
 
 
 
-    /// <summary>
+    /*/// <summary>
     /// Initialize value of boolean explored of blocs of the grid
     /// </summary>
     public void InitializeExplored(bool value)
@@ -470,6 +468,135 @@ public class Grid : MonoBehaviour
             }
         }
 
+    }*/
+
+
+    public bool ExploreConnexity(int x, int y, int z)
+    {
+        //Debug.Log("Exploration du bloc :" + x + " " + y + " " + z);
+
+        bool connected = false;
+        gridMatrix[x, y, z].Explored = true;
+        if (y > 0 && gridMatrix[x, y - 1, z] != null ) {
+            if (y - 1 == 0) return true;
+            if (!gridMatrix[x, y - 1, z].Explored)
+                connected = ExploreConnexity(x, y - 1, z);
+            else connected = gridMatrix[x, y - 1, z].Grounded;
+            if (connected)
+            {
+                gridMatrix[x, y, z].Grounded = true;
+                return connected;
+            }
+        }
+
+
+        if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null) {
+            if (!gridMatrix[x + 1, y, z].Explored)
+                connected = ExploreConnexity(x + 1, y, z);
+            else connected = gridMatrix[x + 1, y, z].Grounded;
+            if (connected)
+            {
+                gridMatrix[x, y, z].Grounded = true;
+                return connected;
+            }
+        }
+
+
+        if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null) {
+            if (!gridMatrix[x, y, z + 1].Explored)
+                connected = ExploreConnexity(x, y, z + 1);
+            else connected = gridMatrix[x, y, z + 1].Grounded;
+        }
+        if (connected)
+        {
+            gridMatrix[x, y, z].Grounded = true;
+            return connected;
+        }
+
+        if (x > 0 && gridMatrix[x - 1, y, z] != null) {
+            if (!gridMatrix[x - 1, y, z].Explored)
+                connected = ExploreConnexity(x - 1, y, z);
+            else connected = gridMatrix[x - 1, y, z].Grounded;
+            if (connected)
+            {
+                gridMatrix[x, y, z].Grounded = true;
+                return connected;
+            }
+        }
+
+
+        if (z > 0 && gridMatrix[x, y, z - 1] != null) {
+            if (!gridMatrix[x, y, z - 1].Explored)
+                connected = ExploreConnexity(x, y, z - 1);
+            else connected = gridMatrix[x, y, z - 1].Grounded;
+            if (connected)
+            {
+                gridMatrix[x, y, z].Grounded = true;
+                return connected;
+            }
+        }
+
+
+        if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null) {
+            if (!gridMatrix[x, y + 1, z].Explored)
+                connected = ExploreConnexity(x, y + 1, z);
+            else connected=gridMatrix[x, y + 1, z].Grounded;
+        }
+        
+        return connected;
+    }
+
+    public void ConnexeFall(int x, int y, int z)
+    {
+        //Debug.Log("Gravité Connexe appelée :" + x + " " + y + " " + z);
+        bool somethingfall = false;
+        for (int i = 0; i < sizeX; i++)
+        {
+            for (int j = 0; j < sizeY; j++)
+            {
+                for (int k = 0; k < sizeZ; k++)
+                {
+                    if (gridMatrix[i,j,k]!=null)
+                    {
+                        gridMatrix[i, j, k].Explored = false;
+                        gridMatrix[i, j, k].Grounded = false;
+                    }
+                }
+
+            }
+        }
+        gridMatrix[x, y, z].Explored = true;
+
+        if (y != 0)
+        {
+            if (y > 0 && gridMatrix[x, y - 1, z] != null)
+            {
+                if (y - 1 == 0) gridMatrix[x, y - 1, z].Grounded = true;
+                else gridMatrix[x, y - 1, z].Grounded = ExploreConnexity(x, y - 1, z);
+                somethingfall = !gridMatrix[x, y - 1, z].Grounded || somethingfall;
+            }
+            if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null) {
+                gridMatrix[x, y + 1, z].Grounded = ExploreConnexity(x, y + 1, z);
+                somethingfall = somethingfall || !gridMatrix[x, y + 1, z].Grounded;
+            }
+            if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null) {
+                gridMatrix[x + 1, y, z].Grounded = ExploreConnexity(x + 1, y, z);
+                somethingfall = somethingfall || !gridMatrix[x+1, y, z].Grounded;
+            }
+            if (x > 0 && gridMatrix[x - 1, y, z] != null) { 
+                gridMatrix[x - 1, y, z].Grounded = ExploreConnexity(x - 1, y, z);
+                somethingfall = somethingfall || !gridMatrix[x-1, y, z].Grounded;
+            }
+            if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null) { 
+                gridMatrix[x, y, z + 1].Grounded = ExploreConnexity(x, y, z + 1);
+                somethingfall = somethingfall || !gridMatrix[x, y, z+1].Grounded;
+            }
+            if (z > 0 && gridMatrix[x, y, z - 1] != null) {
+                gridMatrix[x, y, z - 1].Grounded = ExploreConnexity(x, y, z - 1);
+                somethingfall = somethingfall || !gridMatrix[x, y, z-1].Grounded;
+            }
+            if (somethingfall) Gravity();
+        }
     }
 
     public void MoveBlock(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
@@ -535,18 +662,15 @@ public class Grid : MonoBehaviour
             gridMatrix[x, y, z] = null;
 
         }
-        
-
-
-        //could be a crushable of type crushstay, or empty
 
     }
     /// <summary>
     /// Handle gravity for object of type SIMPLE_GRAVITY. if nothing below => fall
     /// </summary>
-    public void SimpleGravity()
+    public void Gravity()
     {
         int y = 0;
+        bool blockfallen = false;
         while (y < sizeY)
         {
             for (int x = 0; x < sizeX; x++)
@@ -554,8 +678,11 @@ public class Grid : MonoBehaviour
 
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    if (gridMatrix[x, y, z] != null && gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY)
+                    if (gridMatrix[x, y, z] != null &&
+                       (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
+                       (gridMatrix[x, y, z].Explored && !gridMatrix[x, y, z].Grounded)))
                     {
+                        blockfallen = true;
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null
@@ -567,18 +694,13 @@ public class Grid : MonoBehaviour
                         if (ydrop > 0)
                         {
                             HandleCrush(x, y, z, ydrop);
-
-
-
-
                         }
-
-
                     }
                 }
             }
             y++;
         }
+        if (blockfallen) GameManager.instance.ResetAllBatches();
     }
     /// <summary>
     /// Save grid in json file using jaggedarray
@@ -665,12 +787,14 @@ public class Grid : MonoBehaviour
 
         Placeable.currentMaxId=Mathf.Max(Placeable.currentMaxId,maxfound+1);
     }
-                    /// <summary>
-                    /// Precondition: empty grid never filled
-                    /// </summary>
-                    /// <param name="grid"></param>
-                    /// <param name="pathJson"> The path to the map in Json</param>
-                    public void FillGridAndSpawn(GameObject parent, string pathJson)
+
+
+    /// <summary>
+    /// Precondition: empty grid never filled
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <param name="pathJson"> The path to the map in Json</param>
+    public void FillGridAndSpawn(GameObject parent, string pathJson)
     {
         Debug.Log("Load Map");
         JaggedGrid jagged = JaggedGrid.FillGridFromJSON(pathJson);
@@ -712,289 +836,357 @@ public class Grid : MonoBehaviour
 
     }
 
-
-
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool dummy)
+    /// <summary>
+    /// Return a list of blocks i can target with a skill
+    /// </summary>
+    /// <param name="Playerposition"></param>
+    /// <param name="minrange">Maximale range of the skill</param>
+    /// <param name="maxrange">Minimale range of the skill</param>
+    /// <returns></returns>
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
     {
-        int remainingrangeYZ;
-        int remainingrangeY;
-        int dirx, diry, dirz;
+        int remainingrangeYZ; //remaining range
+        int dirx; //x direction (0,-1,1)
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
-        dirx = 0;
-        for (int i = 0; i <= maxrange; i++)
+
+        //Case x = 0 exploration 
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, 0, 0);
+
+        //Now case when x > 0
+        dirx = 1;
+        for (int i = 1; i <= maxrange; i++)
         {
+            //Updating remaining range
             remainingrangeYZ = maxrange - i;
+
+            //Targeted block position
             int x = (int)Playerposition.x + i;
-            if (x <= sizeX)
+            if (x < sizeX)
             {
-                dirz = 0;
-                for (int j = 0; j <= remainingrangeYZ; j++)
-                {
-                    if (i + j < minrange)
-                    {
-                        remainingrangeY = remainingrangeYZ + j;
-                        int z = (int)Playerposition.z + j;
-                        if (z <= sizeZ)
-                        {
-                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
-                            {
-                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
-                                targetableblocs.Add(newblock);
-                            }
-                            diry = 0;
-                            for (int k = 0; k < remainingrangeY; k++)
-                            {
-                                if (i + j + k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y <= sizeY)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                                diry = 1;
-                            }
-                            diry = -1;
-                            for (int k = -2; k >= -remainingrangeY; k--)
-                            {
-                                if (i + j - k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y >= 0)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    dirz = 1;
-                }
-                dirz = -1;
-                for (int j = -1; j >= -remainingrangeYZ; j--)
-                {
-                    if (i - j < minrange)
-                    {
-                        remainingrangeY = remainingrangeYZ - j;
-                        int z = (int)Playerposition.z + j;
-                        if (z >= 0)
-                        {
-                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
-                            {
-                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
-                                targetableblocs.Add(newblock);
-                            }
-                            diry = 0;
-                            for (int k = 0; k < remainingrangeY; k++)
-                            {
-                                if (i - j + k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y <= sizeY)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                                diry = 1;
-                            }
-                            diry = -1;
-                            for (int k = -2; k >= -remainingrangeY; k--)
-                            {
-                                if (i - j - k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y >= 0)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                //exploring in y and z
+                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx);
             }
-            dirx = 1;
         }
+
+        //Case x < 0 
         dirx = -1;
-        for (int i = -1; i >= -maxrange; i++)
+        for (int i = -1; i >= -maxrange; i--)
         {
-            remainingrangeYZ = maxrange - i;
+            remainingrangeYZ = maxrange + i;
             int x = (int)Playerposition.x + i;
             if (x >= 0)
             {
-                dirz = 0;
-                for (int j = 0; j <= remainingrangeYZ; j++)
-                {
-                    if (-i + j < minrange)
-                    {
-                        remainingrangeY = remainingrangeYZ + j;
-                        int z = (int)Playerposition.z + j;
-                        if (z <= sizeZ)
-                        {
-                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
-                            {
-                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
-                                targetableblocs.Add(newblock);
-                            }
-                            diry = 0;
-                            for (int k = 0; k < remainingrangeY; k++)
-                            {
-                                if (-i + j + k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y <= sizeY)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                                diry = 1;
-                            }
-                            diry = -1;
-                            for (int k = -2; k >= -remainingrangeY; k--)
-                            {
-                                if (-i + j - k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y >= 0)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    dirz = 1;
-                }
-                dirz = -1;
-                for (int j = -1; j >= -remainingrangeYZ; j--)
-                {
-                    if (-i - j < minrange)
-                    {
-                        remainingrangeY = remainingrangeYZ - j;
-                        int z = (int)Playerposition.z + j;
-                        if (z >= 0)
-                        {
-                            if (GridMatrix[x, (int)Playerposition.y, z] != null && GridMatrix[x, (int)Playerposition.y + 1, z] == null)
-                            {
-                                Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y, z);
-                                targetableblocs.Add(newblock);
-                            }
-                            diry = 0;
-                            for (int k = 0; k < remainingrangeY; k++)
-                            {
-                                if (-i - j + k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y <= sizeY)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                                diry = 1;
-                            }
-                            diry = -1;
-                            for (int k = -2; k >= -remainingrangeY; k--)
-                            {
-                                if (-i - j - k < minrange)
-                                {
-                                    int y = (int)Playerposition.y + k;
-                                    if (y >= 0)
-                                    {
-                                        if (!RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
-                                        {
-                                            Vector3Int newblock = new Vector3Int(x, y, z);
-                                            targetableblocs.Add(newblock);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                //Exploring in y and z 
+                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx);
             }
         }
+
+        //Removing block where is standing the player, if it has been selected
+        targetableblocs.Remove(new Vector3Int((int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z));
         return targetableblocs;
 
     }
 
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
-    {
-        List<Vector3Int> targetableBlocks = new List<Vector3Int>();
 
-        for (int x = Mathf.Max((int)Playerposition.x - maxrange, 0);
-                x < Mathf.Min((int)Playerposition.x + maxrange + 1, Grid.instance.sizeX);
-                x++)
+    /// <summary>
+    /// Use raycast to determine if the character can see a block and add the good ones to the targetableblocs list
+    /// </summary>
+    /// <param name="Playerposition"></param>
+    /// <param name="targetableblocs">List of blocs position</param>
+    /// <param name="minrange">Minimal range of the skill</param>
+    /// <param name="remainingrange">Remaining range of the skill (without x and z)</param>
+    /// <param name="i">number of block on x axis</param>
+    /// <param name="j">number of block on z axis</param>
+    /// <param name="dirx">x direction (0,-1,1)</param>
+    /// <param name="dirz">z direction (0,-1,1)</param>
+    private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
+        int i, int j, int dirx, int dirz)
+    {
+        int diry = 0; //y direction
+        //real block position
+        int x = (int)Playerposition.x + i;
+        int z = (int)Playerposition.z + j;
+
+        //Case y >= 0
+        for (int k = 0; k <= remainingrange; k++)
         {
-            for (int y = Mathf.Max((int)Playerposition.y - maxrange, 0);
-                y < Mathf.Min((int)Playerposition.y + maxrange + 1, Grid.instance.sizeY);
-                y++)
+            if (Math.Abs(i) + Math.Abs(j) + k > minrange)
             {
-                for (int z = Mathf.Max((int)Playerposition.z - maxrange, 0);
-                z < Mathf.Min((int)Playerposition.z + maxrange + 1, Grid.instance.sizeZ);
-                z++)
+                //real block position
+                int y = (int)Playerposition.y + k;
+                if (y < sizeY)
                 {
-                    if (gridMatrix[x, y, z] != null 
-                        && !gridMatrix[x, y, z].IsLiving() 
-                        && (y == sizeY-1 || gridMatrix[x,y+1,z] == null))
+                    //trying to see the targeted block, if true, adding it to the target list
+                    if (GridMatrix[x, y, z] != null && !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
                     {
-                        targetableBlocks.Add(new Vector3Int(x, y, z));
+                        Vector3Int newblock = new Vector3Int(x, y, z);
+                        targetableblocs.Add(newblock);
+                    }
+                }
+            }
+            //at the end of fonction because case y=0, allow one iteraction for 0
+            diry = 1;
+        }
+
+        //When y<0
+        diry = -1;
+        //Starting from -2, because not including footing
+        for (int k = -2; k >= -remainingrange; k--)
+        {
+            if (Math.Abs(i) + Math.Abs(j) - k > minrange)
+            {
+                //real block position
+                int y = (int)Playerposition.y + k;
+                if (y >= 0)
+                {
+                    //trying to see the targeted block, if true, adding it to the target list
+                    if (GridMatrix[x, y, z] != null && !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                    {
+                        Vector3Int newblock = new Vector3Int(x, y, z);
+                        targetableblocs.Add(newblock);
                     }
                 }
             }
         }
-
-        return targetableBlocks;
     }
 
-        public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+    /// <summary>
+    /// Called by HighlightTargetableBlocks. Used to search along the (x,z) plan some blocks to add in targetableblocs
+    /// </summary>
+    /// <param name="Playerposition"></param>
+    /// <param name="targetableblocs">List of blocs position</param>
+    /// <param name="minrange">Minimal range of the spell</param>
+    /// <param name="remainingrange">Remaining range of the spell (without x)</param>
+    /// <param name="i">number of block on x axis</param>
+    /// <param name="dirx">x direction (0,-1,1)</param>
+    private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
+        int i, int dirx)
     {
-        /*Vector3 playerside;
+        int dirz = 0; //z direction
+        int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
+        //real block position
+        int x = (int)Playerposition.x + i;
+
+        //Case z   >= 0
+        for (int j = 0; j <= trueremainingrange; j++)
+        {
+            //new remaining range
+            remainingrange = trueremainingrange - j;
+            //real block position
+            int z = (int)Playerposition.z + j;
+            if (z < sizeZ)
+            {
+                //if in the good range interval
+                if (Math.Abs(i) + j >= minrange && remainingrange >= 0)
+                {
+                    //search for the floor in range if in line of sight
+                    if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && GridMatrix[x, (int)Playerposition.y, z] == null
+                        && !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition))
+                    {
+                        Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
+                        targetableblocs.Add(newblock);
+                    }
+                }
+                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz);
+            }
+            dirz = 1;
+        }
+
+        //Case z < 0
+        dirz = -1;
+        for (int j = -1; j >= -trueremainingrange; j--)
+        {
+            //new remaining range
+            remainingrange = trueremainingrange + j;
+            //real block position
+            int z = (int)Playerposition.z + j;
+            if (z >= 0)
+            {
+                //if in the good range interval
+                if (Math.Abs(i) - j >= minrange && remainingrange >= 0)
+                {
+                    //search for the floor in range if in line of sight and if so, add it to the bloc list
+                    if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && GridMatrix[x, (int)Playerposition.y, z] == null
+                        && !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition))
+                    {
+                        Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
+                        targetableblocs.Add(newblock);
+                    }
+                }
+                //Search on the y axis
+                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Check if a block can be seem and so targeted by the player
+    /// </summary>
+    /// <param name="x">block position relative to player</param>
+    /// <param name="y">block position relative to player</param>
+    /// <param name="z">block position relative to player</param>
+    /// <param name="dirx">x direction</param>
+    /// <param name="diry">x direction</param>
+    /// <param name="dirz">x direction</param>
+    /// <param name="Playerposition"></param>
+    /// <returns>If there is an obsacle or not</returns>
+    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+    {
+        Vector3 playerside;
         Vector3 blockside;
-        if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y +diry, (int)Playerposition.z + dirz] != null)
-        {
-            if (dirx != 0) Playerposition.x -= dirx / 2;
-            if (diry != 0) Playerposition.y -= diry / 2;
-            if (dirz != 0) Playerposition.z -= dirz / 2;
-        }
-        if (GridMatrix[x + dirx, y + diry, z + dirz] != null)
-        {
+        Vector3 blockside2;
+        Vector3 blockside3;
 
-        }
-        playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.5f, Playerposition.z + dirz * 0.5f);
-        blockside = new Vector3(x - dirx * 0.5f, y - diry * 0.5f, z - dirz * 0.5f);
-        if (Physics.Raycast(playerside,blockside, Vector3.Distance(playerside,blockside)-0.2f)) {
-            return false;
-        }*/
+        int layerMask = 1 << 9;
+        layerMask = ~layerMask;
+        //RaycastHit hit;
 
-        return false;
+        //used to know how many axis are involved
+        int activex = Math.Abs(dirx);
+        int activey = Math.Abs(diry);
+        int activez = Math.Abs(dirz);
+
+        //Number of axis involved, the more, the more raycast i must shoot
+        int sides = activex + activey + activez;
+
+        if (GridMatrix[(int)Playerposition.x + x, (int)Playerposition.y + y, (int)Playerposition.z + z].GetType() != typeof(StandardCube))
+            return true;
+
+        switch (sides)
+        {
+            //One axis = straight line, i only check for any obstacle on that line
+            case 1:
+                //facing the block
+                playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.4f, Playerposition.z + dirz * 0.5f);
+                //facing the player
+                blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y - diry * 0.5f, Playerposition.z + z - dirz * 0.5f);
+
+                //if the block is stuck to the player
+                if (Vector3.Distance(playerside, blockside) < 0.1)
+                    return false;
+                else return (Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask));
+
+            //2 axis = plane, i first determine which one it is, and then, pick to interest points on the block, and 2 on the player
+            //i shoot (if necessary) a raycast from each player point to each block point, and check for any obsacle
+            //if even one of them is free to go, then that mean i can target the block
+            case 2:
+                //check the x axis
+                if (activex == 1)
+                {
+                    //setting first interest point
+                    blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y, Playerposition.z + z);
+                    //checking for y axis
+                    if (activey == 1)
+                    {
+                        //setting first interest point
+                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+                        //Do i really need to shoot if there is a wall ?
+                        if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null)
+                        {
+                            //setting player interest point and shooting
+                            playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                            if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                                return false;
+                        }
+                        //Do i really need to shoot if there is a wall ?
+                        if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null)
+                        {
+                            //setting player interest point and shooting
+                            playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                            if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                                return false;
+                        }
+
+                        return true;
+                    }
+                    //same with z
+                    else
+                    {
+                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
+                        if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null)
+                        {
+                            playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                            if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                                return false;
+                        }
+                        if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null)
+                        {
+                            playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                            if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                                return false;
+                        }
+                        return true;
+                    }
+
+                }
+                //same with plane yz
+                else
+                {
+                    blockside = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
+                    blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+                    if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null)
+                    {
+                        playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                        if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                            return false;
+                    }
+                    if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null)
+                    {
+                        playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                        if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
+                            !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
+                            return false;
+                    }
+                    return true;
+                }
+
+            //3 axis = 3 interest point on the player and 3 on the block
+            //i shoot (if necessary) a raycast from each player point to each block point, and check for any obsacle
+            //if even one of them is free to go, then that mean i can target the block
+            case 3:
+                //setting block's interest points
+                blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y, Playerposition.z + z);
+                blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
+                blockside3 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+
+                //Do i really need to shoot if there is a wall ?
+                if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null)
+                {
+                    //setting player interest point and shooting
+                    playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                    if (!Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                        return false;
+                }
+                //same
+                if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null)
+                {
+                    playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                        return false;
+                }
+                //same
+                if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null)
+                {
+                    playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                        return false;
+                }
+                return true;
+            default:
+                break;
+        }
+        return true;
     }
 
 

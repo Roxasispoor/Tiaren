@@ -397,7 +397,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         block.batch.combineInstances.ToArray(), true, true);
     }
 
-
     /// <summary>
     /// Removes block From Batch
     /// </summary>
@@ -681,10 +680,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
+
     private void Update()
     {
-      
-    }// <summary>
+     
+    }
+    // <summary>
     /// Unused function to apply function to all visible characters
     /// </summary>
     /// <param name="shooter"></param>
