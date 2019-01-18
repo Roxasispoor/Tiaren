@@ -375,6 +375,7 @@ public abstract class Placeable:MonoBehaviour
         }
        
     }
+
     public void OnMouseOverWithLayer()
     {
         if (GameManager.instance.state == States.Move)

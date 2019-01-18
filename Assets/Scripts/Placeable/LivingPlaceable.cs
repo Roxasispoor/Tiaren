@@ -10,6 +10,8 @@ using UnityEngine;
 public class LivingPlaceable : Placeable
 {
     [SerializeField]
+    private string classname = "default";
+    [SerializeField]
     private float maxHP;
     private float currentHP;
     [SerializeField]
@@ -19,15 +21,21 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private float paMax;
     [SerializeField]
-    private int force;
+    private int force = -99999;
     [SerializeField]
     private float speed;
     [SerializeField]
-    private int dexterity;
+    private int dexterity = -77777;
     [SerializeField]
     private float speedStack;
     [SerializeField]
     private int jump;
+    [SerializeField]
+    private int def = -88888;
+    [SerializeField]
+    private int mdef = -66666;
+    [SerializeField]
+    private int mstr = -555555;
     private float deathLength;
     [SerializeField]
     private List<Skill> skills;
@@ -359,6 +367,58 @@ public class LivingPlaceable : Placeable
         set
         {
             targetArea = value;
+        }
+    }
+
+    public string Classname
+    {
+        get
+        {
+            return classname;
+        }
+
+        set
+        {
+            classname = value;
+        }
+    }
+
+    public int Mstr
+    {
+        get
+        {
+            return mstr;
+        }
+
+        set
+        {
+            mstr = value;
+        }
+    }
+
+    public int Mdef
+    {
+        get
+        {
+            return mdef;
+        }
+
+        set
+        {
+            mdef = value;
+        }
+    }
+
+    public int Def
+    {
+        get
+        {
+            return def;
+        }
+
+        set
+        {
+            def = value;
         }
     }
 

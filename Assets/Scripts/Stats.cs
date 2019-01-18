@@ -7,7 +7,7 @@ using UnityEngine;
 [Serializable]
 public class Stats
 {
-   
+    public string className;
     public float maxHP;
     public float currentHP;
     public int pmMax;
@@ -19,6 +19,10 @@ public class Stats
     public int dexterity;
     public float speedStack;
     public int jump;
+    public int def;
+    public int mdef;
+    public int mstr;
+
     /// <summary>
     /// Equalize any fields that have the same type and the same name
     /// </summary>
