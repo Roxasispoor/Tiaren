@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class CreateBlock : EffectOnPlaceableOnly {
 
+    public int prefabListNumber;
     public GameObject prefab;
     [SerializeField]
     public Vector3Int face;
 
     public CreateBlock()
     {
+    }
+    public override void Initialize()
+    {
+        base.Initialize();
+        prefab = Grid.instance.prefabsList[prefabListNumber];
     }
 
     public CreateBlock(CreateBlock other) : base(other)

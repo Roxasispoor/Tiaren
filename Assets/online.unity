@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 823285890}
   - component: {fileID: 823285884}
   - component: {fileID: 823285883}
+  - component: {fileID: 823285886}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -377,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf49af35ff6aa47af722136663683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapToCharge: hill.json
+  mapToCharge: Grid.json
   pathFindingMaterial: {fileID: 2100000, guid: 82458a6739f1d9f4b84ff4e3d5981f81, type: 2}
   highlightingMaterial: {fileID: 2100000, guid: fe617bef43b4a2f4da753559c49788aa,
     type: 2}
@@ -394,9 +395,12 @@ MonoBehaviour:
   gridFolder: {fileID: 1154982765}
   player1: {fileID: 0}
   player2: {fileID: 0}
+  player1Username: 
+  player2Username: 
   prefabMonsters: []
   state: 0
   hovered: {fileID: 0}
+  transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}
 --- !u!4 &823285885
 Transform:
@@ -411,6 +415,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &823285886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 823285882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010869d3eb284c84fa2473698af2021f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkManager: {fileID: 829413193}
 --- !u!114 &823285887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -429,6 +445,7 @@ MonoBehaviour:
   floaties: []
   prefabsList:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
+  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
