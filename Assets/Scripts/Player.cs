@@ -346,6 +346,8 @@ public class Player : NetworkBehaviour
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
             RpcEndSpawnAndStartGame();
+            GameManager.instance.IsGameStarted = true;
+            GameManager.instance.BeginningOfTurn();
         }
     }
 
@@ -372,6 +374,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcEndSpawnAndStartGame()
     {
+        // Make the other player's characters visiblr again
         foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
         {
             c.SetActive(true);
@@ -380,6 +383,35 @@ public class Player : NetworkBehaviour
         {
             c.SetActive(true);
         }
+
+        // Remove the material from the spawning points
+        for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                Grid.instance.SpawnPlayer1[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+        for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                Grid.instance.SpawnPlayer2[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+
+        GameManager.instance.ResetAllBatches();
+
+        // Find the local player and activate the UI;
+        GameObject localPlayer;
+        if (isLocalPlayer)
+        {
+            localPlayer = gameObject;
+        }else
+        {
+            localPlayer = GameManager.instance.GetOtherPlayer(gameObject);
+        }
+
+        localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
+        localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.IsGameStarted = true;
         GameManager.instance.BeginningOfTurn();

@@ -29,6 +29,7 @@ public abstract class Placeable:MonoBehaviour
     private float animationSpeed=1.0f;
     [NonSerialized]
     public Material oldMaterial;
+    public Material baseMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
     [NonSerialized]
@@ -480,11 +481,10 @@ public abstract class Placeable:MonoBehaviour
        
     }
 
-    private void Awake()
+    protected void Awake()
     {
-        //WARNING: NEVER CALLED BY CHILDREN (BECAUSE ABSTRACT?)
 
-     
+        baseMaterial = GetComponent<Renderer>().material;
     }
 
     /// <summary>
