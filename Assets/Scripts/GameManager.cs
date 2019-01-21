@@ -642,8 +642,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-
-        player.GetComponent<Player>().Characters.Add(charac);
+        
         charac1.Player = player.GetComponent<Player>();
         //charac1.FillLiving(className);
         Vector3Int posPers = spawnCoordinates;
