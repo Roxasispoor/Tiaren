@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour {
 
     }
 
-    public int UpdateAbilities(LivingPlaceable character)
+    public int UpdateAbilities(LivingPlaceable character,Vector3Int position)
     {
         if (character == null)
         {
@@ -31,6 +31,17 @@ public class UIManager : MonoBehaviour {
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
+        }
+        foreach (ObjectOnBloc obj in GameManager.instance.GetObjectsOnBlockUnder(position))
+        {
+            foreach(Skill skill in obj.GivenSkills )
+            { 
+            Button button = Instantiate(prefabAbilityButton, SkillZone);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
+            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.onClick.AddListener(skill.Activate);
+            numberInstantiated++;
+            }
         }
         return numberInstantiated;
     }
@@ -61,7 +72,7 @@ public class UIManager : MonoBehaviour {
         {
             GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
-            UpdateAbilities(GameManager.instance.playingPlaceable);
+            UpdateAbilities(GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
             zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();

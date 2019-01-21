@@ -251,12 +251,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             //receive data from server
         }
-       
-        
+        //Create a flag
+        GameObject flag=Instantiate(Grid.instance.prefabsList[2], Grid.instance.GridMatrix[5,3, 6].gameObject.transform.Find("Inventory"));
+        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
             //Retrieve data 
-       
+
         //RpcStartGame();
-        
+
         BeginningOfTurn();
     
     }
@@ -462,18 +464,24 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         GameManager.instance.InitialiseBatchFolder();
     }
-
+    public ObjectOnBloc[] GetObjectsOnBlockUnder(Vector3Int pos)
+    {
+        return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z]
+                .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+    }
     public void MoveLogic(List<Vector3> bezierPath)
     {
         if(playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfMovement();
-
+            Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
             Debug.Log("PM: " + playingPlaceable.CurrentPM);
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(lastPositionCharac, playingPlaceable.CurrentPM,
             playingPlaceable.Jump, playingPlaceable.Player);
 
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable, 
+                new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
 
         }
 

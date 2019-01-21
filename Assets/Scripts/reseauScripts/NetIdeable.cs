@@ -8,6 +8,9 @@ public abstract class NetIdeable : MonoBehaviour {
     [NonSerialized]
     public int netId;
     protected List<Effect> attachedEffects;
+
+    public static int currentMaxId = 0;
+
     public Vector3Int GetPosition()
     {
         return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);

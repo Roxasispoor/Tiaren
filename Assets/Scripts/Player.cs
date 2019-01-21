@@ -349,7 +349,11 @@ public class Player : NetworkBehaviour
     public void RpcEndTurn()
     {
         Debug.Log("Oui chef, mon tour est fini!");
-        GameManager.instance.EndOFTurn();
+        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        {
+            GameManager.instance.EndOFTurn();
+        }
+        
     }
 
     //launcher for end of turn
@@ -362,8 +366,11 @@ public class Player : NetworkBehaviour
     [Command]
     private void CmdEndTurn()
     {
-        GameManager.instance.EndOFTurn();
-        RpcEndTurn();
+        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        {
+            GameManager.instance.EndOFTurn();
+            RpcEndTurn();
+        }
     }
 
     // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
@@ -374,10 +381,64 @@ public class Player : NetworkBehaviour
         clock.StartTimer(time);
         
     }
+    public static Skill NumberToSkill(LivingPlaceable living, int skillNumber)
+    {
+        if (skillNumber < living.Skills.Count)
+        {
+            return living.Skills[skillNumber];
+         }
+        else
+        {
+            int total = living.Skills.Count;
+            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            {
+                if (total + obj.GivenSkills.Count > skillNumber)
+                {
+                    return obj.GivenSkills[skillNumber - total];
+                }
+                total += obj.GivenSkills.Count;
 
+            }
+        }
+
+        return null;
+    }
+
+    public static int SkillToNumber(LivingPlaceable living, Skill skill)
+    {
+        int total = living.Skills.FindIndex(skill.Equals);
+        if (total != -1)
+        {
+            return total;
+        }
+        else
+        {
+            total = living.Skills.Count;
+            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            {
+                if (obj.GivenSkills.FindIndex(skill.Equals) == -1)
+                {
+                    total += obj.GivenSkills.Count;
+                }
+                else
+                {
+                    total += obj.GivenSkills.FindIndex(skill.Equals);
+                    return total;
+                }
+            }
+            Debug.LogError("Skill id was not found even in given skills!");
+            return -1;
+        }
+    }
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
+        if (skill.SkillType == SkillType.ALREADYTARGETED)
+        {
+            
+            CmdUseSkill(SkillToNumber(playingPlaceable,skill), playingPlaceable.netId); //whatever, auto targeted do not go through dispatch
+            return;
+        }
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
@@ -787,8 +848,11 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdUseSkill(int numSkill, int netidTarget)
     {
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        UseTargeted(skill);
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        
+
         if (this == GameManager.instance.playingPlaceable.Player) {
             if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
                 && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
@@ -799,12 +863,24 @@ public class Player : NetworkBehaviour
             
         }
     }
-
+    public void UseTargeted(Skill skill)
+    {
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            foreach (Effect eff in skill.effects)
+            {
+                Effect effectToConsider = eff.Clone();
+                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Use();
+            }
+        }
+    }
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
+        UseTargeted(skill);
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
 

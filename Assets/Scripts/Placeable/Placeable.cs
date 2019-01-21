@@ -14,7 +14,6 @@ public abstract class Placeable:NetIdeable
     const float sizeChild = 1.02f;
     [NonSerialized]
     public Batch batch;
-    public static int currentMaxId=0;
     [SerializeField]
     public int serializeNumber;
     private bool walkable;
@@ -35,6 +34,7 @@ public abstract class Placeable:NetIdeable
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
+    //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
 
@@ -279,7 +279,7 @@ public abstract class Placeable:NetIdeable
         }
     }
 
-
+ 
 
 
     /// <summary>
@@ -312,11 +312,11 @@ public abstract class Placeable:NetIdeable
         if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
-            GameObject quadUp = transform.Find("QuadUp").gameObject;
-            GameObject quadRight = transform.Find("QuadRight").gameObject;
-            GameObject quadLeft = transform.Find("QuadLeft").gameObject;
-            GameObject quadFront = transform.Find("QuadFront").gameObject;
-            GameObject quadBack = transform.Find("QuadBack").gameObject;
+            GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
+            GameObject quadRight = transform.Find("Quads").Find("QuadRight").gameObject;
+            GameObject quadLeft = transform.Find("Quads").Find("QuadLeft").gameObject;
+            GameObject quadFront = transform.Find("Quads").Find("QuadFront").gameObject;
+            GameObject quadBack = transform.Find("Quads").Find("QuadBack").gameObject;
 
             quadUp.SetActive(true);
 
@@ -337,7 +337,7 @@ public abstract class Placeable:NetIdeable
             quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
 
         }
-        foreach (Transform fils in transform)
+        foreach (Transform fils in transform.Find("Quads"))
         {
 
             fils.gameObject.SetActive(true);
@@ -349,7 +349,7 @@ public abstract class Placeable:NetIdeable
         if (IsLiving()) return;
 
         //Put back the default material
-        foreach (Transform fils in transform)
+        foreach (Transform fils in transform.Find("Quads"))
         {
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
@@ -360,7 +360,7 @@ public abstract class Placeable:NetIdeable
         {
 
 
-            foreach (Transform fils in transform)
+            foreach (Transform fils in transform.Find("Quads"))
             {
 
                 fils.gameObject.SetActive(false);
@@ -393,11 +393,11 @@ public abstract class Placeable:NetIdeable
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
 
                 {
                     Debug.Log("You have authority to ask to act");
-                    GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);
+                    GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId);
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }

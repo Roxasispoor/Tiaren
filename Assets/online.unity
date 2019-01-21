@@ -446,6 +446,7 @@ MonoBehaviour:
   prefabsList:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
   - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
+  - {fileID: 1125516440427876, guid: 66cd259cb06d1de4ab4fa6ff303a5b12, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0

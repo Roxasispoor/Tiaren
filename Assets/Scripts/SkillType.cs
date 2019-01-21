@@ -27,6 +27,10 @@
     /// <summary>
     /// skill dealing effect in an area
     /// </summary>
-    AREA
+    AREA,
+    /// <summary>
+    /// skill used by a character on a preloaded skill
+    /// </summary>
+    ALREADYTARGETED
 
 }

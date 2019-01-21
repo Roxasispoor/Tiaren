@@ -445,6 +445,11 @@ public class LivingPlaceable : Placeable
         //TODO use gameEffectManager
         return target.transform.position + maxHit.RelativePosition;
     }
+    public ObjectOnBloc[] GetObjectsOnBlockUnder()
+    {
+       return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
+               .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+               }
 
     public override void DispatchEffect(Effect effect)
     {
@@ -639,11 +644,11 @@ public class LivingPlaceable : Placeable
         {
             if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
             {
-                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
                 quadUp.SetActive(true);
 
@@ -698,11 +703,11 @@ public class LivingPlaceable : Placeable
 
             if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
             {
-                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
                 quadUp.SetActive(false);
                 quadRight.SetActive(false);
