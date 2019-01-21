@@ -612,11 +612,11 @@ public class LivingPlaceable : Placeable
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new Damage(50f));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2",0,5,SkillArea.NONE, 2);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);

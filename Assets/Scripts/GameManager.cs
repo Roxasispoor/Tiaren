@@ -69,6 +69,7 @@ public class GameManager : NetworkBehaviour
     public Skill activeSkill;
     public States state;
     public Placeable hovered;
+    private bool areaffect = false;
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
@@ -147,6 +148,18 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public bool AreaEffect
+    {
+        get
+        {
+            return areaffect;
+        }
+
+        set
+        {
+            areaffect = value;
+        }
+    }
 
 
     /// <summary>
@@ -229,7 +242,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                
                 yield return null;
         }
-        Debug.Log("Please load on client 1 ffs");
+        //Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
         { 
             yield return null;
@@ -607,15 +620,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if(winner==null)
         { 
-        //cleaning and checks and synchro with banana dancing if needed
-        Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
-        if (playingPlaceable.Player.isLocalPlayer)
-        {
-            playingPlaceable.ResetAreaOfTarget();
-            playingPlaceable.ResetAreaOfMovement();
-            playingPlaceable.ResetHighlightSkill();
-            //ResetAllBatches();
-        }
+            //cleaning and checks and synchro with banana dancing if needed
+            Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
+            if (playingPlaceable.Player.isLocalPlayer)
+            {
+                playingPlaceable.ResetAreaOfTarget();
+                playingPlaceable.ResetAreaOfMovement();
+                playingPlaceable.ResetHighlightSkill();
+                playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
+                playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                //ResetAllBatches();
+            }
             BeginningOfTurn();
         }
     }
@@ -660,7 +675,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
         charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
         charac1.netId = Placeable.currentMaxId;
-        Debug.Log(charac1.netId);
+        //Debug.Log(charac1.netId);
         idPlaceable[charac1.netId]= charac1;
         Placeable.currentMaxId++;
 

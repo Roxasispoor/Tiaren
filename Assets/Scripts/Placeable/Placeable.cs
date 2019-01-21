@@ -394,7 +394,7 @@ public abstract class Placeable:NetIdeable
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
 
                 {
                     Debug.Log("You have authority to ask to act");

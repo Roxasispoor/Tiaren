@@ -301,7 +301,7 @@ public class Player : NetworkBehaviour
                 GameManager.instance.player2 = gameObject;
             }
         }
-        Debug.Log("STARTCLIENT!");
+        //Debug.Log("STARTCLIENT!");
 
     }
     //Both clients get that
@@ -345,6 +345,7 @@ public class Player : NetworkBehaviour
             }
         }
     }
+
     [ClientRpc]
     public void RpcEndTurn()
     {
@@ -378,23 +379,35 @@ public class Player : NetworkBehaviour
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
+        RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
+        rayselector.Pattern = SkillArea.NONE;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-        if (skill.SkillType==SkillType.BLOCK)
+        playingPlaceable.ResetAreaOfMovement();
+        playingPlaceable.ResetAreaOfTarget();
+        if (skill.SkillType==SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
+            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
 
-            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-            foreach(Vector3Int v3 in vect)
+            if (skill.SkillArea == SkillArea.CROSS)
+                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.transform.position);
+            else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
+                vect = Grid.instance.TopBlockPattern(vect);
+
+            foreach (Vector3Int v3 in vect)
             {
-                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x,v3.y,v3.z]);
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x, v3.y, v3.z]);
             }
-            //playingPlaceable.TargetArea = 
 
-
-            playingPlaceable.ResetAreaOfMovement();
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
-            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
+            rayselector.layerMask = LayerMask.GetMask("Placeable");
+            rayselector.EffectArea = skill.EffectArea;
+            if (skill.SkillArea == SkillArea.LINE)
+            {
+                rayselector.Pattern = skill.SkillArea;
+            }
+
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
@@ -807,6 +820,8 @@ public class Player : NetworkBehaviour
         Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+        GetComponentInChildren<RaycastSelector>().EffectArea = 0;
+        GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
 
     }
 
