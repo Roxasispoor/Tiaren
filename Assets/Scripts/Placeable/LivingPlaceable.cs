@@ -9,14 +9,24 @@ using UnityEngine;
 [Serializable]
 public class LivingPlaceable : Placeable
 {
+    /// <summary>
+    /// Used to save position, only actualized at this point
+    /// </summary>
+    [SerializeField]
+    private Vector3 positionSave;
+    [SerializeField]
+    private string playerPosesser;
     [SerializeField]
     private string classname = "default";
     [SerializeField]
     private float maxHP;
+    [SerializeField]
     private float currentHP;
     [SerializeField]
     private int pmMax;
+    [SerializeField]
     private int currentPM;
+    [SerializeField]
     private float currentPA;
     [SerializeField]
     private float paMax;
@@ -42,6 +52,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private List<GameObject> weapons;
     private Weapon equipedWeapon;
+    [SerializeField]
     private bool isDead;
     private int counterDeaths;
     private int turnsRemainingCemetery;
@@ -58,8 +69,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Shader originalShader;
     private Shader outlineShader;
-
-
+    
     public float MaxHP
     {
         get
@@ -85,7 +95,27 @@ public class LivingPlaceable : Placeable
             currentHP = value;
         }
     }
+    public override Player Player
+    {
+        get
+        {
+            return base.Player;
+        }
 
+        set
+        {
+            base.Player = value;
+            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+            {
+                playerPosesser = "player1";
+            }
+            if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
+            {
+                playerPosesser = "player2";
+            }
+
+        }
+    }
     public int MaxPM
     {
         get
@@ -585,8 +615,8 @@ public class LivingPlaceable : Placeable
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,2);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 2);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
@@ -663,7 +693,7 @@ public class LivingPlaceable : Placeable
     }
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
-        player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
+        Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
         foreach (NodePath node in AreaOfMouvement)
         {
@@ -797,9 +827,9 @@ public class LivingPlaceable : Placeable
     }
     public void Save()
     {
+        positionSave = GetPosition();
         Stats stats = new Stats();
         stats.FillThis(this);
-
         string text = JsonUtility.ToJson(stats);
         foreach(Skill skill in Skills)
         {
@@ -808,12 +838,32 @@ public class LivingPlaceable : Placeable
         string path = "Living.json";
         File.WriteAllText(path, text);
     }
-    public void FillLiving()
+    public static Stream GenerateStreamFromString(string s)
     {
-        string path = "Living.json";
+        var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        writer.Write(s);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
+    public void LoadFromString(string file)
+    {
+        FillLiving(new StreamReader(GenerateStreamFromString(file)));
+
+    }
+    public void LoadFromjson(string path)
+    {
+        
+        StreamReader reader = new StreamReader(path);
+        FillLiving(reader);
+    }
+    public void FillLiving(StreamReader reader)
+    {
+       
         string line;
         //Read the text from directly from the test.txt file
-        StreamReader reader = new StreamReader(path);
+
         System.Type[] types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
         System.Type[] possible = (from System.Type type in types where type.IsSubclassOf(typeof(Effect)) && !type.IsAbstract select type).ToArray();
 
@@ -856,9 +906,14 @@ public class LivingPlaceable : Placeable
                         }
                         Debug.Log(a);
                         Effect eff=(Effect)JsonUtility.FromJson(a, type);
+                        eff.Initialize();
                         newSkill.effects.Add(eff);
                         if(isNewSkill)
                         {
+                            if(skills==null)
+                            {
+                                skills = new List<Skill>();
+                            }
                             skills.Add(newSkill);
                         }
                       

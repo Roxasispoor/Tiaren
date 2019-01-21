@@ -23,7 +23,7 @@ public class StatDisplayer : MonoBehaviour {
         gameObject.SetActive(true);
         className.text = "Name : " + character.Classname;
         player.text = "Player : xXDarkSasukeXx";
-        team.text = "Team : " + character.player.name;
+        team.text = "Team : " + character.Player.name;
         hp.text = "HP : " + character.CurrentHP;
         mov.text = "MOV : " + character.CurrentPM;
         speed.text = "SPEED : " + character.Speed;

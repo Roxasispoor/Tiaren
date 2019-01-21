@@ -28,7 +28,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1060116728505488
 GameObject:
   m_ObjectHideFlags: 1
@@ -1666,6 +1666,7 @@ MonoBehaviour:
   numberPrefab: 00000000
   isWinner: 0
   winText: {fileID: 114507509239936454}
+  account: {fileID: 0}
   cameraScript: {fileID: 114270093809156058}
   clock: {fileID: 114462364222441842}
 --- !u!114 &114887513324747612

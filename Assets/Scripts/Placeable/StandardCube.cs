@@ -23,10 +23,11 @@ public class StandardCube : Placeable
         this.TraversableChar = TraversableType.NOTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
 
-        this.GravityType = GravityType.SIMPLE_GRAVITY;
+        this.GravityType = GravityType.RELATED_GRAVITY;
        
         this.Crushable = CrushType.CRUSHSTAY;
         this.Explored = false;
+        this.Grounded = false;
         this.OnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>();

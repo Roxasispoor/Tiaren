@@ -14,24 +14,57 @@ public class GameManager : NetworkBehaviour
     [SerializeField]
     string mapToCharge = "Grid.json";
 
-    //can't be the network manager or isServer can't work
+   /// <summary>
+   /// Enforce singleton pattern
+   /// </summary>
     public static GameManager instance;
+    /// <summary>
+    /// Material used to highlight pathfinding
+    /// </summary>
     public Material pathFindingMaterial;
+    /// <summary>
+    /// Material used to highlight target cubes quads when mouse hover it
+    /// </summary>
     public Material highlightingMaterial;
+    /// <summary>
+    /// Specifies current GameMode
+    /// </summary>
     public GameMode gameMode = GameMode.DEATHMATCH;
+    /// <summary>
+    ///  Material used to highlight target cubes (not quads) when skill is used
+    /// </summary>
     public Material targetMaterial;
+    /// <summary>
+    /// Manages all the network part once in game
+    /// </summary>
     public NetworkManager networkManager;
+    /// <summary>
+    /// Max number of vertexes by batch and enforce the limit of 65536 when combining them
+    /// </summary>
     private const int maxBatchVertexes= 2300;
+    /// <summary>
+    /// Turn number
+    /// </summary>
     private int numberTurn = 0;
-    public Dictionary<int, Placeable> idPlaceable;
+    /// <summary>
+    /// Allows to find very fast placeable corresponding to netId
+    /// </summary>
+    public Dictionary<int, NetIdeable> idPlaceable;
+    /// <summary>
+    /// Prefab that will be the placeholder for batches of cubes
+    /// </summary>
     public GameObject batchPrefab;
+    /// <summary>
+    /// Parent of batches in hierarchy
+    /// </summary>
     public GameObject batchFolder;
     public GameObject[] prefabCharacs;
     public GameObject[] prefabWeapons;
     public GameObject gridFolder;
     public GameObject player1; //Should be Object
-
     public GameObject player2; //Should be Object
+    public string player1Username="";
+    public string player2Username=""; //TODOShould instead be account and serialize 
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
@@ -39,7 +72,7 @@ public class GameManager : NetworkBehaviour
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
-
+    public TransmitterNoThread transmitter;
     private Player winner;
     public LivingPlaceable playingPlaceable;
     private UIManager UIManager;
@@ -144,16 +177,12 @@ public class GameManager : NetworkBehaviour
             Destroy(gameObject);
 
         
-        idPlaceable = new Dictionary<int, Placeable>();
+        idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         networkManager = (NetworkManager) FindObjectOfType(typeof(NetworkManager));
-        for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
-        {
-            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
-
-        }
+        transmitter = GetComponent<TransmitterNoThread>();
     }
 
 
@@ -182,7 +211,19 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //If you want to load one
 
         Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        transmitter.networkManager = networkManager;
+       /*if (isServer)
+        {
+            Debug.LogError("Transmitter started");
+            StartCoroutine(transmitter.AcceptTcp());
            
+        }
+        if (isClient)
+        {
+            Debug.Log("Client listen to data start coroutine");
+            StartCoroutine(transmitter.ListenToData());
+            //receive data from server
+        }*/
         while (player1 == null )
         {
                
@@ -198,16 +239,47 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         
         Grid.instance.Gravity();
         //To activate for perf, desactivate for pf
+        transmitter.networkManager = networkManager;
+       /* if (isServer)
+        {
+            transmitter.initServer();
+        }*/
         if (isClient)
         {
             InitialiseBatchFolder();
+            
+
+            //receive data from server
         }
+       
         
             //Retrieve data 
-
+       
         //RpcStartGame();
+        
         BeginningOfTurn();
     
+    }
+
+    public void ResetGrid()
+    {
+        foreach (Transform child in GameManager.instance.batchFolder.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        Grid.instance.GridMatrix = new Placeable[Grid.instance.sizeX, Grid.instance.sizeY, Grid.instance.sizeZ];
+        foreach (Transform child in GameManager.instance.gridFolder.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        idPlaceable = new Dictionary<int, NetIdeable>();
+        TurnOrder = new List<StackAndPlaceable>();
+        //TODO CHECK WITH new spawner
+        LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
+        foreach(LivingPlaceable living in livings)
+        {
+            Destroy(living.gameObject);
+        }
     }
 
     public void CheckWinCondition()
@@ -325,7 +397,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         block.batch.combineInstances.ToArray(), true, true);
     }
 
-
     /// <summary>
     /// Removes block From Batch
     /// </summary>
@@ -394,7 +465,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void MoveLogic(List<Vector3> bezierPath)
     {
-        if(playingPlaceable.player.isLocalPlayer)
+        if(playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfMovement();
 
@@ -409,7 +480,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void OnEndAnimationEffectEnd()
     {
-        if(playingPlaceable.player.isLocalPlayer)
+        if(playingPlaceable.Player.isLocalPlayer)
         { 
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;
@@ -551,7 +622,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
     //Make a copy from model skill in skills, and fill with additional info (caster, targets)
-    public void UseSkill(int skillID, LivingPlaceable caster, List<Placeable> targets)
+    public void UseSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
     {
         Skill skill = playingPlaceable.Skills[skillID];
         if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
@@ -560,7 +631,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    public Placeable FindLocalObject(int id)
+    public NetIdeable FindLocalObject(int id)
     {
 
         return idPlaceable[id];
@@ -609,8 +680,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-    
-    /// <summary>
+
+    private void Update()
+    {
+     
+    }
+    // <summary>
     /// Unused function to apply function to all visible characters
     /// </summary>
     /// <param name="shooter"></param>

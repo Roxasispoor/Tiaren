@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour {
             image.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
             image.GetComponentInChildren<Slider>().maxValue = character.Character.MaxHP;
             image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
-            if (character.Character.player.gameObject == gameObject)
+            if (character.Character.Player.gameObject == gameObject)
             {
                 image.GetComponent<Image>().color = Color.cyan;
             }
@@ -76,7 +76,7 @@ public class UIManager : MonoBehaviour {
 
     public void ChangeTurn()
     {
-        if (GameManager.instance.playingPlaceable.player.gameObject == gameObject)
+        if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
         {
             GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour {
             gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(true);
             hpDisplay.SetActive(true);
         }
-        else if (GameManager.instance.playingPlaceable.player.gameObject != gameObject)
+        else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
             GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
