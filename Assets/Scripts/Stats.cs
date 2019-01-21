@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-
+/// <summary>
+/// Utilitary class used to copy living to json and load from too
+/// </summary>
 [Serializable]
 public class Stats
 {
-   
+    public string className;
+    public Vector3 positionSave;
+    public string playerPosesser;
     public float maxHP;
     public float currentHP;
     public int pmMax;
@@ -19,12 +23,24 @@ public class Stats
     public int dexterity;
     public float speedStack;
     public int jump;
+    public int def;
+    public int mdef;
+    public int mstr;
+    public float deathLength;
+    public List<Skill> skills;
+    public bool isDead;
+    //==================== initialize a mano
+    public int serializeNumber;
+    public int netId;
+
     /// <summary>
-    /// Equalize any fields that have the same type and the same name
+    /// Fill living from values of this. Equalize any fields that have the same type and the same name
     /// </summary>
     /// <param name="living"></param>
     public void FillLiving(LivingPlaceable living)
     {
+         living.serializeNumber = this.serializeNumber ;
+         living.netId = this.netId ;
         List<FieldInfo>livingFields= new List<FieldInfo>( );
         foreach (FieldInfo fieldInfo in this.GetType().GetFields())
         {
@@ -39,8 +55,14 @@ public class Stats
 
         }
     }
+    /// <summary>
+    /// Sets the values of this object from living
+    /// </summary>
+    /// <param name="living"></param>
     public void FillThis(LivingPlaceable living)
     {
+        this.serializeNumber = living.serializeNumber;
+         this.netId= living.netId ;
         List<FieldInfo> livingFields = new List<FieldInfo>();
         foreach (FieldInfo fieldInfo in this.GetType().GetFields())
         {

@@ -8,11 +8,12 @@ public abstract class EffectOnPlaceable : Effect {
 
     private Placeable target;
     private Placeable launcher;
+    public int netIdTarget = -1;
 
     public EffectOnPlaceable(EffectOnPlaceable other)
     {
-        this.target = other.target;
-        this.launcher = other.launcher;
+        Target = other.target;
+        Launcher = other.launcher;
     }
 
     protected EffectOnPlaceable()
@@ -21,8 +22,8 @@ public abstract class EffectOnPlaceable : Effect {
 
     protected EffectOnPlaceable(Placeable target, Placeable launcher)
     {
-        this.target = target;
-        this.launcher = launcher;
+        Target = target;
+        Launcher = launcher;
     }
     public virtual Placeable Target
     {
@@ -34,6 +35,10 @@ public abstract class EffectOnPlaceable : Effect {
         set
         {
             target = value;
+            if (target != null)
+            {
+                netIdTarget = target.netId;
+            }
         }
     }
 
@@ -49,19 +54,23 @@ public abstract class EffectOnPlaceable : Effect {
             launcher = value;
         }
     }
-    public override Placeable GetTarget()
+    public override NetIdeable GetTarget()
     {
         return Target;
     }
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
-        this.target = placeable;
+        Target = placeable;
         EffectManager.instance.UseEffect(this);
     }
 
     public override void TargetAndInvokeEffectManager(Placeable placeable)
     {
-        this.target = placeable;
+        Target = placeable;
         EffectManager.instance.UseEffect(this);
+    }
+    public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)
+    {
+
     }
 }

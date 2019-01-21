@@ -9,11 +9,9 @@ using UnityEngine.EventSystems;
 /// Represents something able to fill a bloc of the grid
 /// </summary>
 [Serializable]
-public abstract class Placeable:MonoBehaviour
+public abstract class Placeable:NetIdeable
 {
     const float sizeChild = 1.02f;
-    [NonSerialized]
-    public int netId;
     [NonSerialized]
     public Batch batch;
     public static int currentMaxId=0;
@@ -37,18 +35,15 @@ public abstract class Placeable:MonoBehaviour
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
-    protected List<Effect> attachedEffects;
+
     protected CombineInstance meshInCombined;
+
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
-    public Player player;
+    private Player player;
 
-    public Vector3Int GetPosition()
-    {
-        return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
 
-    }
    
     public virtual bool IsLiving()
     {
@@ -229,7 +224,7 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
-    public Player Player
+    public virtual Player Player
     {
         get
         {
@@ -270,18 +265,6 @@ public abstract class Placeable:MonoBehaviour
         }
     }
 
-    public List<Effect> AttachedEffects
-    {
-        get
-        {
-            return attachedEffects;
-        }
-
-        set
-        {
-            attachedEffects = value;
-        }
-    }
 
     public CombineInstance MeshInCombined
     {
@@ -386,6 +369,7 @@ public abstract class Placeable:MonoBehaviour
         }
        
     }
+
     public void OnMouseOverWithLayer()
     {
         if (GameManager.instance.state == States.Move)
@@ -410,7 +394,7 @@ public abstract class Placeable:MonoBehaviour
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
 
                 {
                     Debug.Log("You have authority to ask to act");
@@ -439,7 +423,7 @@ public abstract class Placeable:MonoBehaviour
     /// On dispatch selon Living et placeable
     /// </summary>
     /// <param name="effect"></param>
-    public virtual void DispatchEffect(Effect effect)
+    public override void DispatchEffect(Effect effect)
     {
         effect.TargetAndInvokeEffectManager(this);
     }

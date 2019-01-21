@@ -10,8 +10,13 @@ using UnityEngine;
 [Serializable]
 public abstract class Effect
 {
+    public int netIdLauncher=-1;
     [SerializeField]
-    protected Placeable launcher;
+
+    // for animation
+    protected Animator animLauncher;
+
+    private Placeable launcher;
     private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     public virtual Placeable Launcher
     {
@@ -23,6 +28,10 @@ public abstract class Effect
         set
         {
             launcher = value;
+            if(launcher!=null)
+            { 
+            netIdLauncher = launcher.netId;
+            }
         }
     }
     protected Effect()
@@ -33,8 +42,9 @@ public abstract class Effect
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
     public abstract void TargetAndInvokeEffectManager(Placeable placeable);
+    public abstract void TargetAndInvokeEffectManager(ObjectOnBloc placeable);
 
-    public abstract Placeable GetTarget();
+    public abstract NetIdeable GetTarget();
     // Use this for initialization
     public abstract void Use();
 
@@ -62,6 +72,20 @@ public abstract class Effect
         string toReturn = reader.ReadToEnd();
         reader.Close();
         return toReturn;
+    }
+    public virtual void Initialize()
+    {
+
+    }
+
+    public void GetLauncherAnimation()
+    {
+        animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+    }
+
+    public float GetTimeOfLauncherAnimation()
+    {
+        return animLauncher.GetCurrentAnimatorClipInfo(0)[0].clip.length;
     }
 
 }

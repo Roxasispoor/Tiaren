@@ -129,28 +129,32 @@ public class Push : EffectOnPlaceable
         //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
         if (directCollision != null && directCollision.IsLiving())
         {
-            EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,this.Launcher,damage));
+            EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,Launcher,damage));
         }
         foreach(Placeable diagcoll in diagonalCollisions)
         {
             if (diagcoll != null && diagcoll.IsLiving())
             {
-                EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, this.Launcher, damage));
+                EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, Launcher, damage));
             }
         }
         if(path.Count>0)
-        { 
-        Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
-        if(GameManager.instance.isClient)
+        {
+            Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
+            if (GameManager.instance.isClient)
         { 
         GameManager.instance.RemoveBlockFromBatch(Target);
             //Could be either player, really...
         path.Insert(0, Target.GetPosition());
-        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed);
+            // trigger visual effect and physics consequences
+             animLauncher.Play("pushBlock");
+            Vector3 pos = Target.transform.position;
+            AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
+            Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
             }
         }
-        Vector3 pos = Target.transform.position;
-        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
+
+        
         //cmdMoveBlock(Target
     }
     //Todo check que ça sort pas du terrain...
