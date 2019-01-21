@@ -255,6 +255,27 @@ public class Player : NetworkBehaviour
                 choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
             }
 
+            // Spawn the characters
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+
             GameManager.instance.state = States.Spawn;
             GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
             GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
@@ -293,26 +314,75 @@ public class Player : NetworkBehaviour
         CmdGameReady(positions, ids);
     }
 
+    [ClientRpc]
+    public void RpcEndSwapSpawn(Vector3[] positions, int[] ids)
+    {
+        if (GameManager.instance.player2.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        if (GameManager.instance.player1.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        SwapPositionSpawn(positions, ids);
+    }
 
     [Command]
     public void CmdGameReady(Vector3[] positions, int[] ids)
     {
+        
+        SwapPositionSpawn(positions, ids);
+
+        RpcEndSwapSpawn(positions, ids);
+
         Isready = true;
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
-            for (int i = 0; i < positions.Length; i++)
+            RpcEndSpawnAndStartGame();
+        }
+    }
+
+    private void SwapPositionSpawn(Vector3[] positions, int[] ids)
+    {
+        for (int i = 0; i < positions.Length; i++)
+        {
+
+            Vector3Int space = new Vector3Int((int)positions[i].x, (int)positions[i].y, (int)positions[i].z);
+
+            Placeable oldPlac = Grid.instance.GetPlaceableFromVector(space);
+            if (oldPlac == null)
             {
-                Vector3Int groundSpace = new Vector3Int((int)positions[i].x, (int)positions[i].y - 1, (int)positions[i].z);
-                Vector3Int space = new Vector3Int((int)positions[i].x, (int)positions[i].y, (int)positions[i].z);
-                if(Grid.instance.SpawnPlayer1.Find(groundSpace.Equals) == null)
-                {
-                    Debug.Log("error in character " + i.ToString() + "of player" + this.ToString());
-                }
                 Grid.instance.MoveBlock(GameManager.instance.FindLocalObject(ids[i]), space, true);
             }
-            GameManager.instance.IsGameStarted = true;
-            GameManager.instance.BeginningOfTurn();
+            else
+            {
+                Grid.instance.SwitchPlaceable(GameManager.instance.FindLocalObject(ids[i]), oldPlac);
+            }
+
         }
+    }
+
+    [ClientRpc]
+    public void RpcEndSpawnAndStartGame()
+    {
+        foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
+        foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
+
+        GameManager.instance.IsGameStarted = true;
+        GameManager.instance.BeginningOfTurn();
     }
 
     private void Update()

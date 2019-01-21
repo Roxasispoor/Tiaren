@@ -78,8 +78,15 @@ public class Grid : MonoBehaviour
         }
     }
 
+    public Placeable GetPlaceableFromVector(Vector3Int pos)
+    {
+        return GridMatrix[pos.x, pos.y, pos.z];
+    }
 
-
+    public Placeable GetPlaceableFromVector(Vector3 pos)
+    {
+        return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
+    }
 
 
 
@@ -521,8 +528,34 @@ public class Grid : MonoBehaviour
             }
           
 
+        } else
+        {
+            Debug.LogError("MoveBlock error: To define");
         }
     }
+
+    public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)
+    {
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: first placeable is null");
+        }
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: second placeable is null");
+        }
+
+        Vector3Int oldPositionA = placeableA.GetPosition();
+        Vector3Int oldPositionB = placeableB.GetPosition();
+
+        Grid.instance.gridMatrix[oldPositionB.x, oldPositionB.y, oldPositionB.z] = placeableA;
+        placeableA.transform.position = oldPositionB;
+
+        Grid.instance.gridMatrix[oldPositionA.x, oldPositionA.y, oldPositionA.z] = placeableB;
+        placeableB.transform.position = oldPositionA;
+    }
+
+
     /// <summary>
     /// Function handling vertical collisions of bloc by another
     /// </summary>

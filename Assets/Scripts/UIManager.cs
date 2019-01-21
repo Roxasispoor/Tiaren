@@ -19,7 +19,6 @@ public class UIManager : MonoBehaviour {
     public Image prefabCharacterChoices;
 
     private List<GameObject> TeamParents = new List<GameObject>();
-    private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>();
     private List<int> currentCharacters = new List<int>();
 
     public List<int> CurrentCharacters
@@ -35,19 +34,6 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public List<SpriteAndName> PossibleCharacters
-    {
-        get
-        {
-            return possibleCharacters;
-        }
-
-        set
-        {
-            possibleCharacters = value;
-        }
-    }
-
     int mod(int x, int m)
     {
         return (x % m + m) % m;
@@ -58,32 +44,23 @@ public class UIManager : MonoBehaviour {
         if (gameObject.GetComponent<Player>().isLocalPlayer)
         {
             TeamCanvas.SetActive(true);
-            //init Posiible characters
-            string path = "Teams.json";
-            string line;
-
-            StreamReader reader = new StreamReader(path);
-            while ((line = reader.ReadLine()) != null)
-            {
-                SpriteAndName spriteAndName = JsonUtility.FromJson<SpriteAndName>(line);
-                PossibleCharacters.Add(spriteAndName);
-            }
+            
 
             //display UI
             for (int i = 0; i < 5; i++)
             {
-                currentCharacters.Add(mod(i, possibleCharacters.Count));
+                currentCharacters.Add(mod(i, GameManager.instance.PossibleCharacters.Count));
                 //display all sprites and hide them
                 Vector3 position = new Vector3(-700 + 350 * i, 0);
                 TeamParents.Add(new GameObject("Parent" + i.ToString()));
                 TeamParents[i].transform.parent = TeamCanvas.transform;
                 TeamParents[i].transform.localPosition = Vector3.zero;
                 TeamParents[i].transform.localScale = Vector3.one;
-                for (int j = 0; j < PossibleCharacters.Count; j++)
+                for (int j = 0; j < GameManager.instance.PossibleCharacters.Count; j++)
                 {                    
                     Image image = Instantiate(prefabCharacterChoices, TeamParents[i].transform);
                     image.GetComponent<RectTransform>().transform.localPosition = position;
-                    Sprite sprite = Resources.Load<Sprite>(PossibleCharacters[j].spritePath);
+                    Sprite sprite = Resources.Load<Sprite>(GameManager.instance.PossibleCharacters[j].spritePath);
                     image.sprite = sprite;
                     if (j != currentCharacters[i])
                     {
@@ -109,7 +86,7 @@ public class UIManager : MonoBehaviour {
     {        
         Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
         images[CurrentCharacters[i]].gameObject.SetActive(false);
-        CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, PossibleCharacters.Count);
+        CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, GameManager.instance.PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
 
@@ -117,7 +94,7 @@ public class UIManager : MonoBehaviour {
     {
         Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
         images[CurrentCharacters[i]].gameObject.SetActive(false);
-        CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, PossibleCharacters.Count);
+        CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, GameManager.instance.PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
 

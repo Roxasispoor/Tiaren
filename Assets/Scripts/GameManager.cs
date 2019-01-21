@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.IO;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -45,17 +46,13 @@ public class GameManager : NetworkBehaviour
     private Player winner;
     public LivingPlaceable playingPlaceable;
 
-    /// <summary>
-    /// allows to know if the game ended
-    /// </summary>
-    /// <returns></returns>
+
+    private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
 
     /// <summary>
     /// display number of the current turn
     /// </summary>
     /// 
-
-
     public int NumberTurn
     {
         get
@@ -142,7 +139,19 @@ public class GameManager : NetworkBehaviour
             isGameStarted = value;
         }
     }
+    
+    public List<SpriteAndName> PossibleCharacters
+    {
+        get
+        {
+            return possibleCharacters;
+        }
 
+        set
+        {
+            possibleCharacters = value;
+        }
+    }
 
 
     /// <summary>
@@ -181,6 +190,18 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
+        }
+
+
+        //init Posiible characters
+        string path = "Teams.json";
+        string line;
+
+        StreamReader reader = new StreamReader(path);
+        while ((line = reader.ReadLine()) != null)
+        {
+            SpriteAndName spriteAndName = JsonUtility.FromJson<SpriteAndName>(line);
+            PossibleCharacters.Add(spriteAndName);
         }
     }
 
@@ -643,9 +664,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         playerComponent.characters.Add(charac);
 
-        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.GetLocalPlayer().GetComponent<UIManager>().PossibleCharacters[prefaToSpawn].className);
-
-        Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
+        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className);
     }
     
     /// <summary>
