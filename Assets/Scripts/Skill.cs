@@ -22,6 +22,8 @@ public class Skill
     [SerializeField]
     private int minRange;
     [SerializeField]
+    private int effectarea = 0;
+    [SerializeField]
     public List<Effect> effects;
     [SerializeField]
     public delegate bool DelegateCondition();
@@ -31,6 +33,7 @@ public class Skill
     public Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
+    private SkillArea skillarea;
 
 
     public SkillType SkillType
@@ -43,6 +46,19 @@ public class Skill
         set
         {
             skillType = value;
+        }
+    }
+
+    public SkillArea SkillArea
+    {
+        get
+        {
+            return skillarea;
+        }
+
+        set
+        {
+            skillarea = value;
         }
     }
 
@@ -69,6 +85,19 @@ public class Skill
         set
         {
             cooldown = value;
+        }
+    }
+
+    public int EffectArea
+    {
+        get
+        {
+            return effectarea;
+        }
+
+        set
+        {
+            effectarea = value;
         }
     }
 
@@ -124,7 +153,7 @@ public class Skill
         }
     }
 
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax)
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
         Cooldown = cooldown;
@@ -135,7 +164,8 @@ public class Skill
         SkillType = skillType;
         this.maxRange = rangeMax;
         this.minRange = rangeMin;
-
+        EffectArea = effectarea;
+        SkillArea = skillarea;
     }
 
     public Skill(string jsonFilePath)

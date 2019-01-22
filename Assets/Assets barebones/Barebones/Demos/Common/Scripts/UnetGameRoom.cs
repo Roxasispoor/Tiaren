@@ -77,7 +77,7 @@ public class UnetGameRoom : NetworkBehaviour
         NetworkServer.RegisterHandler(AccessMsgType, HandleReceivedAccess);
 
         Msf.Server.Rooms.Connection.Disconnected += OnDisconnectedFromMaster;
-        Debug.Log("Test debug");
+        //Debug.Log("Test debug");
     }
 
     public bool IsRoomRegistered { get; protected set; }

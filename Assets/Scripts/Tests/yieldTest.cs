@@ -19,7 +19,7 @@ public class yieldTest : MonoBehaviour {
         while (!clock.IsFinished)
         {
             i++;
-            yield return StartCoroutine(getInput(KeyCode.Space));
+            yield return StartCoroutine(getInput(KeyCode.G));
             yield return StartCoroutine(Waiting());
            
         }

@@ -33,6 +33,9 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
+    private List<Vector3Int> spawnPlayer1;
+    private List<Vector3Int> spawnPlayer2;
+
 
     public Placeable[,,] GridMatrix
     {
@@ -47,6 +50,41 @@ public class Grid : MonoBehaviour
         }
     }
 
+    public List<Vector3Int> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
+
+        set
+        {
+            spawnPlayer2 = value;
+        }
+    }
+
+    public List<Vector3Int> SpawnPlayer1
+    {
+        get
+        {
+            return spawnPlayer1;
+        }
+
+        set
+        {
+            spawnPlayer1 = value;
+        }
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3Int pos)
+    {
+        return GridMatrix[pos.x, pos.y, pos.z];
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3 pos)
+    {
+        return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
+    }
 
 
 
@@ -314,175 +352,32 @@ public class Grid : MonoBehaviour
             }
         }
     }
-
-
-
-    /*/// <summary>
-    /// Initialize value of boolean explored of blocs of the grid
-    /// </summary>
-    public void InitializeExplored(bool value)
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    if (gridMatrix[x, y, z] != null)
-                    {
-                        gridMatrix[x, y, z].Explored = value;
-                    }
-                }
-            }
-        }
-
-    }
+    
     /// <summary>
-    /// Algorithm of deep research for related gravity
-    /// Exploration is ok, but part for falling if no gravity is missing
+    /// Explore adjacent blocks in order too find those who are linked to the ground
     /// </summary>
-    /// <param name="positionEdgeX"></param>
-    /// <param name="positionEdgeY"></param>
-    /// <param name="positionEdgeZ"></param>
-	public void Explore(int positionEdgeX, int positionEdgeY, int positionEdgeZ)
-    {
-        if (!gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ].Explored)
-        {
-            gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ].Explored = true;
-            // considering the 4 side blocs, the up bloc and down bloc... so 6 sides ?
-            // if neighbours are not null and not explored, and still in the map
-            if (positionEdgeX > 0 && gridMatrix[positionEdgeX - 1, positionEdgeY, positionEdgeZ] != null &&
-                !gridMatrix[positionEdgeX - 1, positionEdgeY, positionEdgeZ].Explored)
-            {
-                Explore(positionEdgeX - 1, positionEdgeY, positionEdgeZ);
-            }
-            if (positionEdgeX < sizeX - 1 && gridMatrix[positionEdgeX + 1, positionEdgeY, positionEdgeZ] != null &&
-                !gridMatrix[positionEdgeX + 1, positionEdgeY, positionEdgeZ].Explored)
-            {
-                Explore(positionEdgeX + 1, positionEdgeY, positionEdgeZ);
-            }
-            if (positionEdgeY > 0 && gridMatrix[positionEdgeX, positionEdgeY - 1, positionEdgeZ] != null &&
-                !gridMatrix[positionEdgeX, positionEdgeY - 1, positionEdgeZ].Explored)
-            {
-                Explore(positionEdgeX, positionEdgeY - 1, positionEdgeZ);
-            }
-            if (positionEdgeY < sizeY - 1 && gridMatrix[positionEdgeX, positionEdgeY + 1, positionEdgeZ] != null &&
-                !gridMatrix[positionEdgeX, positionEdgeY + 1, positionEdgeZ].Explored)
-            {
-                Explore(positionEdgeX, positionEdgeY + 1, positionEdgeZ);
-            }
-            if (positionEdgeZ > 0 && gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ - 1] != null &&
-                !gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ - 1].Explored)
-            {
-                Explore(positionEdgeX, positionEdgeY, positionEdgeZ - 1);
-            }
-            if (positionEdgeZ < sizeZ - 1 && gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ + 1] != null &&
-                !gridMatrix[positionEdgeX, positionEdgeY, positionEdgeZ + 1].Explored)
-            {
-                Explore(positionEdgeX, positionEdgeY, positionEdgeZ + 1);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Check if all the grid has been explored
-    /// </summary>
-    /// <returns></returns>
-    public bool IsGridAllExplored()
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored)
-                    // if unexplored part, false 
-                    {
-                        return false;
-
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Function called to handle all the gravity by herself
-    /// </summary>
-    public void Gravity()
-    {
-        SimpleGravity();
-
-        // check at the creation that explored = false. 
-        while (!IsGridAllExplored())
-        {
-            // starting by the one from the bottom that are not marked, then expanding. 
-            //Then go to floaties, expand. 
-            //Others will fall
-            //  0 = not seen, nothing to do; 1 seen
-            InitializeExplored(false);
-
-
-            for (int x = 0; x < sizeX; x++)
-            {
-                for (int y = 0; y < sizeY; y++)
-                {
-                    for (int z = 0; z < sizeZ; z++)
-                    {
-                        if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored && (y == 0 || gridMatrix[x, y, z].GravityType == GravityType.NULL_GRAVITY))
-                        // throw dfs on unempty bloc that are not explored, on floor or without gravity
-                        {
-                            Explore(x, y, z);
-
-                        }
-
-
-                    }
-                }
-            }
-            //then, all blocs not empty with explored to false fall from s1
-            FallConnexe();
-
-        }
-    }
-    /// <summary>
-    /// make blocs under related gravity fall (all non null unexplored)
-    /// </summary>
-    public void FallConnexe()
-    {
-
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    if (gridMatrix[x, y, z] != null && !gridMatrix[x, y, z].Explored) // if bloc is not null and supposed to fall
-                                                                                      //then fall.
-                    {
-
-                        HandleCrush(x, y, z, 1); // falling from one, applying right crushing if needed
-                    }
-                }
-            }
-        }
-
-    }*/
-
-
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    /// <returns>if the block is linked to the ground</returns>
     public bool ExploreConnexity(int x, int y, int z)
     {
         //Debug.Log("Exploration du bloc :" + x + " " + y + " " + z);
-
+        //Initialise variable connected, value is true if the curretn block is connected to the ground
         bool connected = false;
+        //We've explored this block, so no need to check in again (avoiding loops)
         gridMatrix[x, y, z].Explored = true;
+
+        //first we check the block under us, if there is one
         if (y > 0 && gridMatrix[x, y - 1, z] != null ) {
+            //if it's the ground (level 0) to the current block is connected to the ground
             if (y - 1 == 0) return true;
+            //if the block has no been explored, we check it
             if (!gridMatrix[x, y - 1, z].Explored)
                 connected = ExploreConnexity(x, y - 1, z);
+            //else then we check if it's a floating block or a grounded one
             else connected = gridMatrix[x, y - 1, z].Grounded;
+            // then if we find something, no need to check the other block, let's return true
             if (connected)
             {
                 gridMatrix[x, y, z].Grounded = true;
@@ -490,7 +385,7 @@ public class Grid : MonoBehaviour
             }
         }
 
-
+        //And here is the same with other directions
         if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null) {
             if (!gridMatrix[x + 1, y, z].Explored)
                 connected = ExploreConnexity(x + 1, y, z);
@@ -501,7 +396,6 @@ public class Grid : MonoBehaviour
                 return connected;
             }
         }
-
 
         if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null) {
             if (!gridMatrix[x, y, z + 1].Explored)
@@ -525,7 +419,6 @@ public class Grid : MonoBehaviour
             }
         }
 
-
         if (z > 0 && gridMatrix[x, y, z - 1] != null) {
             if (!gridMatrix[x, y, z - 1].Explored)
                 connected = ExploreConnexity(x, y, z - 1);
@@ -537,7 +430,6 @@ public class Grid : MonoBehaviour
             }
         }
 
-
         if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null) {
             if (!gridMatrix[x, y + 1, z].Explored)
                 connected = ExploreConnexity(x, y + 1, z);
@@ -547,10 +439,17 @@ public class Grid : MonoBehaviour
         return connected;
     }
 
+    /// <summary>
+    /// Called when a block is destroyed or moved, check if some block needs to fall
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
     public void ConnexeFall(int x, int y, int z)
     {
         //Debug.Log("Gravité Connexe appelée :" + x + " " + y + " " + z);
         bool somethingfall = false;
+        //clearing the previous search
         for (int i = 0; i < sizeX; i++)
         {
             for (int j = 0; j < sizeY; j++)
@@ -566,10 +465,13 @@ public class Grid : MonoBehaviour
 
             }
         }
+        //no need to check this block back
         gridMatrix[x, y, z].Explored = true;
 
+        //if the block is in , it's the ground, this shouldn't have been destroyed or moved
         if (y != 0)
         {
+            //for each direction, we check each block that need to fall due to the destruction of the current block
             if (y > 0 && gridMatrix[x, y - 1, z] != null)
             {
                 if (y - 1 == 0) gridMatrix[x, y - 1, z].Grounded = true;
@@ -618,8 +520,34 @@ public class Grid : MonoBehaviour
             }
           
 
+        } else
+        {
+            Debug.LogError("MoveBlock error: To define");
         }
     }
+
+    public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)
+    {
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: first placeable is null");
+        }
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: second placeable is null");
+        }
+
+        Vector3Int oldPositionA = placeableA.GetPosition();
+        Vector3Int oldPositionB = placeableB.GetPosition();
+
+        Grid.instance.gridMatrix[oldPositionB.x, oldPositionB.y, oldPositionB.z] = placeableA;
+        placeableA.transform.position = oldPositionB;
+
+        Grid.instance.gridMatrix[oldPositionA.x, oldPositionA.y, oldPositionA.z] = placeableB;
+        placeableB.transform.position = oldPositionA;
+    }
+
+
     /// <summary>
     /// Function handling vertical collisions of bloc by another
     /// </summary>
@@ -666,7 +594,9 @@ public class Grid : MonoBehaviour
 
     }
     /// <summary>
-    /// Handle gravity for object of type SIMPLE_GRAVITY. if nothing below => fall
+    /// Handle gravity : for object of type SIMPLE_GRAVITY. if nothing below => fall 
+    /// for other objects, if not link to the ground, they fall
+    /// Batching is applying at the end of gravuty application if blocks have fallen
     /// </summary>
     public void Gravity()
     {
@@ -830,10 +760,10 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
         Debug.Log(Placeable.currentMaxId);
-        
-        //Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
-        //Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
 
     }
 
@@ -844,14 +774,14 @@ public class Grid : MonoBehaviour
     /// <param name="minrange">Maximale range of the skill</param>
     /// <param name="maxrange">Minimale range of the skill</param>
     /// <returns></returns>
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks)
     {
         int remainingrangeYZ; //remaining range
         int dirx; //x direction (0,-1,1)
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
-        Depthreading(Playerposition, targetableblocs, minrange, maxrange, 0, 0);
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, 0, 0, throughtblocks);
 
         //Now case when x > 0
         dirx = 1;
@@ -865,7 +795,7 @@ public class Grid : MonoBehaviour
             if (x < sizeX)
             {
                 //exploring in y and z
-                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx);
+                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx, throughtblocks);
             }
         }
 
@@ -878,7 +808,7 @@ public class Grid : MonoBehaviour
             if (x >= 0)
             {
                 //Exploring in y and z 
-                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx);
+                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx, throughtblocks);
             }
         }
 
@@ -901,7 +831,7 @@ public class Grid : MonoBehaviour
     /// <param name="dirx">x direction (0,-1,1)</param>
     /// <param name="dirz">z direction (0,-1,1)</param>
     private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
-        int i, int j, int dirx, int dirz)
+        int i, int j, int dirx, int dirz, bool throughtblocks)
     {
         int diry = 0; //y direction
         //real block position
@@ -918,7 +848,7 @@ public class Grid : MonoBehaviour
                 if (y < sizeY)
                 {
                     //trying to see the targeted block, if true, adding it to the target list
-                    if (GridMatrix[x, y, z] != null && !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                    if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
                     {
                         Vector3Int newblock = new Vector3Int(x, y, z);
                         targetableblocs.Add(newblock);
@@ -941,7 +871,7 @@ public class Grid : MonoBehaviour
                 if (y >= 0)
                 {
                     //trying to see the targeted block, if true, adding it to the target list
-                    if (GridMatrix[x, y, z] != null && !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition))
+                    if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
                     {
                         Vector3Int newblock = new Vector3Int(x, y, z);
                         targetableblocs.Add(newblock);
@@ -961,7 +891,7 @@ public class Grid : MonoBehaviour
     /// <param name="i">number of block on x axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
     private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
-        int i, int dirx)
+        int i, int dirx, bool throughtblocks)
     {
         int dirz = 0; //z direction
         int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
@@ -982,13 +912,13 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && GridMatrix[x, (int)Playerposition.y, z] == null
-                        && !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition))
+                        && (throughtblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition)))
                     {
                         Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
                         targetableblocs.Add(newblock);
                     }
                 }
-                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz);
+                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz, throughtblocks);
             }
             dirz = 1;
         }
@@ -1008,14 +938,14 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight and if so, add it to the bloc list
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && GridMatrix[x, (int)Playerposition.y, z] == null
-                        && !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition))
+                        && (throughtblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition)))
                     {
                         Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
                         targetableblocs.Add(newblock);
                     }
                 }
                 //Search on the y axis
-                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz);
+                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz, throughtblocks);
             }
         }
     }
@@ -1190,6 +1120,99 @@ public class Grid : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Return an area to hightlight when the player use skills with an area effect
+    /// </summary>
+    /// <param name="Cube">Current Placeable selected</param>
+    /// <param name="effectrange">Range of the effect</param>
+    /// <returns>List of blocks where the effect spreads</returns>
+    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange)
+    {
+        List<Placeable> targetableBlocks = new List<Placeable>();
+        Vector3 Position = Cube.transform.position;
+
+        for (int x = Mathf.Max((int)Position.x - effectrange, 0);
+                x < Mathf.Min((int)Position.x + effectrange + 1, sizeX);
+                x++)
+        {
+            for (int y = Mathf.Max((int)Position.y - effectrange, 0);
+                y < Mathf.Min((int)Position.y + effectrange + 1, sizeY);
+                y++)
+            {
+                for (int z = Mathf.Max((int)Position.z - effectrange, 0);
+                z < Mathf.Min((int)Position.z + effectrange + 1, sizeZ);
+                z++)
+                {
+                    if (gridMatrix[x, y, z] != null
+                        && !gridMatrix[x, y, z].IsLiving() && Mathf.Abs(x-Position.x)+Mathf.Abs(y-Position.y)+Mathf.Abs(z-Position.z) < effectrange
+                        && (y == sizeY - 1 || gridMatrix[x, y + 1, z] == null))
+                    {
+                        targetableBlocks.Add(gridMatrix[x,y,z]);
+                    }
+                }
+            }
+        }
+
+        return targetableBlocks;
+    }
+
+    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, int state, SkillArea pattern)
+    {
+        List<Placeable> targetableBlocks = new List<Placeable>();
+        Vector3 Position = Cube.transform.position;
+
+        if (pattern == SkillArea.LINE) {
+            if (state % 2 == 0)
+            {
+                for (int x = Mathf.Max((int)Position.x - effectrange, 0);
+                x < Mathf.Min((int)Position.x + effectrange + 1, sizeX);
+                x++)
+                {
+                    if (gridMatrix[x, (int)Position.y, (int)Position.z] != null
+                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (Position.y == sizeY - 1 || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null))
+                    {
+                        targetableBlocks.Add(gridMatrix[x, (int)Position.y, (int)Position.z]);
+                    }
+                }
+            }
+            else
+            {
+                for (int z = Mathf.Max((int)Position.z - effectrange, 0);
+                z < Mathf.Min((int)Position.z + effectrange + 1, sizeZ);
+                z++)
+                {
+                    if (gridMatrix[(int)Position.x, (int)Position.y, z] != null
+                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (Position.y == sizeY - 1 || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null))
+                    {
+                        targetableBlocks.Add(gridMatrix[(int)Position.x, (int)Position.y, z]);
+                    }
+                }
+            }
+        } 
+        return targetableBlocks;
+    }
+
+    public List<Vector3Int> DrawCrossPattern(List<Vector3Int> Blocklist, Vector3 Playerposition)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (Pos.y - Playerposition.y != 0 || (Pos.x - Playerposition.x != 0 && Pos.z - Playerposition.z != 0))
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> TopBlockPattern(List<Vector3Int> Blocklist)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (Pos.y==sizeY-1 || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
 
     public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange)
     {
