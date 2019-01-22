@@ -508,6 +508,14 @@
         }
 
 
+    
+    public ObjectOnBloc[] GetObjectsOnBlockUnder()
+    {
+       return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
+               .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+               }
+
+
         public void ChangeSpawnCharacter() //method called by the ui buttons during spawn
         {
             GameManager.instance.CharacterToSpawn = this;
@@ -573,6 +581,7 @@
         {
             return true;
         }
+
 
         // Use this for initialization
         void Awake()
@@ -660,14 +669,7 @@
         public void Destroy()
         {
 
-            if (this.Destroyable)
-            {
-                foreach (var effet in this.OnDestroyEffects)
-                {
-                    effet.Use();
-                }
-            }
-
+            base.Destroy();
             this.IsDead = true;
             this.gameObject.SetActive(false);
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
@@ -717,13 +719,13 @@
             float heightSize = 0.2f;
             foreach (NodePath node in AreaOfMouvement)
             {
-                if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
-                {
-                    GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                    GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                    GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                    GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                    GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
+
 
                     quadUp.SetActive(true);
 
@@ -749,9 +751,7 @@
                     //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
                 }
             }
-            //GameManager.instance.ResetAllBatches();
-
-        }
+        
 
         public void ResetAreaOfMovementBatch()
         {
@@ -773,17 +773,15 @@
         {
             foreach (NodePath node in AreaOfMouvement)
             {
-            
-
                 if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
                 {
-                    GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                    GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                    GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                    GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                    GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
-                    quadUp.SetActive(false);
+                quadUp.SetActive(false);
                     quadRight.SetActive(false);
                      quadLeft.SetActive(false);
               
@@ -791,10 +789,7 @@
               
                     quadBack.SetActive(false);
                 
-
-                    // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                    // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-                    //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+                
                 }
 
             }

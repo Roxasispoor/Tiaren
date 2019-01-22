@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class EffectOnObjectBloc : Effect {
     public ObjectOnBloc target;
-    private Placeable launcher;
     public int netIdTarget = -1;
 
     public override NetIdeable GetTarget()
@@ -41,5 +40,16 @@ public abstract class EffectOnObjectBloc : Effect {
         EffectManager.instance.UseEffect(this);
     }
 
-    
+    public EffectOnObjectBloc(EffectOnObjectBloc other)
+    {
+        Target = other.target;
+        Launcher = other.Launcher;
+    }
+    public EffectOnObjectBloc(ObjectOnBloc target)
+    {
+        Target = target;
+    }
+    public EffectOnObjectBloc():base()
+    {
+        }
 }
