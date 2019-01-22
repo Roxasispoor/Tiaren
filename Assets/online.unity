@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -384,12 +384,14 @@ MonoBehaviour:
     type: 2}
   gameMode: 0
   targetMaterial: {fileID: 2100000, guid: d526401e971c20e4595b2bccc06da6b8, type: 2}
+  spawnMaterial: {fileID: 2100000, guid: 5d11303f80d8f3c4595fe051da573f4a, type: 2}
   networkManager: {fileID: 0}
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
     type: 2}
   batchFolder: {fileID: 649181390}
   prefabCharacs:
   - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
+  - {fileID: 1972576056741726, guid: f9d8c67be3f279e4eaa105ecc867a791, type: 2}
   prefabWeapons:
   - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
   gridFolder: {fileID: 1154982765}
@@ -715,6 +717,58 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
+--- !u!1001 &1177372383
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114713950938067470, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10,
+        type: 2}
+      propertyPath: SkillZone
+      value: 
+      objectReference: {fileID: 1177372384}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
+  m_IsPrefabAsset: 0
+--- !u!224 &1177372384 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 224626617816494302, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10,
+    type: 2}
+  m_PrefabInternal: {fileID: 1177372383}
 --- !u!1 &1195699359
 GameObject:
   m_ObjectHideFlags: 0

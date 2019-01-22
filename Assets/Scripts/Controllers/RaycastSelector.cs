@@ -39,7 +39,7 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.playingPlaceable != null)
+        if (GameManager.instance.playingPlaceable != null || GameManager.instance.state == States.Spawn )
         {
             RaycastHit hit;
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);

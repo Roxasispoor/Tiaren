@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.IO;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -34,6 +35,9 @@ public class GameManager : NetworkBehaviour
     ///  Material used to highlight target cubes (not quads) when skill is used
     /// </summary>
     public Material targetMaterial;
+
+    public Material spawnMaterial;
+
     /// <summary>
     /// Manages all the network part once in game
     /// </summary>
@@ -63,6 +67,7 @@ public class GameManager : NetworkBehaviour
     public GameObject gridFolder;
     public GameObject player1; //Should be Object
     public GameObject player2; //Should be Object
+    private LivingPlaceable characterToSpawn;
     public string player1Username="";
     public string player2Username=""; //TODOShould instead be account and serialize 
     public GameObject[] prefabMonsters;
@@ -73,22 +78,19 @@ public class GameManager : NetworkBehaviour
 
     private List<StackAndPlaceable> turnOrder;
     Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
+
+    private bool isGameStarted = false;
     public TransmitterNoThread transmitter;
     private Player winner;
     public LivingPlaceable playingPlaceable;
-    private UIManager UIManager;
 
-    /// <summary>
-    /// allows to know if the game ended
-    /// </summary>
-    /// <returns></returns>
+
+    private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
 
     /// <summary>
     /// display number of the current turn
     /// </summary>
     /// 
-
-
     public int NumberTurn
     {
         get
@@ -148,16 +150,55 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public LivingPlaceable CharacterToSpawn
+    {
+        get
+        {
+            return characterToSpawn;
+        }
+
+        set
+        {
+            if (characterToSpawn != null) characterToSpawn.UnHighlightForSpawn();
+            if (value != null) value.HighlightForSpawn();
+            characterToSpawn = value;
+        }
+    }
     public bool AreaEffect
     {
         get
         {
             return areaffect;
         }
-
         set
         {
             areaffect = value;
+        }
+    }
+
+    public bool IsGameStarted
+    {
+        get
+        {
+            return isGameStarted;
+        }
+        set
+        {
+            isGameStarted = value;
+        }
+    }
+ 
+    
+    public List<SpriteAndName> PossibleCharacters
+    {
+        get
+        {
+            return possibleCharacters;
+        }
+
+        set
+        {
+            possibleCharacters = value;
         }
     }
 
@@ -195,6 +236,22 @@ public class GameManager : NetworkBehaviour
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         networkManager = (NetworkManager) FindObjectOfType(typeof(NetworkManager));
+        for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
+        {
+            networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
+        }
+
+
+        //init Posiible characters
+        string path = "Teams.json";
+        string line;
+
+        StreamReader reader = new StreamReader(path);
+        while ((line = reader.ReadLine()) != null)
+        {
+            SpriteAndName spriteAndName = JsonUtility.FromJson<SpriteAndName>(line);
+            PossibleCharacters.Add(spriteAndName);
+        }
         transmitter = GetComponent<TransmitterNoThread>();
     }
 
@@ -239,41 +296,54 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }*/
         while (player1 == null )
         {
-               
-                yield return null;
+            yield return null;
         }
         //Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
         { 
             yield return null;
         }
-        CreateCharacters(player1, new Vector3Int(0, 4, 0));
-        CreateCharacters(player2, new Vector3Int(3, 4, 0));
         
         Grid.instance.Gravity();
+        state = States.TeamSelect;
+        Debug.Log("Right before select");
+        TeamSelectDisplay();
+        InitialiseBatchFolder();
+        player1.gameObject.name = "player1";
+        player2.gameObject.name = "player2";
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
        /* if (isServer)
         {
             transmitter.initServer();
         }*/
-        if (isClient)
+    }
+
+    public void TeamSelectDisplay()
+    {
+        player1.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+        player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+    }
+    
+    public GameObject GetOtherPlayer(GameObject player)
+    {
+        if(player != player1)
         {
-            InitialiseBatchFolder();
+            return player1;
+        }
+        else
+        {
             
+            InitialiseBatchFolder();
+            return player2;
 
             //receive data from server
         }
        
-        
-            //Retrieve data 
        
-        //RpcStartGame();
         
-        BeginningOfTurn();
-    
     }
-
+    
     public void ResetGrid()
     {
         foreach (Transform child in GameManager.instance.batchFolder.transform)
@@ -362,6 +432,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         
     }
+
     private void UpdateTimeline()
     {
         TurnOrder.Clear();
@@ -446,7 +517,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
         }
         if (saved != null)
-
         {
             newBatch.GetComponent<MeshRenderer>().material = saved;
             newBatch.GetComponent<MeshFilter>().mesh = new Mesh();
@@ -462,7 +532,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Debug.Log("erreur,batch material non trouvé" + batch.material);
         }
 
-        }
+    }
+
     public void ResetAllBatches()
     {
         if(hovered != null)
@@ -543,7 +614,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
 
-
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
         foreach(MeshFilter meshFilter in meshFilters)
@@ -568,7 +638,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    private void BeginningOfTurn()
+
+
+    public void BeginningOfTurn()
     {
         Grid.instance.Gravity();
         UpdateTimeline();
@@ -616,6 +688,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
+
     public void EndOFTurn()
     {
         if(winner==null)
@@ -646,10 +719,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    public NetIdeable FindLocalObject(int id)
+    public Placeable FindLocalObject(int id)
     {
 
-        return idPlaceable[id];
+        return (Placeable) idPlaceable[id];
     }
     public Vector3[] GetPathFromClicked(Placeable arrival)
     {
@@ -663,14 +736,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         return null;
     }
-    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates)
+    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-
-        player.GetComponent<Player>().Characters.Add(charac);
+        
         charac1.Player = player.GetComponent<Player>();
-
-        Vector3Int posPers = (Vector3Int) spawnCoordinates;
+        //charac1.FillLiving(className);
+        Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
         charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
@@ -678,22 +750,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Debug.Log(charac1.netId);
         idPlaceable[charac1.netId]= charac1;
         Placeable.currentMaxId++;
-
     }
-
-    
-    public void CreateCharacters(GameObject player, Vector3Int spawnCoordinates)
+        
+    public void CreateCharacter(GameObject player, Vector3Int spawnCoordinates, int prefaToSpawn)
     {
         Player playerComponent = player.GetComponent<Player>();
-        for (int i = 0; i < playerComponent.NumberPrefab.Count; i++)
-        {
-            GameObject charac = Instantiate(prefabCharacs[player.GetComponent<Player>().NumberPrefab[i]], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
+        
+        GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-            InitialiseCharacter(charac, player, spawnCoordinates);
+        playerComponent.characters.Add(charac);
 
-            Vector3 realCoordinates = new Vector3Int(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z);
-        }
-
+        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className);
     }
 
     private void Update()

@@ -33,6 +33,9 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
+    private List<Vector3Int> spawnPlayer1;
+    private List<Vector3Int> spawnPlayer2;
+
 
     public Placeable[,,] GridMatrix
     {
@@ -47,6 +50,41 @@ public class Grid : MonoBehaviour
         }
     }
 
+    public List<Vector3Int> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
+
+        set
+        {
+            spawnPlayer2 = value;
+        }
+    }
+
+    public List<Vector3Int> SpawnPlayer1
+    {
+        get
+        {
+            return spawnPlayer1;
+        }
+
+        set
+        {
+            spawnPlayer1 = value;
+        }
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3Int pos)
+    {
+        return GridMatrix[pos.x, pos.y, pos.z];
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3 pos)
+    {
+        return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
+    }
 
 
 
@@ -481,8 +519,34 @@ public class Grid : MonoBehaviour
             }
           
 
+        } else
+        {
+            Debug.LogError("MoveBlock error: To define");
         }
     }
+
+    public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)
+    {
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: first placeable is null");
+        }
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: second placeable is null");
+        }
+
+        Vector3Int oldPositionA = placeableA.GetPosition();
+        Vector3Int oldPositionB = placeableB.GetPosition();
+
+        Grid.instance.gridMatrix[oldPositionB.x, oldPositionB.y, oldPositionB.z] = placeableA;
+        placeableA.transform.position = oldPositionB;
+
+        Grid.instance.gridMatrix[oldPositionA.x, oldPositionA.y, oldPositionA.z] = placeableB;
+        placeableB.transform.position = oldPositionA;
+    }
+
+
     /// <summary>
     /// Function handling vertical collisions of bloc by another
     /// </summary>
@@ -695,10 +759,10 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(Placeable.currentMaxId);
-        
-        //Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
-        //Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
+
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
+        Debug.Log(Placeable.currentMaxId);
 
     }
 
