@@ -717,58 +717,6 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
---- !u!1001 &1177372383
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850369285671442, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 114713950938067470, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10,
-        type: 2}
-      propertyPath: SkillZone
-      value: 
-      objectReference: {fileID: 1177372384}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10, type: 2}
-  m_IsPrefabAsset: 0
---- !u!224 &1177372384 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 224626617816494302, guid: 2a9c7d6ca5c0b7449b67bd983fabaa10,
-    type: 2}
-  m_PrefabInternal: {fileID: 1177372383}
 --- !u!1 &1195699359
 GameObject:
   m_ObjectHideFlags: 0
