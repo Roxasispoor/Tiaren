@@ -6,8 +6,6 @@ using UnityEngine;
 [CustomEditor(typeof(MapConverter))]
 public class MapConverterEditor : Editor {
 
-
-
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();

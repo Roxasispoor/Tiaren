@@ -452,7 +452,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-
     /// <summary>
     /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
     /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
@@ -612,31 +611,25 @@ public class LivingPlaceable : Placeable
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new Damage(50f));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,1);
-        skill1.Save();
-        skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5);
+        Skill skill1 = new Skill (0, 1, ListEffects, SkillType.BLOCK, "push", 0, 1);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "createBlock", 0, 5);
         Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + Classname);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
         targetableUnits = new List<LivingPlaceable>();
-     //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        //Save();
-        //force = -5;
-        //FillLiving();
-
 
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
@@ -751,7 +744,6 @@ public class LivingPlaceable : Placeable
     public void ResetAreaOfMovement()
     {
        
-        float heightSize = 1.02f;
         foreach (NodePath node in AreaOfMouvement)
         {
             
@@ -825,7 +817,8 @@ public class LivingPlaceable : Placeable
         targetArea.Clear();
       
     }
-    public void Save()
+
+    public void Save(string path = "Living.json")
     {
         positionSave = GetPosition();
         Stats stats = new Stats();
@@ -835,9 +828,9 @@ public class LivingPlaceable : Placeable
         {
             text+=skill.Save();
         }
-        string path = "Living.json";
         File.WriteAllText(path, text);
     }
+
     public static Stream GenerateStreamFromString(string s)
     {
         var stream = new MemoryStream();

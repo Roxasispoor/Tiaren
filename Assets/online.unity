@@ -398,6 +398,15 @@ MonoBehaviour:
   player1Username: 
   player2Username: 
   prefabMonsters: []
+  activeSkill:
+    skillName: 
+    cost: 0
+    tourCooldownLeft: 0
+    cooldown: 0
+    maxRange: 0
+    minRange: 0
+    abilitySprite: {fileID: 0}
+    skillType: 0
   state: 0
   hovered: {fileID: 0}
   transmitter: {fileID: 0}

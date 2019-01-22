@@ -30,6 +30,12 @@ public class CreateBlock : EffectOnPlaceableOnly {
         this.face = face;
     }
 
+    public CreateBlock(int prefabNumber, Vector3Int face)
+    {
+        prefab = Grid.instance.prefabsList[prefabListNumber];
+        this.face = face;
+    }
+
     public override Effect Clone()
     {
         return new CreateBlock(this);

@@ -112,6 +112,7 @@ public class Grid : MonoBehaviour
         }
 
     }
+
     public bool CheckNull(Vector3Int position)
     {
         return CheckRange(position) && (gridMatrix[position.x, position.y, position.z] == null);
