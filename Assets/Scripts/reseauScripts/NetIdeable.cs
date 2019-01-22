@@ -8,7 +8,8 @@ public abstract class NetIdeable : MonoBehaviour {
     [NonSerialized]
     public int netId;
     protected List<Effect> attachedEffects;
-
+    public bool shouldBatch=true;
+    
     public static int currentMaxId = 0;
 
     public Vector3Int GetPosition()

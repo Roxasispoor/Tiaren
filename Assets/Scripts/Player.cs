@@ -735,11 +735,11 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+       // Debug.LogError("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         if (GameManager.instance.PlayingPlaceable.Player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
-            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
             Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
                 GameManager.instance.playingPlaceable.GetPosition().z] = null;
             Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,

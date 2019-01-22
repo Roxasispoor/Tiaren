@@ -586,6 +586,7 @@
         // Use this for initialization
         void Awake()
         {
+            shouldBatch = false;
             this.characterName = "default";
             this.Walkable = false;
             this.Movable = true;
