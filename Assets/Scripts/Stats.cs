@@ -9,8 +9,7 @@ using UnityEngine;
 [Serializable]
 public class Stats
 {
-
-   
+    public string className;
     public Vector3 positionSave;
     public string playerPosesser;
     public float maxHP;
@@ -24,6 +23,9 @@ public class Stats
     public int dexterity;
     public float speedStack;
     public int jump;
+    public int def;
+    public int mdef;
+    public int mstr;
     public float deathLength;
     public List<Skill> skills;
     public bool isDead;

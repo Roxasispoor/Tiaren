@@ -138,6 +138,21 @@ public class CameraScript : NetworkBehaviour
             //transform.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed/*, Space.World*/);
         }
 
+
+        if (player.DicoCondition["BackToMovement"]())
+        {
+            if (GameManager.instance.playingPlaceable.Player == player)
+            {
+                GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+                GameManager.instance.state = States.Move;
+                GameManager.instance.activeSkill = null;
+                GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
+                GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
+                GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
+            }
+        }
+
+
         ////////Orbit Position
 
         // affect the desired Zoom distance if we roll the scrollwheel

@@ -8,9 +8,10 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
     private bool isFinished;
+    private float maxTime;
     private float targetTime = 0;
-    public Text textToUpdate;
-    public Slider timerSlider;
+    public Image timerDisplay;
+    public Gradient gradient;
 
     public Timer()
     {
@@ -33,14 +34,13 @@ public class Timer : MonoBehaviour
     public void StartTimer(float time)
     {
         targetTime = time;
-        timerSlider.maxValue = time;
-        timerSlider.value = timerSlider.maxValue;
+        maxTime = time;
+        timerDisplay.fillAmount = 1;
     }
 
     void Update()
     {
         if (targetTime > 0)
-
         {
             targetTime -= Time.deltaTime;
         }
@@ -49,11 +49,8 @@ public class Timer : MonoBehaviour
             targetTime = 0;
             IsFinished = true;
         }
-        if (textToUpdate != null)
-        {
-            textToUpdate.text = "Time Left : " + (int)targetTime;
-            timerSlider.value = targetTime;
-        }
+        timerDisplay.fillAmount = targetTime/maxTime;
+        timerDisplay.color = gradient.Evaluate(targetTime / maxTime);
     }
   
 }

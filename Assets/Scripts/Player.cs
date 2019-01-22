@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +18,7 @@ public class Player : NetworkBehaviour
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
     private Vector3Int placeToGo;
+    private bool isready;
     public bool isWinner = false;
     public Text winText;
     public PlayerAccount account;
@@ -140,6 +141,19 @@ public class Player : NetworkBehaviour
         set
         {
             dicoCondition = value;
+        }
+    }
+
+    public bool Isready
+    {
+        get
+        {
+            return isready;
+        }
+
+        set
+        {
+            isready = value;
         }
     }
 
@@ -266,7 +280,7 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
-       
+        Isready = false;
     }
 
     // Use this for initialization
@@ -274,7 +288,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
+            gameObject.transform.Find("TeamCanvas").gameObject.SetActive(true);
         }
         if (isLocalPlayer)
         {
@@ -301,18 +315,233 @@ public class Player : NetworkBehaviour
                 GameManager.instance.player2 = gameObject;
             }
         }
-        Debug.Log("STARTCLIENT!");
+        //Debug.Log("STARTCLIENT!");
 
     }
-    //Both clients get that
-    [ClientRpc]
-    public void RpcCreateCharacters(Vector3 spawnCoordinates)
+
+
+
+    public void displaySpawn()
     {
-        Vector3Int spawn = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
-        Debug.Log("From RPC:");
-        GameManager.instance.CreateCharacters(gameObject, spawn);
+        if (isLocalPlayer)
+        {
+            gameObject.GetComponent<UIManager>().SpawnUI();
+            Debug.Log(gameObject.name);
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
 
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            GameManager.instance.ResetAllBatches();
+        }
     }
+    
+    [Command]
+    public void CmdTeamReady(int[] characterChoices)
+    {
+        Isready = true;
+        List<int> numbers = new List<int>(characterChoices);
+        gameObject.GetComponent<UIManager>().CurrentCharacters = numbers;
+
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            GameManager.instance.player1.GetComponent<Player>().Isready = false;
+            GameManager.instance.player2.GetComponent<Player>().Isready = false;
+            GameManager.instance.state = States.Spawn;
+
+            int[] choicesP1 = new int[GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP1[i] = GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            int[] choicesP2 = new int[GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            // Spawn the characters
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+
+            GameManager.instance.state = States.Spawn;
+            GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
+            GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
+        }
+    }
+
+    public void TeamReady()
+    {
+        int[] characterChoices = new int[gameObject.GetComponent<UIManager>().CurrentCharacters.Count];
+        for (int i = 0; i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+        {
+            characterChoices[i] = gameObject.GetComponent<UIManager>().CurrentCharacters[i];
+        }
+        CmdTeamReady(characterChoices);
+    }
+
+    [ClientRpc]
+    public void RpcStartSpawn(int[] otherPlayerChoices)
+    {
+        List<int> numbers = new List<int>(otherPlayerChoices);
+        GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
+        GameManager.instance.state = States.Spawn;
+        displaySpawn();
+    }
+
+    public void GameReady()
+    {
+        Isready = true;
+        Vector3[] positions = new Vector3[Characters.Count];
+        int[] ids = new int[Characters.Count];
+        for(int i = 0; i < Characters.Count; i++)
+        {
+            positions[i] = Characters[i].transform.position;
+            ids[i] = Characters[i].GetComponent<LivingPlaceable>().netId;
+        }
+        CmdGameReady(positions, ids);
+    }
+
+    [ClientRpc]
+    public void RpcEndSwapSpawn(Vector3[] positions, int[] ids)
+    {
+        if (GameManager.instance.player2.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        if (GameManager.instance.player1.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        SwapPositionSpawn(positions, ids);
+    }
+
+    [Command]
+    public void CmdGameReady(Vector3[] positions, int[] ids)
+    {
+        
+        SwapPositionSpawn(positions, ids);
+
+        RpcEndSwapSpawn(positions, ids);
+
+        Isready = true;
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            RpcEndSpawnAndStartGame();
+            GameManager.instance.IsGameStarted = true;
+            GameManager.instance.BeginningOfTurn();
+        }
+    }
+
+    private void SwapPositionSpawn(Vector3[] positions, int[] ids)
+    {
+        for (int i = 0; i < positions.Length; i++)
+        {
+
+            Vector3Int space = new Vector3Int((int)positions[i].x, (int)positions[i].y, (int)positions[i].z);
+
+            Placeable oldPlac = Grid.instance.GetPlaceableFromVector(space);
+            if (oldPlac == null)
+            {
+                Grid.instance.MoveBlock(GameManager.instance.FindLocalObject(ids[i]), space, true);
+            }
+            else
+            {
+                Grid.instance.SwitchPlaceable(GameManager.instance.FindLocalObject(ids[i]), oldPlac);
+            }
+
+        }
+    }
+
+    [ClientRpc]
+    public void RpcEndSpawnAndStartGame()
+    {
+        // Make the other player's characters visiblr again
+        foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
+        foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
+
+        // Remove the material from the spawning points
+        for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                Grid.instance.SpawnPlayer1[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+        for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                Grid.instance.SpawnPlayer2[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+
+        GameManager.instance.ResetAllBatches();
+
+        // Find the local player and activate the UI;
+        GameObject localPlayer;
+        if (isLocalPlayer)
+        {
+            localPlayer = gameObject;
+        }else
+        {
+            localPlayer = GameManager.instance.GetOtherPlayer(gameObject);
+        }
+
+        localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
+        localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
+
+        GameManager.instance.IsGameStarted = true;
+        GameManager.instance.BeginningOfTurn();
+    }
+
     [ClientRpc]
     public void RpcGivePlayingPlaceable(int netId)
     {
@@ -345,6 +574,7 @@ public class Player : NetworkBehaviour
             }
         }
     }
+
     [ClientRpc]
     public void RpcEndTurn()
     {
@@ -448,29 +678,43 @@ public class Player : NetworkBehaviour
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
+
         if (skill.SkillType == SkillType.ALREADYTARGETED)
         {
             
             CmdUseSkill(SkillToNumber(playingPlaceable,skill), playingPlaceable.netId); //whatever, auto targeted do not go through dispatch
             return;
         }
+
+        RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
+        rayselector.Pattern = SkillArea.NONE;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-        if (skill.SkillType==SkillType.BLOCK)
+        playingPlaceable.ResetAreaOfMovement();
+        playingPlaceable.ResetAreaOfTarget();
+        if (skill.SkillType==SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
+            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
 
-            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
-            foreach(Vector3Int v3 in vect)
+            if (skill.SkillArea == SkillArea.CROSS)
+                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.transform.position);
+            else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
+                vect = Grid.instance.TopBlockPattern(vect);
+
+            foreach (Vector3Int v3 in vect)
             {
-                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x,v3.y,v3.z]);
+                playingPlaceable.TargetArea.Add(Grid.instance.GridMatrix[v3.x, v3.y, v3.z]);
             }
-            //playingPlaceable.TargetArea = 
 
-
-            playingPlaceable.ResetAreaOfMovement();
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
-            GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
+            rayselector.layerMask = LayerMask.GetMask("Placeable");
+            rayselector.EffectArea = skill.EffectArea;
+            if (skill.SkillArea == SkillArea.LINE)
+            {
+                rayselector.Pattern = skill.SkillArea;
+            }
+
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
@@ -546,7 +790,7 @@ public class Player : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
-        transform.Find("Canvas").gameObject.SetActive(true);
+        transform.Find("TeamCanvas").gameObject.SetActive(true);
     }
     
     public void DispatchSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
@@ -898,6 +1142,8 @@ public class Player : NetworkBehaviour
         UseTargeted(skill);
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+        GetComponentInChildren<RaycastSelector>().EffectArea = 0;
+        GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
 
     }
 

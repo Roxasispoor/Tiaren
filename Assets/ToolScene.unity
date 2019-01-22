@@ -265,6 +265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1556664533}
   - component: {fileID: 1556664534}
+  - component: {fileID: 1556664535}
   m_Layer: 0
   m_Name: MapConverter
   m_TagString: Untagged
@@ -296,5 +297,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f98a701a30320a4f91fca732ead1cd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inPathGUI: 
-  outPathGUI: 
+  inPath: 
+  outPath: 
+--- !u!114 &1556664535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1556664532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b9db63ca1aa32418004e3201e78052, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sizeX: 50
+  sizeY: 6
+  sizeZ: 50
+  randomParameter: 90
+  floaties: []
+  prefabsList:
+  - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}

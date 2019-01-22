@@ -2,21 +2,152 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class UIManager : MonoBehaviour {
 
-    public Canvas canvas;
+    public GameObject gameCanvas;
+    public GameObject spawnCanvas;
+    public GameObject TeamCanvas;
     public Button prefabAbilityButton;
-    public Button prefabCharacterButton;
+    public Button prefabTeamButton;
+    public GameObject prefabCharacterImage;
     public RectTransform SkillZone;
+    public RectTransform SpawnZone;
     public RectTransform TimelineZone;
+    public GameObject hpDisplay;
+    public Text movDisplay;
+    public Image prefabCharacterChoices;
 
-    private void Start()
+    private List<GameObject> TeamParents = new List<GameObject>();
+    private List<int> currentCharacters = new List<int>();
+
+    public List<int> CurrentCharacters
     {
+        get
+        {
+            return currentCharacters;
+        }
 
+        set
+        {
+            currentCharacters = value;
+        }
     }
+
    
-    public int UpdateAbilities(LivingPlaceable character,Vector3Int position)
+
+    int mod(int x, int m)
+    {
+        return (x % m + m) % m;
+    }
+
+    public void TeamSelectUI()
+    {
+        if (gameObject.GetComponent<Player>().isLocalPlayer)
+        {
+            TeamCanvas.SetActive(true);
+            
+
+            //display UI
+            for (int i = 0; i < 5; i++)
+            {
+                currentCharacters.Add(mod(i, GameManager.instance.PossibleCharacters.Count));
+                //display all sprites and hide them
+                Vector3 position = new Vector3(-700 + 350 * i, 0);
+                TeamParents.Add(new GameObject("Parent" + i.ToString()));
+                TeamParents[i].transform.parent = TeamCanvas.transform;
+                TeamParents[i].transform.localPosition = Vector3.zero;
+                TeamParents[i].transform.localScale = Vector3.one;
+                for (int j = 0; j < GameManager.instance.PossibleCharacters.Count; j++)
+                {                    
+                    Image image = Instantiate(prefabCharacterChoices, TeamParents[i].transform);
+                    image.GetComponent<RectTransform>().transform.localPosition = position;
+                    Sprite sprite = Resources.Load<Sprite>(GameManager.instance.PossibleCharacters[j].spritePath);
+                    image.sprite = sprite;
+                    if (j != currentCharacters[i])
+                    {
+                        image.gameObject.SetActive(false);
+                    }
+                }
+
+                //display Buttons
+                Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
+                buttonUp.GetComponentInChildren<Text>().text = "^";
+                int tmp = i;
+                buttonUp.onClick.AddListener( ()=> { UpChoice(tmp); });
+                Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
+                buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
+                buttonDown.GetComponentInChildren<Text>().text = "!^";
+                buttonDown.onClick.AddListener(delegate { DownChoice(tmp); });
+            }
+        }
+    }
+
+    public void UpChoice(int i)
+    {        
+        Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
+        images[CurrentCharacters[i]].gameObject.SetActive(false);
+        CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, GameManager.instance.PossibleCharacters.Count);
+        images[CurrentCharacters[i]].gameObject.SetActive(true);
+    }
+
+    public void DownChoice(int i)
+    {
+        Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
+        images[CurrentCharacters[i]].gameObject.SetActive(false);
+        CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, GameManager.instance.PossibleCharacters.Count);
+        images[CurrentCharacters[i]].gameObject.SetActive(true);
+    }
+
+	private void Update()
+    {
+        if (GameManager.instance.state != States.Spawn && GameManager.instance.state != States.TeamSelect)
+        {
+            if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
+            {
+                hpDisplay.transform.Find("HPDisplay").GetComponent<Text>().text = "HP : " + GameManager.instance.PlayingPlaceable.CurrentHP + " / " + GameManager.instance.PlayingPlaceable.MaxHP;
+                hpDisplay.transform.Find("Bar").GetComponent<Image>().fillAmount = GameManager.instance.PlayingPlaceable.CurrentHP / GameManager.instance.PlayingPlaceable.MaxHP;
+                movDisplay.text = "MOV : " + GameManager.instance.PlayingPlaceable.CurrentPM;
+            }
+            GameObject zoneToUpdate = gameObject.transform.Find("InGameCanvas").Find("Timeline").gameObject;
+            Slider[] sliders = zoneToUpdate.GetComponentsInChildren<Slider>();
+            for (int i = 0; i < sliders.Length; i++)
+			{
+                sliders[i].value = GameManager.instance.TurnOrder[i].Character.CurrentHP;
+            }
+        }
+	}
+    public void SpawnUI()
+    {
+        TeamCanvas.SetActive(false);
+        spawnCanvas.SetActive(true);
+        int numberInstantiated = 0;
+        if (gameObject == GameManager.instance.player1)
+        {
+            foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters) {
+                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
+                button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+            }
+        }
+        if (gameObject == GameManager.instance.player2)
+        {
+            foreach (GameObject character in GameManager.instance.player2.GetComponent<Player>().Characters)
+            {
+                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
+                button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+            }
+        }
+            
+    }
+
+    public int UpdateAbilities(LivingPlaceable character, Vector3Int position)
+
     {
         if (character == null)
         {
@@ -27,7 +158,7 @@ public class UIManager : MonoBehaviour {
         foreach (Skill skill in character.Skills)
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
@@ -62,16 +193,19 @@ public class UIManager : MonoBehaviour {
         int numberInstantiated = 0;
         foreach (StackAndPlaceable character in GameManager.instance.TurnOrder)
         {
-            Button button = Instantiate(prefabCharacterButton, TimelineZone);
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 120 - 46 * numberInstantiated);
-            button.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
+            GameObject image = Instantiate(prefabCharacterImage, TimelineZone);
+            image.GetComponent<CharacterDisplay>().Character = character.Character;
+            image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 340 - 110 * numberInstantiated);
+            image.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
+            image.GetComponentInChildren<Slider>().maxValue = character.Character.MaxHP;
+            image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
             if (character.Character.Player.gameObject == gameObject)
             {
-                button.GetComponent<Image>().color = Color.cyan;
+                image.GetComponent<Image>().color = Color.cyan;
             }
             else
             {
-                button.GetComponent<Image>().color = Color.red;
+                image.GetComponent<Image>().color = Color.red;
             }
             numberInstantiated++;
         }
@@ -80,23 +214,26 @@ public class UIManager : MonoBehaviour {
     public void ChangeTurn()
     {
         if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
-        {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
+         {
+            GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
-            UpdateAbilities(GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
+
+            UpdateAbilities(GameManager.instance.playingPlaceable,GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
+            zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(true);
+            gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(true);
+            hpDisplay.SetActive(true);
         }
         else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
-            GameObject zoneToclear = gameObject.transform.Find("Canvas").Find("Skill Zone").gameObject;
+            GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
-            zoneToclear = gameObject.transform.Find("Canvas").Find("Timeline").gameObject;
+            zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();
-            gameObject.transform.Find("Canvas").Find("SkipButton").gameObject.SetActive(false);
+            gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(false);
+            hpDisplay.SetActive(false);
         }
     }
 
@@ -104,7 +241,10 @@ public class UIManager : MonoBehaviour {
     {
         foreach (Transform child in zoneToClear.transform)
         {
-            child.GetComponent<Button>().onClick.RemoveAllListeners();
+            if (child.GetComponent<Button>() != null)
+            {
+                child.GetComponent<Button>().onClick.RemoveAllListeners();
+            }
             Destroy(child.gameObject);
         }
     }
