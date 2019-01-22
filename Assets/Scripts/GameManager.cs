@@ -314,10 +314,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
-        //Create a flag
-        GameObject flag = Instantiate(Grid.instance.prefabsList[2], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));
-        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        NetIdeable.currentMaxId++;
+
      
     }
 
@@ -557,7 +554,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             playingPlaceable.ResetAreaOfMovement();
             Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
+            Debug.Log("Dernière pos character : " + lastPositionCharac);
             Debug.Log("PM: " + playingPlaceable.CurrentPM);
+            if(playingPlaceable.CurrentPM<0)
+            {
+                Debug.Log("DAFUQ!!!");
+            }
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(lastPositionCharac, playingPlaceable.CurrentPM,
             playingPlaceable.Jump, playingPlaceable.Player);
 
@@ -575,6 +577,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;
         }
+    }
+    public void InitStartGame()
+    {
+        //Create a flag
+        GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
+        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
     }
     /// <summary>
     /// Add current combine instance to its batch

@@ -472,6 +472,7 @@ public class Player : NetworkBehaviour
         {
             RpcEndSpawnAndStartGame();
             GameManager.instance.IsGameStarted = true;
+            GameManager.instance.InitStartGame();
             GameManager.instance.BeginningOfTurn();
         }
     }
@@ -539,6 +540,7 @@ public class Player : NetworkBehaviour
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.IsGameStarted = true;
+        GameManager.instance.InitStartGame();
         GameManager.instance.BeginningOfTurn();
     }
 
@@ -1022,7 +1024,7 @@ public class Player : NetworkBehaviour
             anim.SetTrigger("idle");
         }
         Debug.Log("End" + placeable.GetPosition());
-        Debug.Log("End transform" + placeable.transform);
+   //Debug.Log("End transform" + placeable.transform);
     }
     
     // ONLY FOR OTHER PLACEABLE
@@ -1093,9 +1095,9 @@ public class Player : NetworkBehaviour
 
         }
 
-        GameManager.instance.OnEndAnimationEffectEnd();
+        //GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
-        Debug.Log("End transform" + placeable.transform);
+        //Debug.Log("End transform" + placeable.transform);
         
     }
     

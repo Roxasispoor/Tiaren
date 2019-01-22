@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -390,7 +390,7 @@ MonoBehaviour:
     type: 2}
   batchFolder: {fileID: 649181390}
   prefabCharacs:
-  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
+  - {fileID: 1449928830736538, guid: 53048d0b094bda54aaba9180d43917ae, type: 2}
   - {fileID: 1972576056741726, guid: f9d8c67be3f279e4eaa105ecc867a791, type: 2}
   prefabWeapons:
   - {fileID: 1317959614595914, guid: 5cbd77ec49e29734a9562d9472193a14, type: 2}
@@ -457,8 +457,9 @@ MonoBehaviour:
   floaties: []
   prefabsList:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
-  - {fileID: 1449928830736538, guid: 0c7bd821b2b41da4a93960ef10810af3, type: 2}
-  - {fileID: 1125516440427876, guid: 66cd259cb06d1de4ab4fa6ff303a5b12, type: 2}
+  - {fileID: 1449928830736538, guid: 53048d0b094bda54aaba9180d43917ae, type: 2}
+  - {fileID: 1972576056741726, guid: f9d8c67be3f279e4eaa105ecc867a791, type: 2}
+  - {fileID: 1592037701154672, guid: 77a415afa171fe749a00d75fadeb1274, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0

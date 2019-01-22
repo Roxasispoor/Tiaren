@@ -837,7 +837,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializeNumber: 2
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
-<<<<<<< HEAD:Assets/Animations/Character/Model.prefab
   positionSave: {x: 0, y: 0, z: 0}
   playerPosesser: 
   maxHP: 0
@@ -845,12 +844,6 @@ MonoBehaviour:
   pmMax: 0
   currentPM: 0
   currentPA: 0
-=======
-  player: {fileID: 0}
-  isSpawnPoint: 0
-  maxHP: 0
-  pmMax: 0
->>>>>>> 76341c1d5a5624e8c69d2815ff46a25c6588eed7:Assets/CharacterModels/Knight/Model.prefab
   paMax: 0
   force: 0
   speed: 0
@@ -858,10 +851,7 @@ MonoBehaviour:
   speedStack: 0
   jump: 0
   weapons: []
-<<<<<<< HEAD:Assets/Animations/Character/Model.prefab
   isDead: 0
-=======
->>>>>>> 76341c1d5a5624e8c69d2815ff46a25c6588eed7:Assets/CharacterModels/Knight/Model.prefab
   characterSprite: {fileID: 0}
   originalShader: {fileID: 0}
 --- !u!137 &137421415882147450

@@ -448,9 +448,11 @@ public abstract class Placeable: NetIdeable
         }
         else if (GameManager.instance.state == States.Move)
         {
+
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable )
             {
+                
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
                     && this.GetPosition() + new Vector3Int(0, 1, 0) != GameManager.instance.playingPlaceable.GetPosition())
 
@@ -465,8 +467,9 @@ public abstract class Placeable: NetIdeable
         }
         else if (GameManager.instance.state == States.UseSkill)
         {
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
+               
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
                     && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
 
@@ -477,6 +480,7 @@ public abstract class Placeable: NetIdeable
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }
+            
         }
     }
     /// <summary>
