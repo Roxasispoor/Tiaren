@@ -595,14 +595,7 @@ public class LivingPlaceable : Placeable
     public void Destroy()
     {
 
-        if (this.Destroyable)
-        {
-            foreach (var effet in this.OnDestroyEffects)
-            {
-                effet.Use();
-            }
-        }
-
+        base.Destroy();
         this.IsDead = true;
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;

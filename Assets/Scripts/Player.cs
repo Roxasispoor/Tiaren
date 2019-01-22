@@ -390,6 +390,15 @@ public class Player : NetworkBehaviour
         else
         {
             int total = living.Skills.Count;
+            ///The one from weapon
+                if (living.EquipedWeapon && living.EquipedWeapon.Skills!=null && total + living.EquipedWeapon.Skills.Count > skillNumber)
+                {
+                    return living.EquipedWeapon.Skills[skillNumber - total];
+                }
+                total += living.EquipedWeapon.Skills.Count;
+
+            
+            ///The bloc under
             foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
             {
                 if (total + obj.GivenSkills.Count > skillNumber)
@@ -414,6 +423,12 @@ public class Player : NetworkBehaviour
         else
         {
             total = living.Skills.Count;
+            if (living.EquipedWeapon && living.EquipedWeapon.Skills != null && living.EquipedWeapon.Skills.FindIndex(skill.Equals)!= -1)
+            {
+                total += living.EquipedWeapon.Skills.FindIndex(skill.Equals);
+                return total;
+            }
+            total += living.EquipedWeapon.Skills.Count;
             foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
             {
                 if (obj.GivenSkills.FindIndex(skill.Equals) == -1)

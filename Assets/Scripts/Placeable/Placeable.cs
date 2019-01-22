@@ -279,8 +279,8 @@ public abstract class Placeable:NetIdeable
         }
     }
 
- 
 
+ 
 
     /// <summary>
     /// Copy object
@@ -291,7 +291,13 @@ public abstract class Placeable:NetIdeable
         var copy = (Placeable)this.MemberwiseClone();
         return copy;
     }
-
+    public void SomethingPutAbove()
+    {
+        foreach (Transform obj in transform.Find("Inventory"))
+        {
+            obj.GetComponent<ObjectOnBloc>().SomethingPutAbove();
+        }
+    }
     /// <summary>
     /// method to call for destroying object
     /// </summary>
@@ -302,6 +308,10 @@ public abstract class Placeable:NetIdeable
             foreach (var effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.UseEffect(effect);
+            }
+            foreach(Transform obj in transform.Find("Inventory") )
+            {
+                obj.GetComponent<ObjectOnBloc>().Destroy();
             }
         }
         Destroy(this);

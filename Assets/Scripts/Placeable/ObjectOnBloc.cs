@@ -8,6 +8,8 @@ using UnityEngine;
 public class ObjectOnBloc : NetIdeable {
     public bool isPickable;
     public bool isPicked;
+    public bool dropOnDeathPicker;
+    public bool dropOnDeathBlocUnder;
     public override void DispatchEffect(Effect effect)
     {
       
@@ -56,5 +58,60 @@ public class ObjectOnBloc : NetIdeable {
             Skill taker = new Skill(0, 0, new List<Effect>() { eff }, SkillType.ALREADYTARGETED, "Pick Object", 0, 1);//No cooldown because skills from these objects aren't resetted
             givenSkills.Add(taker);
         }
+    }
+    public virtual void Destroy()
+    {
+        if(isPicked)
+        {
+            OnDestroyPicker();
+        }
+        else
+        {
+            OnDestroyBlocUnder();
+        }
+    }
+    public virtual void OnDestroyBlocUnder()
+    {
+        if (dropOnDeathBlocUnder)
+        {
+            Drop();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    public virtual void OnDestroyPicker()
+    {
+        if(dropOnDeathPicker)
+        {
+            Drop();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    public virtual void SomethingPutAbove()
+    {
+
+    }
+    public void Drop()
+    {
+        Vector3Int currentPos = GetPosition();
+        while(Grid.instance.GridMatrix[currentPos.x, currentPos.y,currentPos.z]!=null && currentPos.y>0)
+        {
+            currentPos = new Vector3Int(currentPos.x, currentPos.y - 1, currentPos.z);
+        }
+        if(currentPos.y==0 && Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z]==null)
+        {
+            Debug.LogError("Object was droped with nothing under!");
+        }
+        else
+        {
+            isPicked = false;
+            transform.SetParent(Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z].transform.Find("Inventory"));
+        }
+
     }
 }

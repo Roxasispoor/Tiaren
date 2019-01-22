@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour {
     {
 
     }
-
+   
     public int UpdateAbilities(LivingPlaceable character,Vector3Int position)
     {
         if (character == null)
@@ -31,6 +31,17 @@ public class UIManager : MonoBehaviour {
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
+        }
+        if(character.EquipedWeapon!=null && character.EquipedWeapon.Skills!=null)
+        { 
+        foreach(Skill skill in character.EquipedWeapon.Skills)
+        {
+            Button button = Instantiate(prefabAbilityButton, SkillZone);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-164 + 60 * numberInstantiated, 0);
+            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.onClick.AddListener(skill.Activate);
+            numberInstantiated++;
+        }
         }
         foreach (ObjectOnBloc obj in GameManager.instance.GetObjectsOnBlockUnder(position))
         {

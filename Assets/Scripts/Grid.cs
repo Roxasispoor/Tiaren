@@ -615,7 +615,10 @@ public class Grid : MonoBehaviour
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-          
+          if(desiredPosition.y-1>0)
+            {
+                Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
+            }
 
         }
     }
