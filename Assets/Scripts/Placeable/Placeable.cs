@@ -471,7 +471,7 @@ public abstract class Placeable: NetIdeable
             {
                
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
 
 
                 {
