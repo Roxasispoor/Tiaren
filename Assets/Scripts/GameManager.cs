@@ -284,7 +284,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         transmitter.networkManager = networkManager;
        /*if (isServer)
         {
-            Debug.LogError("Transmitter started");
+            Debug.LogError("Transmitter 
+            
+        
+        
+        
+        ed");
             StartCoroutine(transmitter.AcceptTcp());
            
         }
@@ -298,7 +303,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
-        //Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
         { 
             yield return null;

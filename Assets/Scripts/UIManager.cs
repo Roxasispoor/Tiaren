@@ -18,6 +18,10 @@ public class UIManager : MonoBehaviour {
     public GameObject hpDisplay;
     public Text movDisplay;
     public Image prefabCharacterChoices;
+    public float firstImagePosition;
+    public float firstGap;
+    public float timelineGap;
+    public float AbilityGap;
 
     private List<GameObject> TeamParents = new List<GameObject>();
     private List<int> currentCharacters = new List<int>();
@@ -44,9 +48,8 @@ public class UIManager : MonoBehaviour {
     {
         if (gameObject.GetComponent<Player>().isLocalPlayer)
         {
-            TeamCanvas.SetActive(true);
-            
-
+            TeamCanvas.transform.Find("TitleText").GetComponent<Text>().text = "Choose your characters";
+            TeamCanvas.transform.Find("GoTeam").gameObject.SetActive(true);
             //display UI
             for (int i = 0; i < 5; i++)
             {
@@ -126,9 +129,10 @@ public class UIManager : MonoBehaviour {
         {
             foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters) {
                 Button button = Instantiate(prefabAbilityButton, SpawnZone);
-                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-398 + 200 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
                 button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+                numberInstantiated++;
             }
         }
         if (gameObject == GameManager.instance.player2)
@@ -136,9 +140,10 @@ public class UIManager : MonoBehaviour {
             foreach (GameObject character in GameManager.instance.player2.GetComponent<Player>().Characters)
             {
                 Button button = Instantiate(prefabAbilityButton, SpawnZone);
-                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-170 + 45 * numberInstantiated, 0);
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-398 + 200 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
                 button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
+                numberInstantiated++;
             }
         }
             
@@ -155,7 +160,7 @@ public class UIManager : MonoBehaviour {
         foreach (Skill skill in character.Skills)
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
@@ -170,7 +175,6 @@ public class UIManager : MonoBehaviour {
         {
             GameObject image = Instantiate(prefabCharacterImage, TimelineZone);
             image.GetComponent<CharacterDisplay>().Character = character.Character;
-            image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, 340 - 110 * numberInstantiated);
             image.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
             image.GetComponentInChildren<Slider>().maxValue = character.Character.MaxHP;
             image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
@@ -181,6 +185,15 @@ public class UIManager : MonoBehaviour {
             else
             {
                 image.GetComponent<Image>().color = Color.red;
+            }
+            if (numberInstantiated >= 1)
+            {
+                image.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+                image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, firstImagePosition - firstGap - timelineGap * (numberInstantiated-1));
+            }
+            else
+            {
+                image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, firstImagePosition);
             }
             numberInstantiated++;
         }
