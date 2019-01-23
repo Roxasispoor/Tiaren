@@ -67,7 +67,7 @@ public class Damage : EffectOnLiving
         if (Target.CurrentHP <= 0)
         {
             animTarget.SetTrigger("die");
-            Target.Destroy();
+            Target.gameObject.SetActive(false);
         }
         else
         {

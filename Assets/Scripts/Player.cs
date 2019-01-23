@@ -477,6 +477,18 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void Respawn(LivingPlaceable character)
+    {
+        foreach (Vector3Int spawns in spawnList)
+        {
+            Placeable spawn = Grid.instance.GridMatrix[spawns.x, spawns.y, spawns.z];
+            if (spawn == null)
+            {
+                Grid.instance.MoveBlock(character, spawns);
+            }
+        }
+    }
+
     private void SwapPositionSpawn(Vector3[] positions, int[] ids)
     {
         for (int i = 0; i < positions.Length; i++)

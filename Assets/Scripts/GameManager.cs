@@ -663,16 +663,22 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         UpdateTimeline();
         playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
-        if (playingPlaceable.IsDead)
+        if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
             EndOFTurn();
         }
         else
         {
+            
+            if (playingPlaceable.IsDead)
+            {
+                playingPlaceable.IsDead = false;
+                playingPlaceable.Player.Respawn(playingPlaceable);
+            }
 
             //initialise UI
-            
+
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
             state = States.Move;
