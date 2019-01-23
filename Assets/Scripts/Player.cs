@@ -490,7 +490,33 @@ public class Player : NetworkBehaviour
             if (spawn == null)
             {
                 Grid.instance.MoveBlock(character, spawns);
+                character.gameObject.SetActive(true);
+                Vector3 transmit = new Vector3(spawns.x, spawns.y, spawns.z);
+                CmdRespawn(transmit, character.netId);
             }
+        }
+    }
+
+    [Command]
+    public void CmdRespawn(Vector3 position, int netID)
+    {
+        Placeable placeable = GameManager.instance.FindLocalObject(netID);
+        Vector3Int pos = new Vector3Int((int) position.x, (int) position.y, (int) position.z);
+        Grid.instance.MoveBlock(placeable, pos, true);
+        placeable.gameObject.SetActive(true);
+        GameManager.instance.GetOtherPlayer(gameObject).GetComponent<Player>().RpcRespawn(position, netID);
+    }
+
+    [ClientRpc]
+    public void RpcRespawn(Vector3 position, int netID)
+    {
+        if (isLocalPlayer)
+        {
+            Placeable placeable = GameManager.instance.FindLocalObject(netID);
+            Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
+            Grid.instance.MoveBlock(placeable, pos, true);
+            placeable.gameObject.SetActive(true);
+            GameManager.instance.GetOtherPlayer(gameObject).GetComponent<Player>().RpcRespawn(position, netID);
         }
     }
 
