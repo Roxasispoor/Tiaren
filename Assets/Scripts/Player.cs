@@ -291,11 +291,9 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            gameObject.transform.Find("TeamCanvas").gameObject.SetActive(true);
-        }
-        if (isLocalPlayer)
-        {
-
+            GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
+            firstCanva.SetActive(true);
+            firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
             account = FindObjectOfType<PlayerAccount>();
             if (account != null && account.AccountInfoPacket.Username != null)
             {
@@ -329,7 +327,6 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             gameObject.GetComponent<UIManager>().SpawnUI();
-            Debug.Log(gameObject.name);
             Player localPlayer = GameManager.instance.GetLocalPlayer();
             Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
@@ -357,6 +354,7 @@ public class Player : NetworkBehaviour
                 }
             }
             GameManager.instance.ResetAllBatches();
+            gameObject.GetComponent<UIManager>().SpawnUI();
         }
     }
     
@@ -419,6 +417,8 @@ public class Player : NetworkBehaviour
         {
             characterChoices[i] = gameObject.GetComponent<UIManager>().CurrentCharacters[i];
         }
+        gameObject.transform.Find("TeamCanvas").transform.Find("GoTeam").gameObject.SetActive(false);
+        gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other Player";
         CmdTeamReady(characterChoices);
     }
 

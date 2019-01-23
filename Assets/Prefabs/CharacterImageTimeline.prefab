@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114593803270879160}
   - component: {fileID: 114873186573722026}
   m_Layer: 5
-  m_Name: ChracterImageTimeline
+  m_Name: CharacterImageTimeline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,8 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938eaffa7fd540b42ae72f300626eb75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates: []
-  delegates: []
 --- !u!114 &114768958191481166
 MonoBehaviour:
   m_ObjectHideFlags: 1
