@@ -23,7 +23,12 @@
     /// <summary>
     /// skill dealing effect in an area
     /// </summary>
-    AREA
+    AREA,
+    /// <summary>
+    /// skill used by a character on a preloaded skill
+    /// </summary>
+    ALREADYTARGETED
+
 }
 
 public enum SkillArea
@@ -53,5 +58,6 @@ public enum SkillArea
     /// Skill that affect blocks in the surrounding area (from user position)
     /// </summary>
     SURROUNDINGBLOCKS
+
 
 }

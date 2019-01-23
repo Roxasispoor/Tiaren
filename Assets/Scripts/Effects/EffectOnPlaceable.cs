@@ -7,13 +7,12 @@ using UnityEngine;
 public abstract class EffectOnPlaceable : Effect {
 
     private Placeable target;
-    private Placeable launcher;
     public int netIdTarget = -1;
 
     public EffectOnPlaceable(EffectOnPlaceable other)
     {
         Target = other.target;
-        Launcher = other.launcher;
+        Launcher = other.Launcher;
     }
 
     protected EffectOnPlaceable()
@@ -42,18 +41,6 @@ public abstract class EffectOnPlaceable : Effect {
         }
     }
 
-    public virtual Placeable Launcher
-    {
-        get
-        {
-            return launcher;
-        }
-
-        set
-        {
-            launcher = value;
-        }
-    }
     public override NetIdeable GetTarget()
     {
         return Target;

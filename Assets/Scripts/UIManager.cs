@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour {
     public float firstGap;
     public float timelineGap;
     public float AbilityGap;
+    public int numberOfPlayer = 1;
 
     private List<GameObject> TeamParents = new List<GameObject>();
     private List<int> currentCharacters = new List<int>();
@@ -39,6 +40,8 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+   
+
     int mod(int x, int m)
     {
         return (x % m + m) % m;
@@ -51,7 +54,7 @@ public class UIManager : MonoBehaviour {
             TeamCanvas.transform.Find("TitleText").GetComponent<Text>().text = "Choose your characters";
             TeamCanvas.transform.Find("GoTeam").gameObject.SetActive(true);
             //display UI
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < numberOfPlayer; i++)
             {
                 currentCharacters.Add(mod(i, GameManager.instance.PossibleCharacters.Count));
                 //display all sprites and hide them
@@ -104,7 +107,7 @@ public class UIManager : MonoBehaviour {
 
 	private void Update()
     {
-        if (GameManager.instance.state != States.Spawn && GameManager.instance.state != States.TeamSelect)
+        if (GameManager.instance.state != States.Spawn && GameManager.instance.state != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {
@@ -148,13 +151,17 @@ public class UIManager : MonoBehaviour {
         }
             
     }
-    
-    public int UpdateAbilities(LivingPlaceable character)
+
+    public int UpdateAbilities(LivingPlaceable character, Vector3Int position)
+
     {
+        
         if (character == null)
         {
             return 0;
         }
+        GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
+        ClearZone(zoneToclear);
         int numberInstantiated = 0;
 
         foreach (Skill skill in character.Skills)
@@ -164,6 +171,30 @@ public class UIManager : MonoBehaviour {
             button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
+        }
+        if(character.EquipedWeapon!=null && character.EquipedWeapon.Skills!=null)
+        { 
+        foreach(Skill skill in character.EquipedWeapon.Skills)
+        {
+            Button button = Instantiate(prefabAbilityButton, SkillZone);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
+            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.onClick.AddListener(skill.Activate);
+            numberInstantiated++;
+                Debug.Log("new skill from weapon");
+            }
+        }
+        foreach (ObjectOnBloc obj in GameManager.instance.GetObjectsOnBlockUnder(position))
+        {
+            foreach(Skill skill in obj.GivenSkills )
+            { 
+            Button button = Instantiate(prefabAbilityButton, SkillZone);
+            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
+            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.onClick.AddListener(skill.Activate);
+            numberInstantiated++;
+                Debug.Log("new skill from objectonbloc");
+            }
         }
         return numberInstantiated;
     }
@@ -205,7 +236,8 @@ public class UIManager : MonoBehaviour {
          {
             GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
-            UpdateAbilities(GameManager.instance.playingPlaceable);
+
+            UpdateAbilities(GameManager.instance.playingPlaceable,GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
             zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();

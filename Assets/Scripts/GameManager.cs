@@ -317,10 +317,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player2.gameObject.name = "player2";
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
-       /* if (isServer)
-        {
-            transmitter.initServer();
-        }*/
+
+
+     
     }
 
     public void TeamSelectDisplay()
@@ -343,9 +342,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             //receive data from server
         }
-       
-       
-        
+
     }
     
     public void ResetGrid()
@@ -491,15 +488,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// <param name="block"></param>
     public void RemoveBlockFromBatch(Placeable block)
     {
-        if (!block.IsLiving())
-        {
+      
             block.batch.combineInstances.Remove(block.MeshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
 
             RefreshBatch(block);
 
-
-        }
     }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
@@ -550,18 +544,28 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         GameManager.instance.InitialiseBatchFolder();
     }
-
+    public ObjectOnBloc[] GetObjectsOnBlockUnder(Vector3Int pos)
+    {
+        return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z]
+                .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+    }
     public void MoveLogic(List<Vector3> bezierPath)
     {
         if(playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfMovement();
-
+            Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
+            Debug.Log("Dernière pos character : " + lastPositionCharac);
             Debug.Log("PM: " + playingPlaceable.CurrentPM);
+            if(playingPlaceable.CurrentPM<0)
+            {
+                Debug.Log("DAFUQ!!!");
+            }
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
-            playingPlaceable.Jump, playingPlaceable.Player);
-
+               playingPlaceable.Jump, playingPlaceable.Player);
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable, 
+                new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
 
         }
 
@@ -573,6 +577,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.state = States.Move;
         }
+    }
+    public void InitStartGame()
+    {
+        //Create a flag
+        GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
+        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -622,7 +633,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Todo: if necessary chose them by big cube or something
         foreach(MeshFilter meshFilter in meshFilters)
         {
-
+            if(meshFilter.GetComponent<NetIdeable>()!=null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
+            { 
             CombineInstance currentInstance = new CombineInstance
             {
                 mesh = meshFilter.sharedMesh,
@@ -633,6 +645,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             if(meshFilter.GetComponent<Placeable>()!=null)
             { 
             meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
+            }
             }
         }
         //Then at the end we create all the batches that are not full

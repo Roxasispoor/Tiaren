@@ -466,7 +466,8 @@ public class Grid : MonoBehaviour
             }
         }
         //no need to check this block back
-        gridMatrix[x, y, z].Explored = true;
+        if (gridMatrix[x, y, z] != null)
+            gridMatrix[x, y, z].Explored = true;
 
         //if the block is in , it's the ground, this shouldn't have been destroyed or moved
         if (y != 0)
@@ -518,7 +519,10 @@ public class Grid : MonoBehaviour
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-          
+          if(desiredPosition.y-1>0)
+            {
+                Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
+            }
 
         } else
         {
@@ -602,6 +606,7 @@ public class Grid : MonoBehaviour
     {
         int y = 0;
         bool blockfallen = false;
+        //List<Placeable> batchlist = new List<Placeable>();
         while (y < sizeY)
         {
             for (int x = 0; x < sizeX; x++)
@@ -613,6 +618,7 @@ public class Grid : MonoBehaviour
                        (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
                        (gridMatrix[x, y, z].Explored && !gridMatrix[x, y, z].Grounded)))
                     {
+                        //batchlist.Add(gridMatrix[x, y, z]);
                         blockfallen = true;
                         int ydrop = 0;
 
@@ -631,6 +637,8 @@ public class Grid : MonoBehaviour
             }
             y++;
         }
+        /*foreach (Placeable block in batchlist)
+            GameManager.instance.RemoveBlockFromBatch(block);*/
         if (blockfallen) GameManager.instance.ResetAllBatches();
     }
     /// <summary>
