@@ -86,7 +86,22 @@ public class Grid : MonoBehaviour
         return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
     }
 
-
+    /// <summary>
+    /// Return the spawnlist for the given player
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public List<Vector3Int> GetSpawnPlayer (Player player)
+    {
+        if (player.gameObject == GameManager.instance.player1)
+        {
+            return SpawnPlayer1;
+        }
+        else
+        {
+            return SpawnPlayer2;
+        }
+    }
 
 
     /// <summary>

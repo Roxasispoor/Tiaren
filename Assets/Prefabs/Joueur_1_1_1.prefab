@@ -1142,10 +1142,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 4
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -1680,7 +1680,7 @@ MonoBehaviour:
   firstGap: 99
   timelineGap: 78
   AbilityGap: 100
-  numberOfPlayer: 1
+  numberOfPlayer: 3
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1998,11 +1998,13 @@ MonoBehaviour:
   isReadyToPlay: 0
   characters: []
   numberPrefab: 
+  spawnList: []
   isWinner: 0
   winText: {fileID: 114507509239936454}
   account: {fileID: 0}
   cameraScript: {fileID: 114270093809156058}
   clock: {fileID: 114462364222441842}
+  color: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &114892328325927858
 MonoBehaviour:
   m_ObjectHideFlags: 1
