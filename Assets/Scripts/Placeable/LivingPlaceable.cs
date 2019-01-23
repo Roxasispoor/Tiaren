@@ -620,7 +620,7 @@
             this.CounterDeaths = 0;
             this.TurnsRemaingingCemetery = 0;
             this.ShootPosition = new Vector3(0, 0.5f, 0);
-            this.AreaOfMouvement = new List<NodePath>();
+            
             List<Effect> ListEffects = new List<Effect>();
             List<Effect> ListEffects2 = new List<Effect>();
             List<Effect> ListEffects3 = new List<Effect>();

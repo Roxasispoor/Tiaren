@@ -915,6 +915,9 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
+        GameManager.instance.playingPlaceable.isMoving = true;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
+
         if (path.Count < 2)
         {
             yield break;
@@ -1023,6 +1026,9 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
+        GameManager.instance.playingPlaceable.isMoving = false;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int();
+
         Debug.Log("End" + placeable.GetPosition());
    //Debug.Log("End transform" + placeable.transform);
     }

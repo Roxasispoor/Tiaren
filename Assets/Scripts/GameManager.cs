@@ -484,15 +484,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// <param name="block"></param>
     public void RemoveBlockFromBatch(Placeable block)
     {
-        if (!block.shouldBatch)
-        {
+      
             block.batch.combineInstances.Remove(block.MeshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
 
             RefreshBatch(block);
 
-
-        }
     }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
@@ -632,7 +629,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Todo: if necessary chose them by big cube or something
         foreach(MeshFilter meshFilter in meshFilters)
         {
-
+            if(meshFilter.GetComponent<NetIdeable>()!=null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
+            { 
             CombineInstance currentInstance = new CombineInstance
             {
                 mesh = meshFilter.sharedMesh,
@@ -643,6 +641,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             if(meshFilter.GetComponent<Placeable>()!=null)
             { 
             meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
+            }
             }
         }
         //Then at the end we create all the batches that are not full
