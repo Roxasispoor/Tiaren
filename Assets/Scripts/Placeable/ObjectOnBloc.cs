@@ -51,6 +51,7 @@ public class ObjectOnBloc : NetIdeable {
     }
     private void Awake()
     {
+        shouldBatch = false;
         givenSkills = new List<Skill>();
         if(isPickable)
         {

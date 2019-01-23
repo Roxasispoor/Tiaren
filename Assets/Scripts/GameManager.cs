@@ -484,15 +484,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// <param name="block"></param>
     public void RemoveBlockFromBatch(Placeable block)
     {
-        if (!block.IsLiving())
-        {
+      
             block.batch.combineInstances.Remove(block.MeshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
 
             RefreshBatch(block);
 
-
-        }
     }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
@@ -560,9 +557,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             {
                 Debug.Log("DAFUQ!!!");
             }
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(lastPositionCharac, playingPlaceable.CurrentPM,
-            playingPlaceable.Jump, playingPlaceable.Player);
-
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
+               playingPlaceable.Jump, playingPlaceable.Player);
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable, 
                 new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
@@ -633,7 +629,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Todo: if necessary chose them by big cube or something
         foreach(MeshFilter meshFilter in meshFilters)
         {
-
+            if(meshFilter.GetComponent<NetIdeable>()!=null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
+            { 
             CombineInstance currentInstance = new CombineInstance
             {
                 mesh = meshFilter.sharedMesh,
@@ -644,6 +641,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             if(meshFilter.GetComponent<Placeable>()!=null)
             { 
             meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
+            }
             }
         }
         //Then at the end we create all the batches that are not full

@@ -735,11 +735,11 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+       // Debug.LogError("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         if (GameManager.instance.PlayingPlaceable.Player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
-            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
             Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
                 GameManager.instance.playingPlaceable.GetPosition().z] = null;
             Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
@@ -915,6 +915,9 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
+        GameManager.instance.playingPlaceable.isMoving = true;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
+
         if (path.Count < 2)
         {
             yield break;
@@ -1023,6 +1026,9 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
+        GameManager.instance.playingPlaceable.isMoving = false;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int();
+
         Debug.Log("End" + placeable.GetPosition());
    //Debug.Log("End transform" + placeable.transform);
     }

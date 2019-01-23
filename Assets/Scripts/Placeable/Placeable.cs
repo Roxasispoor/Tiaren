@@ -459,7 +459,7 @@ public abstract class Placeable: NetIdeable
                     && this.GetPosition() + new Vector3Int(0, 1, 0) != GameManager.instance.playingPlaceable.GetPosition())
 
                 {
-                    Debug.Log("You have authority to ask for a move");
+                    Debug.Log("You have authority to ask for a deplacment move");
                     //Vector3 destination = this.GetPosition();
                     Vector3[] path = GameManager.instance.GetPathFromClicked(this);//Check and move on server
                     GameManager.instance.playingPlaceable.Player.CmdMoveTo(path);
@@ -473,7 +473,7 @@ public abstract class Placeable: NetIdeable
             {
                
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
 
 
                 {
