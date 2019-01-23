@@ -401,20 +401,22 @@ public abstract class Placeable: NetIdeable
 
     public void OnMouseOverWithLayer()
     {
-        if (GameManager.instance.state == States.Spawn)
+        if (GameManager.instance.state == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
                 isClicked = true;
 
-                if (this.IsSpawnPoint == true)
+                if (this.IsSpawnPoint == true // AMELIORATION: Maybe could be remove
+                        // Check if it is a spawn point for that player
+                        && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains( GetPosition() + Vector3Int.up)) 
                 {
                     Debug.Log("You have authority to ask to spawn");
                     if (GameManager.instance.CharacterToSpawn == null)
                     {
                         LivingPlaceable charaClicked = (LivingPlaceable)Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
 
-                        if (charaClicked.player == GameManager.instance.GetLocalPlayer())
+                        if (charaClicked != null && charaClicked.player == GameManager.instance.GetLocalPlayer())
                             GameManager.instance.CharacterToSpawn = charaClicked;
                     }
                     else
