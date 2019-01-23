@@ -815,7 +815,13 @@ public class Player : NetworkBehaviour
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-        StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        if (GameManager.instance.playingPlaceable.MoveCoroutine != null)
+        {
+            GameManager.instance.playingPlaceable.StopCoroutine(GameManager.instance.playingPlaceable.MoveCoroutine);
+            GameManager.instance.playingPlaceable.MoveCoroutine = null;
+
+        }
+        GameManager.instance.playingPlaceable.MoveCoroutine=StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
         GameManager.instance.MoveLogic(bezierPath);
         
         
@@ -948,8 +954,14 @@ public class Player : NetworkBehaviour
     public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
          if(path.Count>1)
-        { 
-        StartCoroutine(MoveAlongBezier(path, placeable, speed));
+        {
+            if (placeable.MoveCoroutine!=null)
+            {
+                placeable.StopCoroutine(placeable.MoveCoroutine);
+                placeable.MoveCoroutine = null;
+
+            }
+            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed));
          }
     }
 
@@ -958,13 +970,18 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
-        GameManager.instance.playingPlaceable.isMoving = true;
-        GameManager.instance.playingPlaceable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
-
+       
         if (path.Count < 2)
         {
             yield break;
         }
+        if (placeable.isMoving) //teleport to destination if it was already moving
+        {
+            placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
+        }
+        placeable.isMoving = true;
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -1069,8 +1086,8 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
-        GameManager.instance.playingPlaceable.isMoving = false;
-        GameManager.instance.playingPlaceable.destination = new Vector3Int();
+        placeable.isMoving = false;
+        //GameManager.instance.playingPlaceable.destination = new Vector3Int();
 
         Debug.Log("End" + placeable.GetPosition());
    //Debug.Log("End transform" + placeable.transform);
@@ -1083,6 +1100,13 @@ public class Player : NetworkBehaviour
         {
             yield break;
         }
+        if(placeable.isMoving)
+        {
+            placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
+        }
+        placeable.isMoving = true;
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -1147,9 +1171,9 @@ public class Player : NetworkBehaviour
         //GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
         //Debug.Log("End transform" + placeable.transform);
-        
+        placeable.isMoving = false;
     }
-    
+
     /// <summary>
     /// Check if use is possible and send rpc
     /// </summary>

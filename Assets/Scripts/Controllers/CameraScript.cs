@@ -102,7 +102,7 @@ public class CameraScript : NetworkBehaviour
             position.y = y;
         }
 
-        else if (freecam == 0) position = target.position;
+        else if (freecam == 0 && target!=null) position = target.position;
 
 
         //0 left 1 right 2 middle
