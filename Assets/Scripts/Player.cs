@@ -1145,14 +1145,18 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
+
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
+        Debug.Log("Netid is" + netidTarget + "and target is at" +target.GetPosition());
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
         UseTargeted(skill);
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+        if(GetComponentInChildren<RaycastSelector>()!=null)
+        { 
         GetComponentInChildren<RaycastSelector>().EffectArea = 0;
         GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
-
+        }
     }
 
 }

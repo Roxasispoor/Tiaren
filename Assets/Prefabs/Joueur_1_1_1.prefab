@@ -274,7 +274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1476913564013486
 GameObject:
   m_ObjectHideFlags: 1
@@ -1676,6 +1676,7 @@ MonoBehaviour:
   movDisplay: {fileID: 114792206895558292}
   prefabCharacterChoices: {fileID: 114889792028518860, guid: cf0558fd00e8c0f4e93b442f1e280311,
     type: 2}
+  numberOfPlayer: 1
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1

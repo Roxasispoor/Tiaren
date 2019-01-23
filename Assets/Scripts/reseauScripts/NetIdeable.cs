@@ -5,7 +5,6 @@ using UnityEngine;
 
 public abstract class NetIdeable : MonoBehaviour {
 
-    [NonSerialized]
     public int netId;
     protected List<Effect> attachedEffects;
     public bool shouldBatch=true;
