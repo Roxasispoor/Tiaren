@@ -17,6 +17,7 @@ public class Player : NetworkBehaviour
     public bool isReadyToPlay = false;
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
+    public List<Vector3Int> spawnList;
     private Vector3Int placeToGo;
     private bool isready;
     public bool isWinner = false;
@@ -29,6 +30,8 @@ public class Player : NetworkBehaviour
     private Dictionary<string, Axis> dicoAxis;
     private Dictionary<string, Condition> dicoCondition;
     public Timer clock;
+
+    public Color color;
 
     /// <summary>
     /// Function to know if the player acted during this turn
@@ -327,6 +330,8 @@ public class Player : NetworkBehaviour
         {
             gameObject.GetComponent<UIManager>().SpawnUI();
             Debug.Log(gameObject.name);
+            Player localPlayer = GameManager.instance.GetLocalPlayer();
+            Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
                 Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
