@@ -679,7 +679,7 @@ public class Grid : MonoBehaviour
             Destroy(gameObject);
 
         //gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
-        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
+        
 
 
 
@@ -741,6 +741,8 @@ public class Grid : MonoBehaviour
         sizeX = jagged.sizeX;
         sizeY = jagged.sizeY;
         sizeZ = jagged.sizeZ;
+        //Debug.Log(sizeX + " " + sizeY + " " + sizeZ);
+        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
         //gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
         for (int y = 0; y < sizeY; y++)

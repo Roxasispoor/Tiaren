@@ -338,6 +338,7 @@ public abstract class Placeable: NetIdeable
     {
         if (this.Destroyable)
         {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.UseEffect(effect);
@@ -346,9 +347,10 @@ public abstract class Placeable: NetIdeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            Destroy(this);
+            Destroy(this.gameObject);
         }
-        Destroy(this);
-        Destroy(this.gameObject);
+       
     }
     public void Highlight()
     {
