@@ -1676,7 +1676,7 @@ MonoBehaviour:
   movDisplay: {fileID: 114792206895558292}
   prefabCharacterChoices: {fileID: 114889792028518860, guid: cf0558fd00e8c0f4e93b442f1e280311,
     type: 2}
-  numberOfPlayer: 1
+  numberOfPlayer: 2
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1

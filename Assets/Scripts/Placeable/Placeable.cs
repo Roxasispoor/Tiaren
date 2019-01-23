@@ -35,6 +35,7 @@ public abstract class Placeable: NetIdeable
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
+    private Coroutine moveCoroutine;
     //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
@@ -298,8 +299,21 @@ public abstract class Placeable: NetIdeable
         }
     }
 
+    public Coroutine MoveCoroutine
+    {
+        get
+        {
+            return moveCoroutine;
+        }
 
- 
+        set
+        {
+            moveCoroutine = value;
+        }
+    }
+
+
+
 
     /// <summary>
     /// Copy object
