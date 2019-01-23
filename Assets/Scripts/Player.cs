@@ -516,7 +516,6 @@ public class Player : NetworkBehaviour
             Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
             Grid.instance.MoveBlock(placeable, pos, true);
             placeable.gameObject.SetActive(true);
-            GameManager.instance.GetOtherPlayer(gameObject).GetComponent<Player>().RpcRespawn(position, netID);
         }
     }
 

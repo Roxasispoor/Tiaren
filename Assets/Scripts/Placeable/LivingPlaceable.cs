@@ -692,7 +692,6 @@
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
-        //TODO gérer le temps de respawn
     }
     
     public void HighlightForSpawn()
