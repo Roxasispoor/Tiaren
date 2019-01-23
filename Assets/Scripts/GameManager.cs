@@ -70,6 +70,8 @@ public class GameManager : NetworkBehaviour
     private LivingPlaceable characterToSpawn;
     public string player1Username="";
     public string player2Username=""; //TODOShould instead be account and serialize 
+    public Color localPlayerColor = Color.blue;
+    public Color ennemyPlayerColor = Color.red;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     public States state;
@@ -202,6 +204,21 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public Player Player1
+    {
+        get
+        {
+            return player1.GetComponent<Player>();
+        }
+    }
+
+    public Player Player2
+    {
+        get
+        {
+            return player2.GetComponent<Player>();
+        }
+    }
 
     /// <summary>
     /// Return the player who has authority
@@ -284,7 +301,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         transmitter.networkManager = networkManager;
        /*if (isServer)
         {
-            Debug.LogError("Transmitter started");
+            Debug.LogError("Transmitter 
+            
+        
+        
+        
+        ed");
             StartCoroutine(transmitter.AcceptTcp());
            
         }
@@ -298,7 +320,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
-        //Debug.Log("Please load on client 1 ffs");
         while (player2 == null )
         { 
             yield return null;
@@ -311,6 +332,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseBatchFolder();
         player1.gameObject.name = "player1";
         player2.gameObject.name = "player2";
+
+        Player localPlayer = GetLocalPlayer();
+        localPlayer.color = localPlayerColor;
+        Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
+        otherPlayer.color = ennemyPlayerColor;
+        
+        localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+        otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
