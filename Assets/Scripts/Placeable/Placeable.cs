@@ -9,12 +9,11 @@ using UnityEngine.EventSystems;
 /// Represents something able to fill a bloc of the grid
 /// </summary>
 [Serializable]
-public abstract class Placeable:NetIdeable
+public abstract class Placeable: NetIdeable
 {
     const float sizeChild = 1.02f;
     [NonSerialized]
     public Batch batch;
-    public static int currentMaxId=0;
     [SerializeField]
     public int serializeNumber;
     private bool walkable;
@@ -27,6 +26,7 @@ public abstract class Placeable:NetIdeable
     private float animationSpeed=1.0f;
     [NonSerialized]
     public Material oldMaterial;
+    public Material baseMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
     private bool explored;
@@ -35,13 +35,19 @@ public abstract class Placeable:NetIdeable
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
+    //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
+
+    // Bool to avoid doubleclick with the same input
+    private static bool isClicked = false;
 
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
     private Player player;
+    [SerializeField]
+    private bool isSpawnPoint;
 
 
    
@@ -279,8 +285,21 @@ public abstract class Placeable:NetIdeable
         }
     }
 
+    public bool IsSpawnPoint
+    {
+        get
+        {
+            return isSpawnPoint;
+        }
+
+        set
+        {
+            isSpawnPoint = value;
+        }
+    }
 
 
+ 
 
     /// <summary>
     /// Copy object
@@ -291,7 +310,13 @@ public abstract class Placeable:NetIdeable
         var copy = (Placeable)this.MemberwiseClone();
         return copy;
     }
-
+    public void SomethingPutAbove()
+    {
+        foreach (Transform obj in transform.Find("Inventory"))
+        {
+            obj.GetComponent<ObjectOnBloc>().SomethingPutAbove();
+        }
+    }
     /// <summary>
     /// method to call for destroying object
     /// </summary>
@@ -303,6 +328,10 @@ public abstract class Placeable:NetIdeable
             {
                 EffectManager.instance.UseEffect(effect);
             }
+            foreach(Transform obj in transform.Find("Inventory") )
+            {
+                obj.GetComponent<ObjectOnBloc>().Destroy();
+            }
         }
         Destroy(this);
         Destroy(this.gameObject);
@@ -312,11 +341,11 @@ public abstract class Placeable:NetIdeable
         if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
-            GameObject quadUp = transform.Find("QuadUp").gameObject;
-            GameObject quadRight = transform.Find("QuadRight").gameObject;
-            GameObject quadLeft = transform.Find("QuadLeft").gameObject;
-            GameObject quadFront = transform.Find("QuadFront").gameObject;
-            GameObject quadBack = transform.Find("QuadBack").gameObject;
+            GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
+            GameObject quadRight = transform.Find("Quads").Find("QuadRight").gameObject;
+            GameObject quadLeft = transform.Find("Quads").Find("QuadLeft").gameObject;
+            GameObject quadFront = transform.Find("Quads").Find("QuadFront").gameObject;
+            GameObject quadBack = transform.Find("Quads").Find("QuadBack").gameObject;
 
             quadUp.SetActive(true);
 
@@ -337,7 +366,7 @@ public abstract class Placeable:NetIdeable
             quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
 
         }
-        foreach (Transform fils in transform)
+        foreach (Transform fils in transform.Find("Quads"))
         {
 
             fils.gameObject.SetActive(true);
@@ -349,7 +378,7 @@ public abstract class Placeable:NetIdeable
         if (IsLiving()) return;
 
         //Put back the default material
-        foreach (Transform fils in transform)
+        foreach (Transform fils in transform.Find("Quads"))
         {
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
@@ -360,7 +389,7 @@ public abstract class Placeable:NetIdeable
         {
 
 
-            foreach (Transform fils in transform)
+            foreach (Transform fils in transform.Find("Quads"))
             {
 
                 fils.gameObject.SetActive(false);
@@ -372,16 +401,63 @@ public abstract class Placeable:NetIdeable
 
     public void OnMouseOverWithLayer()
     {
-        if (GameManager.instance.state == States.Move)
+        if (GameManager.instance.state == States.Spawn)
         {
-            // Debug.Log(EventSystem.current.IsPointerOverGameObject());
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
+                isClicked = true;
+
+                if (this.IsSpawnPoint == true)
+                {
+                    Debug.Log("You have authority to ask to spawn");
+                    if (GameManager.instance.CharacterToSpawn == null)
+                    {
+                        LivingPlaceable charaClicked = (LivingPlaceable)Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+
+                        if (charaClicked.player == GameManager.instance.GetLocalPlayer())
+                            GameManager.instance.CharacterToSpawn = charaClicked;
+                    }
+                    else
+                    {
+                        if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                        {
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
+                            GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                        }
+                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving() 
+                            && Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].player == GameManager.instance.GetLocalPlayer())
+                        {
+                            Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z);
+                            GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                        }
+                        GameManager.instance.CharacterToSpawn = null;
+                    }
+                }
+              
+            } else
+            {
+                isClicked = false;
+            }
+        }
+        else if (GameManager.instance.state == States.Move)
+        {
+
+            // Debug.Log(EventSystem.current.IsPointerOverGameObject());
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable )
+            {
+                
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
                     && this.GetPosition() + new Vector3Int(0, 1, 0) != GameManager.instance.playingPlaceable.GetPosition())
 
                 {
-                    Debug.Log("You have authority to ask for a move");
+                    Debug.Log("You have authority to ask for a deplacment move");
                     //Vector3 destination = this.GetPosition();
                     Vector3[] path = GameManager.instance.GetPathFromClicked(this);//Check and move on server
                     GameManager.instance.playingPlaceable.Player.CmdMoveTo(path);
@@ -391,17 +467,20 @@ public abstract class Placeable:NetIdeable
         }
         else if (GameManager.instance.state == States.UseSkill)
         {
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
+               
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
+                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() || GameManager.instance.activeSkill.SkillType == SkillType.BLOCK && !IsLiving()))
+
 
                 {
                     Debug.Log("You have authority to ask to act");
-                    GameManager.instance.playingPlaceable.player.CmdUseSkill(GameManager.instance.playingPlaceable.Skills.FindIndex(GameManager.instance.activeSkill.Equals), netId);
+                    GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId);
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }
+            
         }
     }
     /// <summary>
@@ -412,11 +491,10 @@ public abstract class Placeable:NetIdeable
        
     }
 
-    private void Awake()
+    protected void Awake()
     {
-        //WARNING: NEVER CALLED BY CHILDREN (BECAUSE ABSTRACT?)
 
-     
+        baseMaterial = GetComponent<Renderer>().material;
     }
 
     /// <summary>

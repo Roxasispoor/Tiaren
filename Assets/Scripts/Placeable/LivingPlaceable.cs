@@ -1,509 +1,524 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
+﻿    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using UnityEngine;
 
-[Serializable]
-public class LivingPlaceable : Placeable
-{
-    /// <summary>
-    /// Used to save position, only actualized at this point
-    /// </summary>
-    [SerializeField]
-    private Vector3 positionSave;
-    [SerializeField]
-    private string playerPosesser;
-    [SerializeField]
-    private string classname = "default";
-    [SerializeField]
-    private float maxHP;
-    [SerializeField]
-    private float currentHP;
-    [SerializeField]
-    private int pmMax;
-    [SerializeField]
-    private int currentPM;
-    [SerializeField]
-    private float currentPA;
-    [SerializeField]
-    private float paMax;
-    [SerializeField]
-    private int force = -99999;
-    [SerializeField]
-    private float speed;
-    [SerializeField]
-    private int dexterity = -77777;
-    [SerializeField]
-    private float speedStack;
-    [SerializeField]
-    private int jump;
-    [SerializeField]
-    private int def = -88888;
-    [SerializeField]
-    private int mdef = -66666;
-    [SerializeField]
-    private int mstr = -555555;
-    private float deathLength;
-    [SerializeField]
-    private List<Skill> skills;
-    [SerializeField]
-    private List<GameObject> weapons;
-    private Weapon equipedWeapon;
-    [SerializeField]
-    private bool isDead;
-    private int counterDeaths;
-    private int turnsRemainingCemetery;
-    private Vector3 shootPosition;
-    private int capacityInUse;
-    private List<NodePath> areaOfMouvement;
+    [Serializable]
+    public class LivingPlaceable : Placeable
+    {
+        /// <summary>
+        /// Used to save position, only actualized at this point
+        /// </summary>
+        [SerializeField]
+        private Vector3 positionSave;
+        [SerializeField]
+        private string playerPosesser;
+        [SerializeField]
+        private string classname = "default";
+        [SerializeField]
+        private float maxHP;
+        [SerializeField]
+        private float currentHP;
+        [SerializeField]
+        private int pmMax;
+        [SerializeField]
+        private int currentPM;
+        [SerializeField]
+        private float currentPA;
+        [SerializeField]
+        private float paMax;
+        [SerializeField]
+        private int force = -99999;
+        [SerializeField]
+        private float speed;
+        [SerializeField]
+        private int dexterity = -77777;
+        [SerializeField]
+        private float speedStack;
+        [SerializeField]
+        private int jump;
+        [SerializeField]
+        private int def = -88888;
+        [SerializeField]
+        private int mdef = -66666;
+        [SerializeField]
+        private int mstr = -555555;
+        private float deathLength;
+        [SerializeField]
+        private List<Skill> skills;
+        [SerializeField]
+        private List<GameObject> weapons;
+        private String characterName;
+        private Weapon equipedWeapon;
+        [SerializeField]
+        private bool isDead;
+        private int counterDeaths;
+        private int turnsRemainingCemetery;
+        private Vector3 shootPosition;
+        private int capacityInUse;
+        private List<NodePath> areaOfMouvement;
 
-    private List<Placeable> targetArea;
-    private List<LivingPlaceable> targetableUnits;
-    public Sprite characterSprite;
+        private List<Placeable> targetArea;
+        private List<LivingPlaceable> targetableUnits;
+        public Sprite characterSprite;
 
-    //Shaders (used for the highlight)
-    private Renderer rend;
-    [SerializeField]
-    private Shader originalShader;
-    private Shader outlineShader;
+        //Shaders (used for the highlight)
+        private Renderer rend;
+        [SerializeField]
+        private Shader originalShader;
+        private Shader outlineShader;
     
-    public float MaxHP
-    {
-        get
+        public float MaxHP
         {
-            return maxHP;
-        }
-
-        set
-        {
-            maxHP = value;
-        }
-    }
-
-    public float CurrentHP
-    {
-        get
-        {
-            return currentHP;
-        }
-
-        set
-        {
-            currentHP = value;
-        }
-    }
-    public override Player Player
-    {
-        get
-        {
-            return base.Player;
-        }
-
-        set
-        {
-            base.Player = value;
-            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+            get
             {
-                playerPosesser = "player1";
-            }
-            if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
-            {
-                playerPosesser = "player2";
+                return maxHP;
             }
 
-        }
-    }
-    public int MaxPM
-    {
-        get
-        {
-            return pmMax;
-        }
-
-        set
-        {
-            pmMax = value;
-        }
-    }
-
-    public List<Skill> Skills
-    {
-        get
-        {
-            return skills;
-        }
-
-        set
-        {
-            skills = value;
-        }
-    }
-
-
-    public int Force
-    {
-        get
-        {
-            return force;
-        }
-
-        set
-        {
-            force = value;
-        }
-    }
-
-    public float Speed
-    {
-        get
-        {
-            return speed;
-        }
-
-        set
-        {
-            speed = value;
-        }
-    }
-
-    public int Dexterity
-    {
-        get
-        {
-            return dexterity;
-        }
-
-        set
-        {
-            dexterity = value;
-        }
-    }
-
-    public float SpeedStack
-    {
-        get
-        {
-            return speedStack;
-        }
-
-        set
-        {
-            speedStack = value;
-        }
-    }
-
-    public int TurnsRemaingingCemetery
-    {
-        get
-        {
-            return turnsRemainingCemetery;
-        }
-
-        set
-        {
-            turnsRemainingCemetery = value;
-        }
-    }
-
-    public int CounterDeaths
-    {
-        get
-        {
-            return counterDeaths;
-        }
-
-        set
-        {
-            counterDeaths = value;
-        }
-    }
-
-    public int CurrentPM
-    {
-        get
-        {
-            return currentPM;
-        }
-
-        set
-        {
-            currentPM = value;
-        }
-    }
-
-    public Vector3 ShootPosition
-    {
-        get
-        {
-            return shootPosition;
-        }
-
-        set
-        {
-            shootPosition = value;
-        }
-    }
-
-    public bool IsDead
-    {
-        get
-        {
-            return isDead;
-        }
-
-        set
-        {
-            isDead = value;
-        }
-    }
-
-    public List<GameObject> Weapons
-    {
-        get
-        {
-            return weapons;
-        }
-
-        set
-        {
-            weapons = value;
-        }
-    }
-
-    public Weapon EquipedWeapon
-    {
-        get
-        {
-            return equipedWeapon;
-        }
-
-        set
-        {
-            equipedWeapon = value;
-        }
-    }
-
-    public int CapacityinUse
-    {
-        get
-        {
-            return capacityInUse;
-        }
-
-        set
-        {
-            capacityInUse = value;
-        }
-    }
-
-    public float CurrentPA
-    {
-        get
-        {
-            return currentPA;
-        }
-
-        set
-        {
-            currentPA = value;
-        }
-    }
-
-    public float PaMax
-    {
-        get
-        {
-            return paMax;
-        }
-
-        set
-        {
-            paMax = value;
-        }
-    }
-
-    public int Jump
-    {
-        get
-        {
-            return jump;
-        }
-
-        set
-        {
-            jump = value;
-        }
-    }
-
-    public List<NodePath> AreaOfMouvement
-    {
-        get
-        {
-            return areaOfMouvement;
-        }
-
-        set
-        {
-            areaOfMouvement = value;
-        }
-    }
-
-
-
-    public List<LivingPlaceable> TargetableUnits
-    {
-        get
-        {
-            return targetableUnits;
-        }
-
-        set
-        {
-            foreach (LivingPlaceable living in targetableUnits)
+            set
             {
-                living.UnHighlightForSkill();
+                maxHP = value;
             }
-            foreach (LivingPlaceable living in value)
+        }
+
+        public float CurrentHP
+        {
+            get
             {
-                living.HighlightForSkill();
-            }
-            targetableUnits = value;
-        }
-    }
-
-    public float DeathLength
-    {
-        get
-        {
-            return deathLength;
-        }
-
-        set
-        {
-            deathLength = value;
-        }
-    }
-
-    public List<Placeable> TargetArea
-    {
-        get
-        {
-            return targetArea;
-        }
-
-        set
-        {
-            targetArea = value;
-        }
-    }
-
-    public string Classname
-    {
-        get
-        {
-            return classname;
-        }
-
-        set
-        {
-            classname = value;
-        }
-    }
-
-    public int Mstr
-    {
-        get
-        {
-            return mstr;
-        }
-
-        set
-        {
-            mstr = value;
-        }
-    }
-
-    public int Mdef
-    {
-        get
-        {
-            return mdef;
-        }
-
-        set
-        {
-            mdef = value;
-        }
-    }
-
-    public int Def
-    {
-        get
-        {
-            return def;
-        }
-
-        set
-        {
-            def = value;
-        }
-    }
-
-
-    /// <summary>
-    /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
-    /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="gameEffectManager"></param>
-    public Vector3 ShootDamage(Placeable target)
-    {
-
-        float nbDmgs;
-
-        if (EquipedWeapon.ScalesOnForce)
-        {
-
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
-        }
-        else
-        {
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
-
-        }
-        float maxDamage = 0;
-        HitablePoint maxHit = null;
-        float nbDamagea;
-        foreach (HitablePoint hitPoint in CanHit(target))
-        {
-
-            Vector3 shotaPos = this.transform.position + shootPosition;
-            Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
-            float sinFactor = (shotaPos.y - ciblaPos.y) /
-                (shotaPos - ciblaPos).magnitude;
-
-            Vector3 vect1 = this.transform.forward;
-            Vector3 vect2 = (ciblaPos - shotaPos);
-            vect1.y = 0;
-            vect2.y = 0;
-            vect1.Normalize();
-            vect2.Normalize();
-
-            float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-            nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
-            if (nbDamagea > maxDamage)
-            {
-                maxDamage = nbDamagea;
-                maxHit = hitPoint;
+                return currentHP;
             }
 
+            set
+            {
+                currentHP = value;
+            }
+        }
+        public override Player Player
+        {
+            get
+            {
+                return base.Player;
+            }
+
+            set
+            {
+                base.Player = value;
+                if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+                {
+                    playerPosesser = "player1";
+                }
+                if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
+                {
+                    playerPosesser = "player2";
+                }
+
+            }
+        }
+        public int MaxPM
+        {
+            get
+            {
+                return pmMax;
+            }
+
+            set
+            {
+                pmMax = value;
+            }
         }
 
-        //TODO use gameEffectManager
-        return target.transform.position + maxHit.RelativePosition;
+        public List<Skill> Skills
+        {
+            get
+            {
+                return skills;
+            }
+
+            set
+            {
+                skills = value;
+            }
+        }
+
+
+        public int Force
+        {
+            get
+            {
+                return force;
+            }
+
+            set
+            {
+                force = value;
+            }
+        }
+
+        public float Speed
+        {
+            get
+            {
+                return speed;
+            }
+
+            set
+            {
+                speed = value;
+            }
+        }
+
+        public int Dexterity
+        {
+            get
+            {
+                return dexterity;
+            }
+
+            set
+            {
+                dexterity = value;
+            }
+        }
+
+        public float SpeedStack
+        {
+            get
+            {
+                return speedStack;
+            }
+
+            set
+            {
+                speedStack = value;
+            }
+        }
+
+        public int TurnsRemaingingCemetery
+        {
+            get
+            {
+                return turnsRemainingCemetery;
+            }
+
+            set
+            {
+                turnsRemainingCemetery = value;
+            }
+        }
+
+        public int CounterDeaths
+        {
+            get
+            {
+                return counterDeaths;
+            }
+
+            set
+            {
+                counterDeaths = value;
+            }
+        }
+
+        public int CurrentPM
+        {
+            get
+            {
+                return currentPM;
+            }
+
+            set
+            {
+                currentPM = value;
+            }
+        }
+
+        public Vector3 ShootPosition
+        {
+            get
+            {
+                return shootPosition;
+            }
+
+            set
+            {
+                shootPosition = value;
+            }
+        }
+
+        public bool IsDead
+        {
+            get
+            {
+                return isDead;
+            }
+
+            set
+            {
+                isDead = value;
+            }
+        }
+
+        public List<GameObject> Weapons
+        {
+            get
+            {
+                return weapons;
+            }
+
+            set
+            {
+                weapons = value;
+            }
+        }
+
+        public Weapon EquipedWeapon
+        {
+            get
+            {
+                return equipedWeapon;
+            }
+
+            set
+            {
+                equipedWeapon = value;
+            }
+        }
+
+        public int CapacityinUse
+        {
+            get
+            {
+                return capacityInUse;
+            }
+
+            set
+            {
+                capacityInUse = value;
+            }
+        }
+
+        public float CurrentPA
+        {
+            get
+            {
+                return currentPA;
+            }
+
+            set
+            {
+                currentPA = value;
+            }
+        }
+
+        public float PaMax
+        {
+            get
+            {
+                return paMax;
+            }
+
+            set
+            {
+                paMax = value;
+            }
+        }
+
+        public int Jump
+        {
+            get
+            {
+                return jump;
+            }
+
+            set
+            {
+                jump = value;
+            }
+        }
+
+        public List<NodePath> AreaOfMouvement
+        {
+            get
+            {
+                return areaOfMouvement;
+            }
+
+            set
+            {
+                areaOfMouvement = value;
+            }
+        }
+
+
+
+        public List<LivingPlaceable> TargetableUnits
+        {
+            get
+            {
+                return targetableUnits;
+            }
+
+            set
+            {
+                foreach (LivingPlaceable living in targetableUnits)
+                {
+                    living.UnHighlightForSkill();
+                }
+                foreach (LivingPlaceable living in value)
+                {
+                    living.HighlightForSkill();
+                }
+                targetableUnits = value;
+            }
+        }
+
+        public float DeathLength
+        {
+            get
+            {
+                return deathLength;
+            }
+
+            set
+            {
+                deathLength = value;
+            }
+        }
+
+        public List<Placeable> TargetArea
+        {
+            get
+            {
+                return targetArea;
+            }
+
+            set
+            {
+                targetArea = value;
+            }
+        }
+
+        public string Classname
+        {
+            get
+            {
+                return classname;
+            }
+
+            set
+            {
+                classname = value;
+            }
+        }
+
+        public int Mstr
+        {
+            get
+            {
+                return mstr;
+            }
+
+            set
+            {
+                mstr = value;
+            }
+        }
+
+        public int Mdef
+        {
+            get
+            {
+                return mdef;
+            }
+
+            set
+            {
+                mdef = value;
+            }
+        }
+
+        public int Def
+        {
+            get
+            {
+                return def;
+            }
+
+            set
+            {
+                def = value;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
+        /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="gameEffectManager"></param>
+        public Vector3 ShootDamage(Placeable target)
+        {
+            float nbDmgs;
+
+            if (EquipedWeapon.ScalesOnForce)
+            {
+
+                nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
+            }
+            else
+            {
+                nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
+
+            }
+            float maxDamage = 0;
+            HitablePoint maxHit = null;
+            float nbDamagea;
+            foreach (HitablePoint hitPoint in CanHit(target))
+            {
+
+                Vector3 shotaPos = this.transform.position + shootPosition;
+                Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
+                float sinFactor = (shotaPos.y - ciblaPos.y) /
+                    (shotaPos - ciblaPos).magnitude;
+
+                Vector3 vect1 = this.transform.forward;
+                Vector3 vect2 = (ciblaPos - shotaPos);
+                vect1.y = 0;
+                vect2.y = 0;
+                vect1.Normalize();
+                vect2.Normalize();
+
+                float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
+                nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
+                if (nbDamagea > maxDamage)
+                {
+                    maxDamage = nbDamagea;
+                    maxHit = hitPoint;
+                }
+
+            }
+
+            //TODO use gameEffectManager
+            return target.transform.position + maxHit.RelativePosition;
+        }
+
+
+    
+    public ObjectOnBloc[] GetObjectsOnBlockUnder()
+    {
+       return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
+               .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+    }
+
+
+    public void ChangeSpawnCharacter() //method called by the ui buttons during spawn
+    {
+        GameManager.instance.CharacterToSpawn = this;
     }
 
     public override void DispatchEffect(Effect effect)
@@ -534,7 +549,7 @@ public class LivingPlaceable : Placeable
             {
                 
                 RaycastHit[] hits = Physics.RaycastAll(starting,
-                   direction, (starting - arrival).magnitude + 0.1f);//les arrondis i guess
+                    direction, (starting - arrival).magnitude + 0.1f);//les arrondis i guess
                 int significantItemShot = 0;
                 foreach (RaycastHit hit in hits) //a while would be better
                 {
@@ -570,7 +585,8 @@ public class LivingPlaceable : Placeable
     // Use this for initialization
     void Awake()
     {
-        this.name = "default";
+        shouldBatch = false;
+        this.characterName = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -619,8 +635,8 @@ public class LivingPlaceable : Placeable
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2",0,5,SkillArea.NONE, 2);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
         Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
@@ -630,12 +646,12 @@ public class LivingPlaceable : Placeable
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + name);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
         targetableUnits = new List<LivingPlaceable>();
-     //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
@@ -644,11 +660,14 @@ public class LivingPlaceable : Placeable
         //Save();
         //force = -5;
         //FillLiving();
+        //TODO Read from JSON properly
 
 
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+        rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.03f);
     }
     /// <summary>
     /// method to call to destroy the object 
@@ -658,22 +677,25 @@ public class LivingPlaceable : Placeable
     public void Destroy()
     {
 
-        if (this.Destroyable)
-        {
-            foreach (var effet in this.OnDestroyEffects)
-            {
-                effet.Use();
-            }
-        }
-
+        base.Destroy();
         this.IsDead = true;
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
-       //TODO gérer le temps de respawn
+        //TODO gérer le temps de respawn
     }
     
- 
+    public void HighlightForSpawn()
+    {
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_OutlineColor" ,Color.green);
+    }
+
+    public void UnHighlightForSpawn()
+    {
+        rend.material.shader = originalShader;
+    }
+
     public void HighlightForSkill()
     {
         rend.material.shader = outlineShader;
@@ -691,7 +713,7 @@ public class LivingPlaceable : Placeable
         {
             if(Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
             { 
-           // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
             }
@@ -705,13 +727,13 @@ public class LivingPlaceable : Placeable
         float heightSize = 0.2f;
         foreach (NodePath node in AreaOfMouvement)
         {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
-            {
-                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+
+            GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+            GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+            GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+            GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+            GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
+
 
                 quadUp.SetActive(true);
 
@@ -737,9 +759,7 @@ public class LivingPlaceable : Placeable
                 //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
             }
         }
-        //GameManager.instance.ResetAllBatches();
-
-    }
+        
 
     public void ResetAreaOfMovementBatch()
     {
@@ -748,7 +768,7 @@ public class LivingPlaceable : Placeable
 
             if (Grid.instance.GridMatrix[node.x, node.y, node.z]!=null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
             { 
-           // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
             Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
                     Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
             Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
@@ -756,34 +776,28 @@ public class LivingPlaceable : Placeable
         }
         AreaOfMouvement.Clear();
     }
+
     public void ResetAreaOfMovement()
     {
-       
-        float heightSize = 1.02f;
         foreach (NodePath node in AreaOfMouvement)
         {
-            
-
             if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
             {
-                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadUp").gameObject;
-                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadRight").gameObject;
-                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadLeft").gameObject;
-                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadFront").gameObject;
-                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("QuadBack").gameObject;
+            GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+            GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+            GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+            GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+            GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
-                quadUp.SetActive(false);
+            quadUp.SetActive(false);
                 quadRight.SetActive(false);
-                 quadLeft.SetActive(false);
+                    quadLeft.SetActive(false);
               
                 quadFront.SetActive(false);
               
                 quadBack.SetActive(false);
                 
-
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-                //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+                
             }
 
         }
@@ -833,19 +847,20 @@ public class LivingPlaceable : Placeable
         targetArea.Clear();
       
     }
-    public void Save()
+
+    public void Save(string path = "Living.json")
     {
         positionSave = GetPosition();
         Stats stats = new Stats();
         stats.FillThis(this);
         string text = JsonUtility.ToJson(stats);
-        foreach(Skill skill in Skills)
+        foreach (Skill skill in Skills)
         {
             text+=skill.Save();
         }
-        string path = "Living.json";
         File.WriteAllText(path, text);
     }
+
     public static Stream GenerateStreamFromString(string s)
     {
         var stream = new MemoryStream();
@@ -855,14 +870,13 @@ public class LivingPlaceable : Placeable
         stream.Position = 0;
         return stream;
     }
+    
     public void LoadFromString(string file)
     {
         FillLiving(new StreamReader(GenerateStreamFromString(file)));
-
     }
     public void LoadFromjson(string path)
-    {
-        
+    {        
         StreamReader reader = new StreamReader(path);
         FillLiving(reader);
     }
