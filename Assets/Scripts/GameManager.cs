@@ -36,7 +36,8 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public Material targetMaterial;
 
-    public Material spawnMaterial;
+    public Material spawnAllyMaterial;
+    public Material spawnEnemyMaterial;
 
     /// <summary>
     /// Manages all the network part once in game
@@ -333,8 +334,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player1.gameObject.name = "player1";
         player2.gameObject.name = "player2";
 
-        Player localPlayer = GetLocalPlayer();
+        Player localPlayer = GetLocalPlayer();  
         localPlayer.color = localPlayerColor;
+
         Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
         otherPlayer.color = ennemyPlayerColor;
         
@@ -363,7 +365,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         else
         {
             
-            InitialiseBatchFolder();
+            //InitialiseBatchFolder(); <- a merge issue ?
             return player2;
 
             //receive data from server

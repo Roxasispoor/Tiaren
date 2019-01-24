@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -384,7 +384,8 @@ MonoBehaviour:
     type: 2}
   gameMode: 0
   targetMaterial: {fileID: 2100000, guid: d526401e971c20e4595b2bccc06da6b8, type: 2}
-  spawnMaterial: {fileID: 2100000, guid: 5d11303f80d8f3c4595fe051da573f4a, type: 2}
+  spawnAllyMaterial: {fileID: 2100000, guid: 5d11303f80d8f3c4595fe051da573f4a, type: 2}
+  spawnEnemyMaterial: {fileID: 2100000, guid: d2a84e3e7757cf749bb508b9ab6b3f08, type: 2}
   networkManager: {fileID: 0}
   batchPrefab: {fileID: 1096994754846564, guid: 25124ae756cebd54b8635d9c4b77659d,
     type: 2}
@@ -399,6 +400,8 @@ MonoBehaviour:
   player2: {fileID: 0}
   player1Username: 
   player2Username: 
+  localPlayerColor: {r: 0, g: 0, b: 1, a: 1}
+  ennemyPlayerColor: {r: 1, g: 0, b: 0, a: 1}
   prefabMonsters: []
   activeSkill:
     skillName: 

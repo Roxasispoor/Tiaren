@@ -327,37 +327,59 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             gameObject.GetComponent<UIManager>().SpawnUI();
+
             Player localPlayer = GameManager.instance.GetLocalPlayer();
             Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
-            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
-            {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
 
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
-                    Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
-                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
-                {
-                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
-                }
-            }
-            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+
+            if (localPlayer == GameManager.instance.Player1)
             {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
-                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
-                {
-                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
-                }
+                SpawnLocalPlayer(localPlayer);
+                SpawnEnemyPlayer(enemyPlayer);
+            } else
+            {
+                SpawnEnemyPlayer(enemyPlayer);
+                SpawnLocalPlayer(localPlayer);
             }
+            
             GameManager.instance.ResetAllBatches();
             gameObject.GetComponent<UIManager>().SpawnUI();
         }
     }
     
+    private void SpawnLocalPlayer(Player localPlayer)
+    {
+        for (int i = 0; i < localPlayer.spawnList.Count; i++)
+        {
+            Grid.instance.GridMatrix[localPlayer.spawnList[i].x, localPlayer.spawnList[i].y - 1,
+                localPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+
+            Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
+                localPlayer.spawnList[i].y - 1,
+                localPlayer.spawnList[i].z].IsSpawnPoint = true;
+            if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            {
+                GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+        }
+    }
+
+    private void SpawnEnemyPlayer(Player enemyPlayer)
+    {
+        for (int i = 0; i < enemyPlayer.spawnList.Count; i++)
+        {
+            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
+                enemyPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
+                enemyPlayer.spawnList[i].z].IsSpawnPoint = true;
+            if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            {
+                GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+        }
+
+    }
+
     [Command]
     public void CmdTeamReady(int[] characterChoices)
     {
