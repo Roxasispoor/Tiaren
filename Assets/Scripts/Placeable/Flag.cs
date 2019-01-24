@@ -6,6 +6,7 @@ public class Flag : ObjectOnBloc {
 
     private void Awake()
     {
+        base.Awake();
         isPickable=true;
         isPicked=false;
         dropOnDeathPicker=true;

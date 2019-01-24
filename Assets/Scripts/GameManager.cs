@@ -394,12 +394,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void CheckWinCondition()
     {
-            if (gameMode == GameMode.DEATHMATCH)
+        if (gameMode == GameMode.DEATHMATCH)
         {
             player2.GetComponent<Player>().isWinner = true;
             foreach (GameObject character in player1.GetComponent<Player>().characters)
             {
-                if(!character.GetComponent<LivingPlaceable>().IsDead)
+                if (!character.GetComponent<LivingPlaceable>().IsDead)
                 {
                     player2.GetComponent<Player>().isWinner = false;
                     break;
@@ -414,7 +414,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     break;
                 }
             }
-            if(player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
+            WinAndDisableUI();
+
+        }
+        if (gameMode == GameMode.FLAG)
+        {
+            WinAndDisableUI();
+
+        }
+    }
+    public void WinAndDisableUI()
+    {
+        if (player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
             {
                 //Disable canvas element
                 Canvas c = player1.transform.GetComponentInChildren<Canvas>();
@@ -454,10 +465,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 player2.GetComponent<Player>().winText.text = "DRAW";
                 player1.GetComponent<Player>().winText.text = "DRAW";
             }
-
-        }
-
-        
     }
 
     private void UpdateTimeline()
@@ -616,7 +623,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         GameObject GoalP2 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, Grid.instance.sizeZ - 2), Quaternion.identity, gridFolder.transform);///TODO modify with json
         GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ-2] = GoalP2.GetComponent<Placeable>();
-        GoalP2.GetComponent<Placeable>().Player = player1.GetComponent<Player>();
+        GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
         NetIdeable.currentMaxId++;
     }
     /// <summary>

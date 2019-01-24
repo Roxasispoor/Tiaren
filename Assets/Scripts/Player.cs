@@ -798,7 +798,7 @@ public class Player : NetworkBehaviour
                         Effect effectToConsider = effect.Clone();
                         effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
                     //Double dispatch
-                    GameManager.instance.PlayingPlaceable.DispatchEffect(effect);
+                    GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
 
                     
                 }
@@ -813,7 +813,20 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcMoveTo(Vector3[] path)
     {
+        foreach (Vector3 current in path)
+        {
+            foreach (Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+            {
 
+                //makes the deep copy, send it to effect manager and zoo
+                Effect effectToConsider = effect.Clone();
+                effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                //Double dispatch
+                GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
+
+
+            }
+        }
         //List<Vector3> bezierPath = new List<Vector3>(realPath);
         GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
         List<Vector3> bezierPath=new List<Vector3>(path);

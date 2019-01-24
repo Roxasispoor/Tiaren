@@ -16,6 +16,7 @@ public class FlagVictoryEffect : EffectOnLiving {
         {
             GameManager.instance.Winner = Target.Player;
             Target.Player.isWinner = true;
+            GameManager.instance.CheckWinCondition();
         }
     }
     public FlagVictoryEffect(FlagVictoryEffect other) : base(other)
