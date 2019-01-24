@@ -695,10 +695,17 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+<<<<<<< Updated upstream
         //Debug.Log(Placeable.currentMaxId);
         
         //Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
         //Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
+=======
+
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
+        //Debug.Log(Placeable.currentMaxId);
+>>>>>>> Stashed changes
 
     }
 

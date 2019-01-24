@@ -975,6 +975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c887b991a37ea334c952b4a5d7c915d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream:Assets/Prefabs/Joueur 1 1 1.prefab
   className: {fileID: 114645818408933704}
   player: {fileID: 114307067292909398}
   team: {fileID: 114138877416492552}
@@ -987,6 +988,21 @@ MonoBehaviour:
   str: {fileID: 114459125425496080}
   mStr: {fileID: 114252806786091018}
   image: {fileID: 114829317299977080}
+=======
+  target: {fileID: 0}
+  targetOffset: {x: 0, y: 0, z: 0}
+  distance: 5
+  maxDistance: 20
+  minDistance: 0.6
+  xSpeed: 200
+  ySpeed: 200
+  yMinLimit: 0
+  yMaxLimit: 80
+  zoomRate: 70
+  panSpeed: 0.3
+  zoomDampening: 5
+  player: {fileID: 114887153983755284}
+>>>>>>> Stashed changes:Assets/Prefabs/Joueur_1_1_1.prefab
 --- !u!114 &114290433567720724
 MonoBehaviour:
   m_ObjectHideFlags: 1

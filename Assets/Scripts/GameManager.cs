@@ -251,9 +251,43 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         CreateCharacters(player2, new Vector3Int(3, 4, 0));
         
         Grid.instance.Gravity();
+<<<<<<< Updated upstream
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
        /* if (isServer)
+=======
+        state = States.TeamSelect;
+        Debug.Log("Right before select");
+        TeamSelectDisplay();
+        InitialiseBatchFolder();
+        player1.gameObject.name = "player1";
+        player2.gameObject.name = "player2";
+
+        Player localPlayer = GetLocalPlayer();
+        localPlayer.color = localPlayerColor;
+        Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
+        otherPlayer.color = ennemyPlayerColor;
+        
+        localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+        localPlayer.SendSpawnToCamera();
+        otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+        otherPlayer.SendSpawnToCamera();
+
+        //To activate for perf, desactivate for pf
+        transmitter.networkManager = networkManager;
+     
+    }
+
+    public void TeamSelectDisplay()
+    {
+        player1.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+        player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
+    }
+    
+    public GameObject GetOtherPlayer(GameObject player)
+    {
+        if(player != player1)
+>>>>>>> Stashed changes
         {
             transmitter.initServer();
         }*/
@@ -599,6 +633,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             {
 
                 playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
+                playingPlaceable.Player.cameraScript.Freecam = 0;
+
 
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
@@ -629,6 +665,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.ResetHighlightSkill();
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();

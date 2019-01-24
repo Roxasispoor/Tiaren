@@ -256,7 +256,7 @@ public class Player : NetworkBehaviour
 
     private void Awake()
     {
-       
+
         clock = GetComponent<Timer>();
         DicoAxis = new Dictionary<string, Axis>();
         DicoCondition = new Dictionary<string, Condition>();
@@ -304,7 +304,200 @@ public class Player : NetworkBehaviour
         //Debug.Log("STARTCLIENT!");
 
     }
+<<<<<<< Updated upstream
     //Both clients get that
+=======
+
+    public void SendSpawnToCamera()
+    {
+        Vector3 spawncenter = new Vector3(0, 0, 0);
+        foreach (Vector3Int point in spawnList)
+            spawncenter += point;
+        cameraScript.SpawnCenter = spawncenter / spawnList.Count;
+        cameraScript.Init();
+    }
+
+    public void displaySpawn()
+    {
+        if (isLocalPlayer)
+        {
+            gameObject.GetComponent<UIManager>().SpawnUI();
+            Player localPlayer = GameManager.instance.GetLocalPlayer();
+            Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            GameManager.instance.ResetAllBatches();
+            gameObject.GetComponent<UIManager>().SpawnUI();
+        }
+    }
+    
+    [Command]
+    public void CmdTeamReady(int[] characterChoices)
+    {
+        Isready = true;
+        List<int> numbers = new List<int>(characterChoices);
+        gameObject.GetComponent<UIManager>().CurrentCharacters = numbers;
+
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            GameManager.instance.player1.GetComponent<Player>().Isready = false;
+            GameManager.instance.player2.GetComponent<Player>().Isready = false;
+            GameManager.instance.state = States.Spawn;
+
+            int[] choicesP1 = new int[GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP1[i] = GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            int[] choicesP2 = new int[GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count];
+            for (int i = 0; i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+            {
+                choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
+            }
+
+            // Spawn the characters
+            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+            {
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
+                {
+                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
+                }
+            }
+
+            GameManager.instance.state = States.Spawn;
+            GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
+            GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
+        }
+    }
+
+    public void TeamReady()
+    {
+        int[] characterChoices = new int[gameObject.GetComponent<UIManager>().CurrentCharacters.Count];
+        for (int i = 0; i < gameObject.GetComponent<UIManager>().CurrentCharacters.Count; i++)
+        {
+            characterChoices[i] = gameObject.GetComponent<UIManager>().CurrentCharacters[i];
+        }
+        gameObject.transform.Find("TeamCanvas").transform.Find("GoTeam").gameObject.SetActive(false);
+        gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other Player";
+        CmdTeamReady(characterChoices);
+    }
+
+    [ClientRpc]
+    public void RpcStartSpawn(int[] otherPlayerChoices)
+    {
+        List<int> numbers = new List<int>(otherPlayerChoices);
+        GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
+        GameManager.instance.state = States.Spawn;
+        displaySpawn();
+    }
+
+    public void GameReady()
+    {
+        Isready = true;
+        Vector3[] positions = new Vector3[Characters.Count];
+        int[] ids = new int[Characters.Count];
+        for(int i = 0; i < Characters.Count; i++)
+        {
+            positions[i] = Characters[i].transform.position;
+            ids[i] = Characters[i].GetComponent<LivingPlaceable>().netId;
+        }
+        CmdGameReady(positions, ids);
+    }
+
+    [ClientRpc]
+    public void RpcEndSwapSpawn(Vector3[] positions, int[] ids)
+    {
+        if (GameManager.instance.player2.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        if (GameManager.instance.player1.GetComponent<Player>() != this)
+        {
+            foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+            {
+                c.SetActive(false);
+            }
+        }
+        SwapPositionSpawn(positions, ids);
+    }
+
+    [Command]
+    public void CmdGameReady(Vector3[] positions, int[] ids)
+    {
+        
+        SwapPositionSpawn(positions, ids);
+
+        RpcEndSwapSpawn(positions, ids);
+
+        Isready = true;
+        if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
+        {
+            RpcEndSpawnAndStartGame();
+            GameManager.instance.IsGameStarted = true;
+            GameManager.instance.InitStartGame();
+            GameManager.instance.BeginningOfTurn();
+        }
+    }
+
+    private void SwapPositionSpawn(Vector3[] positions, int[] ids)
+    {
+        for (int i = 0; i < positions.Length; i++)
+        {
+
+            Vector3Int space = new Vector3Int((int)positions[i].x, (int)positions[i].y, (int)positions[i].z);
+
+            Placeable oldPlac = Grid.instance.GetPlaceableFromVector(space);
+            if (oldPlac == null)
+            {
+                Grid.instance.MoveBlock(GameManager.instance.FindLocalObject(ids[i]), space, true);
+            }
+            else
+            {
+                Grid.instance.SwitchPlaceable(GameManager.instance.FindLocalObject(ids[i]), oldPlac);
+            }
+
+        }
+    }
+
+>>>>>>> Stashed changes
     [ClientRpc]
     public void RpcCreateCharacters(Vector3 spawnCoordinates)
     {
