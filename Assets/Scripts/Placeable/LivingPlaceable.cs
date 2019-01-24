@@ -677,21 +677,12 @@
     public void Destroy()
     {
 
-        if (this.Destroyable)
-        {
-            foreach (var effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.UseEffect(effect);
-            }
-            foreach (Transform obj in transform.Find("Inventory"))
-            {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
-            }
-        }
+        base.Destroy();
         this.IsDead = true;
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
+        //TODO gérer le temps de respawn
     }
     
     public void HighlightForSpawn()
@@ -707,18 +698,12 @@
 
     public void HighlightForSkill()
     {
-        if (rend != null && rend.material != null)
-        {
-            rend.material.shader = outlineShader;
-        }
+        rend.material.shader = outlineShader;
     }
 
     public void UnHighlightForSkill()
     {
-        if(rend !=null && rend.material!=null)
-        { 
         rend.material.shader = originalShader;
-        }
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)

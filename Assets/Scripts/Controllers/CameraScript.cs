@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 
 [AddComponentMenu("Camera-Control/3dsMax Camera Style")]
@@ -13,7 +14,7 @@ public class CameraScript : NetworkBehaviour
     public float minDistance = .6f;
     public float xSpeed = 200.0f;
     public float ySpeed = 200.0f;
-    public int yMinLimit = -80;
+    public int yMinLimit = 0;
     public int yMaxLimit = 80;
     public int zoomRate = 70;
     public float panSpeed = 0.3f;
@@ -31,6 +32,7 @@ public class CameraScript : NetworkBehaviour
     private int freecam = 0;  //Is the camera free to move or locked on player, or in skyview
     private Grid grid;
 
+    private Vector3 spawncenter = new Vector3(0, 0, 0);
 
     public float XDeg { get { return xDeg; } set { xDeg = value; } }
 
@@ -38,14 +40,9 @@ public class CameraScript : NetworkBehaviour
 
     public float DesiredDistance { get { return desiredDistance; } set { desiredDistance = value; } }
 
-    void Start()
-    {
+    public Vector3 SpawnCenter { get { return spawncenter; } set { spawncenter = value; } }
 
-        Init();
-
-    }
-
-    void OnEnable() { Init(); }
+    public int Freecam { get { return freecam; } set { freecam = value; } }
 
     public void Init()
     {
@@ -53,11 +50,10 @@ public class CameraScript : NetworkBehaviour
         if (!target)
         {
             GameObject go = new GameObject("Cam Target");
-            go.transform.position = transform.position + (transform.forward * distance);
+            go.transform.position = spawncenter + (transform.forward * distance);
             target = go.transform;
         }
 
-        distance = Vector3.Distance(transform.position, target.position);
         currentDistance = distance;
         DesiredDistance = distance;
 
@@ -67,10 +63,14 @@ public class CameraScript : NetworkBehaviour
         currentRotation = transform.rotation;
         desiredRotation = transform.rotation;
 
-        XDeg = Vector3.Angle(Vector3.right, transform.right);
-        YDeg = Vector3.Angle(Vector3.up, transform.up);
-
         grid = GameObject.Find("GameManager").GetComponent<Grid>();
+
+        Debug.Log(spawncenter);
+        Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2)- spawncenter;
+        XDeg = Vector3.Angle(Vector3.forward, spawntoobjective);
+        YDeg = Vector3.Angle(Vector3.up, spawntoobjective);
+        Debug.Log(XDeg+"  "+ YDeg);
+        rotation = Quaternion.Euler(YDeg-90, XDeg, 0);
 
     }
 
@@ -79,30 +79,52 @@ public class CameraScript : NetworkBehaviour
      */
     void LateUpdate()
     {
+        //Storing y position in order to not modifie the high when travelling with keyboard
         float y = position.y;
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (!GameManager.instance.IsGameStarted)
         {
-            freecam += 1;
-            if (freecam == 3) freecam = 0;
-            else if (freecam == 2)
+            //If there is no target, create a temporary target at 'distance' from the cameras current viewpoint
+            if (!target)
             {
-                transform.LookAt(target.position);
-                rotation = transform.rotation;
-                position = new Vector3(grid.sizeX / 2, 50f, grid.sizeZ / 2);
+                GameObject go = new GameObject("Cam Target");
+                go.transform.position = spawncenter + (transform.forward * distance);
+                target = go.transform;
             }
-            Debug.Log("Camera mode changed");
+            target.transform.position = spawncenter;
         }
 
-        //Debug.Log(transform.rotation);
+        else
+        {
+            //If camera mode change
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                //updating camera mode
+                freecam = freecam == 1 ? 0 : freecam + 1;
+
+                //if skyview mode
+                if (freecam == 2)
+                {
+                    transform.LookAt(target.transform);
+                    rotation = transform.rotation;
+                    position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
+                }
+                Debug.Log("Camera mode changed");
+            }
+        }
+
+        //if free cam mode
         if (freecam == 1)
         {
-            position += rotation * Vector3.right * Input.GetAxis("Horizontal");
+            //move according to input keys
+            position += rotation * Vector3.right * Input.GetAxis("Horizontal")  ;
             position += rotation * Vector3.forward * Input.GetAxis("Vertical");
+            //reset the good high
             position.y = y;
         }
 
-        else if (freecam == 0 && target!=null) position = target.position;
+        //if in stuck camera mode
+        else if (freecam == 0) position = target.position;
 
 
         //0 left 1 right 2 middle
@@ -138,7 +160,7 @@ public class CameraScript : NetworkBehaviour
             //transform.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed/*, Space.World*/);
         }
 
-
+        //resume the movement part
         if (player.DicoCondition["BackToMovement"]())
         {
             if (GameManager.instance.playingPlaceable.Player == player)
@@ -153,8 +175,6 @@ public class CameraScript : NetworkBehaviour
         }
 
 
-        ////////Orbit Position
-
         // affect the desired Zoom distance if we roll the scrollwheel
         DesiredDistance -= player.DicoAxis["AxisZoomCamera"]() * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);
         //clamp the zoom min/max
@@ -163,7 +183,8 @@ public class CameraScript : NetworkBehaviour
         currentDistance = Mathf.Lerp(currentDistance, DesiredDistance, Time.deltaTime * zoomDampening);
 
         // calculate position based on the new currentDistance 
-        transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset); ;
+        transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
+        transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, 1), transform.position.z);
         transform.rotation = rotation;
     }
 
