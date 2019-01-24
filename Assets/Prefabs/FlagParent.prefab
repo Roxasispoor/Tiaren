@@ -19,8 +19,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4132919823526086}
-  - component: {fileID: 114239736445016646}
   - component: {fileID: 135445451974260230}
+  - component: {fileID: 114460734483631130}
   m_Layer: 0
   m_Name: FlagParent
   m_TagString: Untagged
@@ -114,7 +114,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1606845590784206}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114239736445016646
+--- !u!114 &114460734483631130
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1064643011964598}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54b97f96db7e9814b8ec76ceded91370, type: 3}
+  m_Script: {fileID: 11500000, guid: e65e5d84b2979b84a930649156aa5a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   netId: 0

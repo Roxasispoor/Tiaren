@@ -788,10 +788,20 @@ public class Player : NetworkBehaviour
                 (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
             GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-            //Trigger effect the ones after the others
+            //Trigger effect the ones after the others, does not interrupt path
             foreach (Vector3 current in path)
             {
-                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+                foreach(Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+                {
+                  
+                        //makes the deep copy, send it to effect manager and zoo
+                        Effect effectToConsider = effect.Clone();
+                        effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                    //Double dispatch
+                    GameManager.instance.PlayingPlaceable.DispatchEffect(effect);
+
+                    
+                }
             }
             GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
             RpcMoveTo(path);
