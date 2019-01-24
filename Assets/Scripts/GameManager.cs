@@ -488,7 +488,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             {
                 for (int j = i + 1; j < turnOrder.Count - 1; j++)
                 {
-                    if (turnOrder[j].SpeedStack > check.SpeedStack + numberOfTurns * (j-i) / check.Character.Speed)
+                    float compare = check.SpeedStack + ((numberOfTurns * (j - i)) / check.Character.Speed);
+                    if (turnOrder[j].SpeedStack > compare)
                     {
                         turnOrder.Insert(j, new StackAndPlaceable(check.Character, check.SpeedStack + numberOfTurns * (j - i) / check.Character.Speed, true));
                         j++;
