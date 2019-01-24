@@ -688,6 +688,10 @@
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
         }
+        if (GameManager.instance.playingPlaceable == this)
+        {
+            GameManager.instance.EndOFTurn();
+        }
         this.IsDead = true;
         this.gameObject.SetActive(false);
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
