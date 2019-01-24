@@ -504,6 +504,43 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void Respawn(LivingPlaceable character)
+    {
+        foreach (Vector3Int spawns in spawnList)
+        {
+            Placeable spawn = Grid.instance.GridMatrix[spawns.x, spawns.y, spawns.z];
+            if (spawn == null)
+            {
+                Grid.instance.MoveBlock(character, spawns);
+                character.gameObject.SetActive(true);
+                Vector3 transmit = new Vector3(spawns.x, spawns.y, spawns.z);
+                CmdRespawn(transmit, character.netId);
+            }
+        }
+    }
+
+    [Command]
+    public void CmdRespawn(Vector3 position, int netID)
+    {
+        Placeable placeable = GameManager.instance.FindLocalObject(netID);
+        Vector3Int pos = new Vector3Int((int) position.x, (int) position.y, (int) position.z);
+        Grid.instance.MoveBlock(placeable, pos, true);
+        placeable.gameObject.SetActive(true);
+        GameManager.instance.GetOtherPlayer(gameObject).GetComponent<Player>().RpcRespawn(position, netID);
+    }
+
+    [ClientRpc]
+    public void RpcRespawn(Vector3 position, int netID)
+    {
+        if (isLocalPlayer)
+        {
+            Placeable placeable = GameManager.instance.FindLocalObject(netID);
+            Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
+            Grid.instance.MoveBlock(placeable, pos, true);
+            placeable.gameObject.SetActive(true);
+        }
+    }
+
     private void SwapPositionSpawn(Vector3[] positions, int[] ids)
     {
         for (int i = 0; i < positions.Length; i++)
@@ -773,10 +810,20 @@ public class Player : NetworkBehaviour
                 (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
             GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-            //Trigger effect the ones after the others
+            //Trigger effect the ones after the others, does not interrupt path
             foreach (Vector3 current in path)
             {
-                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+                foreach(Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+                {
+                  
+                        //makes the deep copy, send it to effect manager and zoo
+                        Effect effectToConsider = effect.Clone();
+                        effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                    //Double dispatch
+                    GameManager.instance.PlayingPlaceable.DispatchEffect(effect);
+
+                    
+                }
             }
             GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
             RpcMoveTo(path);
@@ -799,7 +846,13 @@ public class Player : NetworkBehaviour
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-        StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        if (GameManager.instance.playingPlaceable.MoveCoroutine != null)
+        {
+            GameManager.instance.playingPlaceable.StopCoroutine(GameManager.instance.playingPlaceable.MoveCoroutine);
+            GameManager.instance.playingPlaceable.MoveCoroutine = null;
+
+        }
+        GameManager.instance.playingPlaceable.MoveCoroutine=StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
         GameManager.instance.MoveLogic(bezierPath);
         
         
@@ -932,8 +985,14 @@ public class Player : NetworkBehaviour
     public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
     {
          if(path.Count>1)
-        { 
-        StartCoroutine(MoveAlongBezier(path, placeable, speed));
+        {
+            if (placeable.MoveCoroutine!=null)
+            {
+                placeable.StopCoroutine(placeable.MoveCoroutine);
+                placeable.MoveCoroutine = null;
+
+            }
+            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed));
          }
     }
 
@@ -942,13 +1001,18 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
-        GameManager.instance.playingPlaceable.isMoving = true;
-        GameManager.instance.playingPlaceable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
-
+       
         if (path.Count < 2)
         {
             yield break;
         }
+        if (placeable.isMoving) //teleport to destination if it was already moving
+        {
+            placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
+        }
+        placeable.isMoving = true;
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -1053,8 +1117,8 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
-        GameManager.instance.playingPlaceable.isMoving = false;
-        GameManager.instance.playingPlaceable.destination = new Vector3Int();
+        placeable.isMoving = false;
+        //GameManager.instance.playingPlaceable.destination = new Vector3Int();
 
         Debug.Log("End" + placeable.GetPosition());
    //Debug.Log("End transform" + placeable.transform);
@@ -1067,6 +1131,13 @@ public class Player : NetworkBehaviour
         {
             yield break;
         }
+        if(placeable.isMoving)
+        {
+            placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
+        }
+        placeable.isMoving = true;
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
@@ -1131,9 +1202,9 @@ public class Player : NetworkBehaviour
         //GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
         //Debug.Log("End transform" + placeable.transform);
-        
+        placeable.isMoving = false;
     }
-    
+
     /// <summary>
     /// Check if use is possible and send rpc
     /// </summary>

@@ -35,6 +35,7 @@ public abstract class Placeable: NetIdeable
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
+    private Coroutine moveCoroutine;
     //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
@@ -298,8 +299,21 @@ public abstract class Placeable: NetIdeable
         }
     }
 
+    public Coroutine MoveCoroutine
+    {
+        get
+        {
+            return moveCoroutine;
+        }
 
- 
+        set
+        {
+            moveCoroutine = value;
+        }
+    }
+
+
+
 
     /// <summary>
     /// Copy object
@@ -324,6 +338,7 @@ public abstract class Placeable: NetIdeable
     {
         if (this.Destroyable)
         {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.UseEffect(effect);
@@ -332,9 +347,10 @@ public abstract class Placeable: NetIdeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            Destroy(this);
+            Destroy(this.gameObject);
         }
-        Destroy(this);
-        Destroy(this.gameObject);
+       
     }
     public void Highlight()
     {

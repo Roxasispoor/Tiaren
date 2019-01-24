@@ -580,7 +580,7 @@ public class Grid : MonoBehaviour
         {
             MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
-        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects
+        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC && !GridMatrix[x,y,z].IsLiving())// destroy bloc, trigger effects
         {
             gridMatrix[x, y, z].Destroy();
             gridMatrix[x, y, z] = null;
@@ -694,7 +694,7 @@ public class Grid : MonoBehaviour
             Destroy(gameObject);
 
         //gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
-        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
+        
 
 
 
@@ -756,6 +756,8 @@ public class Grid : MonoBehaviour
         sizeX = jagged.sizeX;
         sizeY = jagged.sizeY;
         sizeZ = jagged.sizeZ;
+        //Debug.Log(sizeX + " " + sizeY + " " + sizeZ);
+        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
         //gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
         for (int y = 0; y < sizeY; y++)

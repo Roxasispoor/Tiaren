@@ -99,8 +99,9 @@ public class ObjectOnBloc : NetIdeable {
     }
     public void Drop()
     {
+        Debug.Log("Drop!");
         Vector3Int currentPos = GetPosition();
-        while(Grid.instance.GridMatrix[currentPos.x, currentPos.y,currentPos.z]!=null && currentPos.y>0)
+        while(Grid.instance.GridMatrix[currentPos.x, currentPos.y,currentPos.z]==null && currentPos.y>0)
         {
             currentPos = new Vector3Int(currentPos.x, currentPos.y - 1, currentPos.z);
         }
@@ -112,6 +113,7 @@ public class ObjectOnBloc : NetIdeable {
         {
             isPicked = false;
             transform.SetParent(Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z].transform.Find("Inventory"));
+            transform.localPosition = new Vector3();
         }
 
     }
