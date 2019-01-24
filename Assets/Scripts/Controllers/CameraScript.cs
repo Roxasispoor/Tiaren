@@ -160,9 +160,6 @@ public class CameraScript : NetworkBehaviour
             //transform.Translate(transform.up * -player.DicoAxis["AxisYCamera"]() * panSpeed/*, Space.World*/);
         }
 
-<<<<<<< Updated upstream
-        ////////Orbit Position
-=======
         //resume the movement part
         if (player.DicoCondition["BackToMovement"]())
         {
@@ -177,7 +174,6 @@ public class CameraScript : NetworkBehaviour
             }
         }
 
->>>>>>> Stashed changes
 
         // affect the desired Zoom distance if we roll the scrollwheel
         DesiredDistance -= player.DicoAxis["AxisZoomCamera"]() * Time.deltaTime * zoomRate * Mathf.Abs(DesiredDistance);

@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 /// <summary>
 /// Class representing a skill usable by player through a character of his team
 /// </summary>
+[Serializable]
 public class Skill
 {
     [SerializeField]
@@ -164,6 +166,11 @@ public class Skill
         this.minRange = rangeMin;
         EffectArea = effectarea;
         SkillArea = skillarea;
+    }
+
+    public Skill(string jsonFilePath)
+    {
+
     }
 
     public void Activate()

@@ -37,7 +37,7 @@ public class Builder
     }
 
     [MenuItem("MyTools/Launch client and server")]
-    public static void LaunchClients()
+    public static void LaunchClientServer()
     {
         // Get filename.
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
@@ -47,6 +47,26 @@ public class Builder
         server1.StartInfo.FileName = path + "/BuiltGame.exe";
         server1.StartInfo.Arguments = "launchedFromMenu";
         server1.StartInfo.Arguments += " server";
+        server1.Start();
+        Process client1 = new Process();
+        client1.StartInfo.FileName = path + "/BuiltGame.exe";
+        client1.StartInfo.Arguments = "launchedFromMenu";
+        client1.StartInfo.Arguments += " client";
+        client1.Start();
+
+    }
+
+    [MenuItem("MyTools/Launch client x 2")]
+    public static void LaunchClients()
+    {
+        // Get filename.
+        string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
+
+        // Run the game (Process class from System.Diagnostics).
+        Process server1 = new Process();
+        server1.StartInfo.FileName = path + "/BuiltGame.exe";
+        server1.StartInfo.Arguments = "launchedFromMenu";
+        server1.StartInfo.Arguments += " client";
         server1.Start();
         Process client1 = new Process();
         client1.StartInfo.FileName = path + "/BuiltGame.exe";

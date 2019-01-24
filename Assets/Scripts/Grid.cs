@@ -33,6 +33,9 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
+    private List<Vector3Int> spawnPlayer1;
+    private List<Vector3Int> spawnPlayer2;
+
 
     public Placeable[,,] GridMatrix
     {
@@ -47,8 +50,58 @@ public class Grid : MonoBehaviour
         }
     }
 
+    public List<Vector3Int> SpawnPlayer2
+    {
+        get
+        {
+            return spawnPlayer2;
+        }
 
+        set
+        {
+            spawnPlayer2 = value;
+        }
+    }
 
+    public List<Vector3Int> SpawnPlayer1
+    {
+        get
+        {
+            return spawnPlayer1;
+        }
+
+        set
+        {
+            spawnPlayer1 = value;
+        }
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3Int pos)
+    {
+        return GridMatrix[pos.x, pos.y, pos.z];
+    }
+
+    public Placeable GetPlaceableFromVector(Vector3 pos)
+    {
+        return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
+    }
+
+    /// <summary>
+    /// Return the spawnlist for the given player
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public List<Vector3Int> GetSpawnPlayer (Player player)
+    {
+        if (player.gameObject == GameManager.instance.player1)
+        {
+            return SpawnPlayer1;
+        }
+        else
+        {
+            return SpawnPlayer2;
+        }
+    }
 
 
     /// <summary>
@@ -112,6 +165,7 @@ public class Grid : MonoBehaviour
         }
 
     }
+
     public bool CheckNull(Vector3Int position)
     {
         return CheckRange(position) && (gridMatrix[position.x, position.y, position.z] == null);
@@ -427,7 +481,8 @@ public class Grid : MonoBehaviour
             }
         }
         //no need to check this block back
-        gridMatrix[x, y, z].Explored = true;
+        if (gridMatrix[x, y, z] != null)
+            gridMatrix[x, y, z].Explored = true;
 
         //if the block is in , it's the ground, this shouldn't have been destroyed or moved
         if (y != 0)
@@ -479,10 +534,39 @@ public class Grid : MonoBehaviour
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-          
+          if(desiredPosition.y-1>0)
+            {
+                Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
+            }
 
+        } else
+        {
+            Debug.LogError("MoveBlock error: To define");
         }
     }
+
+    public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)
+    {
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: first placeable is null");
+        }
+        if (placeableA == null)
+        {
+            Debug.LogError("SwitchPlaceable: second placeable is null");
+        }
+
+        Vector3Int oldPositionA = placeableA.GetPosition();
+        Vector3Int oldPositionB = placeableB.GetPosition();
+
+        Grid.instance.gridMatrix[oldPositionB.x, oldPositionB.y, oldPositionB.z] = placeableA;
+        placeableA.transform.position = oldPositionB;
+
+        Grid.instance.gridMatrix[oldPositionA.x, oldPositionA.y, oldPositionA.z] = placeableB;
+        placeableB.transform.position = oldPositionA;
+    }
+
+
     /// <summary>
     /// Function handling vertical collisions of bloc by another
     /// </summary>
@@ -537,6 +621,7 @@ public class Grid : MonoBehaviour
     {
         int y = 0;
         bool blockfallen = false;
+        //List<Placeable> batchlist = new List<Placeable>();
         while (y < sizeY)
         {
             for (int x = 0; x < sizeX; x++)
@@ -548,6 +633,7 @@ public class Grid : MonoBehaviour
                        (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
                        (gridMatrix[x, y, z].Explored && !gridMatrix[x, y, z].Grounded)))
                     {
+                        //batchlist.Add(gridMatrix[x, y, z]);
                         blockfallen = true;
                         int ydrop = 0;
 
@@ -566,6 +652,8 @@ public class Grid : MonoBehaviour
             }
             y++;
         }
+        /*foreach (Placeable block in batchlist)
+            GameManager.instance.RemoveBlockFromBatch(block);*/
         if (blockfallen) GameManager.instance.ResetAllBatches();
     }
     /// <summary>
@@ -695,17 +783,10 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-<<<<<<< Updated upstream
-        //Debug.Log(Placeable.currentMaxId);
-        
-        //Debug.Log("Number of spzwn for P1: " + jagged.GetSpawnsP1().Count);
-        //Debug.Log("Number of spawn for P2: " + jagged.GetSpawnsP2().Count);
-=======
 
         SpawnPlayer1 = jagged.GetSpawnsP1();
         SpawnPlayer2 = jagged.GetSpawnsP2();
         //Debug.Log(Placeable.currentMaxId);
->>>>>>> Stashed changes
 
     }
 

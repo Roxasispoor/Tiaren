@@ -12,30 +12,13 @@ public class RaycastSelector : MonoBehaviour
     public Camera camera;
 
     public SkillArea Pattern
-    {
-        get
-        {
-            return pattern;
-        }
+    {get {return pattern;} set {pattern = value;}}
 
-        set
-        {
-            pattern = value;
-        }
-    }
+    //public int State
+    //{ get { return state; } set { state = value; } }
 
     public int EffectArea
-    {
-        get
-        {
-            return effectarea;
-        }
-
-        set
-        {
-            effectarea = value;
-        }
-    }
+    { get { return effectarea; } set { effectarea = value; } }
 
     // Use this for initialization
     void Start()
@@ -56,8 +39,9 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.playingPlaceable != null)
+        if (GameManager.instance.playingPlaceable != null || GameManager.instance.state == States.Spawn )
         {
+
             RaycastHit hit;
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100000, layerMask))

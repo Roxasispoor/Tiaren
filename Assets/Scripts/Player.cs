@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +17,9 @@ public class Player : NetworkBehaviour
     public bool isReadyToPlay = false;
     public List<GameObject> characters = new List<GameObject>();
     public List<int> numberPrefab;
+    public List<Vector3Int> spawnList;
     private Vector3Int placeToGo;
+    private bool isready;
     public bool isWinner = false;
     public Text winText;
     public PlayerAccount account;
@@ -28,6 +30,8 @@ public class Player : NetworkBehaviour
     private Dictionary<string, Axis> dicoAxis;
     private Dictionary<string, Condition> dicoCondition;
     public Timer clock;
+
+    public Color color;
 
     /// <summary>
     /// Function to know if the player acted during this turn
@@ -140,6 +144,19 @@ public class Player : NetworkBehaviour
         set
         {
             dicoCondition = value;
+        }
+    }
+
+    public bool Isready
+    {
+        get
+        {
+            return isready;
+        }
+
+        set
+        {
+            isready = value;
         }
     }
 
@@ -266,7 +283,7 @@ public class Player : NetworkBehaviour
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
-       
+        Isready = false;
     }
 
     // Use this for initialization
@@ -274,11 +291,9 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            gameObject.transform.Find("Canvas").gameObject.SetActive(true);
-        }
-        if (isLocalPlayer)
-        {
-
+            GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
+            firstCanva.SetActive(true);
+            firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
             account = FindObjectOfType<PlayerAccount>();
             if (account != null && account.AccountInfoPacket.Username != null)
             {
@@ -304,9 +319,6 @@ public class Player : NetworkBehaviour
         //Debug.Log("STARTCLIENT!");
 
     }
-<<<<<<< Updated upstream
-    //Both clients get that
-=======
 
     public void SendSpawnToCamera()
     {
@@ -497,15 +509,53 @@ public class Player : NetworkBehaviour
         }
     }
 
->>>>>>> Stashed changes
     [ClientRpc]
-    public void RpcCreateCharacters(Vector3 spawnCoordinates)
+    public void RpcEndSpawnAndStartGame()
     {
-        Vector3Int spawn = new Vector3Int((int)spawnCoordinates.x, (int)spawnCoordinates.y, (int)spawnCoordinates.z);
-        Debug.Log("From RPC:");
-        GameManager.instance.CreateCharacters(gameObject, spawn);
+        // Make the other player's characters visiblr again
+        foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
+        foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+        {
+            c.SetActive(true);
+        }
 
+        // Remove the material from the spawning points
+        for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
+                Grid.instance.SpawnPlayer1[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+        for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+        {
+            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                Grid.instance.SpawnPlayer2[i].z];
+            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+        }
+
+        GameManager.instance.ResetAllBatches();
+
+        // Find the local player and activate the UI;
+        GameObject localPlayer;
+        if (isLocalPlayer)
+        {
+            localPlayer = gameObject;
+        }else
+        {
+            localPlayer = GameManager.instance.GetOtherPlayer(gameObject);
+        }
+
+        localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
+        localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
+
+        GameManager.instance.IsGameStarted = true;
+        GameManager.instance.InitStartGame();
+        GameManager.instance.BeginningOfTurn();
     }
+
     [ClientRpc]
     public void RpcGivePlayingPlaceable(int netId)
     {
@@ -543,7 +593,11 @@ public class Player : NetworkBehaviour
     public void RpcEndTurn()
     {
         Debug.Log("Oui chef, mon tour est fini!");
-        GameManager.instance.EndOFTurn();
+        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        {
+            GameManager.instance.EndOFTurn();
+        }
+        
     }
 
     //launcher for end of turn
@@ -556,8 +610,11 @@ public class Player : NetworkBehaviour
     [Command]
     private void CmdEndTurn()
     {
-        GameManager.instance.EndOFTurn();
-        RpcEndTurn();
+        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        {
+            GameManager.instance.EndOFTurn();
+            RpcEndTurn();
+        }
     }
 
     // A useless player actually acts, but the timer is unactive and unlinked to nothing on the canvas
@@ -568,10 +625,81 @@ public class Player : NetworkBehaviour
         clock.StartTimer(time);
         
     }
+    public static Skill NumberToSkill(LivingPlaceable living, int skillNumber)
+    {
+        if (skillNumber < living.Skills.Count)
+        {
+            return living.Skills[skillNumber];
+         }
+        else
+        {
+            int total = living.Skills.Count;
+            ///The one from weapon
+                if (living.EquipedWeapon && living.EquipedWeapon.Skills!=null && total + living.EquipedWeapon.Skills.Count > skillNumber)
+                {
+                    return living.EquipedWeapon.Skills[skillNumber - total];
+                }
+                total += living.EquipedWeapon.Skills.Count;
 
+            
+            ///The bloc under
+            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            {
+                if (total + obj.GivenSkills.Count > skillNumber)
+                {
+                    return obj.GivenSkills[skillNumber - total];
+                }
+                total += obj.GivenSkills.Count;
+
+            }
+        }
+
+        return null;
+    }
+
+    public static int SkillToNumber(LivingPlaceable living, Skill skill)
+    {
+        int total = living.Skills.FindIndex(skill.Equals);
+        if (total != -1)
+        {
+            return total;
+        }
+        else
+        {
+            total = living.Skills.Count;
+            if (living.EquipedWeapon && living.EquipedWeapon.Skills != null && living.EquipedWeapon.Skills.FindIndex(skill.Equals)!= -1)
+            {
+                total += living.EquipedWeapon.Skills.FindIndex(skill.Equals);
+                return total;
+            }
+            total += living.EquipedWeapon.Skills.Count;
+            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            {
+                if (obj.GivenSkills.FindIndex(skill.Equals) == -1)
+                {
+                    total += obj.GivenSkills.Count;
+                }
+                else
+                {
+                    total += obj.GivenSkills.FindIndex(skill.Equals);
+                    return total;
+                }
+            }
+            Debug.LogError("Skill id was not found even in given skills!");
+            return -1;
+        }
+    }
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
+
+        if (skill.SkillType == SkillType.ALREADYTARGETED)
+        {
+            
+            CmdUseSkill(SkillToNumber(playingPlaceable,skill), playingPlaceable.netId); //whatever, auto targeted do not go through dispatch
+            return;
+        }
+
         RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
         rayselector.Pattern = SkillArea.NONE;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
@@ -619,11 +747,11 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        Debug.Log("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+       // Debug.LogError("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         if (GameManager.instance.PlayingPlaceable.Player == this && path.Length>1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
             //Move  placeable
-            Debug.Log("Start" + GameManager.instance.playingPlaceable.GetPosition());
+            Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
             Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
                 GameManager.instance.playingPlaceable.GetPosition().z] = null;
             Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
@@ -676,7 +804,7 @@ public class Player : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         transform.Find("Main Camera").gameObject.SetActive(true);
-        transform.Find("Canvas").gameObject.SetActive(true);
+        transform.Find("TeamCanvas").gameObject.SetActive(true);
     }
     
     public void DispatchSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
@@ -799,6 +927,9 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
+        GameManager.instance.playingPlaceable.isMoving = true;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
+
         if (path.Count < 2)
         {
             yield break;
@@ -907,8 +1038,11 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
+        GameManager.instance.playingPlaceable.isMoving = false;
+        GameManager.instance.playingPlaceable.destination = new Vector3Int();
+
         Debug.Log("End" + placeable.GetPosition());
-        Debug.Log("End transform" + placeable.transform);
+   //Debug.Log("End transform" + placeable.transform);
     }
     
     // ONLY FOR OTHER PLACEABLE
@@ -979,9 +1113,9 @@ public class Player : NetworkBehaviour
 
         }
 
-        GameManager.instance.OnEndAnimationEffectEnd();
+        //GameManager.instance.OnEndAnimationEffectEnd();
         Debug.Log("End" + placeable.GetPosition());
-        Debug.Log("End transform" + placeable.transform);
+        //Debug.Log("End transform" + placeable.transform);
         
     }
     
@@ -993,8 +1127,11 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdUseSkill(int numSkill, int netidTarget)
     {
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        UseTargeted(skill);
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        
+
         if (this == GameManager.instance.playingPlaceable.Player) {
             if ((GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude <= skill.Maxrange
                 && (GameManager.instance.playingPlaceable.GetPosition() - target.GetPosition()).magnitude >= skill.Minrange)
@@ -1005,17 +1142,33 @@ public class Player : NetworkBehaviour
             
         }
     }
-
+    public void UseTargeted(Skill skill)
+    {
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            foreach (Effect eff in skill.effects)
+            {
+                Effect effectToConsider = eff.Clone();
+                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Use();
+            }
+        }
+    }
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
+
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-        Skill skill = GameManager.instance.playingPlaceable.Skills[numSkill];
+        Debug.Log("Netid is" + netidTarget + "and target is at" +target.GetPosition());
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
+        UseTargeted(skill);
         GameManager.instance.playingPlaceable.ResetAreaOfTarget();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+        if(GetComponentInChildren<RaycastSelector>()!=null)
+        { 
         GetComponentInChildren<RaycastSelector>().EffectArea = 0;
         GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
-
+        }
     }
 
 }

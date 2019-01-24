@@ -149,6 +149,7 @@ public class Push : EffectOnPlaceable
             // trigger visual effect and physics consequences
              animLauncher.Play("pushBlock");
             Vector3 pos = Target.transform.position;
+           
             AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
             Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
             }
