@@ -166,7 +166,7 @@ public class CameraScript : NetworkBehaviour
             if (GameManager.instance.playingPlaceable.Player == player)
             {
                 GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-                GameManager.instance.state = States.Move;
+                GameManager.instance.State = States.Move;
                 GameManager.instance.activeSkill = null;
                 GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
                 GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);

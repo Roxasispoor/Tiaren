@@ -75,7 +75,7 @@ public class GameManager : NetworkBehaviour
     public Color ennemyPlayerColor = Color.red;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
-    public States state;
+    private States state;
     public Placeable hovered;
     private bool areaffect = false;
 
@@ -221,6 +221,23 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public States State
+    {
+        get
+        {
+            return state;
+        }
+
+        set
+        {
+            if (state == States.Spawn)
+            {
+                EndSpawn();
+            }
+            state = value;
+        }
+    }
+
     /// <summary>
     /// Return the player who has authority
     /// </summary>
@@ -327,7 +344,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         
         Grid.instance.Gravity();
-        state = States.TeamSelect;
+        State = States.TeamSelect;
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
@@ -348,6 +365,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
+    }
+
+    /// <summary>
+    /// Function called when the states was changed from spawn, reset the variable
+    /// </summary>
+    private void EndSpawn()
+    {
+        CharacterToSpawn = null;
     }
 
     public void TeamSelectDisplay()
@@ -606,7 +631,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         if(playingPlaceable.Player.isLocalPlayer)
         { 
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
-            GameManager.instance.state = States.Move;
+            GameManager.instance.State = States.Move;
         }
     }
     public void InitStartGame()
@@ -734,7 +759,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
-            state = States.Move;
+            State = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {

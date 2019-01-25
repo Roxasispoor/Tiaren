@@ -175,7 +175,7 @@ public class Skill
 
     public void Activate()
     {
-        GameManager.instance.state = States.UseSkill;
+        GameManager.instance.State = States.UseSkill;
         GameManager.instance.activeSkill = this;
         GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
     }

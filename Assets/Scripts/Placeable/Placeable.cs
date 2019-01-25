@@ -399,7 +399,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.state!=States.Move  ||
+        if (GameManager.instance.State!=States.Move  ||
             !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
@@ -417,7 +417,7 @@ public abstract class Placeable: NetIdeable
 
     public void OnMouseOverWithLayer()
     {
-        if (GameManager.instance.state == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
+        if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
@@ -464,7 +464,7 @@ public abstract class Placeable: NetIdeable
                 isClicked = false;
             }
         }
-        else if (GameManager.instance.state == States.Move)
+        else if (GameManager.instance.State == States.Move)
         {
 
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
@@ -483,7 +483,7 @@ public abstract class Placeable: NetIdeable
                 }
             }
         }
-        else if (GameManager.instance.state == States.UseSkill)
+        else if (GameManager.instance.State == States.UseSkill)
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {

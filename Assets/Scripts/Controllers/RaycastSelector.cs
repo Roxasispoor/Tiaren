@@ -39,7 +39,7 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.playingPlaceable != null || GameManager.instance.state == States.Spawn )
+        if (GameManager.instance.playingPlaceable != null || GameManager.instance.State == States.Spawn )
         {
 
             RaycastHit hit;
