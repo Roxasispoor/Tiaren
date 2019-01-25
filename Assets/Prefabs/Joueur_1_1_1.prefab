@@ -1215,7 +1215,7 @@ MonoBehaviour:
   minDistance: 0.6
   xSpeed: 200
   ySpeed: 200
-  yMinLimit: -80
+  yMinLimit: 0
   yMaxLimit: 80
   zoomRate: 70
   panSpeed: 0.3
@@ -1681,7 +1681,6 @@ MonoBehaviour:
   firstGap: 99
   timelineGap: 78
   AbilityGap: 100
-
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1

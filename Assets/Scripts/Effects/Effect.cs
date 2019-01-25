@@ -17,7 +17,7 @@ public abstract class Effect
     protected Animator animLauncher;
 
     private Placeable launcher;
-    private int turnActiveEffect; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    private int turnActiveEffect=1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     public virtual Placeable Launcher
     {
         get
@@ -34,11 +34,37 @@ public abstract class Effect
             }
         }
     }
+    public virtual void AttachToTarget()
+    {
+
+    }
+
+    public int TurnActiveEffect
+    {
+        get
+        {
+            return turnActiveEffect;
+        }
+
+        set
+        {
+            turnActiveEffect = value;
+        }
+    }
+
     protected Effect()
     {
 
     }
-   
+    protected Effect(Effect other)
+    {
+        TurnActiveEffect = other.TurnActiveEffect;
+        Launcher = other.Launcher;
+    }
+    protected Effect(int numberOfTurns)
+    {
+        TurnActiveEffect = numberOfTurns;
+    }
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
     public abstract void TargetAndInvokeEffectManager(Placeable placeable);

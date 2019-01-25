@@ -339,15 +339,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
         otherPlayer.color = ennemyPlayerColor;
-        
+
         localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+        localPlayer.SendSpawnToCamera();
         otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+        otherPlayer.SendSpawnToCamera();
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
-
-     
     }
 
     public void TeamSelectDisplay()
@@ -706,6 +706,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         UpdateTimeline();
         playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+
+        for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
+        {
+            EffectManager.instance.UseEffect(playingPlaceable.AttachedEffects[i]);
+            // some code
+            // safePendingList.RemoveAt(i);
+        }
+        
+        
+        
         if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
@@ -735,9 +745,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
             if(isClient && playingPlaceable.Player.isLocalPlayer)
             {
-
                 playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
-
+                playingPlaceable.Player.cameraScript.Freecam = 0;
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
@@ -768,6 +777,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.ResetHighlightSkill();
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();

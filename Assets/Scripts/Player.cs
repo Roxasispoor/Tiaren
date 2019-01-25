@@ -320,7 +320,14 @@ public class Player : NetworkBehaviour
 
     }
 
-
+    public void SendSpawnToCamera()
+    {
+        Vector3 spawncenter = new Vector3(0, 0, 0);
+        foreach (Vector3Int point in spawnList)
+            spawncenter += point;
+        cameraScript.SpawnCenter = spawncenter / spawnList.Count;
+        cameraScript.Init();
+    }
 
     public void displaySpawn()
     {

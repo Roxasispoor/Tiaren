@@ -52,7 +52,7 @@ public abstract class Placeable: NetIdeable
 
 
    
-    public virtual bool IsLiving()
+    public override bool IsLiving()
     {
         return false;
     }
