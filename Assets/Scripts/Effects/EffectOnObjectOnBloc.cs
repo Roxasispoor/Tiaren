@@ -40,12 +40,12 @@ public abstract class EffectOnObjectBloc : Effect {
         EffectManager.instance.UseEffect(this);
     }
 
-    public EffectOnObjectBloc(EffectOnObjectBloc other)
+    public EffectOnObjectBloc(EffectOnObjectBloc other) : base(other)
     {
         Target = other.target;
-        Launcher = other.Launcher;
+     
     }
-    public EffectOnObjectBloc(ObjectOnBloc target)
+    public EffectOnObjectBloc(ObjectOnBloc target,int numberOfTurns):base(numberOfTurns)
     {
         Target = target;
     }

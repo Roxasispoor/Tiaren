@@ -18,7 +18,10 @@ public class Damage : EffectOnLiving
     {
         damageValue = value;
     }
-
+    public Damage(float value,int numberOfturn):base(numberOfturn)
+    {
+        damageValue = value;
+    }
     public Damage(Damage other) : base(other)
     {
         this.damageValue = other.damageValue;
@@ -35,7 +38,10 @@ public class Damage : EffectOnLiving
     {
         this.DamageValue = damageValue;
     }
-
+    public Damage(LivingPlaceable target, Placeable launcher, float damageValue,int numberOfTurns) : base(target, launcher, numberOfTurns)
+    {
+        this.DamageValue = damageValue;
+    }
 
     public float DamageValue
     {

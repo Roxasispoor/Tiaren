@@ -37,4 +37,8 @@ public abstract class NetIdeable : MonoBehaviour {
         }
     }
     public abstract void DispatchEffect(Effect effect);
+    public virtual bool IsLiving()
+    {
+        return false;
+    }
 }
