@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 /// <summary>
@@ -10,14 +8,16 @@ using UnityEngine;
 [Serializable]
 public abstract class Effect
 {
-    public int netIdLauncher=-1;
+    public int netIdLauncher = -1;
     [SerializeField]
 
     // for animation
     protected Animator animLauncher;
 
     private Placeable launcher;
-    private int turnActiveEffect=1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    private int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    private bool triggerAtOneOnly = false;
+    private bool hitOnDirectAttack = true;
     public virtual Placeable Launcher
     {
         get
@@ -28,9 +28,9 @@ public abstract class Effect
         set
         {
             launcher = value;
-            if(launcher!=null)
-            { 
-            netIdLauncher = launcher.netId;
+            if (launcher != null)
+            {
+                netIdLauncher = launcher.netId;
             }
         }
     }
@@ -52,6 +52,32 @@ public abstract class Effect
         }
     }
 
+    public bool TriggerAtOneOnly
+    {
+        get
+        {
+            return triggerAtOneOnly;
+        }
+
+        set
+        {
+            triggerAtOneOnly = value;
+        }
+    }
+
+    public bool HitOnDirectAttack
+    {
+        get
+        {
+            return hitOnDirectAttack;
+        }
+
+        set
+        {
+            hitOnDirectAttack = value;
+        }
+    }
+
     protected Effect()
     {
 
@@ -60,10 +86,15 @@ public abstract class Effect
     {
         TurnActiveEffect = other.TurnActiveEffect;
         Launcher = other.Launcher;
+        turnActiveEffect = other.TurnActiveEffect;
+        TriggerAtOneOnly = other.TriggerAtOneOnly;
+        HitOnDirectAttack = other.HitOnDirectAttack;
     }
-    protected Effect(int numberOfTurns)
+    protected Effect(int numberOfTurns, bool triggerAtEnd = false, bool hitOnDirectAttack = true)
     {
         TurnActiveEffect = numberOfTurns;
+        TriggerAtOneOnly = triggerAtEnd;
+        HitOnDirectAttack = hitOnDirectAttack;
     }
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
@@ -77,9 +108,9 @@ public abstract class Effect
     public string Save()
     {
         string text = JsonUtility.ToJson(this);
-        text = GetType() + text ;
+        text = GetType() + text;
         return text;
-       // string path = "Skill1.json";
+        // string path = "Skill1.json";
         //File.WriteAllText(path, text);
     }
 
@@ -88,8 +119,7 @@ public abstract class Effect
         return JsonUtility.FromJson<JaggedGrid>(ReadString());
     }
 
-
-    static string ReadString()
+    private static string ReadString()
     {
         string path = "Skill1.json";
 

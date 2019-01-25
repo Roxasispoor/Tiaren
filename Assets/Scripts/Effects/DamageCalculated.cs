@@ -97,7 +97,7 @@ public class DamageCalculated : EffectOnLiving {
                       (Launcher.GetPosition() - Target.GetPosition()).magnitude;
             }
             Debug.Log(totalDmg);
-            EffectManager.instance.UseEffect(new Damage(Target, Launcher, totalDmg));
+            EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
 
 
         }

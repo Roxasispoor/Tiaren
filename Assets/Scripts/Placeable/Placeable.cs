@@ -341,7 +341,7 @@ public abstract class Placeable: NetIdeable
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
-                EffectManager.instance.UseEffect(effect);
+                EffectManager.instance.DirectAttack(effect);
             }
             foreach(Transform obj in transform.Find("Inventory") )
             {

@@ -129,13 +129,13 @@ public class Push : EffectOnPlaceable
         //Make damage and chek dodge conditions, destructions.... to modify according gameplay decided
         if (directCollision != null && directCollision.IsLiving())
         {
-            EffectManager.instance.UseEffect(new Damage((LivingPlaceable)directCollision,Launcher,damage));
+            EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)directCollision,Launcher,damage));
         }
         foreach(Placeable diagcoll in diagonalCollisions)
         {
             if (diagcoll != null && diagcoll.IsLiving())
             {
-                EffectManager.instance.UseEffect(new Damage((LivingPlaceable)diagcoll, Launcher, damage));
+                EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)diagcoll, Launcher, damage));
             }
         }
         if(path.Count>0)

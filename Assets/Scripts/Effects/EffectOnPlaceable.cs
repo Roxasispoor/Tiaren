@@ -53,13 +53,13 @@ public abstract class EffectOnPlaceable : Effect {
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
         Target = placeable;
-        EffectManager.instance.UseEffect(this);
+        EffectManager.instance.DirectAttack(this);
     }
 
     public override void TargetAndInvokeEffectManager(Placeable placeable)
     {
         Target = placeable;
-        EffectManager.instance.UseEffect(this);
+        EffectManager.instance.DirectAttack(this);
     }
     public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)
     {
