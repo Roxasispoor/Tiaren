@@ -626,10 +626,12 @@
         List<Effect> ListEffects4 = new List<Effect>();
         List<Effect> ListEffects5 = new List<Effect>();
         List<Effect> ListEffects6 = new List<Effect>();
+        List<Effect> ListEffects7 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new DamageCalculated(30,DamageCalculated.DamageScale.STR));
+        ListEffects7.Add(new Damage(30,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);
@@ -640,12 +642,14 @@
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
         Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
+        Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
+        Skills.Add(skill7);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
@@ -687,6 +691,7 @@
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            AttachedEffects.Clear();
         }
         this.IsDead = true;
         this.gameObject.SetActive(false);

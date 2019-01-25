@@ -8,19 +8,26 @@ public abstract class EffectOnLiving : Effect
 {
     private LivingPlaceable target;
     public int netIdTarget=-1;
-  
 
-    public EffectOnLiving(EffectOnLiving other)
+
+    public EffectOnLiving(EffectOnLiving other):base(other)
     {
         Target = other.target;
-        Launcher = other.Launcher;
+      
     }
 
     protected EffectOnLiving()
     {
     }
-
+    protected EffectOnLiving(int numberOfTurn):base(numberOfTurn)
+    {
+    }
     protected EffectOnLiving(LivingPlaceable target, Placeable launcher)
+    {
+        Target = target;
+        Launcher = launcher;
+    }
+    protected EffectOnLiving(LivingPlaceable target, Placeable launcher,int numberOfTurns):base(numberOfTurns)
     {
         Target = target;
         Launcher = launcher;

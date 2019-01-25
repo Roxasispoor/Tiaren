@@ -40,11 +40,18 @@ public class EffectManager:MonoBehaviour {
         }
         if(!isblocked)
         {
+            
             effect.GetLauncherAnimation();
             effect.Use();
+            effect.TurnActiveEffect--;
+            if(effect.TurnActiveEffect>0)
+            {
+                effect.GetTarget().AttachedEffects.Add(effect);
+            }
         }
         //Deletes all nulls blocks
         effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(BlockEffects) && ((BlockEffects)x).numberToBlock <= 0);
+        effect.GetTarget().AttachedEffects.RemoveAll((x) => x.TurnActiveEffect<=0);
         GameManager.instance.CheckWinCondition();
 
     }

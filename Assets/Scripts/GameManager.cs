@@ -706,6 +706,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         UpdateTimeline();
         playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+
+        for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
+        {
+            EffectManager.instance.UseEffect(playingPlaceable.AttachedEffects[i]);
+            // some code
+            // safePendingList.RemoveAt(i);
+        }
+        
+        
+        
         if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
