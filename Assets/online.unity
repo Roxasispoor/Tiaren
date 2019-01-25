@@ -413,7 +413,6 @@ MonoBehaviour:
     effectarea: 0
     abilitySprite: {fileID: 0}
     skillType: 0
-  state: 0
   hovered: {fileID: 0}
   transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}

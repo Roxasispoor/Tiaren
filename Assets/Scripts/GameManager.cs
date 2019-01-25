@@ -162,7 +162,7 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (characterToSpawn != null) characterToSpawn.UnHighlightForSpawn();
+            if (characterToSpawn != null) characterToSpawn.UnHighlight();
             if (value != null) value.HighlightForSpawn();
             characterToSpawn = value;
         }

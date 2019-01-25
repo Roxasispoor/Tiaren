@@ -352,7 +352,7 @@ public abstract class Placeable: NetIdeable
         }
        
     }
-    public void Highlight()
+    public virtual void Highlight()
     {
         if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
@@ -389,7 +389,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
         }
     }
-    public void UnHighlight()
+    public virtual void UnHighlight()
     {
         if (IsLiving()) return;
 

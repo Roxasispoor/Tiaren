@@ -367,7 +367,7 @@ public class LivingPlaceable : Placeable
         {
             foreach (LivingPlaceable living in targetableUnits)
             {
-                living.UnHighlightForSkill();
+                living.UnHighlight();
             }
             foreach (LivingPlaceable living in value)
             {
@@ -673,7 +673,7 @@ public class LivingPlaceable : Placeable
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
-        rend.material.SetFloat("_Outline", 0.03f);
+        rend.material.SetFloat("_Outline", 0.02f);
     }
 
     public override void Init()
@@ -707,32 +707,36 @@ public class LivingPlaceable : Placeable
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
     }
-    
-    public void HighlightForSpawn()
+
+    private void ActivateOutline(Color color)
     {
         rend.material.shader = outlineShader;
-        rend.material.SetColor("_OutlineColor" ,Color.green);
+        rend.material.SetColor("_OutlineColor", color);
     }
 
-    public void UnHighlightForSpawn()
+    private void DesactivateOutline()
     {
         rend.material.shader = originalShader;
+    }
+
+    public override void Highlight()
+    {
+        ActivateOutline(Color.white);
+    }
+
+    public override void UnHighlight()
+    {
+        DesactivateOutline();
+    }
+
+    public void HighlightForSpawn()
+    {
+        ActivateOutline(Color.green);
     }
 
     public void HighlightForSkill()
     {
-        if (rend != null && rend.material != null)
-        {
-            rend.material.shader = outlineShader;
-        }
-    }
-
-    public void UnHighlightForSkill()
-    {
-        if(rend !=null && rend.material!=null)
-        { 
-        rend.material.shader = originalShader;
-        }
+        ActivateOutline(Color.red);
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
