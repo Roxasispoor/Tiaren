@@ -18,11 +18,11 @@ public class UIManager : MonoBehaviour {
     public GameObject hpDisplay;
     public Text movDisplay;
     public Image prefabCharacterChoices;
+    public int numberOfPlayer;
     public float firstImagePosition;
     public float firstGap;
     public float timelineGap;
     public float AbilityGap;
-    public int numberOfPlayer = 1;
 
     private List<GameObject> TeamParents = new List<GameObject>();
     private List<int> currentCharacters = new List<int>();

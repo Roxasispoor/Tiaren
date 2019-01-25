@@ -66,11 +66,11 @@ public class CameraScript : NetworkBehaviour
         grid = GameObject.Find("GameManager").GetComponent<Grid>();
 
         Debug.Log(spawncenter);
-        Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2)- spawncenter;
+        Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2) - spawncenter;
         XDeg = Vector3.Angle(Vector3.forward, spawntoobjective);
         YDeg = Vector3.Angle(Vector3.up, spawntoobjective);
-        Debug.Log(XDeg+"  "+ YDeg);
-        rotation = Quaternion.Euler(YDeg-90, XDeg, 0);
+        Debug.Log(XDeg + "  " + YDeg);
+        rotation = Quaternion.Euler(YDeg - 90, XDeg, 0);
 
     }
 
@@ -117,8 +117,8 @@ public class CameraScript : NetworkBehaviour
         if (freecam == 1)
         {
             //move according to input keys
-            position += rotation * Vector3.right * Input.GetAxis("Horizontal")  ;
-            position += rotation * Vector3.forward * Input.GetAxis("Vertical");
+            position += rotation * Vector3.right * Input.GetAxis("Horizontal") *0.5f;
+            position += rotation * Vector3.forward * Input.GetAxis("Vertical") *0.5f;
             //reset the good high
             position.y = y;
         }
