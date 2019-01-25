@@ -81,15 +81,15 @@ public class DamageCalculated : EffectOnLiving {
             float totalDmg=0;
             if(ScaleOn==DamageScale.STR)
             {
-                totalDmg = power * ((LivingPlaceable)Launcher).Force * Target.Def ;
+                totalDmg = power * ((LivingPlaceable)Launcher).Force / Target.Def ;
               }
             else if (ScaleOn == DamageScale.DEXT)
             {
-                totalDmg = power * ((LivingPlaceable)Launcher).Dexterity * Target.Def;
+                totalDmg = power * ((LivingPlaceable)Launcher).Dexterity / Target.Def;
             }
             else if (ScaleOn == DamageScale.MAG)
             {
-                totalDmg = power * ((LivingPlaceable)Launcher).Mstr * Target.Mdef;
+                totalDmg = power * ((LivingPlaceable)Launcher).Mstr / Target.Mdef;
             }
             if(Launcher.GetPosition().y>Target.GetPosition().y)
             {
