@@ -629,7 +629,7 @@
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects4.Add(new Damage(50f));
+        ListEffects4.Add(new DamageCalculated(30,DamageCalculated.DamageScale.STR));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);

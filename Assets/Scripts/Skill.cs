@@ -200,7 +200,7 @@ public class Skill
                 Effect effectToConsider = effect.Clone();
                 effectToConsider.Launcher = caster;
                 //Double dispatch
-                target.DispatchEffect(effect);
+                target.DispatchEffect(effectToConsider);
 
             }
         }
