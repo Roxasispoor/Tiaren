@@ -807,6 +807,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
         
         charac1.Player = player.GetComponent<Player>();
+        charac1.Init();
         //charac1.FillLiving(className);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;

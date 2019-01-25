@@ -518,6 +518,14 @@ public abstract class Placeable: NetIdeable
     }
 
     /// <summary>
+    /// To call when creating a Placeable to initialize needed values
+    /// </summary>
+    public virtual void Init()
+    {
+        
+    }
+
+    /// <summary>
     /// On dispatch selon Living et placeable
     /// </summary>
     /// <param name="effect"></param>

@@ -51,6 +51,8 @@ public class LivingPlaceable : Placeable
     private List<Skill> skills;
     [SerializeField]
     private List<GameObject> weapons;
+    [SerializeField]
+    private SpriteRenderer circleTeam;
     private String characterName;
     private Weapon equipedWeapon;
     [SerializeField]
@@ -669,6 +671,13 @@ public class LivingPlaceable : Placeable
         rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.03f);
     }
+
+    public override void Init()
+    {
+        base.Init();
+        this.circleTeam.color = Player.color;
+    }
+
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
