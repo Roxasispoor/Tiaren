@@ -453,6 +453,346 @@ public class LivingPlaceable : Placeable
             def.BaseValue = value;
         }
     }
+    
+    public float MaxHPFlat
+    {
+        get
+        {
+           return maxHP.FlatModif;
+        }
+        
+        set
+        {
+            maxHP.FlatModif=value;
+        }
+    }
+    public float CurrentHPFlat
+    {
+        get
+        {
+            return currentHP.FlatModif;
+        }
+        set
+        {
+            currentHP.FlatModif = value;
+        }
+    }
+    public float MaxPMFlat
+    {
+        get
+        {
+            return pmMax.FlatModif;
+        }
+        set
+        {
+            pmMax.FlatModif = value;
+        }
+    }
+    public float CurrentPMFlat
+    {
+        get
+        {
+            return currentPM.FlatModif;
+        }
+        set
+        {
+            currentPM.FlatModif = value;
+        }
+    }
+    public float CurrentPAFlat
+    {
+        get
+        {
+            return currentPA.FlatModif;
+        }
+        set
+        {
+            currentPA.FlatModif = value;
+        }
+    }
+    public float MaxPAFlat
+    {
+        get
+        {
+            return paMax.FlatModif;
+        }
+        set
+        {
+            paMax.FlatModif = value;
+        }
+    }
+    public float ForceFlat
+    {
+        get
+        {
+            return force.FlatModif;
+        }
+        set
+        {
+            force.FlatModif = value;
+        }
+    }
+
+    public float SpeedFlat
+    {
+        get
+        {
+            return speed.FlatModif;
+        }
+        set
+        {
+            speed.FlatModif = value;
+        }
+    }
+    public float DexterityFlat
+    {
+        get
+        {
+            return dexterity.FlatModif;
+        }
+        set
+        {
+            dexterity.FlatModif = value;
+        }
+    }
+    public float SpeedStackFlat
+    {
+        get
+        {
+            return speedStack.FlatModif;
+        }
+        set
+        {
+            speedStack.FlatModif = value;
+        }
+    }
+    public float JumpFlat
+    {
+        get
+        {
+            return jump.FlatModif;
+        }
+        set
+        {
+            jump.FlatModif = value;
+        }
+    }
+    public float DefFlat
+    {
+        get
+        {
+            return def.FlatModif;
+        }
+        set
+        {
+            def.FlatModif = value;
+        }
+    }
+    public float MDefFlat
+    {
+        get
+        {
+            return mdef.FlatModif;
+        }
+        set
+        {
+            mdef.FlatModif = value;
+        }
+    }
+    public float MStrFlat
+    {
+        get
+        {
+            return mstr.FlatModif;
+        }
+        set
+        {
+            mstr.FlatModif = value;
+        }
+    }
+    public float DeathLengthFlat
+    {
+        get
+        {
+            return deathLength.FlatModif;
+        }
+        set
+        {
+            deathLength.FlatModif = value;
+        }
+    }
+
+
+
+
+
+    public float MaxHPPercent
+    {
+        get
+        {
+            return maxHP.PercentModif;
+        }
+        set
+        {
+            maxHP.PercentModif = value;
+        }
+    }
+    public float CurrentHPPercent
+    {
+        get
+        {
+            return currentHP.PercentModif;
+        }
+        set
+        {
+            currentHP.PercentModif = value;
+        }
+    }
+    public float MaxPMPercent
+    {
+        get
+        {
+            return pmMax.PercentModif;
+        }
+        set
+        {
+            pmMax.PercentModif = value;
+        }
+    }
+    public float CurrentPMPercent
+    {
+        get
+        {
+            return currentPM.PercentModif;
+        }
+        set
+        {
+            currentPM.PercentModif = value;
+        }
+    }
+    public float CurrentPAPercent
+    {
+        get
+        {
+            return currentPA.PercentModif;
+        }
+        set
+        {
+            currentPA.PercentModif = value;
+        }
+    }
+    public float MaxPAPercent
+    {
+        get
+        {
+            return paMax.PercentModif;
+        }
+        set
+        {
+            paMax.PercentModif = value;
+        }
+    }
+    public float ForcePercent
+    {
+        get
+        {
+            return force.PercentModif;
+        }
+        set
+        {
+            force.PercentModif = value;
+        }
+    }
+
+    public float SpeedPercent
+    {
+        get
+        {
+            return speed.PercentModif;
+        }
+        set
+        {
+            speed.PercentModif = value;
+        }
+    }
+    public float DexterityPercent
+    {
+        get
+        {
+            return dexterity.PercentModif;
+        }
+        set
+        {
+            dexterity.PercentModif = value;
+        }
+    }
+    public float SpeedStackPercent
+    {
+        get
+        {
+            return speedStack.PercentModif;
+        }
+        set
+        {
+            speedStack.PercentModif = value;
+        }
+    }
+    public float JumpPercent
+    {
+        get
+        {
+            return jump.PercentModif;
+        }
+        set
+        {
+            jump.PercentModif = value;
+        }
+    }
+    public float DefPercent
+    {
+        get
+        {
+            return def.PercentModif;
+        }
+        set
+        {
+            def.PercentModif = value;
+        }
+    }
+    public float MDefPercent
+    {
+        get
+        {
+            return mdef.PercentModif;
+        }
+        set
+        {
+            mdef.PercentModif = value;
+        }
+    }
+    public float MStrPercent
+    {
+        get
+        {
+            return mstr.PercentModif;
+        }
+        set
+        {
+            mstr.PercentModif = value;
+        }
+    }
+    public float DeathLengthPercent
+    {
+        get
+        {
+            return deathLength.PercentModif;
+        }
+        set
+        {
+            deathLength.PercentModif = value;
+        }
+    }
+
 
 
 
@@ -603,7 +943,7 @@ public class LivingPlaceable : Placeable
         };
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
-        this.maxHP.BaseValue = 100;
+        this.MaxHP = 100;
         this.CurrentHP = 100;
         this.MaxPM = 3;
         this.CurrentPM = 3;
@@ -633,10 +973,11 @@ public class LivingPlaceable : Placeable
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
-        ListEffects7.Add(new Damage(30, 2, false, false));
+        ListEffects7.Add(new Damage(30, 2, true, false));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(2, o => o.MaxPM));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();

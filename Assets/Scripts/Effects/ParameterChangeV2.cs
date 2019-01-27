@@ -14,12 +14,13 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
     }
 
     //Used like this: SetPropertyFromValue(value, o => o.Property1);
-   public ParameterChangeV2(TProperty value, Expression<Func<T, TProperty>> expr)
+   public ParameterChangeV2(TProperty value, Expression<Func<T, TProperty>> expr, int numberOfturns=1, bool triggerAtEnd = false,
+       bool hitOnDirectAttack = true):base(numberOfturns,triggerAtEnd,hitOnDirectAttack)
         {
         this.value = value;
         this.expression = expr;
         }
-    public ParameterChangeV2(ParameterChangeV2<T,TProperty> other)
+    public ParameterChangeV2(ParameterChangeV2<T,TProperty> other):base(other)
     {
         this.value = other.value;
         this.expression = other.expression;

@@ -49,7 +49,14 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            UseEffect(effect);
+            if(!effect.TriggerAtOneOnly || effect.TriggerAtOneOnly && effect.TurnActiveEffect==1)
+            {
+                UseEffect(effect);
+            }
+            else
+            { effect.TurnActiveEffect--;
+            }
+         
         }
         else//deletes the DOT
         {

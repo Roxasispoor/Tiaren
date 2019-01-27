@@ -1,14 +1,15 @@
-﻿public class Attribute
+﻿public struct Attribute
 {
     private float baseValue;
-    private float flatModif = 0;
-    private float percentModif = 0;
+    private float flatModif ;
+    private float percentModif;
 
     public float Value
     {
         get
         {
-            return BaseValue + flatModif * percentModif;
+            
+            return (BaseValue + flatModif) * percentModif;
         }
     }
 
@@ -21,6 +22,10 @@
 
         set
         {
+            if (BaseValue == 0 && flatModif == 0 && percentModif == 0)
+            {
+                percentModif = 1;
+            }
             baseValue = value;
         }
     }
