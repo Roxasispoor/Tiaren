@@ -76,7 +76,7 @@ public class GameManager : NetworkBehaviour
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
     private States state;
-    public Placeable hovered;
+    private Placeable hovered;
     private bool areaffect = false;
 
     private List<StackAndPlaceable> turnOrder;
@@ -235,6 +235,21 @@ public class GameManager : NetworkBehaviour
                 EndSpawn();
             }
             state = value;
+        }
+    }
+
+    public Placeable Hovered
+    {
+        get
+        {
+            return hovered;
+        }
+
+        set
+        {
+            if (hovered != null) hovered.UnHighlight();
+            if (value != null) value.Highlight();
+            hovered = value;
         }
     }
 
@@ -595,9 +610,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void ResetAllBatches()
     {
-        if(hovered != null)
+        if(Hovered != null)
         {
-            hovered.UnHighlight();
+            Hovered.UnHighlight();
         }
         foreach (Transform child in batchFolder.transform)
         {

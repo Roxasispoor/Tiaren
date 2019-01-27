@@ -67,11 +67,13 @@ public class LivingPlaceable : Placeable
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
-    //Shaders (used for the highlight)
+    // Variable used for the highligh
+    private bool isTarget = false;
     private Renderer rend;
     [SerializeField]
     private Shader originalShader;
     private Shader outlineShader;
+    private Color previousColor = Color.white;
     
     public float MaxHP
     {
@@ -367,7 +369,7 @@ public class LivingPlaceable : Placeable
         {
             foreach (LivingPlaceable living in targetableUnits)
             {
-                living.UnHighlight();
+                living.UnHighlightTarget();
             }
             foreach (LivingPlaceable living in value)
             {
@@ -672,8 +674,11 @@ public class LivingPlaceable : Placeable
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-        rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
     }
 
     public override void Init()
@@ -726,17 +731,33 @@ public class LivingPlaceable : Placeable
 
     public override void UnHighlight()
     {
+        if (isTarget)
+        {
+            ActivateOutline(previousColor);
+        }
+        else
+        {
+            DesactivateOutline();
+        }
+    }
+
+    public void UnHighlightTarget()
+    {
         DesactivateOutline();
     }
 
     public void HighlightForSpawn()
     {
         ActivateOutline(Color.green);
+        previousColor = Color.green;
+        isTarget = true;
     }
 
     public void HighlightForSkill()
     {
         ActivateOutline(Color.red);
+        previousColor = Color.red;
+        isTarget = true;
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)

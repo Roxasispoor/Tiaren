@@ -354,7 +354,6 @@ public abstract class Placeable: NetIdeable
     }
     public virtual void Highlight()
     {
-        if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
             GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
@@ -391,7 +390,6 @@ public abstract class Placeable: NetIdeable
     }
     public virtual void UnHighlight()
     {
-        if (IsLiving()) return;
 
         //Put back the default material
         foreach (Transform fils in transform.Find("Quads"))
