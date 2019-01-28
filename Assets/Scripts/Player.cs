@@ -755,7 +755,8 @@ public class Player : NetworkBehaviour
         if (skill.SkillType == SkillType.ALREADYTARGETED)
         {
             
-            CmdUseSkill(SkillToNumber(playingPlaceable,skill), playingPlaceable.netId); //whatever, auto targeted do not go through dispatch
+            CmdUseSkill(SkillToNumber(playingPlaceable,skill), playingPlaceable.netId);
+            GameManager.instance.playingPlaceable.ResetAreaOfMovement();//whatever, auto targeted do not go through dispatch
             return;
         }
 
@@ -1234,7 +1235,13 @@ public class Player : NetworkBehaviour
     public void CmdUseSkill(int numSkill, int netidTarget)
     {
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
-        UseTargeted(skill);
+        if(skill.SkillType==SkillType.ALREADYTARGETED)
+        { 
+            skill.UseTargeted(skill);
+        RpcUseSkill(numSkill, netidTarget);
+        }
+        else
+        { 
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
         
 
@@ -1247,33 +1254,30 @@ public class Player : NetworkBehaviour
             }
             
         }
+       }
     }
-    public void UseTargeted(Skill skill)
-    {
-        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
-        {
-            foreach (Effect eff in skill.effects)
-            {
-                Effect effectToConsider = eff.Clone();
-                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
-                effectToConsider.Use();
-            }
-        }
-    }
+  
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget)
     {
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            skill.UseTargeted(skill);
+            GameManager.instance.playingPlaceable.ResetTargets();
 
+        }
+        else
+        { 
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
         Debug.Log("Netid is" + netidTarget + "and target is at" +target.GetPosition());
-        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
-        UseTargeted(skill);
         GameManager.instance.playingPlaceable.ResetTargets();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
         if(GetComponentInChildren<RaycastSelector>()!=null)
         { 
         GetComponentInChildren<RaycastSelector>().EffectArea = 0;
         GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+        }
         }
     }
 
