@@ -179,7 +179,28 @@ public class Skill
         GameManager.instance.activeSkill = this;
         GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
     }
-
+    public bool UseTargeted(Skill skill)
+    {
+        if (this.tourCooldownLeft > 0)
+        {
+            return false;
+        }
+        if (condition != null && !condition.Invoke())
+        {
+            return false;
+        }
+        this.tourCooldownLeft = this.cooldown;
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            foreach (Effect eff in skill.effects)
+            {
+                Effect effectToConsider = eff.Clone();
+                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Use();
+            }
+        }
+        return true;
+    }
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {

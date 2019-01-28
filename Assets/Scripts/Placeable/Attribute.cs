@@ -8,7 +8,10 @@
     {
         get
         {
-            
+            if (BaseValue == 0 && flatModif == 0 && percentModif == 0)
+            {
+                percentModif = 1;
+            }
             return (BaseValue + flatModif) * percentModif;
         }
     }

@@ -71,32 +71,37 @@ public class DamageCalculated : EffectOnLiving {
     {
         return new DamageCalculated(this);
     }
+    public float CalculateDamage()
+    {
+        float totalDmg = 0;
+        if (ScaleOn == DamageScale.STR)
+        {
+            totalDmg = power * ((LivingPlaceable)Launcher).Force / Target.Def;
+        }
+        else if (ScaleOn == DamageScale.DEXT)
+        {
+            totalDmg = power * ((LivingPlaceable)Launcher).Dexterity / Target.Def;
+        }
+        else if (ScaleOn == DamageScale.MAG)
+        {
+            totalDmg = power * ((LivingPlaceable)Launcher).Mstr / Target.Mdef;
+        }
+        if (Launcher.GetPosition().y > Target.GetPosition().y)
+        {
+            totalDmg *= SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
+                  (Launcher.GetPosition() - Target.GetPosition()).magnitude;
+        }
+        Debug.Log(totalDmg);
 
+        return totalDmg;
+    }
     override
         public void Use()
     {
         
         if(Launcher.IsLiving())
         {
-            float totalDmg=0;
-            if(ScaleOn==DamageScale.STR)
-            {
-                totalDmg = power * ((LivingPlaceable)Launcher).Force / Target.Def ;
-              }
-            else if (ScaleOn == DamageScale.DEXT)
-            {
-                totalDmg = power * ((LivingPlaceable)Launcher).Dexterity / Target.Def;
-            }
-            else if (ScaleOn == DamageScale.MAG)
-            {
-                totalDmg = power * ((LivingPlaceable)Launcher).Mstr / Target.Mdef;
-            }
-            if(Launcher.GetPosition().y>Target.GetPosition().y)
-            {
-                totalDmg *= SinFactor*(Launcher.GetPosition().y - Target.GetPosition().y) /
-                      (Launcher.GetPosition() - Target.GetPosition()).magnitude;
-            }
-            Debug.Log(totalDmg);
+            float totalDmg = CalculateDamage();
             EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
 
 

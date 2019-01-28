@@ -385,13 +385,20 @@ public class LivingPlaceable : Placeable
 
         set
         {
-            foreach (LivingPlaceable living in targetableUnits)
+            if (targetableUnits != null)
             {
-                living.HighlightForSkill();
+                foreach (LivingPlaceable living in targetableUnits)
+                {
+                    living.UnHighlightTarget();
+                }
             }
-            foreach (LivingPlaceable living in value)
+
+            if (value != null)
             {
-                living.UnHighlight();
+                foreach (LivingPlaceable living in value)
+                {
+                    living.HighlightForSkill();
+                }
             }
             targetableUnits = value;
         }
@@ -916,6 +923,7 @@ public class LivingPlaceable : Placeable
         this.Jump = 1;
         this.Force = 100;
         this.Speed = 100;
+        this.Def = 100;
         this.SpeedStack = 1 / Speed;
         this.Dexterity = 100;
         this.Skills = new List<Skill>();
@@ -933,6 +941,8 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects6 = new List<Effect>();
         List<Effect> ListEffects7 = new List<Effect>();
         List<Effect> ListEffects8 = new List<Effect>();
+        List<Effect> ListEffects9 = new List<Effect>();
+        List<Effect> ListEffects10 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
@@ -942,6 +952,9 @@ public class LivingPlaceable : Placeable
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
+        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
+        ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
+        ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
@@ -951,7 +964,9 @@ public class LivingPlaceable : Placeable
         Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
         Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
-        Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "", 0, 2);
+        Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
+        Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
+        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
@@ -960,6 +975,8 @@ public class LivingPlaceable : Placeable
         Skills.Add(skill6);
         Skills.Add(skill7);
         Skills.Add(skill8);
+        Skills.Add(skill9);
+        Skills.Add(skill10);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
@@ -991,6 +1008,7 @@ public class LivingPlaceable : Placeable
     {
         base.Init();
         this.circleTeam.color = Player.color;
+        targetableUnits = new List<LivingPlaceable>();
     }
 
     /// <summary>
@@ -1013,6 +1031,11 @@ public class LivingPlaceable : Placeable
             foreach (Transform obj in transform.Find("Inventory"))
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
+            }
+            foreach(Effect effect in AttachedEffects)
+            {
+                effect.TurnActiveEffect = 1;
+                EffectManager.instance.DirectAttack(effect);
             }
             AttachedEffects.Clear();
         }
@@ -1054,10 +1077,6 @@ public class LivingPlaceable : Placeable
 
     public void UnHighlightTarget()
     {
-        if (rend != null && rend.material != null)
-        {
-            rend.material.shader = originalShader;
-        }
         DesactivateOutline();
     }
 
@@ -1197,7 +1216,10 @@ public class LivingPlaceable : Placeable
 
     }
 
-    public void ResetAreaOfTarget()
+    /// <summary>
+    /// Reset the targets, both cube and livingPlaceable
+    /// </summary>
+    public void ResetTargets()
     {
         foreach (Placeable plac in targetArea)
         {
@@ -1214,6 +1236,8 @@ public class LivingPlaceable : Placeable
             GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
+
+        TargetableUnits = null;
 
     }
 

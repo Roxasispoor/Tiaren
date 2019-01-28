@@ -33,6 +33,19 @@ public class AnimationHandler : MonoBehaviour
         }
     }
 
+    public IEnumerator CheckInterruptionsWithRef(float time, LivingPlaceable refPlaceable)
+    {
+        for (float i = 0; i < time; i = i + 0.1f)
+        {
+            if (refPlaceable == GameManager.instance.PlayingPlaceable) // TODO case if pa > 1, check selection of skill and break wait
+                yield return new WaitForSeconds(0.1f);
+            else
+            {
+                break;
+            }
+        }
+    }
+
     // checking interruptions if several actions in a row - give playing placeable as ref at the start
     // use if several coroutine in one action (ex : damage -> hurt -> die)
 
@@ -55,8 +68,11 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndCreateBlock(GameObject go, Vector3Int position, float time)
     {
-        yield return StartCoroutine(CheckInterruptions(time));
+        LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
         Grid.instance.InstantiateCube(go, position);
+        //Grid.instance.GetPlaceableFromVector(position).gameObject.SetActive(false);
+        yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
+        Grid.instance.GetPlaceableFromVector(position).gameObject.SetActive(true);
     }
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
