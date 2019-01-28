@@ -774,7 +774,7 @@ public class Grid : MonoBehaviour
 
                         //Debug.Log(x + "-" + y + "-" + z);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
-                        obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
+                        obj.GetComponent<NetIdeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
                         Placeable.currentMaxId++;
                         // NetworkServer.Spawn(obj);
@@ -784,6 +784,29 @@ public class Grid : MonoBehaviour
 
                 }
             }
+        }
+
+        GameObject flag = Instantiate(Grid.instance.prefabsList[3], 
+            GetPlaceableFromVector(jagged.GetFlagPos() + Vector3.down).gameObject.transform.Find("Inventory"));
+        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
+
+        foreach (Vector3Int coord in jagged.GetGoalsP1())
+        {
+            GameObject Goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            Goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = Goal.GetComponent<Placeable>();
+            Goal.GetComponent<Placeable>().Player = GameManager.instance.player1.GetComponent<Player>();
+            NetIdeable.currentMaxId++;
+        }
+
+        foreach (Vector3Int coord in jagged.GetGoalsP2())
+        {
+            GameObject Goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            Goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = Goal.GetComponent<Placeable>();
+            Goal.GetComponent<Placeable>().Player = GameManager.instance.player2.GetComponent<Player>();
+            NetIdeable.currentMaxId++;
         }
 
         SpawnPlayer1 = jagged.GetSpawnsP1();
