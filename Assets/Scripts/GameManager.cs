@@ -331,8 +331,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         //If you want to load one
 
-        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
-        transmitter.networkManager = networkManager;
         /*if (isServer)
          {
              Debug.LogError("Transmitter 
@@ -358,6 +356,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
+
+        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        transmitter.networkManager = networkManager;
 
         Grid.instance.Gravity();
         State = States.TeamSelect;
@@ -654,6 +655,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void InitStartGame()
     {
+        // Flag hardcodé pour hill
+        /* 
         //Create a flag
         GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
         flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
@@ -669,7 +672,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ - 2] = GoalP2.GetComponent<Placeable>();
         GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
-        NetIdeable.currentMaxId++;
+        NetIdeable.currentMaxId++;*/ 
     }
     /// <summary>
     /// Add current combine instance to its batch
