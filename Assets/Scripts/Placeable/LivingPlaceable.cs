@@ -385,13 +385,20 @@ public class LivingPlaceable : Placeable
 
         set
         {
-            foreach (LivingPlaceable living in targetableUnits)
+            if (targetableUnits != null)
             {
-                living.HighlightForSkill();
+                foreach (LivingPlaceable living in targetableUnits)
+                {
+                    living.UnHighlightTarget();
+                }
             }
-            foreach (LivingPlaceable living in value)
+
+            if (value != null)
             {
-                living.UnHighlight();
+                foreach (LivingPlaceable living in value)
+                {
+                    living.HighlightForSkill();
+                }
             }
             targetableUnits = value;
         }
@@ -996,6 +1003,7 @@ public class LivingPlaceable : Placeable
     {
         base.Init();
         this.circleTeam.color = Player.color;
+        targetableUnits = new List<LivingPlaceable>();
     }
 
     /// <summary>
@@ -1059,10 +1067,6 @@ public class LivingPlaceable : Placeable
 
     public void UnHighlightTarget()
     {
-        if (rend != null && rend.material != null)
-        {
-            rend.material.shader = originalShader;
-        }
         DesactivateOutline();
     }
 
@@ -1202,7 +1206,10 @@ public class LivingPlaceable : Placeable
 
     }
 
-    public void ResetAreaOfTarget()
+    /// <summary>
+    /// Reset the targets, both cube and livingPlaceable
+    /// </summary>
+    public void ResetTargets()
     {
         foreach (Placeable plac in targetArea)
         {
@@ -1219,6 +1226,8 @@ public class LivingPlaceable : Placeable
             GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
+
+        TargetableUnits = null;
 
     }
 
