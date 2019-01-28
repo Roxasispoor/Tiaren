@@ -1024,6 +1024,11 @@ public class LivingPlaceable : Placeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            foreach(Effect effect in AttachedEffects)
+            {
+                effect.TurnActiveEffect = 1;
+                EffectManager.instance.DirectAttack(effect);
+            }
             AttachedEffects.Clear();
         }
         this.IsDead = true;
