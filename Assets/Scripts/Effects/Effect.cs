@@ -80,7 +80,7 @@ public abstract class Effect
 
     protected Effect()
     {
-
+        
     }
     protected Effect(Effect other)
     {

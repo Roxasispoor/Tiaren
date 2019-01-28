@@ -933,6 +933,7 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects6 = new List<Effect>();
         List<Effect> ListEffects7 = new List<Effect>();
         List<Effect> ListEffects8 = new List<Effect>();
+        List<Effect> ListEffects9 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
@@ -942,6 +943,8 @@ public class LivingPlaceable : Placeable
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
+        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
+        ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
@@ -952,6 +955,7 @@ public class LivingPlaceable : Placeable
         Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "", 0, 2);
+        Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "", 0, 1);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
@@ -960,6 +964,7 @@ public class LivingPlaceable : Placeable
         Skills.Add(skill6);
         Skills.Add(skill7);
         Skills.Add(skill8);
+        Skills.Add(skill9);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
