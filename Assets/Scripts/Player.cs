@@ -320,7 +320,14 @@ public class Player : NetworkBehaviour
 
     }
 
-
+    public void SendSpawnToCamera()
+    {
+        Vector3 spawncenter = new Vector3(0, 0, 0);
+        foreach (Vector3Int point in spawnList)
+            spawncenter += point;
+        cameraScript.SpawnCenter = spawncenter / spawnList.Count;
+        cameraScript.Init();
+    }
 
     public void displaySpawn()
     {
@@ -391,7 +398,7 @@ public class Player : NetworkBehaviour
         {
             GameManager.instance.player1.GetComponent<Player>().Isready = false;
             GameManager.instance.player2.GetComponent<Player>().Isready = false;
-            GameManager.instance.state = States.Spawn;
+            GameManager.instance.State = States.Spawn;
 
             int[] choicesP1 = new int[GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count];
             for (int i = 0; i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count; i++)
@@ -426,7 +433,7 @@ public class Player : NetworkBehaviour
                 }
             }
 
-            GameManager.instance.state = States.Spawn;
+            GameManager.instance.State = States.Spawn;
             GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
             GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
         }
@@ -449,7 +456,7 @@ public class Player : NetworkBehaviour
     {
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
-        GameManager.instance.state = States.Spawn;
+        GameManager.instance.State = States.Spawn;
         displaySpawn();
     }
 

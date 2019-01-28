@@ -1,7 +1,10 @@
 ﻿using System;
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 [Serializable]
@@ -12,8 +15,6 @@ public class LivingPlaceable : Placeable
     /// </summary>
     [SerializeField]
     private Vector3 positionSave;
-
-
     [SerializeField]
     private string playerPosesser;
     [SerializeField]
@@ -52,6 +53,8 @@ public class LivingPlaceable : Placeable
     private List<Skill> skills;
     [SerializeField]
     private List<GameObject> weapons;
+    [SerializeField]
+    private SpriteRenderer circleTeam;
     private String characterName;
     private Weapon equipedWeapon;
     [SerializeField]
@@ -66,16 +69,21 @@ public class LivingPlaceable : Placeable
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
-    //Shaders (used for the highlight)
+    // Variable used for the highligh
+    private bool isTarget = false;
     private Renderer rend;
+     //Shaders (used for the highlight)
+
     [SerializeField]
     private Shader originalShader;
     private Shader outlineShader;
+    private Color previousColor = Color.white;
 
     public float MaxHP
     {
         get
         {
+
             return maxHP.Value;
         }
 
@@ -97,7 +105,7 @@ public class LivingPlaceable : Placeable
             currentHP.BaseValue = value;
         }
     }
-    public override Player Player
+   /* public override Player Player
     {
         get
         {
@@ -108,6 +116,20 @@ public class LivingPlaceable : Placeable
         {
             base.Player = value;
             if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
+            
+        }
+    }*/
+    public override Player Player
+    {
+        get
+        {
+            return base.Player;
+        }
+
+        set
+        {
+            base.Player = value;
+            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
             {
                 playerPosesser = "player1";
             }
@@ -353,8 +375,7 @@ public class LivingPlaceable : Placeable
         }
     }
 
-
-
+    
     public List<LivingPlaceable> TargetableUnits
     {
         get
@@ -366,11 +387,11 @@ public class LivingPlaceable : Placeable
         {
             foreach (LivingPlaceable living in targetableUnits)
             {
-                living.UnHighlightForSkill();
+                living.HighlightForSkill();
             }
             foreach (LivingPlaceable living in value)
             {
-                living.HighlightForSkill();
+                living.UnHighlight();
             }
             targetableUnits = value;
         }
@@ -792,64 +813,7 @@ public class LivingPlaceable : Placeable
             deathLength.PercentModif = value;
         }
     }
-
-
-
-
-    /// <summary>
-    /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
-    /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="gameEffectManager"></param>
-    public Vector3 ShootDamage(Placeable target)
-    {
-        float nbDmgs;
-
-        if (EquipedWeapon.ScalesOnForce)
-        {
-
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * Force;
-        }
-        else
-        {
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * Dexterity;
-
-        }
-        float maxDamage = 0;
-        HitablePoint maxHit = null;
-        float nbDamagea;
-        foreach (HitablePoint hitPoint in CanHit(target))
-        {
-
-            Vector3 shotaPos = this.transform.position + shootPosition;
-            Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
-            float sinFactor = (shotaPos.y - ciblaPos.y) /
-                (shotaPos - ciblaPos).magnitude;
-
-            Vector3 vect1 = this.transform.forward;
-            Vector3 vect2 = (ciblaPos - shotaPos);
-            vect1.y = 0;
-            vect2.y = 0;
-            vect1.Normalize();
-            vect2.Normalize();
-
-            float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-            nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
-            if (nbDamagea > maxDamage)
-            {
-                maxDamage = nbDamagea;
-                maxHit = hitPoint;
-            }
-
-        }
-
-        //TODO use gameEffectManager
-        return target.transform.position + maxHit.RelativePosition;
-    }
-
-
-
+    
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
         return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
@@ -1016,9 +980,19 @@ public class LivingPlaceable : Placeable
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-        rend.material.SetColor("_Color", new Color(1, 1, 1, 0.725f));
-        rend.material.SetFloat("_Outline", 0.03f);
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
     }
+
+    public override void Init()
+    {
+        base.Init();
+        this.circleTeam.color = Player.color;
+    }
+
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -1045,31 +1019,60 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
     }
 
-    public void HighlightForSpawn()
+   /* public void HighlightForSpawn()
     {
         rend.material.shader = outlineShader;
         rend.material.SetColor("_OutlineColor", Color.green);
+    }*/
+    private void ActivateOutline(Color color)
+    {
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_OutlineColor", color);
     }
 
-    public void UnHighlightForSpawn()
+    private void DesactivateOutline()
     {
         rend.material.shader = originalShader;
     }
 
-    public void HighlightForSkill()
+    public override void Highlight()
     {
-        if (rend != null && rend.material != null)
+        ActivateOutline(Color.white);
+    }
+
+    public override void UnHighlight()
+    {
+        if (isTarget)
         {
-            rend.material.shader = outlineShader;
+            ActivateOutline(previousColor);
+        }
+        else
+        {
+            DesactivateOutline();
         }
     }
 
-    public void UnHighlightForSkill()
+    public void UnHighlightTarget()
     {
         if (rend != null && rend.material != null)
         {
             rend.material.shader = originalShader;
         }
+        DesactivateOutline();
+    }
+
+    public void HighlightForSpawn()
+    {
+        ActivateOutline(Color.green);
+        previousColor = Color.green;
+        isTarget = true;
+    }
+
+    public void HighlightForSkill()
+    {
+        ActivateOutline(Color.red);
+        previousColor = Color.red;
+        isTarget = true;
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)

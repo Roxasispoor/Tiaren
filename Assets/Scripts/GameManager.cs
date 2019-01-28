@@ -72,8 +72,8 @@ public class GameManager : NetworkBehaviour
     public Color ennemyPlayerColor = Color.red;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
-    public States state;
-    public Placeable hovered;
+    private States state;
+    private Placeable hovered;
     private bool areaffect = false;
 
     private List<StackAndPlaceable> turnOrder;
@@ -159,16 +159,9 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (characterToSpawn != null)
-            {
-                characterToSpawn.UnHighlightForSpawn();
-            }
 
-            if (value != null)
-            {
-                value.HighlightForSpawn();
-            }
-
+            if (characterToSpawn != null) characterToSpawn.UnHighlight();
+            if (value != null) value.HighlightForSpawn();
             characterToSpawn = value;
         }
     }
@@ -223,6 +216,38 @@ public class GameManager : NetworkBehaviour
         get
         {
             return player2.GetComponent<Player>();
+        }
+    }
+
+    public States State
+    {
+        get
+        {
+            return state;
+        }
+
+        set
+        {
+            if (state == States.Spawn)
+            {
+                EndSpawn();
+            }
+            state = value;
+        }
+    }
+
+    public Placeable Hovered
+    {
+        get
+        {
+            return hovered;
+        }
+
+        set
+        {
+            if (hovered != null) hovered.UnHighlight();
+            if (value != null) value.Highlight();
+            hovered = value;
         }
     }
 
@@ -335,7 +360,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
         Grid.instance.Gravity();
-        state = States.TeamSelect;
+        State = States.TeamSelect;
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
@@ -349,13 +374,21 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         otherPlayer.color = ennemyPlayerColor;
 
         localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+        localPlayer.SendSpawnToCamera();
         otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+        otherPlayer.SendSpawnToCamera();
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
+    }
 
-
+    /// <summary>
+    /// Function called when the states was changed from spawn, reset the variable
+    /// </summary>
+    private void EndSpawn()
+    {
+        CharacterToSpawn = null;
     }
 
     public void TeamSelectDisplay()
@@ -578,9 +611,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void ResetAllBatches()
     {
-        if (hovered != null)
+
+        if(Hovered != null)
         {
-            hovered.UnHighlight();
+            Hovered.UnHighlight();
         }
         foreach (Transform child in batchFolder.transform)
         {
@@ -611,10 +645,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void OnEndAnimationEffectEnd()
     {
-        if (playingPlaceable.Player.isLocalPlayer)
-        {
-            MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
-            GameManager.instance.state = States.Move;
+
+        if(playingPlaceable.Player.isLocalPlayer)
+        { 
+        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
+            GameManager.instance.State = States.Move;
         }
     }
     public void InitStartGame()
@@ -742,7 +777,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
-            state = States.Move;
+            State = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {
@@ -753,9 +788,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
             if (isClient && playingPlaceable.Player.isLocalPlayer)
             {
-
                 playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
-
+                playingPlaceable.Player.cameraScript.Freecam = 0;
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
@@ -786,6 +820,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.ResetHighlightSkill();
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();
@@ -825,6 +860,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
         charac1.Player = player.GetComponent<Player>();
+        charac1.Init();
         //charac1.FillLiving(className);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
