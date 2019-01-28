@@ -291,9 +291,12 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
-            firstCanva.SetActive(true);
-            firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
+            if (GameManager.instance.state == States.TeamSelect)
+            {
+                GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
+                firstCanva.SetActive(true);
+                firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
+            }
             account = FindObjectOfType<PlayerAccount>();
             if (account != null && account.AccountInfoPacket.Username != null)
             {

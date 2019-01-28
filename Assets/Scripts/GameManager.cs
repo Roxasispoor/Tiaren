@@ -289,33 +289,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
    
     IEnumerator Start()
     {
-        //PHASE 0 : SET THE GAME UP
-
-        //If you want to create one and save it
-        // Grid.instance.CreateRandomGrid(gridFolder);
-        //Grid.instance.SaveGridFile();
-
-        //If you want to load one
-
         Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
         transmitter.networkManager = networkManager;
-       /*if (isServer)
-        {
-            Debug.LogError("Transmitter 
-            
-        
-        
-        
-        ed");
-            StartCoroutine(transmitter.AcceptTcp());
-           
-        }
-        if (isClient)
-        {
-            Debug.Log("Client listen to data start coroutine");
-            StartCoroutine(transmitter.ListenToData());
-            //receive data from server
-        }*/
+        state = States.TeamSelect;
         while (player1 == null )
         {
             yield return null;
@@ -326,7 +302,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         
         Grid.instance.Gravity();
-        state = States.TeamSelect;
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
@@ -420,10 +395,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 Canvas c = player1.transform.GetComponentInChildren<Canvas>();
                 if(c!=null)
                 { 
-                foreach (Transform des in c.transform)
-                {
-                    des.gameObject.SetActive(false);
-                }
+                    foreach (Transform des in c.transform)
+                    {
+                        des.gameObject.SetActive(false);
+                    }
                 }
                 c = player2.transform.GetComponentInChildren<Canvas>();
                 if (c != null)
@@ -807,6 +782,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Player playerComponent = player.GetComponent<Player>();
         
         GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
+
+        charac.GetComponent<LivingPlaceable>().InitCharacter(prefaToSpawn);
+
+        LivingPlaceable check = charac.GetComponent<LivingPlaceable>();
 
         playerComponent.characters.Add(charac);
 

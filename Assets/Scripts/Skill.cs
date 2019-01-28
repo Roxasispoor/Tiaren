@@ -29,8 +29,7 @@ public class Skill
     public delegate bool DelegateCondition();
     [SerializeField]
     public DelegateCondition condition;
-    [SerializeField]
-    public Sprite abilitySprite;
+    private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
     private SkillArea skillarea;
@@ -153,6 +152,19 @@ public class Skill
         }
     }
 
+    public Sprite AbilitySprite
+    {
+        get
+        {
+            return abilitySprite;
+        }
+
+        set
+        {
+            abilitySprite = value;
+        }
+    }
+    
     public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
@@ -160,7 +172,7 @@ public class Skill
         tourCooldownLeft = 0;
         this.effects = effects;
         SkillName = skillName;
-        this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
+        this.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         SkillType = skillType;
         this.maxRange = rangeMax;
         this.minRange = rangeMin;

@@ -17,7 +17,7 @@
         [SerializeField]
         private string playerPosesser;
         [SerializeField]
-        private string classname = "default";
+        private string className = "default";
         [SerializeField]
         private float maxHP;
         [SerializeField]
@@ -51,7 +51,6 @@
         private List<Skill> skills;
         [SerializeField]
         private List<GameObject> weapons;
-        private String characterName;
         private Weapon equipedWeapon;
         [SerializeField]
         private bool isDead;
@@ -405,12 +404,12 @@
         {
             get
             {
-                return classname;
+                return className;
             }
 
             set
             {
-                classname = value;
+                className = value;
             }
         }
 
@@ -585,8 +584,9 @@
     // Use this for initialization
     void Awake()
     {
+        /*
         shouldBatch = false;
-        this.characterName = "default";
+        this.className = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -635,7 +635,7 @@
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "CreateBlock",0,5);
         Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
@@ -646,7 +646,7 @@
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + className);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
@@ -657,10 +657,44 @@
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        //Save();
-        //force = -5;
-        //FillLiving();
-        //TODO Read from JSON properly
+        */
+        shouldBatch = false;
+        this.Classname = "default";
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.SIMPLE_GRAVITY;
+
+        this.Crushable = CrushType.CRUSHDEATH;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+        {
+            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+        };
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AreaOfMouvement = new List<NodePath>();
+        targetArea = new List<Placeable>();
+
+        targetableUnits = new List<LivingPlaceable>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+
+
+        this.Skills = new List<Skill>();
+        this.Weapons = new List<GameObject>();
+        this.IsDead = false;
+        this.CounterDeaths = 0;
+        this.TurnsRemaingingCemetery = 0;
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
+        this.AreaOfMouvement = new List<NodePath>();
+
 
 
         rend = GetComponentInChildren<Renderer>();
@@ -668,7 +702,16 @@
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.03f);
+        
     }
+
+    public void InitCharacter(int classNumber)
+    {
+        className = GameManager.instance.PossibleCharacters[classNumber].className;
+        Debug.Log(Classname + ".json");
+        LoadFromjson(className + ".json");
+    }
+    
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -915,6 +958,7 @@
         }
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + className);
         bool isNewSkill = true;
         Skill newSkill = null;
         
@@ -924,6 +968,7 @@
             {
                 
                 newSkill = JsonUtility.FromJson<Skill>(line);
+                newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 isNewSkill = false;
                 

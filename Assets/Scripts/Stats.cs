@@ -27,7 +27,7 @@ public class Stats
     public int mdef;
     public int mstr;
     public float deathLength;
-    public List<Skill> skills;
+    //public List<Skill> skills;
     public bool isDead;
     //==================== initialize a mano
     public int serializeNumber;
