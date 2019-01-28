@@ -35,6 +35,7 @@ public abstract class Placeable: NetIdeable
     protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
+    private Coroutine moveCoroutine;
     //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
@@ -51,7 +52,7 @@ public abstract class Placeable: NetIdeable
 
 
    
-    public virtual bool IsLiving()
+    public override bool IsLiving()
     {
         return false;
     }
@@ -298,8 +299,21 @@ public abstract class Placeable: NetIdeable
         }
     }
 
+    public Coroutine MoveCoroutine
+    {
+        get
+        {
+            return moveCoroutine;
+        }
 
- 
+        set
+        {
+            moveCoroutine = value;
+        }
+    }
+
+
+
 
     /// <summary>
     /// Copy object
@@ -324,6 +338,7 @@ public abstract class Placeable: NetIdeable
     {
         if (this.Destroyable)
         {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.UseEffect(effect);
@@ -332,9 +347,10 @@ public abstract class Placeable: NetIdeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            Destroy(this);
+            Destroy(this.gameObject);
         }
-        Destroy(this);
-        Destroy(this.gameObject);
+       
     }
     public void Highlight()
     {
@@ -480,7 +496,18 @@ public abstract class Placeable: NetIdeable
                 {
 
                     Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
-                    GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId);
+                    List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
+                    if (area == null) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, new int[0]);
+                    else
+                    {
+                        int[] netidlist = new int[area.Count];
+                        for (int i =0; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = area[i].netId;
+                        }
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, netidlist);
+                    }
+                    
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }

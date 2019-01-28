@@ -580,7 +580,7 @@ public class Grid : MonoBehaviour
         {
             MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
-        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC)// destroy bloc, trigger effects
+        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC && !GridMatrix[x,y,z].IsLiving())// destroy bloc, trigger effects
         {
             gridMatrix[x, y, z].Destroy();
             gridMatrix[x, y, z] = null;
@@ -694,7 +694,7 @@ public class Grid : MonoBehaviour
             Destroy(gameObject);
 
         //gridBool = new DistanceAndParent[sizeX, sizeY, sizeZ];
-        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
+        
 
 
 
@@ -756,6 +756,8 @@ public class Grid : MonoBehaviour
         sizeX = jagged.sizeX;
         sizeY = jagged.sizeY;
         sizeZ = jagged.sizeZ;
+        //Debug.Log(sizeX + " " + sizeY + " " + sizeZ);
+        gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
         //gridMatrix = new Placeable[sizeX, sizeY, sizeZ];
 
         for (int y = 0; y < sizeY; y++)
@@ -786,7 +788,7 @@ public class Grid : MonoBehaviour
 
         SpawnPlayer1 = jagged.GetSpawnsP1();
         SpawnPlayer2 = jagged.GetSpawnsP2();
-        //Debug.Log(Placeable.currentMaxId);
+        Debug.Log(Placeable.currentMaxId);
 
     }
 
@@ -1233,6 +1235,56 @@ public class Grid : MonoBehaviour
         {
             if (Pos.y==sizeY-1 || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
                 targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> DestroyBlockPattern(List<Vector3Int> Blocklist)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> CreateBlockPattern(List<Vector3Int> Blocklist)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            Placeable block = gridMatrix[Pos.x, Pos.y, Pos.z];
+            if (block.GetType()==typeof(Goal) || block.GetType()==typeof(Spawn))
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> PushPattern(List<Vector3Int> Blocklist, Vector3 playerposition)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Movable)
+                targetableblock.Remove(Pos);
+            else
+            {
+                if (Math.Abs((int)playerposition.x - Pos.x) - Math.Abs((int)playerposition.z - Pos.z) > 0)
+                {
+                    int direction = (Pos.x - (int)playerposition.x) / Math.Abs((int)playerposition.x - Pos.x);
+                    if (Pos.x + direction < 0 || Pos.x +direction >= sizeX || gridMatrix[Pos.x+direction, Pos.y, Pos.z]!=null)
+                        targetableblock.Remove(Pos);
+                }
+                else
+                {
+                    int direction = (Pos.z - (int)playerposition.z) / Math.Abs((int)playerposition.z - Pos.z);
+                    if (Pos.z + direction < 0 || Pos.z + direction >= sizeZ || gridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
+                        targetableblock.Remove(Pos);
+                }
+            }
+            
         }
         return targetableblock;
     }

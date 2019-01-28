@@ -9,17 +9,22 @@ public abstract class EffectOnPlaceable : Effect {
     private Placeable target;
     public int netIdTarget = -1;
 
-    public EffectOnPlaceable(EffectOnPlaceable other)
+    public EffectOnPlaceable(EffectOnPlaceable other) : base(other)
     {
         Target = other.target;
-        Launcher = other.Launcher;
+        
     }
 
+    
     protected EffectOnPlaceable()
     {
     }
-
     protected EffectOnPlaceable(Placeable target, Placeable launcher)
+    {
+        Target = target;
+        Launcher = launcher;
+    }
+    protected EffectOnPlaceable(Placeable target, Placeable launcher, int numberOfTurns) : base(numberOfTurns)
     {
         Target = target;
         Launcher = launcher;

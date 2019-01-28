@@ -61,3 +61,24 @@ public enum SkillArea
 
 
 }
+
+public enum SkillEffect
+{
+    NONE,
+    /// <summary>
+    /// Check when a block is moved if the path is clear
+    /// </summary>
+    MOVE,
+    /// <summary>
+    /// Check if the block can be destroyed or not
+    /// </summary>
+    DESTROY,
+    /// <summary>
+    /// Check if we can create any block on the targeted block
+    /// </summary>
+    CREATE,
+    /// <summary>
+    /// Check if the character can go up
+    /// </summary>
+    UP
+}
