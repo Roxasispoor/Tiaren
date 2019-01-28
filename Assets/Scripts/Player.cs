@@ -763,9 +763,9 @@ public class Player : NetworkBehaviour
         rayselector.Pattern = SkillArea.NONE;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
-        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        GameManager.instance.playingPlaceable.ResetTargets();
         playingPlaceable.ResetAreaOfMovement();
-        playingPlaceable.ResetAreaOfTarget();
+        playingPlaceable.ResetTargets();
         if (skill.SkillType==SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
             List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
@@ -1268,7 +1268,7 @@ public class Player : NetworkBehaviour
         Debug.Log("Netid is" + netidTarget + "and target is at" +target.GetPosition());
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
         UseTargeted(skill);
-        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        GameManager.instance.playingPlaceable.ResetTargets();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
         if(GetComponentInChildren<RaycastSelector>()!=null)
         { 

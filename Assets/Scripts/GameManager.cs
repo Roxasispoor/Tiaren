@@ -160,7 +160,7 @@ public class GameManager : NetworkBehaviour
         set
         {
 
-            if (characterToSpawn != null) characterToSpawn.UnHighlight();
+            if (characterToSpawn != null) characterToSpawn.UnHighlightTarget();
             if (value != null) value.HighlightForSpawn();
             characterToSpawn = value;
         }
@@ -815,7 +815,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Debug.Log("tour suivaaaaaaaaant Area of movement=" + playingPlaceable.AreaOfMouvement.Count);
             if (playingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.ResetAreaOfTarget();
+                playingPlaceable.ResetTargets();
                 playingPlaceable.ResetAreaOfMovement();
                 playingPlaceable.ResetHighlightSkill();
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
