@@ -1,510 +1,510 @@
-﻿    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
 
-    [Serializable]
-    public class LivingPlaceable : Placeable
-    {
-        /// <summary>
-        /// Used to save position, only actualized at this point
-        /// </summary>
-        [SerializeField]
-        private Vector3 positionSave;
-        [SerializeField]
-        private string playerPosesser;
-        [SerializeField]
-        private string className = "default";
-        [SerializeField]
-        private float maxHP;
-        [SerializeField]
-        private float currentHP;
-        [SerializeField]
-        private int pmMax;
-        [SerializeField]
-        private int currentPM;
-        [SerializeField]
-        private float currentPA;
-        [SerializeField]
-        private float paMax;
-        [SerializeField]
-        private int force = -99999;
-        [SerializeField]
-        private float speed;
-        [SerializeField]
-        private int dexterity = -77777;
-        [SerializeField]
-        private float speedStack;
-        [SerializeField]
-        private int jump;
-        [SerializeField]
-        private int def = -88888;
-        [SerializeField]
-        private int mdef = -66666;
-        [SerializeField]
-        private int mstr = -555555;
-        private float deathLength;
-        [SerializeField]
-        private List<Skill> skills;
-        [SerializeField]
-        private List<GameObject> weapons;
-        private Weapon equipedWeapon;
-        [SerializeField]
-        private bool isDead;
-        private int counterDeaths;
-        private int turnsRemainingCemetery;
-        private Vector3 shootPosition;
-        private int capacityInUse;
-        private List<NodePath> areaOfMouvement;
+[Serializable]
+public class LivingPlaceable : Placeable
+{
+    /// <summary>
+    /// Used to save position, only actualized at this point
+    /// </summary>
+    [SerializeField]
+    private Vector3 positionSave;
+    [SerializeField]
+    private string playerPosesser;
+    [SerializeField]
+    private string className = "default";
+    [SerializeField]
+    private float maxHP;
+    [SerializeField]
+    private float currentHP;
+    [SerializeField]
+    private int pmMax;
+    [SerializeField]
+    private int currentPM;
+    [SerializeField]
+    private float currentPA;
+    [SerializeField]
+    private float paMax;
+    [SerializeField]
+    private int force = -99999;
+    [SerializeField]
+    private float speed;
+    [SerializeField]
+    private int dexterity = -77777;
+    [SerializeField]
+    private float speedStack;
+    [SerializeField]
+    private int jump;
+    [SerializeField]
+    private int def = -88888;
+    [SerializeField]
+    private int mdef = -66666;
+    [SerializeField]
+    private int mstr = -555555;
+    private float deathLength;
+    [SerializeField]
+    private List<Skill> skills;
+    [SerializeField]
+    private List<GameObject> weapons;
+    private Weapon equipedWeapon;
+    [SerializeField]
+    private bool isDead;
+    private int counterDeaths;
+    private int turnsRemainingCemetery;
+    private Vector3 shootPosition;
+    private int capacityInUse;
+    private List<NodePath> areaOfMouvement;
 
-        private List<Placeable> targetArea;
-        private List<LivingPlaceable> targetableUnits;
-        public Sprite characterSprite;
+    private List<Placeable> targetArea;
+    private List<LivingPlaceable> targetableUnits;
+    public Sprite characterSprite;
 
-        //Shaders (used for the highlight)
-        private Renderer rend;
-        [SerializeField]
-        private Shader originalShader;
-        private Shader outlineShader;
+    //Shaders (used for the highlight)
+    private Renderer rend;
+    [SerializeField]
+    private Shader originalShader;
+    private Shader outlineShader;
     
-        public float MaxHP
+    public float MaxHP
+    {
+        get
         {
-            get
-            {
-                return maxHP;
-            }
-
-            set
-            {
-                maxHP = value;
-            }
+            return maxHP;
         }
 
-        public float CurrentHP
+        set
         {
-            get
-            {
-                return currentHP;
-            }
-
-            set
-            {
-                currentHP = value;
-            }
+            maxHP = value;
         }
-        public override Player Player
+    }
+
+    public float CurrentHP
+    {
+        get
         {
-            get
-            {
-                return base.Player;
-            }
-
-            set
-            {
-                base.Player = value;
-                if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
-                {
-                    playerPosesser = "player1";
-                }
-                if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
-                {
-                    playerPosesser = "player2";
-                }
-
-            }
-        }
-        public int MaxPM
-        {
-            get
-            {
-                return pmMax;
-            }
-
-            set
-            {
-                pmMax = value;
-            }
+            return currentHP;
         }
 
-        public List<Skill> Skills
+        set
         {
-            get
-            {
-                return skills;
-            }
-
-            set
-            {
-                skills = value;
-            }
+            currentHP = value;
+        }
+    }
+    public override Player Player
+    {
+        get
+        {
+            return base.Player;
         }
 
-
-        public int Force
+        set
         {
-            get
+            base.Player = value;
+            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
             {
-                return force;
+                playerPosesser = "player1";
+            }
+            if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
+            {
+                playerPosesser = "player2";
             }
 
-            set
-            {
-                force = value;
-            }
+        }
+    }
+    public int MaxPM
+    {
+        get
+        {
+            return pmMax;
         }
 
-        public float Speed
+        set
         {
-            get
-            {
-                return speed;
-            }
+            pmMax = value;
+        }
+    }
 
-            set
-            {
-                speed = value;
-            }
+    public List<Skill> Skills
+    {
+        get
+        {
+            return skills;
         }
 
-        public int Dexterity
+        set
         {
-            get
-            {
-                return dexterity;
-            }
+            skills = value;
+        }
+    }
 
-            set
-            {
-                dexterity = value;
-            }
+
+    public int Force
+    {
+        get
+        {
+            return force;
         }
 
-        public float SpeedStack
+        set
         {
-            get
-            {
-                return speedStack;
-            }
+            force = value;
+        }
+    }
 
-            set
-            {
-                speedStack = value;
-            }
+    public float Speed
+    {
+        get
+        {
+            return speed;
         }
 
-        public int TurnsRemaingingCemetery
+        set
         {
-            get
-            {
-                return turnsRemainingCemetery;
-            }
+            speed = value;
+        }
+    }
 
-            set
-            {
-                turnsRemainingCemetery = value;
-            }
+    public int Dexterity
+    {
+        get
+        {
+            return dexterity;
         }
 
-        public int CounterDeaths
+        set
         {
-            get
-            {
-                return counterDeaths;
-            }
+            dexterity = value;
+        }
+    }
 
-            set
-            {
-                counterDeaths = value;
-            }
+    public float SpeedStack
+    {
+        get
+        {
+            return speedStack;
         }
 
-        public int CurrentPM
+        set
         {
-            get
-            {
-                return currentPM;
-            }
+            speedStack = value;
+        }
+    }
 
-            set
-            {
-                currentPM = value;
-            }
+    public int TurnsRemaingingCemetery
+    {
+        get
+        {
+            return turnsRemainingCemetery;
         }
 
-        public Vector3 ShootPosition
+        set
         {
-            get
-            {
-                return shootPosition;
-            }
+            turnsRemainingCemetery = value;
+        }
+    }
 
-            set
-            {
-                shootPosition = value;
-            }
+    public int CounterDeaths
+    {
+        get
+        {
+            return counterDeaths;
         }
 
-        public bool IsDead
+        set
         {
-            get
-            {
-                return isDead;
-            }
+            counterDeaths = value;
+        }
+    }
 
-            set
-            {
-                isDead = value;
-            }
+    public int CurrentPM
+    {
+        get
+        {
+            return currentPM;
         }
 
-        public List<GameObject> Weapons
+        set
         {
-            get
-            {
-                return weapons;
-            }
+            currentPM = value;
+        }
+    }
 
-            set
-            {
-                weapons = value;
-            }
+    public Vector3 ShootPosition
+    {
+        get
+        {
+            return shootPosition;
         }
 
-        public Weapon EquipedWeapon
+        set
         {
-            get
-            {
-                return equipedWeapon;
-            }
+            shootPosition = value;
+        }
+    }
 
-            set
-            {
-                equipedWeapon = value;
-            }
+    public bool IsDead
+    {
+        get
+        {
+            return isDead;
         }
 
-        public int CapacityinUse
+        set
         {
-            get
-            {
-                return capacityInUse;
-            }
+            isDead = value;
+        }
+    }
 
-            set
-            {
-                capacityInUse = value;
-            }
+    public List<GameObject> Weapons
+    {
+        get
+        {
+            return weapons;
         }
 
-        public float CurrentPA
+        set
         {
-            get
-            {
-                return currentPA;
-            }
+            weapons = value;
+        }
+    }
 
-            set
-            {
-                currentPA = value;
-            }
+    public Weapon EquipedWeapon
+    {
+        get
+        {
+            return equipedWeapon;
         }
 
-        public float PaMax
+        set
         {
-            get
-            {
-                return paMax;
-            }
+            equipedWeapon = value;
+        }
+    }
 
-            set
-            {
-                paMax = value;
-            }
+    public int CapacityinUse
+    {
+        get
+        {
+            return capacityInUse;
         }
 
-        public int Jump
+        set
         {
-            get
-            {
-                return jump;
-            }
+            capacityInUse = value;
+        }
+    }
 
-            set
-            {
-                jump = value;
-            }
+    public float CurrentPA
+    {
+        get
+        {
+            return currentPA;
         }
 
-        public List<NodePath> AreaOfMouvement
+        set
         {
-            get
-            {
-                return areaOfMouvement;
-            }
+            currentPA = value;
+        }
+    }
 
-            set
-            {
-                areaOfMouvement = value;
-            }
+    public float PaMax
+    {
+        get
+        {
+            return paMax;
         }
 
-
-
-        public List<LivingPlaceable> TargetableUnits
+        set
         {
-            get
-            {
-                return targetableUnits;
-            }
+            paMax = value;
+        }
+    }
 
-            set
-            {
-                foreach (LivingPlaceable living in targetableUnits)
-                {
-                    living.UnHighlightForSkill();
-                }
-                foreach (LivingPlaceable living in value)
-                {
-                    living.HighlightForSkill();
-                }
-                targetableUnits = value;
-            }
+    public int Jump
+    {
+        get
+        {
+            return jump;
         }
 
-        public float DeathLength
+        set
         {
-            get
-            {
-                return deathLength;
-            }
+            jump = value;
+        }
+    }
 
-            set
-            {
-                deathLength = value;
-            }
+    public List<NodePath> AreaOfMouvement
+    {
+        get
+        {
+            return areaOfMouvement;
         }
 
-        public List<Placeable> TargetArea
+        set
         {
-            get
-            {
-                return targetArea;
-            }
+            areaOfMouvement = value;
+        }
+    }
 
-            set
-            {
-                targetArea = value;
-            }
+
+
+    public List<LivingPlaceable> TargetableUnits
+    {
+        get
+        {
+            return targetableUnits;
         }
 
-        public string Classname
+        set
         {
-            get
+            foreach (LivingPlaceable living in targetableUnits)
             {
-                return className;
+                living.UnHighlightForSkill();
             }
+            foreach (LivingPlaceable living in value)
+            {
+                living.HighlightForSkill();
+            }
+            targetableUnits = value;
+        }
+    }
 
-            set
-            {
-                className = value;
-            }
+    public float DeathLength
+    {
+        get
+        {
+            return deathLength;
         }
 
-        public int Mstr
+        set
         {
-            get
-            {
-                return mstr;
-            }
+            deathLength = value;
+        }
+    }
 
-            set
-            {
-                mstr = value;
-            }
+    public List<Placeable> TargetArea
+    {
+        get
+        {
+            return targetArea;
         }
 
-        public int Mdef
+        set
         {
-            get
-            {
-                return mdef;
-            }
+            targetArea = value;
+        }
+    }
 
-            set
-            {
-                mdef = value;
-            }
+    public string Classname
+    {
+        get
+        {
+            return className;
         }
 
-        public int Def
+        set
         {
-            get
-            {
-                return def;
-            }
+            className = value;
+        }
+    }
 
-            set
-            {
-                def = value;
-            }
+    public int Mstr
+    {
+        get
+        {
+            return mstr;
         }
 
-
-
-        /// <summary>
-        /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
-        /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="gameEffectManager"></param>
-        public Vector3 ShootDamage(Placeable target)
+        set
         {
-            float nbDmgs;
-
-            if (EquipedWeapon.ScalesOnForce)
-            {
-
-                nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
-            }
-            else
-            {
-                nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
-
-            }
-            float maxDamage = 0;
-            HitablePoint maxHit = null;
-            float nbDamagea;
-            foreach (HitablePoint hitPoint in CanHit(target))
-            {
-
-                Vector3 shotaPos = this.transform.position + shootPosition;
-                Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
-                float sinFactor = (shotaPos.y - ciblaPos.y) /
-                    (shotaPos - ciblaPos).magnitude;
-
-                Vector3 vect1 = this.transform.forward;
-                Vector3 vect2 = (ciblaPos - shotaPos);
-                vect1.y = 0;
-                vect2.y = 0;
-                vect1.Normalize();
-                vect2.Normalize();
-
-                float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-                nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
-                if (nbDamagea > maxDamage)
-                {
-                    maxDamage = nbDamagea;
-                    maxHit = hitPoint;
-                }
-
-            }
-
-            //TODO use gameEffectManager
-            return target.transform.position + maxHit.RelativePosition;
+            mstr = value;
         }
+    }
+
+    public int Mdef
+    {
+        get
+        {
+            return mdef;
+        }
+
+        set
+        {
+            mdef = value;
+        }
+    }
+
+    public int Def
+    {
+        get
+        {
+            return def;
+        }
+
+        set
+        {
+            def = value;
+        }
+    }
+
+
+
+    /// <summary>
+    /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
+    /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="gameEffectManager"></param>
+    public Vector3 ShootDamage(Placeable target)
+    {
+        float nbDmgs;
+
+        if (EquipedWeapon.ScalesOnForce)
+        {
+
+            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
+        }
+        else
+        {
+            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
+
+        }
+        float maxDamage = 0;
+        HitablePoint maxHit = null;
+        float nbDamagea;
+        foreach (HitablePoint hitPoint in CanHit(target))
+        {
+
+            Vector3 shotaPos = this.transform.position + shootPosition;
+            Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
+            float sinFactor = (shotaPos.y - ciblaPos.y) /
+                (shotaPos - ciblaPos).magnitude;
+
+            Vector3 vect1 = this.transform.forward;
+            Vector3 vect2 = (ciblaPos - shotaPos);
+            vect1.y = 0;
+            vect2.y = 0;
+            vect1.Normalize();
+            vect2.Normalize();
+
+            float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
+            nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
+            if (nbDamagea > maxDamage)
+            {
+                maxDamage = nbDamagea;
+                maxHit = hitPoint;
+            }
+
+        }
+
+        //TODO use gameEffectManager
+        return target.transform.position + maxHit.RelativePosition;
+    }
 
 
     
