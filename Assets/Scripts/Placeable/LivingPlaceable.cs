@@ -1000,7 +1000,10 @@ public class LivingPlaceable : Placeable
     override
     public void Destroy()
     {
-
+        // warning : the SetActive value of the gameobject attached to livingplaceable is dealed with directly in AnimationHandler to avoid bug of respawn in special case
+        this.IsDead = true;
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+        CounterDeaths++;
         if (this.Destroyable)
         {
             foreach (Effect effect in this.OnDestroyEffects)
@@ -1013,10 +1016,7 @@ public class LivingPlaceable : Placeable
             }
             AttachedEffects.Clear();
         }
-        this.IsDead = true;
-        this.gameObject.SetActive(false);
-        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        CounterDeaths++;
+        
     }
 
    /* public void HighlightForSpawn()
