@@ -786,8 +786,10 @@ public class Grid : MonoBehaviour
             }
         }
 
+        Vector3Int posFlag = jagged.GetFlagPos() + Vector3Int.down;
+
         GameObject flag = Instantiate(Grid.instance.prefabsList[3], 
-            GetPlaceableFromVector(jagged.GetFlagPos() + Vector3.down).gameObject.transform.Find("Inventory"));
+            GetPlaceableFromVector(posFlag).gameObject.transform.Find("Inventory"));
         flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         NetIdeable.currentMaxId++;
 
