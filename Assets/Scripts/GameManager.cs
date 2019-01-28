@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using UnityEditor;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
-using System;
-using System.IO;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -13,11 +10,11 @@ using System.IO;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField]
-    string mapToCharge = "Grid.json";
+    private string mapToCharge = "Grid.json";
 
-   /// <summary>
-   /// Enforce singleton pattern
-   /// </summary>
+    /// <summary>
+    /// Enforce singleton pattern
+    /// </summary>
     public static GameManager instance;
     /// <summary>
     /// Material used to highlight pathfinding
@@ -30,13 +27,14 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// Specifies current GameMode
     /// </summary>
-    public GameMode gameMode = GameMode.DEATHMATCH;
+    public GameMode gameMode = GameMode.FLAG;
     /// <summary>
     ///  Material used to highlight target cubes (not quads) when skill is used
     /// </summary>
     public Material targetMaterial;
 
-    public Material spawnMaterial;
+    public Material spawnAllyMaterial;
+    public Material spawnEnemyMaterial;
 
     /// <summary>
     /// Manages all the network part once in game
@@ -45,7 +43,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// Max number of vertexes by batch and enforce the limit of 65536 when combining them
     /// </summary>
-    private const int maxBatchVertexes= 2300;
+    private const int maxBatchVertexes = 2300;
     /// <summary>
     /// Turn number
     /// </summary>
@@ -68,18 +66,18 @@ public class GameManager : NetworkBehaviour
     public GameObject player1; //Should be Object
     public GameObject player2; //Should be Object
     private LivingPlaceable characterToSpawn;
-    public string player1Username="";
-    public string player2Username=""; //TODOShould instead be account and serialize 
+    public string player1Username = "";
+    public string player2Username = ""; //TODOShould instead be account and serialize 
     public Color localPlayerColor = Color.blue;
     public Color ennemyPlayerColor = Color.red;
     public GameObject[] prefabMonsters;
     public Skill activeSkill;
-    public States state;
-    public Placeable hovered;
+    private States state;
+    private Placeable hovered;
     private bool areaffect = false;
 
     private List<StackAndPlaceable> turnOrder;
-    Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
+    private Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
 
     private bool isGameStarted = false;
     public TransmitterNoThread transmitter;
@@ -111,7 +109,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
 
 
-    
+
     public Player Winner
     {
         get
@@ -161,7 +159,8 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (characterToSpawn != null) characterToSpawn.UnHighlightForSpawn();
+
+            if (characterToSpawn != null) characterToSpawn.UnHighlightTarget();
             if (value != null) value.HighlightForSpawn();
             characterToSpawn = value;
         }
@@ -189,8 +188,8 @@ public class GameManager : NetworkBehaviour
             isGameStarted = value;
         }
     }
- 
-    
+
+
     public List<SpriteAndName> PossibleCharacters
     {
         get
@@ -220,6 +219,38 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public States State
+    {
+        get
+        {
+            return state;
+        }
+
+        set
+        {
+            if (state == States.Spawn)
+            {
+                EndSpawn();
+            }
+            state = value;
+        }
+    }
+
+    public Placeable Hovered
+    {
+        get
+        {
+            return hovered;
+        }
+
+        set
+        {
+            if (hovered != null) hovered.UnHighlight();
+            if (value != null) value.Highlight();
+            hovered = value;
+        }
+    }
+
     /// <summary>
     /// Return the player who has authority
     /// </summary>
@@ -237,22 +268,25 @@ public class GameManager : NetworkBehaviour
         //CSVReader.ReadVectors("untitled.txt");
         //MapConverter.ConvertGridFromText("Towers.txt", "Towers.json");
         if (instance == null)
+        {
 
             //if not, set instance to this
             instance = this;
+        }
 
         //If instance already exists and it's not this:
         else if (instance != this)
+        {
 
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
+        }
 
-        
         idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
-        networkManager = (NetworkManager) FindObjectOfType(typeof(NetworkManager));
+        networkManager = (NetworkManager)FindObjectOfType(typeof(NetworkManager));
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
@@ -286,21 +320,21 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
 
     // Use this for initialization
-   
-    IEnumerator Start()
+
+    private IEnumerator Start()
     {
         Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
         transmitter.networkManager = networkManager;
         state = States.TeamSelect;
-        while (player1 == null )
+        while (player1 == null)
         {
             yield return null;
         }
-        while (player2 == null )
-        { 
+        while (player2 == null)
+        {
             yield return null;
         }
-        
+
         Grid.instance.Gravity();
         Debug.Log("Right before select");
         TeamSelectDisplay();
@@ -310,17 +344,26 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         Player localPlayer = GetLocalPlayer();
         localPlayer.color = localPlayerColor;
+
         Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
         otherPlayer.color = ennemyPlayerColor;
-        
+
         localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+        localPlayer.SendSpawnToCamera();
         otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+        otherPlayer.SendSpawnToCamera();
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
 
+    }
 
-     
+    /// <summary>
+    /// Function called when the states was changed from spawn, reset the variable
+    /// </summary>
+    private void EndSpawn()
+    {
+        CharacterToSpawn = null;
     }
 
     public void TeamSelectDisplay()
@@ -328,24 +371,24 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player1.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
         player2.GetComponent<Player>().GetComponent<UIManager>().TeamSelectUI();
     }
-    
+
     public GameObject GetOtherPlayer(GameObject player)
     {
-        if(player != player1)
+        if (player != player1)
         {
             return player1;
         }
         else
         {
-            
-            InitialiseBatchFolder();
+
+            //InitialiseBatchFolder(); <- a merge issue ?
             return player2;
 
             //receive data from server
         }
 
     }
-    
+
     public void ResetGrid()
     {
         foreach (Transform child in GameManager.instance.batchFolder.transform)
@@ -361,7 +404,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         TurnOrder = new List<StackAndPlaceable>();
         //TODO CHECK WITH new spawner
         LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
-        foreach(LivingPlaceable living in livings)
+        foreach (LivingPlaceable living in livings)
         {
             Destroy(living.gameObject);
         }
@@ -369,12 +412,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void CheckWinCondition()
     {
-            if (gameMode == GameMode.DEATHMATCH)
+        if (gameMode == GameMode.DEATHMATCH)
         {
             player2.GetComponent<Player>().isWinner = true;
             foreach (GameObject character in player1.GetComponent<Player>().characters)
             {
-                if(!character.GetComponent<LivingPlaceable>().IsDead)
+                if (!character.GetComponent<LivingPlaceable>().IsDead)
                 {
                     player2.GetComponent<Player>().isWinner = false;
                     break;
@@ -389,50 +432,57 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     break;
                 }
             }
-            if(player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
-            {
-                //Disable canvas element
-                Canvas c = player1.transform.GetComponentInChildren<Canvas>();
-                if(c!=null)
-                { 
-                    foreach (Transform des in c.transform)
-                    {
-                        des.gameObject.SetActive(false);
-                    }
-                }
-                c = player2.transform.GetComponentInChildren<Canvas>();
-                if (c != null)
-                {
-                    foreach (Transform des in player2.GetComponentInChildren<Canvas>().transform)
-                    {
-                        des.gameObject.SetActive(false);
-                    }
-                }
-
-                player1.GetComponent<Player>().winText.gameObject.SetActive(true);
-                player2.GetComponent<Player>().winText.gameObject.SetActive(true);
-            }
-            if(player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
-            {
-                
-                player1.GetComponent<Player>().winText.text = "VICTORY";
-                player2.GetComponent<Player>().winText.text = "DEFEAT";
-            }
-            else if(player2.GetComponent<Player>().isWinner && !player1.GetComponent<Player>().isWinner)
-            {
-           
-                player2.GetComponent<Player>().winText.text = "VICTORY";
-                player1.GetComponent<Player>().winText.text = "DEFEAT";
-            }
-            else if(player2.GetComponent<Player>().isWinner && player1.GetComponent<Player>().isWinner)
-            {
-                player2.GetComponent<Player>().winText.text = "DRAW";
-                player1.GetComponent<Player>().winText.text = "DRAW";
-            }
+            WinAndDisableUI();
 
         }
+        if (gameMode == GameMode.FLAG)
+        {
+            WinAndDisableUI();
 
-        
+        }
+    }
+    public void WinAndDisableUI()
+    {
+        if (player1.GetComponent<Player>().isWinner || player2.GetComponent<Player>().isWinner)
+        {
+            //Disable canvas element
+            Canvas c = player1.transform.GetComponentInChildren<Canvas>();
+            if (c != null)
+            {
+                foreach (Transform des in c.transform)
+                {
+                    des.gameObject.SetActive(false);
+                }
+            }
+            c = player2.transform.GetComponentInChildren<Canvas>();
+            if (c != null)
+            {
+                foreach (Transform des in player2.GetComponentInChildren<Canvas>().transform)
+                {
+                    des.gameObject.SetActive(false);
+                }
+            }
+
+            player1.GetComponent<Player>().winText.gameObject.SetActive(true);
+            player2.GetComponent<Player>().winText.gameObject.SetActive(true);
+        }
+        if (player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
+        {
+
+            player1.GetComponent<Player>().winText.text = "VICTORY";
+            player2.GetComponent<Player>().winText.text = "DEFEAT";
+        }
+        else if (player2.GetComponent<Player>().isWinner && !player1.GetComponent<Player>().isWinner)
+        {
+
+            player2.GetComponent<Player>().winText.text = "VICTORY";
+            player1.GetComponent<Player>().winText.text = "DEFEAT";
+        }
+        else if (player2.GetComponent<Player>().isWinner && player1.GetComponent<Player>().isWinner)
+        {
+            player2.GetComponent<Player>().winText.text = "DRAW";
+            player1.GetComponent<Player>().winText.text = "DRAW";
+        }
     }
 
     private void UpdateTimeline()
@@ -456,7 +506,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Check for every Character if it has to play more than once in the "Grand Turn"
 
         int numberOfTurns = 1;
-        for (int i = 0; i < turnOrder.Count -1; i++)
+        for (int i = 0; i < turnOrder.Count - 1; i++)
         {
             StackAndPlaceable check = turnOrder[i];
             if (!check.SeenBefore)
@@ -490,11 +540,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// <param name="block"></param>
     public void RemoveBlockFromBatch(Placeable block)
     {
-      
-            block.batch.combineInstances.Remove(block.MeshInCombined);
-            block.GetComponent<MeshRenderer>().enabled = true;
 
-            RefreshBatch(block);
+        block.batch.combineInstances.Remove(block.MeshInCombined);
+        block.GetComponent<MeshRenderer>().enabled = true;
+
+        RefreshBatch(block);
 
     }
     /// <summary>
@@ -510,7 +560,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //get the good material
         foreach (Material mat in newBatch.GetComponent<Renderer>().materials)
         {
-            if(mat.name==batch.material)
+            if (mat.name == batch.material)
             {
                 saved = mat;
                 break;
@@ -536,9 +586,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void ResetAllBatches()
     {
-        if(hovered != null)
+
+        if(Hovered != null)
         {
-            hovered.UnHighlight();
+            Hovered.UnHighlight();
         }
         foreach (Transform child in batchFolder.transform)
         {
@@ -553,20 +604,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void MoveLogic(List<Vector3> bezierPath)
     {
-        if(playingPlaceable.Player.isLocalPlayer)
+        if (playingPlaceable.Player.isLocalPlayer)
         {
             playingPlaceable.ResetAreaOfMovement();
             Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
             Debug.Log("Dernière pos character : " + lastPositionCharac);
-            Debug.Log("PM: " + playingPlaceable.CurrentPM);
-            if(playingPlaceable.CurrentPM<0)
-            {
-                Debug.Log("DAFUQ!!!");
-            }
             playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
                playingPlaceable.Jump, playingPlaceable.Player);
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
-            playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable, 
+            playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable,
                 new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
 
         }
@@ -574,10 +620,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void OnEndAnimationEffectEnd()
     {
+
         if(playingPlaceable.Player.isLocalPlayer)
         { 
         MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
-            GameManager.instance.state = States.Move;
+            GameManager.instance.State = States.Move;
         }
     }
     public void InitStartGame()
@@ -586,13 +633,25 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
         flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         NetIdeable.currentMaxId++;
+        //
+        GameObject GoalP1 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, 1), Quaternion.identity, gridFolder.transform);///TODO modify with json
+        GoalP1.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        Grid.instance.GridMatrix[10, 1, 1] = GoalP1.GetComponent<Placeable>();
+        GoalP1.GetComponent<Placeable>().Player = player1.GetComponent<Player>();
+        NetIdeable.currentMaxId++;
+
+        GameObject GoalP2 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, Grid.instance.sizeZ - 2), Quaternion.identity, gridFolder.transform);///TODO modify with json
+        GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ - 2] = GoalP2.GetComponent<Placeable>();
+        GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
+        NetIdeable.currentMaxId++;
     }
     /// <summary>
     /// Add current combine instance to its batch
     /// </summary>
     /// <param name="meshFilter"></param>
     /// <param name="combineInstance"></param>
-    public void AddMeshToBatches(MeshFilter meshFilter,CombineInstance combineInstance)
+    public void AddMeshToBatches(MeshFilter meshFilter, CombineInstance combineInstance)
     {
 
         if (!dictionaryMaterialsFilling.ContainsKey(meshFilter.GetComponent<MeshRenderer>().material.name))
@@ -602,7 +661,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             {
                 new Batch(meshFilter.GetComponent<MeshRenderer>().material.name)
             };
-            
+
         }
         if (dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
             [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1].combineInstances.Count >= maxBatchVertexes)
@@ -613,10 +672,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             CreateNewBatch(dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
             [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1]);
             dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Add(new Batch(meshFilter.GetComponent<MeshRenderer>().material.name));
-  
+
 
         }
-        if(meshFilter.GetComponent<Placeable>())//Add batch to placeable
+        if (meshFilter.GetComponent<Placeable>())//Add batch to placeable
         {
             meshFilter.GetComponent<Placeable>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
             [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1];
@@ -629,31 +688,31 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void InitialiseBatchFolder()
     {
-        dictionaryMaterialsFilling=new Dictionary<string, List<Batch>>();
+        dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
 
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
-        foreach(MeshFilter meshFilter in meshFilters)
+        foreach (MeshFilter meshFilter in meshFilters)
         {
-            if(meshFilter.GetComponent<NetIdeable>()!=null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
-            { 
-            CombineInstance currentInstance = new CombineInstance
+            if (meshFilter.GetComponent<NetIdeable>() != null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
             {
-                mesh = meshFilter.sharedMesh,
-                transform = meshFilter.transform.localToWorldMatrix
-            };
-            // If it is the first of this material
-            AddMeshToBatches(meshFilter,currentInstance);
-            if(meshFilter.GetComponent<Placeable>()!=null)
-            { 
-            meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
-            }
+                CombineInstance currentInstance = new CombineInstance
+                {
+                    mesh = meshFilter.sharedMesh,
+                    transform = meshFilter.transform.localToWorldMatrix
+                };
+                // If it is the first of this material
+                AddMeshToBatches(meshFilter, currentInstance);
+                if (meshFilter.GetComponent<Placeable>() != null)
+                {
+                    meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
+                }
             }
         }
         //Then at the end we create all the batches that are not full
-        foreach(List<Batch> batches in dictionaryMaterialsFilling.Values)
+        foreach (List<Batch> batches in dictionaryMaterialsFilling.Values)
         {
-            CreateNewBatch(batches[batches.Count-1]); //instanciate last batch
+            CreateNewBatch(batches[batches.Count - 1]); //instanciate last batch
         }
     }
 
@@ -665,6 +724,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         UpdateTimeline();
         playingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+
+        for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
+        {
+            EffectManager.instance.StartTurnUseEffect(playingPlaceable.AttachedEffects[i]);
+            // some code
+            // safePendingList.RemoveAt(i);
+        }
+
+
+
         if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
@@ -672,7 +741,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-            
+
             if (playingPlaceable.IsDead)
             {
                 playingPlaceable.IsDead = false;
@@ -683,7 +752,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             player2.GetComponent<UIManager>().ChangeTurn();
             player1.GetComponent<UIManager>().ChangeTurn();
-            state = States.Move;
+            State = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {
@@ -692,19 +761,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
-            if(isClient && playingPlaceable.Player.isLocalPlayer)
+            if (isClient && playingPlaceable.Player.isLocalPlayer)
             {
-
                 playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
-
+                playingPlaceable.Player.cameraScript.Freecam = 0;
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
-            if(playingPlaceable.Player.isLocalPlayer)
+            if (playingPlaceable.Player.isLocalPlayer)
             {
                 playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
-                playingPlaceable.Jump,playingPlaceable.Player);
+                playingPlaceable.Jump, playingPlaceable.Player);
                 playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             }
             player1.GetComponent<Timer>().StartTimer(30f);
@@ -716,17 +784,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void EndOFTurn()
     {
-        if(winner==null)
-        { 
+        if (winner == null)
+        {
             //cleaning and checks and synchro with banana dancing if needed
-            Debug.Log("tour suivaaaaaaaaant Area of movement="+playingPlaceable.AreaOfMouvement.Count);
+            Debug.Log("tour suivaaaaaaaaant Area of movement=" + playingPlaceable.AreaOfMouvement.Count);
             if (playingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.ResetAreaOfTarget();
+                playingPlaceable.ResetTargets();
                 playingPlaceable.ResetAreaOfMovement();
                 playingPlaceable.ResetHighlightSkill();
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();
@@ -740,14 +809,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Skill skill = playingPlaceable.Skills[skillID];
         if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
         {
-            caster.CurrentPA= caster.CurrentPA - skill.Cost>0? caster.CurrentPA - skill.Cost:0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
+            caster.CurrentPA = caster.CurrentPA - skill.Cost > 0 ? caster.CurrentPA - skill.Cost : 0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
         }
     }
 
     public Placeable FindLocalObject(int id)
     {
 
-        return (Placeable) idPlaceable[id];
+        return (Placeable)idPlaceable[id];
     }
     public Vector3[] GetPathFromClicked(Placeable arrival)
     {
@@ -764,8 +833,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
-        
+
         charac1.Player = player.GetComponent<Player>();
+        charac1.Init();
         //charac1.FillLiving(className);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
@@ -773,17 +843,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
         charac1.netId = Placeable.currentMaxId;
         //Debug.Log(charac1.netId);
-        idPlaceable[charac1.netId]= charac1;
+        idPlaceable[charac1.netId] = charac1;
         Placeable.currentMaxId++;
     }
-        
+
     public void CreateCharacter(GameObject player, Vector3Int spawnCoordinates, int prefaToSpawn)
     {
         Player playerComponent = player.GetComponent<Player>();
-        
+
         GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-        charac.GetComponent<LivingPlaceable>().InitCharacter(prefaToSpawn);
+        charac.GetComponent<LivingPlaceable>().Init(prefaToSpawn);
 
         LivingPlaceable check = charac.GetComponent<LivingPlaceable>();
 
@@ -794,7 +864,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private void Update()
     {
-     
+
     }
     // <summary>
     /// Unused function to apply function to all visible characters
@@ -828,7 +898,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
 
         }
-      
+
     }
-    
+
 }

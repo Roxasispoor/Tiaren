@@ -14,7 +14,7 @@ public class LivingPlaceableEditor : Editor {
 
         if (GUILayout.Button("Convert"))
         {
-            living.Save(living.Classname + ".json");
+            living.Save(living.ClassName + ".json");
         }
     }
 }

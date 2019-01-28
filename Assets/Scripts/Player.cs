@@ -291,7 +291,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (GameManager.instance.state == States.TeamSelect)
+            if (GameManager.instance.State == States.TeamSelect)
             {
                 GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
                 firstCanva.SetActive(true);
@@ -323,44 +323,73 @@ public class Player : NetworkBehaviour
 
     }
 
-
+    public void SendSpawnToCamera()
+    {
+        Vector3 spawncenter = new Vector3(0, 0, 0);
+        foreach (Vector3Int point in spawnList)
+            spawncenter += point;
+        cameraScript.SpawnCenter = spawncenter / spawnList.Count;
+        cameraScript.Init();
+    }
 
     public void displaySpawn()
     {
         if (isLocalPlayer)
         {
             gameObject.GetComponent<UIManager>().SpawnUI();
+
             Player localPlayer = GameManager.instance.GetLocalPlayer();
             Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
-            for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
-            {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
 
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
-                    Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
-                if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
-                {
-                    GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
-                }
-            }
-            for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
+
+            if (localPlayer == GameManager.instance.Player1)
             {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnMaterial;
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
-                if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
-                {
-                    GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
-                }
+                SpawnLocalPlayer(localPlayer);
+                SpawnEnemyPlayer(enemyPlayer);
+            } else
+            {
+                SpawnEnemyPlayer(enemyPlayer);
+                SpawnLocalPlayer(localPlayer);
             }
+            
             GameManager.instance.ResetAllBatches();
             gameObject.GetComponent<UIManager>().SpawnUI();
         }
     }
     
+    private void SpawnLocalPlayer(Player localPlayer)
+    {
+        for (int i = 0; i < localPlayer.spawnList.Count; i++)
+        {
+            Grid.instance.GridMatrix[localPlayer.spawnList[i].x, localPlayer.spawnList[i].y - 1,
+                localPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+
+            Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
+                localPlayer.spawnList[i].y - 1,
+                localPlayer.spawnList[i].z].IsSpawnPoint = true;
+            if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            {
+                GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+        }
+    }
+
+    private void SpawnEnemyPlayer(Player enemyPlayer)
+    {
+        for (int i = 0; i < enemyPlayer.spawnList.Count; i++)
+        {
+            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
+                enemyPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
+                enemyPlayer.spawnList[i].z].IsSpawnPoint = true;
+            if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
+            {
+                GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
+            }
+        }
+
+    }
+
     [Command]
     public void CmdTeamReady(int[] characterChoices)
     {
@@ -372,7 +401,7 @@ public class Player : NetworkBehaviour
         {
             GameManager.instance.player1.GetComponent<Player>().Isready = false;
             GameManager.instance.player2.GetComponent<Player>().Isready = false;
-            GameManager.instance.state = States.Spawn;
+            GameManager.instance.State = States.Spawn;
 
             int[] choicesP1 = new int[GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count];
             for (int i = 0; i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count; i++)
@@ -407,7 +436,7 @@ public class Player : NetworkBehaviour
                 }
             }
 
-            GameManager.instance.state = States.Spawn;
+            GameManager.instance.State = States.Spawn;
             GameManager.instance.player1.GetComponent<Player>().RpcStartSpawn(choicesP2);
             GameManager.instance.player2.GetComponent<Player>().RpcStartSpawn(choicesP1);
         }
@@ -430,7 +459,7 @@ public class Player : NetworkBehaviour
     {
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
-        GameManager.instance.state = States.Spawn;
+        GameManager.instance.State = States.Spawn;
         displaySpawn();
     }
 
@@ -737,9 +766,9 @@ public class Player : NetworkBehaviour
         rayselector.Pattern = SkillArea.NONE;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
-        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        GameManager.instance.playingPlaceable.ResetTargets();
         playingPlaceable.ResetAreaOfMovement();
-        playingPlaceable.ResetAreaOfTarget();
+        playingPlaceable.ResetTargets();
         if (skill.SkillType==SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
             List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
@@ -791,10 +820,20 @@ public class Player : NetworkBehaviour
                 (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
             GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-            //Trigger effect the ones after the others
+            //Trigger effect the ones after the others, does not interrupt path
             foreach (Vector3 current in path)
             {
-                //Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalk()
+                foreach(Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+                {
+                  
+                        //makes the deep copy, send it to effect manager and zoo
+                        Effect effectToConsider = effect.Clone();
+                        effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                    //Double dispatch
+                    GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
+
+                    
+                }
             }
             GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
             RpcMoveTo(path);
@@ -806,7 +845,20 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcMoveTo(Vector3[] path)
     {
+        foreach (Vector3 current in path)
+        {
+            foreach (Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+            {
 
+                //makes the deep copy, send it to effect manager and zoo
+                Effect effectToConsider = effect.Clone();
+                effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                //Double dispatch
+                GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
+
+
+            }
+        }
         //List<Vector3> bezierPath = new List<Vector3>(realPath);
         GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
         List<Vector3> bezierPath=new List<Vector3>(path);
@@ -1219,7 +1271,7 @@ public class Player : NetworkBehaviour
         Debug.Log("Netid is" + netidTarget + "and target is at" +target.GetPosition());
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable,numSkill);
         UseTargeted(skill);
-        GameManager.instance.playingPlaceable.ResetAreaOfTarget();
+        GameManager.instance.playingPlaceable.ResetTargets();
         skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
         if(GetComponentInChildren<RaycastSelector>()!=null)
         { 

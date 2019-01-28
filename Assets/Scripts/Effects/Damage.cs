@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Class representing damage
@@ -18,7 +16,10 @@ public class Damage : EffectOnLiving
     {
         damageValue = value;
     }
-
+    public Damage(float value, int numberOfturn, bool triggerAtEnd = false, bool hitOnDirectAttack = true) : base(numberOfturn, triggerAtEnd, hitOnDirectAttack)
+    {
+        damageValue = value;
+    }
     public Damage(Damage other) : base(other)
     {
         this.damageValue = other.damageValue;
@@ -35,7 +36,10 @@ public class Damage : EffectOnLiving
     {
         this.DamageValue = damageValue;
     }
-
+    public Damage(LivingPlaceable target, Placeable launcher, float damageValue, int numberOfTurns) : base(target, launcher, numberOfTurns)
+    {
+        this.DamageValue = damageValue;
+    }
 
     public float DamageValue
     {
@@ -61,8 +65,8 @@ public class Damage : EffectOnLiving
         Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
         animLauncher.SetTrigger("attack");
         Animator animTarget = Target.gameObject.GetComponent<Animator>();
-        
-        Debug.Log("Touché!" + damageValue );
+
+        Debug.Log("Touché!" + damageValue);
         Target.CurrentHP -= DamageValue;
         if (Target.CurrentHP <= 0)
         {
@@ -75,6 +79,6 @@ public class Damage : EffectOnLiving
         }
 
 
-        
+
     }
 }

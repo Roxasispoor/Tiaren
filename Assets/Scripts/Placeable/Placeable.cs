@@ -52,7 +52,7 @@ public abstract class Placeable: NetIdeable
 
 
    
-    public virtual bool IsLiving()
+    public override bool IsLiving()
     {
         return false;
     }
@@ -341,7 +341,7 @@ public abstract class Placeable: NetIdeable
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
-                EffectManager.instance.UseEffect(effect);
+                EffectManager.instance.DirectAttack(effect);
             }
             foreach(Transform obj in transform.Find("Inventory") )
             {
@@ -352,9 +352,8 @@ public abstract class Placeable: NetIdeable
         }
        
     }
-    public void Highlight()
+    public virtual void Highlight()
     {
-        if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
             GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
@@ -389,9 +388,8 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
         }
     }
-    public void UnHighlight()
+    public virtual void UnHighlight()
     {
-        if (IsLiving()) return;
 
         //Put back the default material
         foreach (Transform fils in transform.Find("Quads"))
@@ -399,7 +397,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.state!=States.Move  ||
+        if (GameManager.instance.State!=States.Move  ||
             !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
@@ -417,7 +415,7 @@ public abstract class Placeable: NetIdeable
 
     public void OnMouseOverWithLayer()
     {
-        if (GameManager.instance.state == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
+        if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
@@ -464,7 +462,7 @@ public abstract class Placeable: NetIdeable
                 isClicked = false;
             }
         }
-        else if (GameManager.instance.state == States.Move)
+        else if (GameManager.instance.State == States.Move)
         {
 
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
@@ -483,7 +481,7 @@ public abstract class Placeable: NetIdeable
                 }
             }
         }
-        else if (GameManager.instance.state == States.UseSkill)
+        else if (GameManager.instance.State == States.UseSkill)
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
@@ -515,6 +513,14 @@ public abstract class Placeable: NetIdeable
     {
 
         baseMaterial = GetComponent<Renderer>().material;
+    }
+
+    /// <summary>
+    /// To call when creating a Placeable to initialize needed values
+    /// </summary>
+    public virtual void Init()
+    {
+        
     }
 
     /// <summary>

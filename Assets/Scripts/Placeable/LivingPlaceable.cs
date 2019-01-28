@@ -13,44 +13,48 @@ public class LivingPlaceable : Placeable
     /// Used to save position, only actualized at this point
     /// </summary>
     [SerializeField]
+    private string className = "default";
+    [SerializeField]
     private Vector3 positionSave;
     [SerializeField]
     private string playerPosesser;
     [SerializeField]
-    private string className = "default";
+    private Attribute maxHP;
     [SerializeField]
-    private float maxHP;
+    private Attribute currentHP;
     [SerializeField]
-    private float currentHP;
+    private Attribute pmMax;
     [SerializeField]
-    private int pmMax;
+    private Attribute currentPM;
     [SerializeField]
-    private int currentPM;
+    private Attribute currentPA;
     [SerializeField]
-    private float currentPA;
+    private Attribute paMax;
     [SerializeField]
-    private float paMax;
+    private Attribute force;
     [SerializeField]
-    private int force = -99999;
+    private Attribute speed;
     [SerializeField]
-    private float speed;
+    private Attribute dexterity;
     [SerializeField]
-    private int dexterity = -77777;
+    private Attribute speedStack;
     [SerializeField]
-    private float speedStack;
+    private Attribute jump;
     [SerializeField]
-    private int jump;
+    private Attribute def;
     [SerializeField]
-    private int def = -88888;
+    private Attribute mdef;
     [SerializeField]
-    private int mdef = -66666;
+    private Attribute mstr;
     [SerializeField]
-    private int mstr = -555555;
-    private float deathLength;
+    private Attribute deathLength;
     [SerializeField]
     private List<Skill> skills;
     [SerializeField]
     private List<GameObject> weapons;
+    [SerializeField]
+    private SpriteRenderer circleTeam;
+    private String characterName;
     private Weapon equipedWeapon;
     [SerializeField]
     private bool isDead;
@@ -64,22 +68,27 @@ public class LivingPlaceable : Placeable
     private List<LivingPlaceable> targetableUnits;
     public Sprite characterSprite;
 
-    //Shaders (used for the highlight)
+    // Variable used for the highligh
+    private bool isTarget = false;
     private Renderer rend;
+    //Shaders (used for the highlight)
+
     [SerializeField]
     private Shader originalShader;
     private Shader outlineShader;
-    
+    private Color previousColor = Color.white;
+
     public float MaxHP
     {
         get
         {
-            return maxHP;
+
+            return maxHP.Value;
         }
 
         set
         {
-            maxHP = value;
+            maxHP.BaseValue = value;
         }
     }
 
@@ -87,14 +96,28 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return currentHP;
+            return currentHP.Value;
         }
 
         set
         {
-            currentHP = value;
+            currentHP.BaseValue = value;
         }
     }
+    /* public override Player Player
+     {
+         get
+         {
+             return base.Player;
+         }
+
+         set
+         {
+             base.Player = value;
+             if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
+
+         }
+     }*/
     public override Player Player
     {
         get
@@ -105,7 +128,7 @@ public class LivingPlaceable : Placeable
         set
         {
             base.Player = value;
-            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
             {
                 playerPosesser = "player1";
             }
@@ -120,12 +143,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return pmMax;
+            return (int)pmMax.Value;
         }
 
         set
         {
-            pmMax = value;
+            pmMax.BaseValue = value;
         }
     }
 
@@ -143,16 +166,16 @@ public class LivingPlaceable : Placeable
     }
 
 
-    public int Force
+    public float Force
     {
         get
         {
-            return force;
+            return force.Value;
         }
 
         set
         {
-            force = value;
+            force.BaseValue = value;
         }
     }
 
@@ -160,25 +183,25 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return speed;
+            return speed.Value;
         }
 
         set
         {
-            speed = value;
+            speed.BaseValue = value;
         }
     }
 
-    public int Dexterity
+    public float Dexterity
     {
         get
         {
-            return dexterity;
+            return dexterity.Value;
         }
 
         set
         {
-            dexterity = value;
+            dexterity.BaseValue = value;
         }
     }
 
@@ -186,12 +209,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return speedStack;
+            return speedStack.Value;
         }
 
         set
         {
-            speedStack = value;
+            speedStack.BaseValue = value;
         }
     }
 
@@ -225,12 +248,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return currentPM;
+            return (int)currentPM.Value;
         }
 
         set
         {
-            currentPM = value;
+            currentPM.BaseValue = value;
         }
     }
 
@@ -299,29 +322,29 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public float CurrentPA
+    public int CurrentPA
     {
         get
         {
-            return currentPA;
+            return (int)currentPA.Value;
         }
 
         set
         {
-            currentPA = value;
+            currentPA.BaseValue = value;
         }
     }
 
-    public float PaMax
+    public int PaMax
     {
         get
         {
-            return paMax;
+            return (int)paMax.Value;
         }
 
         set
         {
-            paMax = value;
+            paMax.BaseValue = value;
         }
     }
 
@@ -329,12 +352,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return jump;
+            return (int)jump.Value;
         }
 
         set
         {
-            jump = value;
+            jump.BaseValue = value;
         }
     }
 
@@ -352,7 +375,6 @@ public class LivingPlaceable : Placeable
     }
 
 
-
     public List<LivingPlaceable> TargetableUnits
     {
         get
@@ -362,13 +384,20 @@ public class LivingPlaceable : Placeable
 
         set
         {
-            foreach (LivingPlaceable living in targetableUnits)
+            if (targetableUnits != null)
             {
-                living.UnHighlightForSkill();
+                foreach (LivingPlaceable living in targetableUnits)
+                {
+                    living.UnHighlightTarget();
+                }
             }
-            foreach (LivingPlaceable living in value)
+
+            if (value != null)
             {
-                living.HighlightForSkill();
+                foreach (LivingPlaceable living in value)
+                {
+                    living.HighlightForSkill();
+                }
             }
             targetableUnits = value;
         }
@@ -378,12 +407,12 @@ public class LivingPlaceable : Placeable
     {
         get
         {
-            return deathLength;
+            return deathLength.Value;
         }
 
         set
         {
-            deathLength = value;
+            deathLength.BaseValue = value;
         }
     }
 
@@ -400,7 +429,379 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public string Classname
+    public float Mstr
+    {
+        get
+        {
+            return mstr.Value;
+        }
+
+        set
+        {
+            mstr.BaseValue = value;
+        }
+    }
+
+    public float Mdef
+    {
+        get
+        {
+            return mdef.Value;
+        }
+
+        set
+        {
+            mdef.BaseValue = value;
+        }
+    }
+
+    public float Def
+    {
+        get
+        {
+            return def.Value;
+        }
+
+        set
+        {
+            def.BaseValue = value;
+        }
+    }
+    public float MaxHPFlat
+    {
+        get
+        {
+            return maxHP.FlatModif;
+        }
+
+        set
+        {
+            maxHP.FlatModif = value;
+        }
+    }
+
+    public float CurrentHPFlat
+    {
+        get
+        {
+            return currentHP.FlatModif;
+        }
+        set
+        {
+            currentHP.FlatModif = value;
+        }
+    }
+    public float MaxPMFlat
+    {
+        get
+        {
+            return pmMax.FlatModif;
+        }
+        set
+        {
+            pmMax.FlatModif = value;
+        }
+    }
+    public float CurrentPMFlat
+    {
+        get
+        {
+            return currentPM.FlatModif;
+        }
+        set
+        {
+            currentPM.FlatModif = value;
+        }
+    }
+    public float CurrentPAFlat
+    {
+        get
+        {
+            return currentPA.FlatModif;
+        }
+        set
+        {
+            currentPA.FlatModif = value;
+        }
+    }
+    public float MaxPAFlat
+    {
+        get
+        {
+            return paMax.FlatModif;
+        }
+        set
+        {
+            paMax.FlatModif = value;
+        }
+    }
+    public float ForceFlat
+    {
+        get
+        {
+            return force.FlatModif;
+        }
+        set
+        {
+            force.FlatModif = value;
+        }
+    }
+    public float SpeedFlat
+    {
+        get
+        {
+            return speed.FlatModif;
+        }
+        set
+        {
+            speed.FlatModif = value;
+        }
+    }
+    public float DexterityFlat
+    {
+        get
+        {
+            return dexterity.FlatModif;
+        }
+        set
+        {
+            dexterity.FlatModif = value;
+        }
+    }
+    public float SpeedStackFlat
+    {
+        get
+        {
+            return speedStack.FlatModif;
+        }
+        set
+        {
+            speedStack.FlatModif = value;
+        }
+    }
+    public float JumpFlat
+    {
+        get
+        {
+            return jump.FlatModif;
+        }
+        set
+        {
+            jump.FlatModif = value;
+        }
+    }
+    public float DefFlat
+    {
+        get
+        {
+            return def.FlatModif;
+        }
+        set
+        {
+            def.FlatModif = value;
+        }
+    }
+    public float MDefFlat
+    {
+        get
+        {
+            return mdef.FlatModif;
+        }
+        set
+        {
+            mdef.FlatModif = value;
+        }
+    }
+    public float MStrFlat
+    {
+        get
+        {
+            return mstr.FlatModif;
+        }
+        set
+        {
+            mstr.FlatModif = value;
+        }
+    }
+    public float DeathLengthFlat
+    {
+        get
+        {
+            return deathLength.FlatModif;
+        }
+        set
+        {
+            deathLength.FlatModif = value;
+        }
+    }
+
+    public float MaxHPPercent
+    {
+        get
+        {
+            return maxHP.PercentModif;
+        }
+        set
+        {
+            maxHP.PercentModif = value;
+        }
+    }
+    public float CurrentHPPercent
+    {
+        get
+        {
+            return currentHP.PercentModif;
+        }
+        set
+        {
+            currentHP.PercentModif = value;
+        }
+    }
+    public float MaxPMPercent
+    {
+        get
+        {
+            return pmMax.PercentModif;
+        }
+        set
+        {
+            pmMax.PercentModif = value;
+        }
+    }
+    public float CurrentPMPercent
+    {
+        get
+        {
+            return currentPM.PercentModif;
+        }
+        set
+        {
+            currentPM.PercentModif = value;
+        }
+    }
+    public float CurrentPAPercent
+    {
+        get
+        {
+            return currentPA.PercentModif;
+        }
+        set
+        {
+            currentPA.PercentModif = value;
+        }
+    }
+    public float MaxPAPercent
+    {
+        get
+        {
+            return paMax.PercentModif;
+        }
+        set
+        {
+            paMax.PercentModif = value;
+        }
+    }
+    public float ForcePercent
+    {
+        get
+        {
+            return force.PercentModif;
+        }
+        set
+        {
+            force.PercentModif = value;
+        }
+    }
+    public float SpeedPercent
+    {
+        get
+        {
+            return speed.PercentModif;
+        }
+        set
+        {
+            speed.PercentModif = value;
+        }
+    }
+    public float DexterityPercent
+    {
+        get
+        {
+            return dexterity.PercentModif;
+        }
+        set
+        {
+            dexterity.PercentModif = value;
+        }
+    }
+    public float SpeedStackPercent
+    {
+        get
+        {
+            return speedStack.PercentModif;
+        }
+        set
+        {
+            speedStack.PercentModif = value;
+        }
+    }
+    public float JumpPercent
+    {
+        get
+        {
+            return jump.PercentModif;
+        }
+        set
+        {
+            jump.PercentModif = value;
+        }
+    }
+    public float DefPercent
+    {
+        get
+        {
+            return def.PercentModif;
+        }
+        set
+        {
+            def.PercentModif = value;
+        }
+    }
+    public float MDefPercent
+    {
+        get
+        {
+            return mdef.PercentModif;
+        }
+        set
+        {
+            mdef.PercentModif = value;
+        }
+    }
+    public float MStrPercent
+    {
+        get
+        {
+            return mstr.PercentModif;
+        }
+        set
+        {
+            mstr.PercentModif = value;
+        }
+    }
+    public float DeathLengthPercent
+    {
+        get
+        {
+            return deathLength.PercentModif;
+        }
+        set
+        {
+            deathLength.PercentModif = value;
+        }
+    }
+
+    public string ClassName
     {
         get
         {
@@ -413,105 +814,10 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public int Mstr
-    {
-        get
-        {
-            return mstr;
-        }
-
-        set
-        {
-            mstr = value;
-        }
-    }
-
-    public int Mdef
-    {
-        get
-        {
-            return mdef;
-        }
-
-        set
-        {
-            mdef = value;
-        }
-    }
-
-    public int Def
-    {
-        get
-        {
-            return def;
-        }
-
-        set
-        {
-            def = value;
-        }
-    }
-
-
-
-    /// <summary>
-    /// Create the effect damage and all effects of weapon to the gameEffectManager, then launch resolution
-    /// doesn't check if target can me touched, just read. Add bonus for height. Pick the point that hurts most
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="gameEffectManager"></param>
-    public Vector3 ShootDamage(Placeable target)
-    {
-        float nbDmgs;
-
-        if (EquipedWeapon.ScalesOnForce)
-        {
-
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * force;
-        }
-        else
-        {
-            nbDmgs = EquipedWeapon.BaseDamage + EquipedWeapon.StatMultiplier * dexterity;
-
-        }
-        float maxDamage = 0;
-        HitablePoint maxHit = null;
-        float nbDamagea;
-        foreach (HitablePoint hitPoint in CanHit(target))
-        {
-
-            Vector3 shotaPos = this.transform.position + shootPosition;
-            Vector3 ciblaPos = target.transform.position + hitPoint.RelativePosition;
-            float sinFactor = (shotaPos.y - ciblaPos.y) /
-                (shotaPos - ciblaPos).magnitude;
-
-            Vector3 vect1 = this.transform.forward;
-            Vector3 vect2 = (ciblaPos - shotaPos);
-            vect1.y = 0;
-            vect2.y = 0;
-            vect1.Normalize();
-            vect2.Normalize();
-
-            float sinDirection = Vector3.Cross(vect1, vect2).magnitude;
-            nbDamagea = nbDmgs; //* (1 + sinFactor * sinMultiplier - sinDirection * sinMultiplier2);
-            if (nbDamagea > maxDamage)
-            {
-                maxDamage = nbDamagea;
-                maxHit = hitPoint;
-            }
-
-        }
-
-        //TODO use gameEffectManager
-        return target.transform.position + maxHit.RelativePosition;
-    }
-
-
-    
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
-       return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
-               .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+        return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
+                .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
     }
 
 
@@ -581,10 +887,9 @@ public class LivingPlaceable : Placeable
         return true;
     }
 
-    // Use this for initialization
-    void Awake()
+    // Use this for initialization //TO KEEP AS IS
+    private void Awake()
     {
-        /*
         shouldBatch = false;
         this.className = "default";
         this.Walkable = false;
@@ -602,7 +907,7 @@ public class LivingPlaceable : Placeable
         };
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
-        this.maxHP = 100;
+        this.MaxHP = 100;
         this.CurrentHP = 100;
         this.MaxPM = 3;
         this.CurrentPM = 3;
@@ -626,13 +931,18 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects4 = new List<Effect>();
         List<Effect> ListEffects5 = new List<Effect>();
         List<Effect> ListEffects6 = new List<Effect>();
+        List<Effect> ListEffects7 = new List<Effect>();
+        List<Effect> ListEffects8 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects4.Add(new Damage(50f));
+        ListEffects4.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
+        ListEffects7.Add(new Damage(30, 2, true, false));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillArea.CROSS);
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "CreateBlock",0,5);
@@ -640,13 +950,17 @@ public class LivingPlaceable : Placeable
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
         Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
         Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
+        Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
+        Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "", 0, 2);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + className);
+        Skills.Add(skill7);
+        Skills.Add(skill8);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
 
@@ -657,9 +971,23 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        */
+
+        rend = GetComponentInChildren<Renderer>();
+        originalShader = Shader.Find("Standard");
+        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
+        this.circleTeam.color = Player.color;
+    }
+
+    public void Init(int classNumber)
+    {/*
+        base.Init();
         shouldBatch = false;
-        this.Classname = "default";
+        this.className = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -700,18 +1028,17 @@ public class LivingPlaceable : Placeable
         rend = GetComponentInChildren<Renderer>();
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-        rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
-        rend.material.SetFloat("_Outline", 0.03f);
-        
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
+        ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
+        Debug.Log(className + ".json");
+        LoadFromjson(ClassName + ".json");
+        this.circleTeam.color = Player.color;
+        targetableUnits = new List<LivingPlaceable>();*/
     }
-
-    public void InitCharacter(int classNumber)
-    {
-        className = GameManager.instance.PossibleCharacters[classNumber].className;
-        Debug.Log(Classname + ".json");
-        LoadFromjson(className + ".json");
-    }
-    
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -722,14 +1049,15 @@ public class LivingPlaceable : Placeable
 
         if (this.Destroyable)
         {
-            foreach (var effect in this.OnDestroyEffects)
+            foreach (Effect effect in this.OnDestroyEffects)
             {
-                EffectManager.instance.UseEffect(effect);
+                EffectManager.instance.DirectAttack(effect);
             }
             foreach (Transform obj in transform.Find("Inventory"))
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
+            AttachedEffects.Clear();
         }
         if (GameManager.instance.playingPlaceable == this)
         {
@@ -740,48 +1068,73 @@ public class LivingPlaceable : Placeable
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
     }
-    
-    public void HighlightForSpawn()
+
+   /* public void HighlightForSpawn()
     {
         rend.material.shader = outlineShader;
-        rend.material.SetColor("_OutlineColor" ,Color.green);
+        rend.material.SetColor("_OutlineColor", Color.green);
+    }*/
+    private void ActivateOutline(Color color)
+    {
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_OutlineColor", color);
     }
 
-    public void UnHighlightForSpawn()
+    private void DesactivateOutline()
     {
         rend.material.shader = originalShader;
+    }
+
+    public override void Highlight()
+    {
+        ActivateOutline(Color.white);
+    }
+
+    public override void UnHighlight()
+    {
+        if (isTarget)
+        {
+            ActivateOutline(previousColor);
+        }
+        else
+        {
+            DesactivateOutline();
+        }
+    }
+
+    public void UnHighlightTarget()
+    {
+        DesactivateOutline();
+    }
+
+    public void HighlightForSpawn()
+    {
+        ActivateOutline(Color.green);
+        previousColor = Color.green;
+        isTarget = true;
     }
 
     public void HighlightForSkill()
     {
-        if (rend != null && rend.material != null)
-        {
-            rend.material.shader = outlineShader;
-        }
-    }
-
-    public void UnHighlightForSkill()
-    {
-        if(rend !=null && rend.material!=null)
-        { 
-        rend.material.shader = originalShader;
-        }
+        ActivateOutline(Color.red);
+        previousColor = Color.red;
+        isTarget = true;
     }
 
     public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
     {
-       
+
         foreach (NodePath node in AreaOfMouvement)
         {
-            if(Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial==null) //if we haven't seen this one before
-            { 
-            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
+            {
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
+                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
             }
         }
         GameManager.instance.ResetAllBatches();
-        
+
     }
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
@@ -797,43 +1150,43 @@ public class LivingPlaceable : Placeable
             GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
 
-                quadUp.SetActive(true);
+            quadUp.SetActive(true);
 
-                quadRight.SetActive(true);
-                quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, heightSize+0.01f, 1);
-                quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0.5f-heightSize/2+0.01f, quadRight.transform.localPosition.z);
+            quadRight.SetActive(true);
+            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, heightSize + 0.01f, 1);
+            quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadRight.transform.localPosition.z);
 
-                quadLeft.SetActive(true);
-                quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, heightSize + 0.01f, 1);
-                quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadLeft.transform.localPosition.z);
+            quadLeft.SetActive(true);
+            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, heightSize + 0.01f, 1);
+            quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadLeft.transform.localPosition.z);
 
-                quadFront.SetActive(true);
-                quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, heightSize + 0.01f, 1);
-                quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadFront.transform.localPosition.z);
+            quadFront.SetActive(true);
+            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, heightSize + 0.01f, 1);
+            quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadFront.transform.localPosition.z);
 
-                quadBack.SetActive(true);
-                quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, heightSize + 0.01f, 1);
-                quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadBack.transform.localPosition.z);
-                
-                
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-                //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
-            }
+            quadBack.SetActive(true);
+            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, heightSize + 0.01f, 1);
+            quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadBack.transform.localPosition.z);
+
+
+            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+            // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
+            //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
         }
-        
+    }
+
 
     public void ResetAreaOfMovementBatch()
     {
         foreach (NodePath node in AreaOfMouvement)
         {
 
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z]!=null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial!=null)//if we haven't already reset this one
-            { 
-            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
-                    Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
-            Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
+            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial != null)//if we haven't already reset this one
+            {
+                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
+                        Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
+                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
             }
         }
         AreaOfMouvement.Clear();
@@ -845,21 +1198,21 @@ public class LivingPlaceable : Placeable
         {
             if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
             {
-            GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
-            GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
-            GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
-            GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
-            GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
+                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
+                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
+                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
+                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
+                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
 
-            quadUp.SetActive(false);
+                quadUp.SetActive(false);
                 quadRight.SetActive(false);
-                    quadLeft.SetActive(false);
-              
+                quadLeft.SetActive(false);
+
                 quadFront.SetActive(false);
-              
+
                 quadBack.SetActive(false);
-                
-                
+
+
             }
 
         }
@@ -890,24 +1243,29 @@ public class LivingPlaceable : Placeable
 
     }
 
-    public void ResetAreaOfTarget()
+    /// <summary>
+    /// Reset the targets, both cube and livingPlaceable
+    /// </summary>
+    public void ResetTargets()
     {
         foreach (Placeable plac in targetArea)
         {
             if (Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
             {
-               
-                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].GetComponent<MeshRenderer>().material = 
+
+                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].GetComponent<MeshRenderer>().material =
                     Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial;
                 Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial = null;
             }
         }
-        if(targetArea.Count>0)
+        if (targetArea.Count > 0)
         {
             GameManager.instance.RefreshBatch(targetArea[0]);
         }
         targetArea.Clear();
-      
+
+        TargetableUnits = null;
+
     }
 
     public void Save(string path = "Living.json")
@@ -918,33 +1276,33 @@ public class LivingPlaceable : Placeable
         string text = JsonUtility.ToJson(stats);
         foreach (Skill skill in Skills)
         {
-            text+=skill.Save();
+            text += skill.Save();
         }
         File.WriteAllText(path, text);
     }
 
     public static Stream GenerateStreamFromString(string s)
     {
-        var stream = new MemoryStream();
-        var writer = new StreamWriter(stream);
+        MemoryStream stream = new MemoryStream();
+        StreamWriter writer = new StreamWriter(stream);
         writer.Write(s);
         writer.Flush();
         stream.Position = 0;
         return stream;
     }
-    
+
     public void LoadFromString(string file)
     {
         FillLiving(new StreamReader(GenerateStreamFromString(file)));
     }
     public void LoadFromjson(string path)
-    {        
+    {
         StreamReader reader = new StreamReader(path);
         FillLiving(reader);
     }
     public void FillLiving(StreamReader reader)
     {
-       
+
         string line;
         //Read the text from directly from the test.txt file
 
@@ -954,66 +1312,63 @@ public class LivingPlaceable : Placeable
         if ((line = reader.ReadLine()) == null)
         {
             Debug.Log("Empty file while reading living form file!");
-            return ;
+            return;
         }
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
-        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + className);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
         bool isNewSkill = true;
         Skill newSkill = null;
-        
+
         while ((line = reader.ReadLine()) != null)
         {
-            if(isNewSkill)
+            if (isNewSkill)
             {
-                
+
                 newSkill = JsonUtility.FromJson<Skill>(line);
                 newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 isNewSkill = false;
-                
+
             }
             else
             {
-                string typename=line.Substring(0, line.IndexOf("{"));
-                foreach(Type type in possible)
+                string typename = line.Substring(0, line.IndexOf("{"));
+                foreach (Type type in possible)
                 {
-                    if(type.ToString()==typename)
+                    if (type.ToString() == typename)
                     {
                         // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
                         //MethodInfo generic = method.MakeGenericMethod(type);
                         //object[] objectArray = new[] { line};
                         string a = line.Substring(line.IndexOf("{"));
-                        
+
                         if (line[line.Length - 1] == ';')
                         {
                             a = a.Remove(a.Length - 1);
                             isNewSkill = true;
                         }
                         Debug.Log(a);
-                        Effect eff=(Effect)JsonUtility.FromJson(a, type);
+                        Effect eff = (Effect)JsonUtility.FromJson(a, type);
                         eff.Initialize();
                         newSkill.effects.Add(eff);
-                        if(isNewSkill)
+                        if (isNewSkill)
                         {
-                            if(skills==null)
+                            if (skills == null)
                             {
                                 skills = new List<Skill>();
                             }
                             skills.Add(newSkill);
                         }
-                      
+
                     }
                 }
-               
+
 
             }
-          
+
         }
         reader.Close();
 
     }
-    
-    
-
 }

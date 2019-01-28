@@ -21,7 +21,7 @@ public class StatDisplayer : MonoBehaviour {
     public void Activate(LivingPlaceable character)
     {
         gameObject.SetActive(true);
-        className.text = "Name : " + character.Classname;
+        className.text = "Name : " + character.ClassName;
         player.text = "Player : xXDarkSasukeXx";
         team.text = "Team : " + character.Player.name;
         hp.text = "HP : " + character.CurrentHP;
