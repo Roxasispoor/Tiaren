@@ -18,28 +18,65 @@ public class AnimationHandler : MonoBehaviour
         }
     }
 
+    // this coroutine allows to check if turn passes and thus finishes what has to be finished at this time
+    public IEnumerator CheckInterruptions(float time)
+    {
+        Placeable tmpPlaceable = GameManager.instance.PlayingPlaceable;
+        for (float i = 0; i < time; i = i + 0.1f)
+        {
+            if (tmpPlaceable == GameManager.instance.PlayingPlaceable) // TODO case if pa > 1, check selection of skill and break wait
+                yield return new WaitForSeconds(0.1f);
+            else
+            {
+                break;
+            }
+        }
+    }
+
     public IEnumerator WaitAndCreateBlock(GameObject go, Vector3Int position, float time)
     {
-        yield return new WaitForSeconds(time);
+        yield return StartCoroutine("CheckInterruptions", time);
         Grid.instance.InstantiateCube(go, position);
     }
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
     {
-        yield return new WaitForSeconds(time);
+        Vector3 pos = go.transform.position;
+        yield return StartCoroutine("CheckInterruptions", time);
+        
+        if (GameManager.instance.isClient)
+        {
+            GameManager.instance.RemoveBlockFromBatch(go);
+        }
+        
         go.Destroy();
+        
+        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
     }
 
     public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time)
     {
-        yield return new WaitForSeconds(time/2);
+        yield return StartCoroutine("CheckInterruptions", time/2);
         GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed);
+        // TODO : check if startmovealongbezier cannot cause bug (rebatch)
 
     }
 
-    public IEnumerator WaitAndDamageIsDone()
+
+    public IEnumerator WaitAndGetHurt(LivingPlaceable target, Animator animator, float time)
     {
-        yield return null;
+        yield return StartCoroutine("CheckInterruptions", time);
+        animator.Play("hurt");
+
+        if (target.CurrentHP <= 0)
+        {
+            yield return StartCoroutine("CheckInterruptions", animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+            animator.Play("die");
+            yield return StartCoroutine("CheckInterruptions", animator.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+            target.Destroy();
+        }
     }
+
+   
 
 }
