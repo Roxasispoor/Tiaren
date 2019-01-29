@@ -534,12 +534,13 @@ public class Grid : MonoBehaviour
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-          if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
+            if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
             {
                 Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
             }
 
-        } else
+        }
+        else
         {
             Debug.LogError("MoveBlock error: To define");
         }
@@ -1260,6 +1261,56 @@ public class Grid : MonoBehaviour
         {
             if (Pos.y==sizeY-1 || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
                 targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> DestroyBlockPattern(List<Vector3Int> Blocklist)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> CreateBlockPattern(List<Vector3Int> Blocklist)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            Placeable block = gridMatrix[Pos.x, Pos.y, Pos.z];
+            if (block.GetType()==typeof(Goal) || block.GetType()==typeof(Spawn))
+                targetableblock.Remove(Pos);
+        }
+        return targetableblock;
+    }
+
+    public List<Vector3Int> PushPattern(List<Vector3Int> Blocklist, Vector3 playerposition)
+    {
+        List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
+        foreach (Vector3Int Pos in Blocklist)
+        {
+            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Movable)
+                targetableblock.Remove(Pos);
+            else
+            {
+                if (Math.Abs((int)playerposition.x - Pos.x) - Math.Abs((int)playerposition.z - Pos.z) > 0)
+                {
+                    int direction = (Pos.x - (int)playerposition.x) / Math.Abs((int)playerposition.x - Pos.x);
+                    if (Pos.x + direction < 0 || Pos.x +direction >= sizeX || gridMatrix[Pos.x+direction, Pos.y, Pos.z]!=null)
+                        targetableblock.Remove(Pos);
+                }
+                else
+                {
+                    int direction = (Pos.z - (int)playerposition.z) / Math.Abs((int)playerposition.z - Pos.z);
+                    if (Pos.z + direction < 0 || Pos.z + direction >= sizeZ || gridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
+                        targetableblock.Remove(Pos);
+                }
+            }
+            
         }
         return targetableblock;
     }

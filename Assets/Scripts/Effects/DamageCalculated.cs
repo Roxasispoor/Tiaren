@@ -95,6 +95,7 @@ public class DamageCalculated : EffectOnLiving {
 
         return totalDmg;
     }
+
     override
         public void Use()
     {
@@ -103,8 +104,6 @@ public class DamageCalculated : EffectOnLiving {
         {
             float totalDmg = CalculateDamage();
             EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
-
-
         }
         else
         {

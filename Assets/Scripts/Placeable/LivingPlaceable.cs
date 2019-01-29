@@ -1,5 +1,4 @@
-﻿using System;
-
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -32,7 +31,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Attribute paMax;
     [SerializeField]
-    private Attribute force ;
+    private Attribute force;
     [SerializeField]
     private Attribute speed;
     [SerializeField]
@@ -42,9 +41,9 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Attribute jump;
     [SerializeField]
-    private Attribute def ;
+    private Attribute def;
     [SerializeField]
-    private Attribute mdef ;
+    private Attribute mdef;
     [SerializeField]
     private Attribute mstr;
     [SerializeField]
@@ -72,7 +71,7 @@ public class LivingPlaceable : Placeable
     // Variable used for the highligh
     private bool isTarget = false;
     private Renderer rend;
-     //Shaders (used for the highlight)
+    //Shaders (used for the highlight)
 
     [SerializeField]
     private Shader originalShader;
@@ -105,20 +104,20 @@ public class LivingPlaceable : Placeable
             currentHP.BaseValue = value;
         }
     }
-   /* public override Player Player
-    {
-        get
-        {
-            return base.Player;
-        }
+    /* public override Player Player
+     {
+         get
+         {
+             return base.Player;
+         }
 
-        set
-        {
-            base.Player = value;
-            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
-            
-        }
-    }*/
+         set
+         {
+             base.Player = value;
+             if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
+
+         }
+     }*/
     public override Player Player
     {
         get
@@ -129,7 +128,7 @@ public class LivingPlaceable : Placeable
         set
         {
             base.Player = value;
-            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
             {
                 playerPosesser = "player1";
             }
@@ -375,7 +374,7 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    
+
     public List<LivingPlaceable> TargetableUnits
     {
         get
@@ -481,17 +480,17 @@ public class LivingPlaceable : Placeable
             def.BaseValue = value;
         }
     }
-    
+
     public float MaxHPFlat
     {
         get
         {
-           return maxHP.FlatModif;
+            return maxHP.FlatModif;
         }
-        
+
         set
         {
-            maxHP.FlatModif=value;
+            maxHP.FlatModif = value;
         }
     }
     public float CurrentHPFlat
@@ -820,7 +819,7 @@ public class LivingPlaceable : Placeable
             deathLength.PercentModif = value;
         }
     }
-    
+
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
         return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
@@ -946,8 +945,8 @@ public class LivingPlaceable : Placeable
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects4.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
-        ListEffects7.Add(new Damage(30, 2, true, false));
+        ListEffects4.Add(new DamageCalculated(30,DamageCalculated.DamageScale.STR));
+        ListEffects7.Add(new Damage(30,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
@@ -955,18 +954,18 @@ public class LivingPlaceable : Placeable
         ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
         ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillEffect.MOVE,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2", 0, 5);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5, SkillEffect.CREATE);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3, SkillEffect.DESTROY);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
-        Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
-        Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
+        Skill skill5 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 4, SkillEffect.DESTROY, SkillArea.NONE, 2);
+        Skill skill6 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
         Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
-        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
+        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
@@ -1029,7 +1028,7 @@ public class LivingPlaceable : Placeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-            foreach(Effect effect in AttachedEffects)
+            foreach (Effect effect in AttachedEffects)
             {
                 effect.TurnActiveEffect = 1;
                 EffectManager.instance.DirectAttack(effect);
@@ -1042,11 +1041,11 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
     }
 
-   /* public void HighlightForSpawn()
-    {
-        rend.material.shader = outlineShader;
-        rend.material.SetColor("_OutlineColor", Color.green);
-    }*/
+    /* public void HighlightForSpawn()
+     {
+         rend.material.shader = outlineShader;
+         rend.material.SetColor("_OutlineColor", Color.green);
+     }*/
     private void ActivateOutline(Color color)
     {
         rend.material.shader = outlineShader;
@@ -1342,7 +1341,4 @@ public class LivingPlaceable : Placeable
         reader.Close();
 
     }
-
-
-
 }
