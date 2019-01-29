@@ -5,8 +5,11 @@ using UnityEngine;
 public class DamageCalculated : EffectOnLiving {
   
     public enum DamageScale {STR,DEXT,MAG}
+    [SerializeField]
     private float power;
+    [SerializeField]
     private DamageScale scaleOn;
+    [SerializeField]
     private float sinFactor = 0.3f;
 
     public DamageCalculated()
@@ -71,6 +74,7 @@ public class DamageCalculated : EffectOnLiving {
     {
         return new DamageCalculated(this);
     }
+
     public float CalculateDamage()
     {
         float totalDmg = 0;

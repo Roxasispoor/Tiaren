@@ -29,6 +29,8 @@ public class Skill
     public delegate bool DelegateCondition();
     [SerializeField]
     public DelegateCondition condition;
+    [SerializeField]
+    private string description = "Ca tue";
     private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
@@ -179,6 +181,19 @@ public class Skill
         }
     }
 
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+
+        set
+        {
+            description = value;
+        }
+    }
+
     public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
@@ -264,9 +279,9 @@ public class Skill
             text+=eff.Save();
             
         }
-        text += ";";
+        text = text.Remove(text.Length - 1) + ";";
         return text;
- //       File.WriteAllText(path, text);
+        //File.WriteAllText(path, text);
     }
 
     

@@ -879,6 +879,8 @@ public class LivingPlaceable : Placeable
     private void Awake()
     {
         /*
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+
         shouldBatch = false;
         this.className = "default";
         this.Walkable = false;
@@ -932,8 +934,8 @@ public class LivingPlaceable : Placeable
         ListEffects7.Add(new Damage(30,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
         ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
         ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
@@ -970,21 +972,12 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-
-        rend = GetComponentInChildren<Renderer>();
-        originalShader = Shader.Find("Standard");
-        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-        rend.material.shader = outlineShader;
-        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
-        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
-        rend.material.SetFloat("_Outline", 0.02f);
-        rend.material.shader = originalShader;
-        this.circleTeam.color = Player.color;
         */
     }
 
     public void Init(int classNumber)
     {
+        
         base.Init();
         shouldBatch = false;
         this.className = "default";
@@ -1038,7 +1031,9 @@ public class LivingPlaceable : Placeable
         LoadFromjson(ClassName + ".json");
         circleTeam.color = Player.color;
         targetableUnits = new List<LivingPlaceable>();
+        
     }
+
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -1234,8 +1229,6 @@ public class LivingPlaceable : Placeable
 
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
-
-
         foreach (Placeable placeable in TargetArea)
         {
             if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
@@ -1248,7 +1241,6 @@ public class LivingPlaceable : Placeable
             }
         }
         GameManager.instance.ResetAllBatches();
-
     }
 
     /// <summary>
@@ -1342,33 +1334,72 @@ public class LivingPlaceable : Placeable
             else
             {
                 string typename = line.Substring(0, line.IndexOf("{"));
-                foreach (Type type in possible)
+
+                if (typename.StartsWith("ParameterChangeV2"))
                 {
-                    if (type.ToString() == typename)
+                    string T = line.Substring(line.IndexOf("[") + 1, line.IndexOf(",") - line.IndexOf("[") - 1);
+                    string TProperty = line.Substring(line.IndexOf(",") + 1, line.IndexOf("]") - line.IndexOf(",") - 1);
+                    string a = line.Substring(line.IndexOf("{"));
+
+                    if (line[line.Length - 1] == ';')
                     {
-                        // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
-                        //MethodInfo generic = method.MakeGenericMethod(type);
-                        //object[] objectArray = new[] { line};
-                        string a = line.Substring(line.IndexOf("{"));
-
-                        if (line[line.Length - 1] == ';')
+                        a = a.Remove(a.Length - 1);
+                        isNewSkill = true;
+                    }
+                    Debug.Log(a);
+                    Effect eff = null;
+                    if (T == "LivingPlaceable")
+                    {
+                        if (TProperty == "System.Single")
                         {
-                            a = a.Remove(a.Length - 1);
-                            isNewSkill = true;
+                            eff = (Effect)JsonUtility.FromJson<ParameterChangeV2<LivingPlaceable, float>>(a);
                         }
-                        Debug.Log(a);
-                        Effect eff = (Effect)JsonUtility.FromJson(a, type);
-                        eff.Initialize();
-                        newSkill.effects.Add(eff);
-                        if (isNewSkill)
+                    }
+                    if (eff == null)
+                    {
+                        Debug.LogError("no parameterChange with those types");
+                    }
+                    eff.Initialize();
+                    newSkill.effects.Add(eff);
+                    if (isNewSkill)
+                    {
+                        if (skills == null)
                         {
-                            if (skills == null)
+                            skills = new List<Skill>();
+                        }
+                        skills.Add(newSkill);
+                    }
+                }
+                else
+                {
+                    foreach (Type type in possible)
+                    {
+                        if (type.ToString() == typename)
+                        {
+                            // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
+                            //MethodInfo generic = method.MakeGenericMethod(type);
+                            //object[] objectArray = new[] { line};
+                            string a = line.Substring(line.IndexOf("{"));
+
+                            if (line[line.Length - 1] == ';')
                             {
-                                skills = new List<Skill>();
+                                a = a.Remove(a.Length - 1);
+                                isNewSkill = true;
                             }
-                            skills.Add(newSkill);
-                        }
+                            Debug.Log(a);
+                            Effect eff = (Effect)JsonUtility.FromJson(a, type);
+                            eff.Initialize();
+                            newSkill.effects.Add(eff);
+                            if (isNewSkill)
+                            {
+                                if (skills == null)
+                                {
+                                    skills = new List<Skill>();
+                                }
+                                skills.Add(newSkill);
+                            }
 
+                        }
                     }
                 }
 
