@@ -33,6 +33,7 @@ public class Skill
     [SerializeField]
     private SkillType skillType;
     private SkillArea skillarea;
+    private SkillEffect skilleffect;
 
 
     public SkillType SkillType
@@ -58,6 +59,19 @@ public class Skill
         set
         {
             skillarea = value;
+        }
+    }
+
+    public SkillEffect SkillEffect
+    {
+        get
+        {
+            return skilleffect;
+        }
+
+        set
+        {
+            skilleffect = value;
         }
     }
 
@@ -164,8 +178,8 @@ public class Skill
             abilitySprite = value;
         }
     }
-    
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
+
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
         Cooldown = cooldown;
@@ -178,6 +192,7 @@ public class Skill
         this.minRange = rangeMin;
         EffectArea = effectarea;
         SkillArea = skillarea;
+        SkillEffect = skilleffect;
     }
 
     public Skill(string jsonFilePath)
@@ -191,7 +206,28 @@ public class Skill
         GameManager.instance.activeSkill = this;
         GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
     }
-
+    public bool UseTargeted(Skill skill)
+    {
+        if (this.tourCooldownLeft > 0)
+        {
+            return false;
+        }
+        if (condition != null && !condition.Invoke())
+        {
+            return false;
+        }
+        this.tourCooldownLeft = this.cooldown;
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            foreach (Effect eff in skill.effects)
+            {
+                Effect effectToConsider = eff.Clone();
+                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Use();
+            }
+        }
+        return true;
+    }
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {

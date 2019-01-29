@@ -13,7 +13,6 @@ public struct Attribute
     {
         get
         {
-            
             return (BaseValue + flatModif) * (1 + percentModif);
         }
     }

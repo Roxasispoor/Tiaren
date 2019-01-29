@@ -323,8 +323,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private IEnumerator Start()
     {
-        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
-        transmitter.networkManager = networkManager;
+
+
+        //PHASE 0 : SET THE GAME UP
+
+        //If you want to create one and save it
+        
         state = States.TeamSelect;
         while (player1 == null)
         {
@@ -334,6 +338,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
+
+        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        transmitter.networkManager = networkManager;
 
         Grid.instance.Gravity();
         Debug.Log("Right before select");
@@ -587,7 +594,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void ResetAllBatches()
     {
 
-        if(Hovered != null)
+        if (Hovered != null)
         {
             Hovered.UnHighlight();
         }
@@ -621,14 +628,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void OnEndAnimationEffectEnd()
     {
 
-        if(playingPlaceable.Player.isLocalPlayer)
-        { 
-        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
+        if (playingPlaceable.Player.isLocalPlayer)
+        {
+            MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.State = States.Move;
         }
     }
     public void InitStartGame()
     {
+        // Flag hardcodé pour hill
+        /* 
         //Create a flag
         GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
         flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
@@ -644,7 +653,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ - 2] = GoalP2.GetComponent<Placeable>();
         GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
-        NetIdeable.currentMaxId++;
+        NetIdeable.currentMaxId++;*/
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -732,8 +741,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             // safePendingList.RemoveAt(i);
         }
 
-
-
         if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
@@ -741,6 +748,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
+            
+            if (playingPlaceable.IsDead)
+            {
+                playingPlaceable.IsDead = false;
+                playingPlaceable.Player.Respawn(playingPlaceable);
+            }
 
             if (playingPlaceable.IsDead)
             {
@@ -763,8 +776,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
             if (isClient && playingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
+                playingPlaceable.Player.cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
                 playingPlaceable.Player.cameraScript.Freecam = 0;
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
@@ -796,6 +811,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
                 playingPlaceable.Player.cameraScript.Freecam = 1;
+                playingPlaceable.Player.cameraScript.SetTarget(TurnOrder[1].Character.transform);
                 //ResetAllBatches();
             }
             BeginningOfTurn();
