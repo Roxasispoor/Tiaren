@@ -796,19 +796,34 @@ public class Grid : MonoBehaviour
 
         foreach (Vector3Int coord in jagged.GetGoalsP1())
         {
-            GameObject Goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
-            Goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = Goal.GetComponent<Placeable>();
-            Goal.GetComponent<Placeable>().Player = GameManager.instance.player1.GetComponent<Player>();
+            GameObject goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = goal.GetComponent<Placeable>();
+            goal.GetComponent<Placeable>().Player = GameManager.instance.player1.GetComponent<Player>();
+            if (GameManager.instance.Player1 == GameManager.instance.GetLocalPlayer())
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            }
+            else
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            }
             NetIdeable.currentMaxId++;
         }
 
         foreach (Vector3Int coord in jagged.GetGoalsP2())
         {
-            GameObject Goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
-            Goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = Goal.GetComponent<Placeable>();
-            Goal.GetComponent<Placeable>().Player = GameManager.instance.player2.GetComponent<Player>();
+            GameObject goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = goal.GetComponent<Placeable>();
+            goal.GetComponent<Placeable>().Player = GameManager.instance.player2.GetComponent<Player>();
+            if (GameManager.instance.Player2 == GameManager.instance.GetLocalPlayer())
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            } else
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            }
             NetIdeable.currentMaxId++;
         }
 

@@ -1076,6 +1076,7 @@ public class LivingPlaceable : Placeable
 
     public void UnHighlightTarget()
     {
+        isTarget = false;
         DesactivateOutline();
     }
 
