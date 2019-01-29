@@ -535,6 +535,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void RefreshBatch(Placeable block)
     {
+        if (block.batch.batchObject == null)
+        {
+            CreateNewBatch(block.batch);
+        }
         block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
         block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
         block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
