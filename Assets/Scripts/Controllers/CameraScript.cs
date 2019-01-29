@@ -60,18 +60,27 @@ public class CameraScript : NetworkBehaviour
         //be sure to grab the current rotations as starting points.
         position = transform.position;
         rotation = transform.rotation;
-        currentRotation = transform.rotation;
-        desiredRotation = transform.rotation;
 
         grid = GameObject.Find("GameManager").GetComponent<Grid>();
 
         Debug.Log(spawncenter);
         Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2) - spawncenter;
         XDeg = Vector3.Angle(Vector3.forward, spawntoobjective);
-        YDeg = Vector3.Angle(Vector3.up, spawntoobjective);
-        Debug.Log(XDeg + "  " + YDeg);
-        rotation = Quaternion.Euler(YDeg - 90, XDeg, 0);
+        YDeg = Vector3.Angle(Vector3.up, spawntoobjective)-90;
+        //Debug.Log(XDeg + "  " + YDeg);
+        rotation = Quaternion.Euler(YDeg, XDeg, 0);
 
+    }
+
+    public void SetTarget(Transform newtarget)
+    {
+        target = newtarget;
+        Vector3 playertoobjective = new Vector3(grid.sizeX / 2, newtarget.position.y ,grid.sizeZ / 2) - newtarget.position;
+        XDeg = Vector3.Angle(Vector3.forward, playertoobjective);
+        YDeg = Vector3.Angle(Vector3.up, playertoobjective)-45;
+        DesiredDistance = distance;
+        //Debug.Log(XDeg + "  " + YDeg);
+        rotation = Quaternion.Euler(YDeg, XDeg, 0);
     }
 
     /*
@@ -137,8 +146,6 @@ public class CameraScript : NetworkBehaviour
             XDeg += player.DicoAxis["AxisXCamera"]() * xSpeed * 0.02f;
             YDeg -= player.DicoAxis["AxisYCamera"]() * ySpeed * 0.02f;
 
-            ////////OrbitAngle
-
             //Clamp the vertical axis for the orbit
             YDeg = ClampAngle(YDeg, yMinLimit, yMaxLimit);
             // set camera rotation 
@@ -180,12 +187,30 @@ public class CameraScript : NetworkBehaviour
         //clamp the zoom min/max
         DesiredDistance = Mathf.Clamp(DesiredDistance, minDistance, maxDistance);
         // For smoothing of the zoom, lerp distance
-        currentDistance = Mathf.Lerp(currentDistance, DesiredDistance, Time.deltaTime * zoomDampening);
+        float newdist = Mathf.Lerp(currentDistance, DesiredDistance, Time.deltaTime * zoomDampening);
 
         // calculate position based on the new currentDistance 
-        transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
+        Vector3 newpos = position - (rotation * Vector3.forward * newdist + targetOffset);
+        //check if the rotation make the camera fall under the floor
+
+        if (newpos.y >= 1)
+        {
+            transform.position = newpos;
+            transform.rotation = rotation;
+            currentDistance = newdist;
+        }
+        else
+        {
+            Quaternion newrot = Quaternion.Euler(currentRotation.eulerAngles.x, rotation.eulerAngles.y, 0);
+            transform.position = position - (newrot * Vector3.forward * currentDistance + targetOffset);
+            transform.rotation = newrot;
+            desiredRotation = newrot;
+            DesiredDistance = newdist;
+            YDeg = currentRotation.eulerAngles.x > 180 ? currentRotation.eulerAngles.x-360 : currentRotation.eulerAngles.x;
+            XDeg = currentRotation.eulerAngles.y;
+        }
+        //transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
         transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, 1), transform.position.z);
-        transform.rotation = rotation;
     }
 
     private static float ClampAngle(float angle, float min, float max)

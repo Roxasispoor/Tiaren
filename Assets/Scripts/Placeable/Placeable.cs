@@ -464,7 +464,6 @@ public abstract class Placeable: NetIdeable
         }
         else if (GameManager.instance.State == States.Move)
         {
-
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable )
             {
@@ -494,7 +493,17 @@ public abstract class Placeable: NetIdeable
                 {
 
                     Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
-                    GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId);
+                    List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
+                    if (area == null) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, new int[0]);
+                    else
+                    {
+                        int[] netidlist = new int[area.Count];
+                        for (int i =0; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = area[i].netId;
+                        }
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, netidlist);
+                    }
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }

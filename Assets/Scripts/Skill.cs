@@ -34,6 +34,7 @@ public class Skill
     [SerializeField]
     private SkillType skillType;
     private SkillArea skillarea;
+    private SkillEffect skilleffect;
 
 
     public SkillType SkillType
@@ -59,6 +60,19 @@ public class Skill
         set
         {
             skillarea = value;
+        }
+    }
+
+    public SkillEffect SkillEffect
+    {
+        get
+        {
+            return skilleffect;
+        }
+
+        set
+        {
+            skilleffect = value;
         }
     }
 
@@ -153,7 +167,7 @@ public class Skill
         }
     }
 
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
         Cooldown = cooldown;
@@ -166,6 +180,7 @@ public class Skill
         this.minRange = rangeMin;
         EffectArea = effectarea;
         SkillArea = skillarea;
+        SkillEffect = skilleffect;
     }
 
     public Skill(string jsonFilePath)
