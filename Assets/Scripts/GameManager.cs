@@ -830,13 +830,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         return null;
     }
-    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
+    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className, int prefabNumber)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
         charac1.Player = player.GetComponent<Player>();
-        charac1.Init();
-        //charac1.FillLiving(className);
+        charac1.Init(prefabNumber);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
@@ -853,13 +852,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-        charac.GetComponent<LivingPlaceable>().Init(prefaToSpawn);
-
-        LivingPlaceable check = charac.GetComponent<LivingPlaceable>();
+        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className, prefaToSpawn);
 
         playerComponent.characters.Add(charac);
-
-        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className);
     }
 
     private void Update()

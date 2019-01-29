@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -411,9 +411,7 @@ MonoBehaviour:
     maxRange: 0
     minRange: 0
     effectarea: 0
-    abilitySprite: {fileID: 0}
     skillType: 0
-  hovered: {fileID: 0}
   transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}
 --- !u!4 &823285885

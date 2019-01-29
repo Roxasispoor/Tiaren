@@ -104,20 +104,6 @@ public class LivingPlaceable : Placeable
             currentHP.BaseValue = value;
         }
     }
-    /* public override Player Player
-     {
-         get
-         {
-             return base.Player;
-         }
-
-         set
-         {
-             base.Player = value;
-             if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
-
-         }
-     }*/
     public override Player Player
     {
         get
@@ -889,7 +875,7 @@ public class LivingPlaceable : Placeable
 
     // Use this for initialization //TO KEEP AS IS
     private void Awake()
-    {
+    {/*
         shouldBatch = false;
         this.className = "default";
         this.Walkable = false;
@@ -981,10 +967,11 @@ public class LivingPlaceable : Placeable
         rend.material.SetFloat("_Outline", 0.02f);
         rend.material.shader = originalShader;
         this.circleTeam.color = Player.color;
+        */
     }
 
     public void Init(int classNumber)
-    {/*
+    {
         base.Init();
         shouldBatch = false;
         this.className = "default";
@@ -1036,8 +1023,8 @@ public class LivingPlaceable : Placeable
         ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
         Debug.Log(className + ".json");
         LoadFromjson(ClassName + ".json");
-        this.circleTeam.color = Player.color;
-        targetableUnits = new List<LivingPlaceable>();*/
+        circleTeam.color = Player.color;
+        targetableUnits = new List<LivingPlaceable>();
     }
     /// <summary>
     /// method to call to destroy the object 
