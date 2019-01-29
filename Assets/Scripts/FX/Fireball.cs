@@ -5,7 +5,8 @@ using UnityEngine;
 public class Fireball : MonoBehaviour {
 
     public GameObject target;
-
+    [SerializeField]
+    private float speed;
 	// Use this for initialization
 	void Start () {
         transform.LookAt(target.transform);
@@ -13,7 +14,7 @@ public class Fireball : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position += transform.forward;
+        transform.position += transform.forward * speed;
 
     }
 }

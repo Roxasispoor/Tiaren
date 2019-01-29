@@ -1107,6 +1107,7 @@ public class LivingPlaceable : Placeable
 
     public void UnHighlightTarget()
     {
+        isTarget = false;
         DesactivateOutline();
     }
 
@@ -1264,6 +1265,7 @@ public class LivingPlaceable : Placeable
         }
         targetArea.Clear();
 
+        GameManager.instance.ResetAllBatches();
         TargetableUnits = null;
 
     }

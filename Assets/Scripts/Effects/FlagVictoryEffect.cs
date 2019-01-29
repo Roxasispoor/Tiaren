@@ -11,7 +11,7 @@ public class FlagVictoryEffect : EffectOnLiving {
     { }
     public override void Use()
     {
-       if(GameManager.instance.gameMode==GameMode.FLAG &&  Target.Player==Launcher.Player &&
+       if(GameManager.instance.gameMode==GameMode.FLAG &&  Target.Player!=Launcher.Player &&
             Target.transform.Find("Inventory") && Target.transform.Find("Inventory").GetComponentInChildren<Flag>()!=null)
         {
             GameManager.instance.Winner = Target.Player;
