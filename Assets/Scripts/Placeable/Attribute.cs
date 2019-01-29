@@ -1,5 +1,10 @@
-﻿public struct Attribute
+﻿using System;
+using UnityEngine;
+
+[Serializable]
+public struct Attribute
 {
+    [SerializeField]
     private float baseValue;
     private float flatModif ;
     private float percentModif;
@@ -8,11 +13,7 @@
     {
         get
         {
-            if (BaseValue == 0 && flatModif == 0 && percentModif == 0)
-            {
-                percentModif = 1;
-            }
-            return (BaseValue + flatModif) * percentModif;
+            return (BaseValue + flatModif) * (1 + percentModif);
         }
     }
 

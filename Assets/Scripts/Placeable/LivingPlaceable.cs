@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +13,11 @@ public class LivingPlaceable : Placeable
     /// Used to save position, only actualized at this point
     /// </summary>
     [SerializeField]
+    private string className = "default";
+    [SerializeField]
     private Vector3 positionSave;
     [SerializeField]
     private string playerPosesser;
-    [SerializeField]
-    private string classname = "default";
     [SerializeField]
     private Attribute maxHP;
     [SerializeField]
@@ -104,20 +104,7 @@ public class LivingPlaceable : Placeable
             currentHP.BaseValue = value;
         }
     }
-    /* public override Player Player
-     {
-         get
-         {
-             return base.Player;
-         }
 
-         set
-         {
-             base.Player = value;
-             if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
-
-         }
-     }*/
     public override Player Player
     {
         get
@@ -429,19 +416,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public string Classname
-    {
-        get
-        {
-            return classname;
-        }
-
-        set
-        {
-            classname = value;
-        }
-    }
-
     public float Mstr
     {
         get
@@ -493,6 +467,7 @@ public class LivingPlaceable : Placeable
             maxHP.FlatModif = value;
         }
     }
+
     public float CurrentHPFlat
     {
         get
@@ -559,7 +534,6 @@ public class LivingPlaceable : Placeable
             force.FlatModif = value;
         }
     }
-
     public float SpeedFlat
     {
         get
@@ -649,10 +623,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-
-
-
-
     public float MaxHPPercent
     {
         get
@@ -730,7 +700,6 @@ public class LivingPlaceable : Placeable
             force.PercentModif = value;
         }
     }
-
     public float SpeedPercent
     {
         get
@@ -819,6 +788,19 @@ public class LivingPlaceable : Placeable
             deathLength.PercentModif = value;
         }
     }
+    
+    public string ClassName
+    {
+        get
+        {
+            return className;
+        }
+
+        set
+        {
+            className = value;
+        }
+    }
 
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
@@ -893,11 +875,12 @@ public class LivingPlaceable : Placeable
         return true;
     }
 
-    // Use this for initialization
+    // Use this for initialization //TO KEEP AS IS
     private void Awake()
     {
+        /*
         shouldBatch = false;
-        this.characterName = "default";
+        this.className = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -987,10 +970,59 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        //Save();
-        //force = -5;
-        //FillLiving();
-        //TODO Read from JSON properly
+
+        rend = GetComponentInChildren<Renderer>();
+        originalShader = Shader.Find("Standard");
+        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
+        this.circleTeam.color = Player.color;
+        */
+    }
+
+    public void Init(int classNumber)
+    {
+        base.Init();
+        shouldBatch = false;
+        this.className = "default";
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.SIMPLE_GRAVITY;
+
+        this.Crushable = CrushType.CRUSHDEATH;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+        {
+            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+        };
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AreaOfMouvement = new List<NodePath>();
+        targetArea = new List<Placeable>();
+
+        targetableUnits = new List<LivingPlaceable>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+
+
+        this.Skills = new List<Skill>();
+        this.Weapons = new List<GameObject>();
+        this.IsDead = false;
+        this.CounterDeaths = 0;
+        this.TurnsRemaingingCemetery = 0;
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
+        this.AreaOfMouvement = new List<NodePath>();
+
 
 
         rend = GetComponentInChildren<Renderer>();
@@ -1001,15 +1033,12 @@ public class LivingPlaceable : Placeable
         //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.02f);
         rend.material.shader = originalShader;
-    }
-
-    public override void Init()
-    {
-        base.Init();
-        this.circleTeam.color = Player.color;
+        ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
+        Debug.Log(className + ".json");
+        LoadFromjson(ClassName + ".json");
+        circleTeam.color = Player.color;
         targetableUnits = new List<LivingPlaceable>();
     }
-
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -1017,7 +1046,10 @@ public class LivingPlaceable : Placeable
     override
     public void Destroy()
     {
-
+        // warning : the SetActive value of the gameobject attached to livingplaceable is dealed with directly in AnimationHandler to avoid bug of respawn in special case
+        this.IsDead = true;
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+        CounterDeaths++;
         if (this.Destroyable)
         {
             foreach (Effect effect in this.OnDestroyEffects)
@@ -1034,6 +1066,10 @@ public class LivingPlaceable : Placeable
                 EffectManager.instance.DirectAttack(effect);
             }
             AttachedEffects.Clear();
+        }
+        if (GameManager.instance.playingPlaceable == this)
+        {
+            GameManager.instance.EndOFTurn();
         }
         this.IsDead = true;
         this.gameObject.SetActive(false);
@@ -1289,6 +1325,7 @@ public class LivingPlaceable : Placeable
         }
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
         bool isNewSkill = true;
         Skill newSkill = null;
 
@@ -1298,6 +1335,7 @@ public class LivingPlaceable : Placeable
             {
 
                 newSkill = JsonUtility.FromJson<Skill>(line);
+                newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 isNewSkill = false;
 
