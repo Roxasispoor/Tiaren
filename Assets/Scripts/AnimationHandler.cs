@@ -70,9 +70,10 @@ public class AnimationHandler : MonoBehaviour
     {
         LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
         Grid.instance.InstantiateCube(go, position);
-        //Grid.instance.GetPlaceableFromVector(position).gameObject.SetActive(false);
+        Placeable cubeConcerned = Grid.instance.GetPlaceableFromVector(position);
+        //cubeConcerned.gameObject.SetActive(false);
         yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
-        Grid.instance.GetPlaceableFromVector(position).gameObject.SetActive(true);
+        //cubeConcerned.gameObject.SetActive(true);
     }
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
