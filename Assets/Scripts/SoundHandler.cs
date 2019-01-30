@@ -48,5 +48,10 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.StopAllSounds();
     }
-    
+
+    public void PlayUISound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Click"));
+    }
+
 }
