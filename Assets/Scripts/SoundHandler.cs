@@ -27,12 +27,26 @@ public class SoundHandler : MonoBehaviour {
     public void PrepareAllSounds()
     {
         int fightSceneMusicID = EazySoundManager.PrepareMusic((AudioClip)Resources.Load("Sounds/backgroundmusic"), 1f, true, false, 0f, 0f);
-        int cubeCreateCharacID = EazySoundManager.PrepareSound((AudioClip)Resources.Load("Sounds/Blocksummon"), false);
+        //int cubeCreateCharacID = EazySoundManager.PrepareSound((AudioClip)Resources.Load("Sounds/Blocksummon"), false);
     }
     public void StartFightMusic()
     {
         EazySoundManager.GetAudio(fightSceneMusicID).Play();
     }
+    
+    public void StartWalkSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Footsteps"), true);
+    }
 
+    public void PauseWalkSound()
+    {
+        EazySoundManager.PauseAllSounds();
+    }
+
+    public void StopWalkSound()
+    {
+        EazySoundManager.StopAllSounds();
+    }
     
 }

@@ -77,8 +77,10 @@ public class AnimationHandler : MonoBehaviour
         Grid.instance.InstantiateCube(go, position);
         Placeable cubeConcerned = Grid.instance.GetPlaceableFromVector(position);
         //cubeConcerned.gameObject.SetActive(false);
+        //GameManager.instance.RefreshBatch(cubeConcerned);
         yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
         //cubeConcerned.gameObject.SetActive(true);
+        //GameManager.instance.RefreshBatch(cubeConcerned);
 
         // TODO : fix this to sync with anim
     }
