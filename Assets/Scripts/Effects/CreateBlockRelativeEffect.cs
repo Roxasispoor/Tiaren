@@ -5,12 +5,15 @@ using UnityEngine;
 public class CreateBlockRelativeEffect : CreateBlock
 {
 
-    private Vector3Int relativePosition;
+    public Vector3Int relativePosition;
     /// <summary>
     /// Warning not used!
     /// </summary>
     private bool inTargetDirection = false;
-
+    public override void Initialize(LivingPlaceable livingPlaceable)
+    {
+        base.Initialize(livingPlaceable);
+    }
     public CreateBlockRelativeEffect(CreateBlockRelativeEffect other) : base(other)
     {
         this.relativePosition = other.relativePosition;

@@ -960,12 +960,9 @@ public class LivingPlaceable : Placeable
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
         Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
-<<<<<<< HEAD
         Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
         Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "spell2", 0, 6);
-=======
         Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
->>>>>>> 6b9c4b056877a483591b5bb60382f90f9f50d722
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
@@ -1378,7 +1375,7 @@ public class LivingPlaceable : Placeable
                     {
                         Debug.LogError("no parameterChange with those types");
                     }
-                    eff.Initialize();
+                    eff.Initialize(this);
                     newSkill.effects.Add(eff);
                     if (isNewSkill)
                     {
@@ -1407,7 +1404,7 @@ public class LivingPlaceable : Placeable
                             }
                             Debug.Log(a);
                             Effect eff = (Effect)JsonUtility.FromJson(a, type);
-                            eff.Initialize();
+                            eff.Initialize(this);
                             newSkill.effects.Add(eff);
                             if (isNewSkill)
                             {

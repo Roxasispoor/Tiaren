@@ -55,7 +55,12 @@ public class MoveEffect : EffectOnLiving {
         this.UseBezier = other.useBezier;
     }
 
-
+    public override void Initialize(LivingPlaceable livingPlaceable)
+    {
+        base.Initialize(livingPlaceable);
+        this.Target = livingPlaceable;
+        this.Launcher = livingPlaceable ;
+    }
     /// <summary>
     /// create a damage object
     /// </summary>

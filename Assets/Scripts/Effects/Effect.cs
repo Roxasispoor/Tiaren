@@ -132,7 +132,7 @@ public abstract class Effect
         reader.Close();
         return toReturn;
     }
-    public virtual void Initialize()
+    public virtual void Initialize(LivingPlaceable livingPlaceable)
     {
 
     }
