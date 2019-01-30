@@ -134,6 +134,14 @@ public class GameManager : NetworkBehaviour
 
         set
         {
+            if (playingPlaceable != null)
+            {
+                playingPlaceable.EndingMyTurn();
+            }
+            if (value != null)
+            {
+                value.BeginningMyTurn();
+            }
             playingPlaceable = value;
         }
     }
@@ -720,7 +728,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         Grid.instance.Gravity();
         UpdateTimeline();
-        playingPlaceable = TurnOrder[0].Character;
+        PlayingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
 
         for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)

@@ -1047,7 +1047,24 @@ public class LivingPlaceable : Placeable
         targetableUnits = new List<LivingPlaceable>();
         
     }
+    
 
+    /// <summary>
+    /// To call at the beginning of the turn of the character
+    /// </summary>
+    public void BeginningMyTurn()
+    {
+        circleTeam.color = Color.green;
+    }
+
+    /// <summary>
+    /// To call at the ending of the turn of the character
+    /// </summary>
+    public void EndingMyTurn()
+    {
+        circleTeam.color = Player.color;
+    }
+    
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
