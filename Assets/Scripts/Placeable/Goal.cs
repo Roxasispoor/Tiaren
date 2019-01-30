@@ -19,7 +19,6 @@ public class Goal : Placeable {
         this.TraversableBullet = TraversableType.NOTHROUGH;
 
         this.GravityType = GravityType.NULL_GRAVITY;
-
         this.Crushable = CrushType.CRUSHDESTROYBLOC;
         this.Explored = false;
         this.Grounded = false;

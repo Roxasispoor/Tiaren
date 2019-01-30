@@ -30,10 +30,13 @@ public class Skill
     [SerializeField]
     public DelegateCondition condition;
     [SerializeField]
-    public Sprite abilitySprite;
+    private string description = "Ca tue";
+    private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
+    [SerializeField]
     private SkillArea skillarea;
+    [SerializeField]
     private SkillEffect skilleffect;
 
 
@@ -167,6 +170,32 @@ public class Skill
         }
     }
 
+    public Sprite AbilitySprite
+    {
+        get
+        {
+            return abilitySprite;
+        }
+
+        set
+        {
+            abilitySprite = value;
+        }
+    }
+
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+
+        set
+        {
+            description = value;
+        }
+    }
+
     public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
@@ -174,7 +203,7 @@ public class Skill
         tourCooldownLeft = 0;
         this.effects = effects;
         SkillName = skillName;
-        this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
+        this.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         SkillType = skillType;
         this.maxRange = rangeMax;
         this.minRange = rangeMin;
@@ -190,11 +219,32 @@ public class Skill
 
     public void Activate()
     {
-        GameManager.instance.state = States.UseSkill;
+        GameManager.instance.State = States.UseSkill;
         GameManager.instance.activeSkill = this;
         GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
     }
-
+    public bool UseTargeted(Skill skill)
+    {
+        if (this.tourCooldownLeft > 0)
+        {
+            return false;
+        }
+        if (condition != null && !condition.Invoke())
+        {
+            return false;
+        }
+        this.tourCooldownLeft = this.cooldown;
+        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        {
+            foreach (Effect eff in skill.effects)
+            {
+                Effect effectToConsider = eff.Clone();
+                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Use();
+            }
+        }
+        return true;
+    }
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
@@ -231,9 +281,9 @@ public class Skill
             text+=eff.Save();
             
         }
-        text += ";";
+        text = text.Remove(text.Length - 1) + ";";
         return text;
- //       File.WriteAllText(path, text);
+        //File.WriteAllText(path, text);
     }
 
     

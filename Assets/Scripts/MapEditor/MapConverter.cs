@@ -8,8 +8,14 @@ public class MapConverter : MonoBehaviour {
     List<CSVReader.BlockCSV> blocks;
     public static readonly int SPAWNPOINTP1 = 99;
     public static readonly int SPAWNPOINTP2 = 98;
-    private List<int> spawnPointsP1;
-    private List<int> spawnPointsP2;
+    public static readonly int FLAG = 97;
+    public static readonly int GOALP1 = 96;
+    public static readonly int GOALP2 = 95;
+    private List<int> spawnPointsP1 = new List<int>();
+    private List<int> spawnPointsP2 = new List<int>();
+    private List<int> goalP1 = new List<int>();
+    private List<int> goalP2 = new List<int>();
+    private List<int> flag = new List<int>();
 
 
     public string inPath;
@@ -17,10 +23,20 @@ public class MapConverter : MonoBehaviour {
 
     public static Dictionary<string, int> strColorToSerialize = new Dictionary<string, int>
     {
-        {"639bff", SPAWNPOINTP1 }, // Spawnpoint
-        {"ac3232", SPAWNPOINTP2 }, // Spawnpoint
-        {"ffffff", 1 },
-        {"000000", 0 },
+        {"0000ff", SPAWNPOINTP1 }, // Spawnpoint
+        {"ff0000", SPAWNPOINTP2 }, // Spawnpoint
+        {"4444ff", GOALP1 }, // Goal player 1
+        {"ff4444", GOALP2 }, // Goal player 2
+        {"02cafa", 11 }, // Water
+        {"838383", 10 }, // Stone
+        {"f1d882", 9 }, // Sand
+        {"0aa302", 8 }, // Grass
+        {"926d02", 7 }, // Dirt
+        {"bba34e", 6 }, // Bridge
+        //{"fe00fe", 5 }, // Goal
+        {"ffff00", FLAG }, // FlagParent
+        {"ffffff", 1 }, // Basic cube (used for the 1st maps)
+        {"000000", 0 }, // Empty
 
     };
 
@@ -66,15 +82,14 @@ public class MapConverter : MonoBehaviour {
 
 
         JaggedGrid jaggedGrid = new JaggedGrid(sizeX, sizeY, sizeZ);
-        spawnPointsP1 = new List<int>();
-        spawnPointsP2 = new List<int>();
 
         foreach (CSVReader.BlockCSV block in blocks)
         {
+            Debug.Log(string.Format("Bloc ({0}, {1}, {2}): {3} ", block.Position.x, block.Position.y, block.Position.z, block.Type));
             int x = block.Position.x + shiftX,
                 y = block.Position.y + shiftY,
                 z = block.Position.z + shiftZ;
-            //gridTable[y * sizeZ * sizeX + z * sizeX + x] = strColorToSerialize[block.Type];
+            
             if (strColorToSerialize[block.Type] == SPAWNPOINTP1)
             {
                 //Debug.Log("SpawnPoints!!");
@@ -88,6 +103,26 @@ public class MapConverter : MonoBehaviour {
                 spawnPointsP2.Add(z); // swapping z and y for Unity
                 spawnPointsP2.Add(y); // swapping z and y for Unity
             }
+            else if (strColorToSerialize[block.Type] == GOALP1)
+            {
+                //Debug.Log("SpawnPoints!!");
+                goalP1.Add(x);
+                goalP1.Add(z); // swapping z and y for Unity
+                goalP1.Add(y); // swapping z and y for Unity
+            }
+            else if (strColorToSerialize[block.Type] == GOALP2)
+            {
+                //Debug.Log("SpawnPoints!!");
+                goalP2.Add(x);
+                goalP2.Add(z); // swapping z and y for Unity
+                goalP2.Add(y); // swapping z and y for Unity
+            }else if (strColorToSerialize[block.Type] == FLAG)
+            {
+                //Debug.Log("SpawnPoints!!");
+                flag.Add(x);
+                flag.Add(z); // swapping z and y for Unity
+                flag.Add(y); // swapping z and y for Unity
+            }
             else {
                 jaggedGrid.SetCell(strColorToSerialize[block.Type], x, y, z);
             }
@@ -95,6 +130,9 @@ public class MapConverter : MonoBehaviour {
         
         jaggedGrid.spawnPlayerOne = spawnPointsP1.ToArray();
         jaggedGrid.spawnPlayerTwo = spawnPointsP2.ToArray();
+        jaggedGrid.goalP1 = goalP1.ToArray();
+        jaggedGrid.goalP2 = goalP2.ToArray();
+        jaggedGrid.flagCoord = flag.ToArray();
         jaggedGrid.Save(_outPath);
         Debug.Log("MapConverter: successfully converted to " + _outPath);
     }

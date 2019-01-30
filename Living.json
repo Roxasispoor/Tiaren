@@ -1,0 +1,13 @@
+{"className":"Knight","positionSave":{"x":1.0,"y":1.0,"z":12.0},"playerPosesser":"player1","maxHP":200.0,"currentHP":200.0,"pmMax":2,"currentPM":2,"currentPA":1.0,"paMax":1.0,"force":70,"speed":40.0,"dexterity":15,"speedStack":0.02500000037252903,"jump":1,"def":75,"mdef":55,"mstr":5,"deathLength":0.0,"isDead":false,"serializeNumber":2,"netId":202}
+{"skillName":"Push","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":0,"skillType":2}
+Push{"netIdLauncher":0,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
+{"skillName":"CreateBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":5,"minRange":0,"effectarea":0,"skillType":2}
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"m_FileID":1790,"m_PathID":0},"face":{"x":0,"y":1,"z":0}};
+{"skillName":"DestroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":0,"skillType":2}
+DestroyBloc{"netIdLauncher":-1,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1};
+{"skillName":"Damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"skillType":1}
+Damage{"netIdLauncher":-1,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"damageValue":50.0};
+{"skillName":"CreateBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":5,"minRange":0,"effectarea":2,"skillType":5}
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"m_FileID":1790,"m_PathID":0},"face":{"x":0,"y":1,"z":0}};
+{"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"skillType":5}
+DestroyBloc{"netIdLauncher":-1,"animLauncher":{"m_FileID":0,"m_PathID":0},"netIdTarget":-1};

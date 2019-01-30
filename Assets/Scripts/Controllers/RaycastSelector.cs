@@ -42,7 +42,7 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.playingPlaceable != null || GameManager.instance.state == States.Spawn )
+        if (GameManager.instance.playingPlaceable != null || GameManager.instance.State == States.Spawn )
         {
 
             RaycastHit hit;
@@ -53,10 +53,10 @@ public class RaycastSelector : MonoBehaviour
                 {
                     hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
 
-                    if (GameManager.instance.hovered != null)
+                    if (GameManager.instance.Hovered != null)
                     {
                         if (area == null)
-                            GameManager.instance.hovered.UnHighlight();
+                            GameManager.instance.Hovered.UnHighlight();
                         else
                         {
                             foreach (Placeable block in area)
@@ -65,15 +65,15 @@ public class RaycastSelector : MonoBehaviour
 
                     }
 
-                    GameManager.instance.hovered = hit.transform.GetComponent<Placeable>();
+                    GameManager.instance.Hovered = hit.transform.GetComponent<Placeable>();
 
                     if (effectarea==0)
                     {
                         area = null;
    
-                        if (GameManager.instance.hovered != null)
+                        if (GameManager.instance.Hovered != null)
                         {
-                            GameManager.instance.hovered.Highlight();
+                            GameManager.instance.Hovered.Highlight();
                         }
                     }
                     else
@@ -86,6 +86,9 @@ public class RaycastSelector : MonoBehaviour
                             block.Highlight();
                     }
                 }
+            } else
+            {
+                GameManager.instance.Hovered = null;
             }
         }
     }

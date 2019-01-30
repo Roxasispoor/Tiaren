@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     private LivingPlaceable character;
+    private bool isHovered = false;
 
     public LivingPlaceable Character
     {
@@ -23,10 +24,22 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public void OnPointerEnter(PointerEventData eventData)
     {
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(Character);
+        isHovered = true;
+        character.Highlight();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
+        isHovered = false;
+        character.UnHighlight();
+    }
+
+    public void Update()
+    {
+        if (isHovered)
+        {
+            character.OnMouseOverWithLayer();
+        }
     }
 }

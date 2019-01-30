@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour {
 
 	private void Update()
     {
-        if (GameManager.instance.state != States.Spawn && GameManager.instance.state != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
+        if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {
@@ -167,8 +167,9 @@ public class UIManager : MonoBehaviour {
         foreach (Skill skill in character.Skills)
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
+            button.GetComponent<SkillInfo>().Skill = skill;
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
-            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
         }
@@ -178,7 +179,7 @@ public class UIManager : MonoBehaviour {
         {
             Button button = Instantiate(prefabAbilityButton, SkillZone);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
-            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
                 Debug.Log("new skill from weapon");
@@ -190,7 +191,7 @@ public class UIManager : MonoBehaviour {
             { 
             Button button = Instantiate(prefabAbilityButton, SkillZone);
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
-            button.GetComponentInChildren<Image>().sprite = skill.abilitySprite;
+            button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
             numberInstantiated++;
                 Debug.Log("new skill from objectonbloc");

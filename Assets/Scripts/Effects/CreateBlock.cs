@@ -43,6 +43,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
 
     public override void Use()
     {
+        GetLauncherAnimation();
         animLauncher.Play("createBlock");
         AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face, GetTimeOfLauncherAnimation()));
 

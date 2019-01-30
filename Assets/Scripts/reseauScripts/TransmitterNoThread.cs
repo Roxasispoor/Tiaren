@@ -225,7 +225,7 @@ public class TransmitterNoThread : MonoBehaviour {
                         foreach(Skill skill in charac1.Skills)
                         {
 
-                            skill.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                            skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
                         }
                     }
                     else if(newLivingStats.playerPosesser == "player2" )
@@ -250,7 +250,7 @@ public class TransmitterNoThread : MonoBehaviour {
                         foreach (Skill skill in charac1.Skills)
                         {
 
-                            skill.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                            skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
                         }
 
 

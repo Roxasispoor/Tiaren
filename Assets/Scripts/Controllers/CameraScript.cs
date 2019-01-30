@@ -14,7 +14,7 @@ public class CameraScript : NetworkBehaviour
     public float minDistance = .6f;
     public float xSpeed = 200.0f;
     public float ySpeed = 200.0f;
-    public int yMinLimit = -80;
+    public int yMinLimit = 0;
     public int yMaxLimit = 80;
     public int zoomRate = 70;
     public float panSpeed = 0.3f;
@@ -172,8 +172,8 @@ public class CameraScript : NetworkBehaviour
         {
             if (GameManager.instance.playingPlaceable.Player == player)
             {
-                GameManager.instance.playingPlaceable.ResetAreaOfTarget();
-                GameManager.instance.state = States.Move;
+                GameManager.instance.playingPlaceable.ResetTargets();
+                GameManager.instance.State = States.Move;
                 GameManager.instance.activeSkill = null;
                 GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
                 GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
@@ -211,7 +211,6 @@ public class CameraScript : NetworkBehaviour
         }
         //transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
         transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, 1), transform.position.z);
-        
     }
 
     private static float ClampAngle(float angle, float min, float max)

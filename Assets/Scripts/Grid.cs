@@ -14,8 +14,11 @@ public class Grid : MonoBehaviour
     public int sizeX = 50;
     public int sizeY = 6;
     public int sizeZ = 50;
+    [SerializeField]
+    private int falldamage = 15;
+    [SerializeField]
+    private int blockfalldamage = 20;
     //public DistanceAndParent[,,] gridBool;
-
 
     /// <summary>
     /// Represents grid for the game
@@ -36,6 +39,31 @@ public class Grid : MonoBehaviour
     private List<Vector3Int> spawnPlayer1;
     private List<Vector3Int> spawnPlayer2;
 
+    public int FallDamage
+    {
+        get
+        {
+            return falldamage;
+        }
+
+        set
+        {
+            falldamage = value;
+        }
+    }
+
+    public int BlockFallDamage
+    {
+        get
+        {
+            return blockfalldamage;
+        }
+
+        set
+        {
+            blockfalldamage = value;
+        }
+    }
 
     public Placeable[,,] GridMatrix
     {
@@ -384,7 +412,7 @@ public class Grid : MonoBehaviour
         gridMatrix[x, y, z].Explored = true;
 
         //first we check the block under us, if there is one
-        if (y > 0 && gridMatrix[x, y - 1, z] != null ) {
+        if (y > 0 && gridMatrix[x, y - 1, z] != null && !gridMatrix[x, y - 1, z].IsLiving()) {
             //if it's the ground (level 0) to the current block is connected to the ground
             if (y - 1 == 0) return true;
             //if the block has no been explored, we check it
@@ -401,7 +429,7 @@ public class Grid : MonoBehaviour
         }
 
         //And here is the same with other directions
-        if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null) {
+        if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null && !gridMatrix[x+1, y, z].IsLiving()) {
             if (!gridMatrix[x + 1, y, z].Explored)
                 connected = ExploreConnexity(x + 1, y, z);
             else connected = gridMatrix[x + 1, y, z].Grounded;
@@ -412,7 +440,7 @@ public class Grid : MonoBehaviour
             }
         }
 
-        if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null) {
+        if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null && !gridMatrix[x, y , z+1].IsLiving()) {
             if (!gridMatrix[x, y, z + 1].Explored)
                 connected = ExploreConnexity(x, y, z + 1);
             else connected = gridMatrix[x, y, z + 1].Grounded;
@@ -423,7 +451,7 @@ public class Grid : MonoBehaviour
             return connected;
         }
 
-        if (x > 0 && gridMatrix[x - 1, y, z] != null) {
+        if (x > 0 && gridMatrix[x - 1, y, z] != null && !gridMatrix[x-1, y, z].IsLiving()) {
             if (!gridMatrix[x - 1, y, z].Explored)
                 connected = ExploreConnexity(x - 1, y, z);
             else connected = gridMatrix[x - 1, y, z].Grounded;
@@ -434,7 +462,7 @@ public class Grid : MonoBehaviour
             }
         }
 
-        if (z > 0 && gridMatrix[x, y, z - 1] != null) {
+        if (z > 0 && gridMatrix[x, y, z - 1] != null && !gridMatrix[x, y, z-1].IsLiving()) {
             if (!gridMatrix[x, y, z - 1].Explored)
                 connected = ExploreConnexity(x, y, z - 1);
             else connected = gridMatrix[x, y, z - 1].Grounded;
@@ -445,7 +473,7 @@ public class Grid : MonoBehaviour
             }
         }
 
-        if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null) {
+        if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null && !gridMatrix[x, y + 1, z].IsLiving()) {
             if (!gridMatrix[x, y + 1, z].Explored)
                 connected = ExploreConnexity(x, y + 1, z);
             else connected=gridMatrix[x, y + 1, z].Grounded;
@@ -488,29 +516,29 @@ public class Grid : MonoBehaviour
         if (y != 0)
         {
             //for each direction, we check each block that need to fall due to the destruction of the current block
-            if (y > 0 && gridMatrix[x, y - 1, z] != null)
+            if (y > 0 && gridMatrix[x, y - 1, z] != null && !gridMatrix[x, y - 1, z].IsLiving())
             {
                 if (y - 1 == 0) gridMatrix[x, y - 1, z].Grounded = true;
                 else gridMatrix[x, y - 1, z].Grounded = ExploreConnexity(x, y - 1, z);
                 somethingfall = !gridMatrix[x, y - 1, z].Grounded || somethingfall;
             }
-            if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null) {
+            if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null && !gridMatrix[x, y + 1, z].IsLiving()) {
                 gridMatrix[x, y + 1, z].Grounded = ExploreConnexity(x, y + 1, z);
                 somethingfall = somethingfall || !gridMatrix[x, y + 1, z].Grounded;
             }
-            if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null) {
+            if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null && !gridMatrix[x+1, y, z].IsLiving()) {
                 gridMatrix[x + 1, y, z].Grounded = ExploreConnexity(x + 1, y, z);
                 somethingfall = somethingfall || !gridMatrix[x+1, y, z].Grounded;
             }
-            if (x > 0 && gridMatrix[x - 1, y, z] != null) { 
+            if (x > 0 && gridMatrix[x - 1, y, z] != null && !gridMatrix[x-1, y , z].IsLiving()) { 
                 gridMatrix[x - 1, y, z].Grounded = ExploreConnexity(x - 1, y, z);
                 somethingfall = somethingfall || !gridMatrix[x-1, y, z].Grounded;
             }
-            if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null) { 
+            if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null && !gridMatrix[x, y, z+1].IsLiving()) { 
                 gridMatrix[x, y, z + 1].Grounded = ExploreConnexity(x, y, z + 1);
                 somethingfall = somethingfall || !gridMatrix[x, y, z+1].Grounded;
             }
-            if (z > 0 && gridMatrix[x, y, z - 1] != null) {
+            if (z > 0 && gridMatrix[x, y, z - 1] != null && !gridMatrix[x, y, z-1].IsLiving()) {
                 gridMatrix[x, y, z - 1].Grounded = ExploreConnexity(x, y, z - 1);
                 somethingfall = somethingfall || !gridMatrix[x, y, z-1].Grounded;
             }
@@ -534,12 +562,13 @@ public class Grid : MonoBehaviour
             {
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
             }
-          if(desiredPosition.y-1>0)
+            if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
             {
                 Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
             }
 
-        } else
+        }
+        else
         {
             Debug.LogError("MoveBlock error: To define");
         }
@@ -593,11 +622,8 @@ public class Grid : MonoBehaviour
             {
                 ymontee++;
             }
-
             gridMatrix[x, ymontee, z] = gridMatrix[x, y - ydrop, z];
             //gridMatrix[x, ymontee, z].Position.Set(x, ymontee, z);
-
-
             gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
             //gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
             gridMatrix[x, y, z] = null;
@@ -608,9 +634,18 @@ public class Grid : MonoBehaviour
             gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
             // gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
             gridMatrix[x, y, z] = null;
-
         }
-
+        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
+        {
+            EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
+            gridMatrix[x, y - ydrop, z].Destroy();
+            gridMatrix[x, y, z] = null;
+        }
+        else if (gridMatrix[x, y, z].IsLiving())
+        {
+            LivingPlaceable Character = (LivingPlaceable)gridMatrix[x, y, z];
+            EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y-ydrop, z], Math.Max(ydrop - Character.Jump, 0)*falldamage));
+        }
     }
     /// <summary>
     /// Handle gravity : for object of type SIMPLE_GRAVITY. if nothing below => fall 
@@ -774,7 +809,7 @@ public class Grid : MonoBehaviour
 
                         //Debug.Log(x + "-" + y + "-" + z);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
-                        obj.GetComponent<Placeable>().netId = Placeable.currentMaxId;
+                        obj.GetComponent<NetIdeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
                         Placeable.currentMaxId++;
                         // NetworkServer.Spawn(obj);
@@ -784,6 +819,46 @@ public class Grid : MonoBehaviour
 
                 }
             }
+        }
+
+        Vector3Int posFlag = jagged.GetFlagPos() + Vector3Int.down;
+
+        GameObject flag = Instantiate(Grid.instance.prefabsList[3], 
+            GetPlaceableFromVector(posFlag).gameObject.transform.Find("Inventory"));
+        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
+
+        foreach (Vector3Int coord in jagged.GetGoalsP1())
+        {
+            GameObject goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = goal.GetComponent<Placeable>();
+            goal.GetComponent<Placeable>().Player = GameManager.instance.player1.GetComponent<Player>();
+            if (GameManager.instance.Player1 == GameManager.instance.GetLocalPlayer())
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            }
+            else
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            }
+            NetIdeable.currentMaxId++;
+        }
+
+        foreach (Vector3Int coord in jagged.GetGoalsP2())
+        {
+            GameObject goal = Instantiate(Grid.instance.prefabsList[4], coord, Quaternion.identity, transform);
+            goal.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+            Grid.instance.GridMatrix[coord.x, coord.y, coord.z] = goal.GetComponent<Placeable>();
+            goal.GetComponent<Placeable>().Player = GameManager.instance.player2.GetComponent<Player>();
+            if (GameManager.instance.Player2 == GameManager.instance.GetLocalPlayer())
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            } else
+            {
+                goal.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            }
+            NetIdeable.currentMaxId++;
         }
 
         SpawnPlayer1 = jagged.GetSpawnsP1();
@@ -1004,9 +1079,6 @@ public class Grid : MonoBehaviour
 
         //Number of axis involved, the more, the more raycast i must shoot
         int sides = activex + activey + activez;
-
-        if (GridMatrix[(int)Playerposition.x + x, (int)Playerposition.y + y, (int)Playerposition.z + z].GetType() != typeof(StandardCube))
-            return true;
 
         switch (sides)
         {
@@ -1289,19 +1361,16 @@ public class Grid : MonoBehaviour
         return targetableblock;
     }
 
-    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange)
+    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks)
     {
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
-        //TODO
         foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
-            distance.x = Mathf.Abs(distance.x);
-            distance.y = Mathf.Abs(distance.y);
-            distance.z = Mathf.Abs(distance.z);
-            if (distance.x + distance.y + distance.z <= maxrange
-                && distance.x + distance.y + distance.z >= minrange)
+            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
+            if (totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
+                distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
@@ -1310,16 +1379,26 @@ public class Grid : MonoBehaviour
         foreach (GameObject gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
-            distance.x = Mathf.Abs(distance.x);
-            distance.y = Mathf.Abs(distance.y);
-            distance.z = Mathf.Abs(distance.z);
-            if (distance.x + distance.y + distance.z <= maxrange
-                && distance.x + distance.y + distance.z >= minrange)
+            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
+            if (totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+                distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
         }
 
         return targetableliving;
+    }
+
+    public List<LivingPlaceable> SpinningPattern(List<LivingPlaceable> Targetlist, Vector3 Playerposition)
+    {
+        List<LivingPlaceable> targetableunits = new List<LivingPlaceable>(Targetlist);
+        foreach (LivingPlaceable Character in Targetlist)
+        {
+            Vector3 Pos = Character.transform.position;
+            if (Pos.y - Playerposition.y != 0 || Math.Abs(Pos.x - Playerposition.x) >1 || Math.Abs(Pos.z - Playerposition.z) >1 || Pos == Playerposition)
+                targetableunits.Remove(Character);
+        }
+        return targetableunits;
     }
 }

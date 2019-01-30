@@ -341,7 +341,7 @@ public abstract class Placeable: NetIdeable
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (var effect in this.OnDestroyEffects)
             {
-                EffectManager.instance.UseEffect(effect);
+                EffectManager.instance.DirectAttack(effect);
             }
             foreach(Transform obj in transform.Find("Inventory") )
             {
@@ -352,9 +352,8 @@ public abstract class Placeable: NetIdeable
         }
        
     }
-    public void Highlight()
+    public virtual void Highlight()
     {
-        if (IsLiving()) return;
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
         {
             GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
@@ -389,9 +388,8 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
         }
     }
-    public void UnHighlight()
+    public virtual void UnHighlight()
     {
-        if (IsLiving()) return;
 
         //Put back the default material
         foreach (Transform fils in transform.Find("Quads"))
@@ -399,7 +397,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.state!=States.Move  ||
+        if (GameManager.instance.State!=States.Move  ||
             !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
@@ -417,7 +415,7 @@ public abstract class Placeable: NetIdeable
 
     public void OnMouseOverWithLayer()
     {
-        if (GameManager.instance.state == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
+        if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
             {
@@ -464,9 +462,8 @@ public abstract class Placeable: NetIdeable
                 isClicked = false;
             }
         }
-        else if (GameManager.instance.state == States.Move)
+        else if (GameManager.instance.State == States.Move)
         {
-
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable )
             {
@@ -483,21 +480,31 @@ public abstract class Placeable: NetIdeable
                 }
             }
         }
-        else if (GameManager.instance.state == States.UseSkill)
+        else if (GameManager.instance.State == States.UseSkill)
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-               
+                Skill skill = GameManager.instance.activeSkill;
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() 
-                    || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
+                    && skill!= null && (skill.SkillType == SkillType.LIVING && IsLiving() 
+                    || (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA) && !IsLiving()))
 
 
                 {
 
                     Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
                     List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
-                    if (area == null) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, new int[0]);
+                    if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0]);
+                    else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+                    {
+                        List<LivingPlaceable> Playerlist = GameManager.instance.playingPlaceable.TargetableUnits;
+                        int[] netidlist = new int[Playerlist.Count];
+                        for (int i = 0; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = Playerlist[i].netId;
+                        }
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist);
+                    }
                     else
                     {
                         int[] netidlist = new int[area.Count];
@@ -505,9 +512,8 @@ public abstract class Placeable: NetIdeable
                         {
                             netidlist[i] = area[i].netId;
                         }
-                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, netidlist);
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist);
                     }
-                    
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }
@@ -526,6 +532,14 @@ public abstract class Placeable: NetIdeable
     {
 
         baseMaterial = GetComponent<Renderer>().material;
+    }
+
+    /// <summary>
+    /// To call when creating a Placeable to initialize needed values
+    /// </summary>
+    public virtual void Init()
+    {
+        
     }
 
     /// <summary>

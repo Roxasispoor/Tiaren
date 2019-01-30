@@ -13,7 +13,9 @@ using UnityEngine.Networking;
 /// </summary>
 public class JaggedGrid
 {
-
+    public int[] flagCoord;
+    public int[] goalP1;
+    public int[] goalP2;
 
     public int[] gridTable;
     
@@ -119,4 +121,28 @@ public class JaggedGrid
         return spawns;
     }
 
+    public List<Vector3Int> GetGoalsP1()
+    {
+        List<Vector3Int> goals = new List<Vector3Int>();
+        for (int i = 0; i < goalP1.Length; i += 3)
+        {
+            goals.Add(new Vector3Int(goalP1[i], goalP1[i + 2], goalP1[i + 1]));
+        }
+        return goals;
+    }
+
+    public List<Vector3Int> GetGoalsP2()
+    {
+        List<Vector3Int> goals = new List<Vector3Int>();
+        for (int i = 0; i < goalP2.Length; i += 3)
+        {
+            goals.Add(new Vector3Int(goalP2[i], goalP2[i + 2], goalP2[i + 1]));
+        }
+        return goals;
+    }
+
+    public Vector3Int GetFlagPos()
+    {
+        return new Vector3Int(flagCoord[0], flagCoord[2], flagCoord[1]);
+    }
 }
