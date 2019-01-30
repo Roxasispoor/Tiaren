@@ -31,6 +31,8 @@ public class CreateZipLine : CreateBlock
             GameObject zip2 = Grid.instance.InstanciateObjectOnBloc(prefab, Target.GetPosition());
             zip1.GetComponent<ZipLine>().linkedTo = zip2.GetComponent<ZipLine>();
             zip2.GetComponent<ZipLine>().linkedTo = zip1.GetComponent<ZipLine>();
+            GameManager.instance.playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(GameManager.instance.playingPlaceable,
+                GameManager.instance.playingPlaceable.GetPosition());
         }
     }
 }
