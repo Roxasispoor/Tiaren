@@ -14,8 +14,11 @@ public abstract class EffectOnPlaceable : Effect {
         Target = other.target;
         
     }
+    protected EffectOnPlaceable(Placeable launcher)
+    {
+        Launcher = launcher;
+    }
 
-    
     protected EffectOnPlaceable()
     {
     }

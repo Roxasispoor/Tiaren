@@ -7,8 +7,8 @@ CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1};
 {"skillName":"Basic_attack","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":5}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":0,"sinFactor":0.30000001192092898};
-{"skillName":"Fissure","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5,"skillarea":3,"skilleffect":2}
-DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1};
+{"skillName":"Fissure","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5,"skillarea":3,"skilleffect":2}
+DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"depthExceed":1};
 {"skillName":"Wall","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5,"skillarea":3,"skilleffect":3}
 CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3166},"face":{"x":0,"y":1,"z":0}};
 {"skillName":"Higherground","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":6,"skillarea":0,"skilleffect":0}

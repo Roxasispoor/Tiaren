@@ -12,6 +12,9 @@ public abstract class EffectOnPlaceableOnly : EffectOnPlaceable {
     protected EffectOnPlaceableOnly()
     {
     }
+    protected EffectOnPlaceableOnly( Placeable launcher) : base(launcher)
+    {
+    }
 
     protected EffectOnPlaceableOnly(Placeable target, Placeable launcher) : base(target, launcher)
     {

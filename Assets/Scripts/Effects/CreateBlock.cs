@@ -8,6 +8,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
     public GameObject prefab;
     [SerializeField]
     public Vector3Int face;
+    public int height=0;
 
     public CreateBlock()
     {
@@ -22,19 +23,27 @@ public class CreateBlock : EffectOnPlaceableOnly {
     {
         this.prefab = other.prefab;
         this.face = other.face;
+        this.height = other.height;
     }
 
-    public CreateBlock(GameObject prefab, Vector3Int face)
+    public CreateBlock(GameObject prefab, Vector3Int face,int height=0):base()
     {
         this.prefab = prefab;
         this.face = face;
+        this.height = height;
     }
-
-    public CreateBlock(int prefabNumber, Vector3Int face)
+    public CreateBlock(Placeable launcher,GameObject prefab, Vector3Int face, int height = 0) : base(launcher)
+    {
+        this.prefab = prefab;
+        this.face = face;
+        this.height = height;
+    }
+    public CreateBlock(int prefabNumber, Vector3Int face,int height= 0)
     {
         prefabListNumber = prefabNumber;
         prefab = Grid.instance.prefabsList[prefabListNumber];
         this.face = face;
+        this.height = height;
     }
 
     public override Effect Clone()
@@ -47,7 +56,10 @@ public class CreateBlock : EffectOnPlaceableOnly {
         GetLauncherAnimation();
         animLauncher.Play("createBlock");
         AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face, GetTimeOfLauncherAnimation()));
-
+        for (int i = 0; i < height; i++)
+        {
+           new CreateBlockRelativeEffect(Target,prefab, new Vector3Int(0, 1, 0),new Vector3Int(0,1+i,0)).Use();
+        }
     }
     
 }

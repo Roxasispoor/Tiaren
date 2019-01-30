@@ -27,6 +27,12 @@ public class CreateBlockRelativeEffect : CreateBlock
         this.relativePosition = relativePosition;
         this.inTargetDirection = inTargetDirection;
     }
+    public CreateBlockRelativeEffect(Placeable target,GameObject prefab, Vector3Int face, Vector3Int relativePosition, bool inTargetDirection = false) : base(target,prefab, face)
+    {
+        this.relativePosition = relativePosition;
+        this.inTargetDirection = inTargetDirection;
+    }
+
     public override Effect Clone()
     {
         return new CreateBlockRelativeEffect(this);
@@ -35,8 +41,7 @@ public class CreateBlockRelativeEffect : CreateBlock
     public override void Use()
     {
         Target = Grid.instance.GetPlaceableFromVector(Launcher.GetPosition() + relativePosition);
-        if(Target!=null && relativePosition.y < 0 && relativePosition.x == 0 && relativePosition.z == 0
-            && Grid.instance.CheckNull(Launcher.GetPosition() + new Vector3Int(0, 1, 0)))//if under us, check if we can go higher
+        if(Target!=null && Grid.instance.CheckNull(Target.GetPosition() + new Vector3Int(0, 1, 0)))//if under us, check if we can go higher
         {
             base.Use();
         }

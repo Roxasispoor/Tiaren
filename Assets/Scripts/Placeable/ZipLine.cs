@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
+
     private void Awake()
     {
         base.Awake();

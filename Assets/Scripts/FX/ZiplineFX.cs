@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Zipline : MonoBehaviour
+public class ZiplineFX : MonoBehaviour
 {
 
-    private Zipline startZip;
-    private Zipline endZip;
+    private ZiplineFX startZip;
+    private ZiplineFX endZip;
     private LineRenderer rope;
     [SerializeField]
     private Transform topPole;
@@ -21,7 +21,7 @@ public class Zipline : MonoBehaviour
         }
     }
 
-    public Zipline StartZipline
+    public ZiplineFX StartZipline
     {
         set
         {
@@ -29,7 +29,7 @@ public class Zipline : MonoBehaviour
         }
     }
 
-    public Zipline endZipline
+    public ZiplineFX endZipline
     {
         set
         {
@@ -49,7 +49,7 @@ public class Zipline : MonoBehaviour
     /// Call it from the start of the zipline to create the rope
     /// </summary>
     /// <param name="endZipline"></param>
-    public void ConnectZipline(Zipline endZipline)
+    public void ConnectZipline(ZiplineFX endZipline)
     { //new Color (173,132,69)
         startZip = this;
         endZipline.StartZipline = this;
