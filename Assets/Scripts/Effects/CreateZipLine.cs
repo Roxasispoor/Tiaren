@@ -10,6 +10,10 @@ public class CreateZipLine : CreateBlock
     public CreateZipLine(GameObject prefab, Vector3Int face) : base(prefab, face)
     {
     }
+    public CreateZipLine(int prefabNumber, Vector3Int face):base(prefabNumber,face)
+    {
+    }
+
     public override Effect Clone()
     {
         return new CreateZipLine(this);

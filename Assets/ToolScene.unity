@@ -313,6 +313,7 @@ MonoBehaviour:
   sizeX: 50
   sizeY: 6
   sizeZ: 50
+  UseAwakeLiving: 1
   randomParameter: 90
   floaties: []
   prefabsList:

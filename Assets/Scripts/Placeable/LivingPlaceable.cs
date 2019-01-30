@@ -878,7 +878,8 @@ public class LivingPlaceable : Placeable
     // Use this for initialization //TO KEEP AS IS
     private void Awake()
     {
-        /*
+        if(Grid.instance.UseAwakeLiving)
+        { 
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
 
         shouldBatch = false;
@@ -935,23 +936,16 @@ public class LivingPlaceable : Placeable
         ListEffects7.Add(new Damage(30,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0,2,true,false));
         ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 2, 0), false));
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-3,0))); 
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
         ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
-        ListEffects11.Add(new CreateZipLine(Grid.instance.prefabsList[5], new Vector3Int(0, 1, 0))); 
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
-
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
-        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
-        ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
-        ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
+        ListEffects11.Add(new CreateZipLine(5, new Vector3Int(0, 1, 0))); 
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillEffect.MOVE,SkillArea.CROSS);
-        skill1.Save();
-        skill1.effects[0].Save();
+        //skill1.Save();
+        //skill1.effects[0].Save();
         Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5, SkillEffect.CREATE);
         Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3, SkillEffect.DESTROY);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
@@ -960,7 +954,6 @@ public class LivingPlaceable : Placeable
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
         Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
-        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
         Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "spell2", 0, 6);
         Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
         Skills.Add(skill1);
@@ -986,7 +979,7 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        */
+        }
     }
 
     public void Init(int classNumber)
