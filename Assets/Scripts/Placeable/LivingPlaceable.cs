@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -14,11 +13,11 @@ public class LivingPlaceable : Placeable
     /// Used to save position, only actualized at this point
     /// </summary>
     [SerializeField]
+    private string className = "default";
+    [SerializeField]
     private Vector3 positionSave;
     [SerializeField]
     private string playerPosesser;
-    [SerializeField]
-    private string classname = "default";
     [SerializeField]
     private Attribute maxHP;
     [SerializeField]
@@ -32,7 +31,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Attribute paMax;
     [SerializeField]
-    private Attribute force ;
+    private Attribute force;
     [SerializeField]
     private Attribute speed;
     [SerializeField]
@@ -42,9 +41,9 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Attribute jump;
     [SerializeField]
-    private Attribute def ;
+    private Attribute def;
     [SerializeField]
-    private Attribute mdef ;
+    private Attribute mdef;
     [SerializeField]
     private Attribute mstr;
     [SerializeField]
@@ -72,7 +71,7 @@ public class LivingPlaceable : Placeable
     // Variable used for the highligh
     private bool isTarget = false;
     private Renderer rend;
-     //Shaders (used for the highlight)
+    //Shaders (used for the highlight)
 
     [SerializeField]
     private Shader originalShader;
@@ -105,20 +104,7 @@ public class LivingPlaceable : Placeable
             currentHP.BaseValue = value;
         }
     }
-   /* public override Player Player
-    {
-        get
-        {
-            return base.Player;
-        }
 
-        set
-        {
-            base.Player = value;
-            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
-            
-        }
-    }*/
     public override Player Player
     {
         get
@@ -129,7 +115,7 @@ public class LivingPlaceable : Placeable
         set
         {
             base.Player = value;
-            if(GameManager.instance && GameManager.instance.player1!=null && GameManager.instance.player1==Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
             {
                 playerPosesser = "player1";
             }
@@ -375,7 +361,7 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    
+
     public List<LivingPlaceable> TargetableUnits
     {
         get
@@ -430,19 +416,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public string Classname
-    {
-        get
-        {
-            return classname;
-        }
-
-        set
-        {
-            classname = value;
-        }
-    }
-
     public float Mstr
     {
         get
@@ -481,19 +454,20 @@ public class LivingPlaceable : Placeable
             def.BaseValue = value;
         }
     }
-    
+
     public float MaxHPFlat
     {
         get
         {
-           return maxHP.FlatModif;
+            return maxHP.FlatModif;
         }
-        
+
         set
         {
-            maxHP.FlatModif=value;
+            maxHP.FlatModif = value;
         }
     }
+
     public float CurrentHPFlat
     {
         get
@@ -560,7 +534,6 @@ public class LivingPlaceable : Placeable
             force.FlatModif = value;
         }
     }
-
     public float SpeedFlat
     {
         get
@@ -650,10 +623,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-
-
-
-
     public float MaxHPPercent
     {
         get
@@ -731,7 +700,6 @@ public class LivingPlaceable : Placeable
             force.PercentModif = value;
         }
     }
-
     public float SpeedPercent
     {
         get
@@ -821,6 +789,19 @@ public class LivingPlaceable : Placeable
         }
     }
     
+    public string ClassName
+    {
+        get
+        {
+            return className;
+        }
+
+        set
+        {
+            className = value;
+        }
+    }
+
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
         return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
@@ -894,11 +875,14 @@ public class LivingPlaceable : Placeable
         return true;
     }
 
-    // Use this for initialization
+    // Use this for initialization //TO KEEP AS IS
     private void Awake()
     {
+        /*
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+
         shouldBatch = false;
-        this.characterName = "default";
+        this.className = "default";
         this.Walkable = false;
         this.Movable = true;
         this.Destroyable = true;
@@ -947,8 +931,8 @@ public class LivingPlaceable : Placeable
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects4.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
-        ListEffects7.Add(new Damage(30, 2, true, false));
+        ListEffects4.Add(new DamageCalculated(30,DamageCalculated.DamageScale.STR));
+        ListEffects7.Add(new Damage(30,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
@@ -959,18 +943,29 @@ public class LivingPlaceable : Placeable
         ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
         ListEffects11.Add(new CreateZipLine(Grid.instance.prefabsList[5], new Vector3Int(0, 1, 0))); 
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
+
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
+        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
+        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
+        ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
+        ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillEffect.MOVE,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2", 0, 5);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5, SkillEffect.CREATE);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3, SkillEffect.DESTROY);
         Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
-        Skill skill5 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 5, SkillArea.NONE, 2);
-        Skill skill6 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 3, SkillArea.LINE, 1);
+        Skill skill5 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 4, SkillEffect.DESTROY, SkillArea.NONE, 2);
+        Skill skill6 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
         Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
         Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
+<<<<<<< HEAD
         Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
         Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "spell2", 0, 6);
+=======
+        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
+>>>>>>> 6b9c4b056877a483591b5bb60382f90f9f50d722
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
@@ -994,10 +989,50 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        //Save();
-        //force = -5;
-        //FillLiving();
-        //TODO Read from JSON properly
+        */
+    }
+
+    public void Init(int classNumber)
+    {
+        
+        base.Init();
+        shouldBatch = false;
+        this.className = "default";
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.SIMPLE_GRAVITY;
+
+        this.Crushable = CrushType.CRUSHDEATH;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+        {
+            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+        };
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AreaOfMouvement = new List<NodePath>();
+        targetArea = new List<Placeable>();
+
+        targetableUnits = new List<LivingPlaceable>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+
+
+        this.Skills = new List<Skill>();
+        this.Weapons = new List<GameObject>();
+        this.IsDead = false;
+        this.CounterDeaths = 0;
+        this.TurnsRemaingingCemetery = 0;
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
+        this.AreaOfMouvement = new List<NodePath>();
+
 
 
         rend = GetComponentInChildren<Renderer>();
@@ -1008,13 +1043,12 @@ public class LivingPlaceable : Placeable
         //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.02f);
         rend.material.shader = originalShader;
-    }
-
-    public override void Init()
-    {
-        base.Init();
-        this.circleTeam.color = Player.color;
+        ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
+        Debug.Log(className + ".json");
+        LoadFromjson(ClassName + ".json");
+        circleTeam.color = Player.color;
         targetableUnits = new List<LivingPlaceable>();
+        
     }
 
     /// <summary>
@@ -1024,7 +1058,10 @@ public class LivingPlaceable : Placeable
     override
     public void Destroy()
     {
-
+        // warning : the SetActive value of the gameobject attached to livingplaceable is dealed with directly in AnimationHandler to avoid bug of respawn in special case
+        this.IsDead = true;
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+        CounterDeaths++;
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
@@ -1036,23 +1073,27 @@ public class LivingPlaceable : Placeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-            foreach(Effect effect in AttachedEffects)
+            foreach (Effect effect in AttachedEffects)
             {
                 effect.TurnActiveEffect = 1;
                 EffectManager.instance.DirectAttack(effect);
             }
             AttachedEffects.Clear();
         }
+        if (GameManager.instance.playingPlaceable == this)
+        {
+            GameManager.instance.EndOFTurn();
+        }
         this.IsDead = true;
         this.gameObject.SetActive(false);
               CounterDeaths++;
     }
 
-   /* public void HighlightForSpawn()
-    {
-        rend.material.shader = outlineShader;
-        rend.material.SetColor("_OutlineColor", Color.green);
-    }*/
+    /* public void HighlightForSpawn()
+     {
+         rend.material.shader = outlineShader;
+         rend.material.SetColor("_OutlineColor", Color.green);
+     }*/
     private void ActivateOutline(Color color)
     {
         rend.material.shader = outlineShader;
@@ -1083,6 +1124,7 @@ public class LivingPlaceable : Placeable
 
     public void UnHighlightTarget()
     {
+        isTarget = false;
         DesactivateOutline();
     }
 
@@ -1205,8 +1247,6 @@ public class LivingPlaceable : Placeable
 
     public void ChangeMaterialAreaOfTarget(Material materialTarget)
     {
-
-
         foreach (Placeable placeable in TargetArea)
         {
             if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
@@ -1219,7 +1259,6 @@ public class LivingPlaceable : Placeable
             }
         }
         GameManager.instance.ResetAllBatches();
-
     }
 
     /// <summary>
@@ -1243,6 +1282,7 @@ public class LivingPlaceable : Placeable
         }
         targetArea.Clear();
 
+        GameManager.instance.ResetAllBatches();
         TargetableUnits = null;
 
     }
@@ -1295,6 +1335,7 @@ public class LivingPlaceable : Placeable
         }
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
+        this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
         bool isNewSkill = true;
         Skill newSkill = null;
 
@@ -1304,6 +1345,7 @@ public class LivingPlaceable : Placeable
             {
 
                 newSkill = JsonUtility.FromJson<Skill>(line);
+                newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 isNewSkill = false;
 
@@ -1311,33 +1353,72 @@ public class LivingPlaceable : Placeable
             else
             {
                 string typename = line.Substring(0, line.IndexOf("{"));
-                foreach (Type type in possible)
+
+                if (typename.StartsWith("ParameterChangeV2"))
                 {
-                    if (type.ToString() == typename)
+                    string T = line.Substring(line.IndexOf("[") + 1, line.IndexOf(",") - line.IndexOf("[") - 1);
+                    string TProperty = line.Substring(line.IndexOf(",") + 1, line.IndexOf("]") - line.IndexOf(",") - 1);
+                    string a = line.Substring(line.IndexOf("{"));
+
+                    if (line[line.Length - 1] == ';')
                     {
-                        // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
-                        //MethodInfo generic = method.MakeGenericMethod(type);
-                        //object[] objectArray = new[] { line};
-                        string a = line.Substring(line.IndexOf("{"));
-
-                        if (line[line.Length - 1] == ';')
+                        a = a.Remove(a.Length - 1);
+                        isNewSkill = true;
+                    }
+                    Debug.Log(a);
+                    Effect eff = null;
+                    if (T == "LivingPlaceable")
+                    {
+                        if (TProperty == "System.Single")
                         {
-                            a = a.Remove(a.Length - 1);
-                            isNewSkill = true;
+                            eff = (Effect)JsonUtility.FromJson<ParameterChangeV2<LivingPlaceable, float>>(a);
                         }
-                        Debug.Log(a);
-                        Effect eff = (Effect)JsonUtility.FromJson(a, type);
-                        eff.Initialize();
-                        newSkill.effects.Add(eff);
-                        if (isNewSkill)
+                    }
+                    if (eff == null)
+                    {
+                        Debug.LogError("no parameterChange with those types");
+                    }
+                    eff.Initialize();
+                    newSkill.effects.Add(eff);
+                    if (isNewSkill)
+                    {
+                        if (skills == null)
                         {
-                            if (skills == null)
+                            skills = new List<Skill>();
+                        }
+                        skills.Add(newSkill);
+                    }
+                }
+                else
+                {
+                    foreach (Type type in possible)
+                    {
+                        if (type.ToString() == typename)
+                        {
+                            // MethodInfo method = typeof(JsonUtility).GetMethod("FromJson");
+                            //MethodInfo generic = method.MakeGenericMethod(type);
+                            //object[] objectArray = new[] { line};
+                            string a = line.Substring(line.IndexOf("{"));
+
+                            if (line[line.Length - 1] == ';')
                             {
-                                skills = new List<Skill>();
+                                a = a.Remove(a.Length - 1);
+                                isNewSkill = true;
                             }
-                            skills.Add(newSkill);
-                        }
+                            Debug.Log(a);
+                            Effect eff = (Effect)JsonUtility.FromJson(a, type);
+                            eff.Initialize();
+                            newSkill.effects.Add(eff);
+                            if (isNewSkill)
+                            {
+                                if (skills == null)
+                                {
+                                    skills = new List<Skill>();
+                                }
+                                skills.Add(newSkill);
+                            }
 
+                        }
                     }
                 }
 
@@ -1348,7 +1429,4 @@ public class LivingPlaceable : Placeable
         reader.Close();
 
     }
-
-
-
 }

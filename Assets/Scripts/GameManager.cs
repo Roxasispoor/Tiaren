@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -291,7 +292,7 @@ public class GameManager : NetworkBehaviour
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
         }
-
+        
 
         //init Posiible characters
         string path = "Teams.json";
@@ -323,33 +324,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private IEnumerator Start()
     {
+
+
         //PHASE 0 : SET THE GAME UP
 
         //If you want to create one and save it
-        // Grid.instance.CreateRandomGrid(gridFolder);
-        //Grid.instance.SaveGridFile();
-
-        //If you want to load one
-
-        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
-        transmitter.networkManager = networkManager;
-        /*if (isServer)
-         {
-             Debug.LogError("Transmitter 
-
-
-
-
-         ed");
-             StartCoroutine(transmitter.AcceptTcp());
-
-         }
-         if (isClient)
-         {
-             Debug.Log("Client listen to data start coroutine");
-             StartCoroutine(transmitter.ListenToData());
-             //receive data from server
-         }*/
+        
+        state = States.TeamSelect;
         while (player1 == null)
         {
             yield return null;
@@ -359,8 +340,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             yield return null;
         }
 
+        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        transmitter.networkManager = networkManager;
+
         Grid.instance.Gravity();
-        State = States.TeamSelect;
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
@@ -553,6 +536,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void RefreshBatch(Placeable block)
     {
+        if (block.batch.batchObject == null)
+        {
+            CreateNewBatch(block.batch);
+        }
         block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
         block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
         block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
@@ -612,7 +599,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void ResetAllBatches()
     {
 
-        if(Hovered != null)
+        if (Hovered != null)
         {
             Hovered.UnHighlight();
         }
@@ -646,30 +633,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void OnEndAnimationEffectEnd()
     {
 
-        if(playingPlaceable.Player.isLocalPlayer)
-        { 
-        MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
+        if (playingPlaceable.Player.isLocalPlayer)
+        {
+            MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.State = States.Move;
         }
     }
     public void InitStartGame()
     {
-        //Create a flag
-        GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
-        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        NetIdeable.currentMaxId++;
-        //
-        GameObject GoalP1 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, 1), Quaternion.identity, gridFolder.transform);///TODO modify with json
-        GoalP1.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        Grid.instance.GridMatrix[10, 1, 1] = GoalP1.GetComponent<Placeable>();
-        GoalP1.GetComponent<Placeable>().Player = player1.GetComponent<Player>();
-        NetIdeable.currentMaxId++;
-
-        GameObject GoalP2 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, Grid.instance.sizeZ - 2), Quaternion.identity, gridFolder.transform);///TODO modify with json
-        GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ - 2] = GoalP2.GetComponent<Placeable>();
-        GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
-        NetIdeable.currentMaxId++;
+        //Initialisation de MethodsForEffects
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -757,8 +730,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             // safePendingList.RemoveAt(i);
         }
 
-
-
         if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
         {
             playingPlaceable.TurnsRemaingingCemetery--;
@@ -766,6 +737,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
+            
+            if (playingPlaceable.IsDead)
+            {
+                playingPlaceable.IsDead = false;
+                playingPlaceable.Player.Respawn(playingPlaceable);
+            }
 
             if (playingPlaceable.IsDead)
             {
@@ -788,8 +765,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
             if (isClient && playingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.Player.cameraScript.target = playingPlaceable.GetComponent<Placeable>().gameObject.transform;
+                playingPlaceable.Player.cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
                 playingPlaceable.Player.cameraScript.Freecam = 0;
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
             }
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
@@ -821,6 +800,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
                 playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
                 playingPlaceable.Player.cameraScript.Freecam = 1;
+                playingPlaceable.Player.cameraScript.SetTarget(TurnOrder[1].Character.transform);
                 //ResetAllBatches();
             }
             BeginningOfTurn();
@@ -855,13 +835,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         return null;
     }
-    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className)
+    private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className, int prefabNumber)
     {
         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
         charac1.Player = player.GetComponent<Player>();
-        charac1.Init();
-        //charac1.FillLiving(className);
+        charac1.Init(prefabNumber);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
         charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
@@ -878,9 +857,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         GameObject charac = Instantiate(prefabCharacs[prefaToSpawn], new Vector3(spawnCoordinates.x, spawnCoordinates.y, spawnCoordinates.z), Quaternion.identity);
 
-        playerComponent.characters.Add(charac);
+        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className, prefaToSpawn);
 
-        InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className);
+        playerComponent.characters.Add(charac);
     }
 
     private void Update()

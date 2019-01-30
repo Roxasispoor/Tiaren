@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114105382873498880}
   - component: {fileID: 114945978310607720}
   m_Layer: 10
-  m_Name: Cube
+  m_Name: Bridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,7 +484,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: d393261edd4f76b4195e245d1d818fca, type: 2}
+  - {fileID: 2100000, guid: b4e23faa08b754f4c8584624ba76b54f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -695,8 +695,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1e989823256d0438c381cbc3f6ada6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializeNumber: 1
+  netId: 0
+  shouldBatch: 1
+  isMoving: 0
+  destination: {x: 0, y: 0, z: 0}
+  serializeNumber: 6
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
+  baseMaterial: {fileID: 0}
+  isSpawnPoint: 0
 --- !u!114 &114945978310607720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -711,21 +717,21 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 124
-    i1: 137
-    i2: 54
-    i3: 64
-    i4: 9
-    i5: 41
-    i6: 144
-    i7: 116
-    i8: 121
-    i9: 21
-    i10: 175
-    i11: 138
-    i12: 173
-    i13: 100
-    i14: 246
-    i15: 39
+    i0: 40
+    i1: 7
+    i2: 72
+    i3: 169
+    i4: 93
+    i5: 128
+    i6: 145
+    i7: 148
+    i8: 248
+    i9: 20
+    i10: 170
+    i11: 167
+    i12: 157
+    i13: 235
+    i14: 8
+    i15: 113
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0

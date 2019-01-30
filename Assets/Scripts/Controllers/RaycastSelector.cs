@@ -5,10 +5,10 @@ using UnityEngine;
 public class RaycastSelector : MonoBehaviour
 {
     public LayerMask layerMask = 0;
-    private int effectarea;
+    private int effectarea; //effectarea radius
     private int state;
     private SkillArea pattern;
-    List<Placeable> area;
+    private List<Placeable> area;
     public Camera camera;
 
     public SkillArea Pattern
@@ -19,6 +19,9 @@ public class RaycastSelector : MonoBehaviour
 
     public int EffectArea
     { get { return effectarea; } set { effectarea = value; } }
+
+    public List<Placeable> Area
+    { get { return area; } set { area = value; } }
 
     // Use this for initialization
     void Start()

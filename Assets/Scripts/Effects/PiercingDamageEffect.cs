@@ -5,6 +5,7 @@ using UnityEngine;
 public class PiercingDamageEffect : DamageCalculated
 {
     public float diminutionRate = 0.34f;
+
     public PiercingDamageEffect() : base()
     {
     }

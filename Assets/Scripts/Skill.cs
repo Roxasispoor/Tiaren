@@ -30,10 +30,12 @@ public class Skill
     [SerializeField]
     public DelegateCondition condition;
     [SerializeField]
-    public Sprite abilitySprite;
+    private string description = "Ca tue";
+    private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
     private SkillArea skillarea;
+    private SkillEffect skilleffect;
 
 
     public SkillType SkillType
@@ -59,6 +61,19 @@ public class Skill
         set
         {
             skillarea = value;
+        }
+    }
+
+    public SkillEffect SkillEffect
+    {
+        get
+        {
+            return skilleffect;
+        }
+
+        set
+        {
+            skilleffect = value;
         }
     }
 
@@ -153,19 +168,46 @@ public class Skill
         }
     }
 
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
+    public Sprite AbilitySprite
+    {
+        get
+        {
+            return abilitySprite;
+        }
+
+        set
+        {
+            abilitySprite = value;
+        }
+    }
+
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+
+        set
+        {
+            description = value;
+        }
+    }
+
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
     {
         Cost = cost;
         Cooldown = cooldown;
         tourCooldownLeft = 0;
         this.effects = effects;
         SkillName = skillName;
-        this.abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
+        this.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         SkillType = skillType;
         this.maxRange = rangeMax;
         this.minRange = rangeMin;
         EffectArea = effectarea;
         SkillArea = skillarea;
+        SkillEffect = skilleffect;
     }
 
     public Skill(string jsonFilePath)
@@ -237,9 +279,9 @@ public class Skill
             text+=eff.Save();
             
         }
-        text += ";";
+        text = text.Remove(text.Length - 1) + ";";
         return text;
- //       File.WriteAllText(path, text);
+        //File.WriteAllText(path, text);
     }
 
     

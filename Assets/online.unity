@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf49af35ff6aa47af722136663683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapToCharge: Hill.json
+  mapToCharge: Castles.json
   pathFindingMaterial: {fileID: 2100000, guid: 82458a6739f1d9f4b84ff4e3d5981f81, type: 2}
   highlightingMaterial: {fileID: 2100000, guid: fe617bef43b4a2f4da753559c49788aa,
     type: 2}
@@ -411,7 +411,7 @@ MonoBehaviour:
     maxRange: 0
     minRange: 0
     effectarea: 0
-    abilitySprite: {fileID: 0}
+    description: 
     skillType: 0
   transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}
@@ -462,7 +462,12 @@ MonoBehaviour:
   - {fileID: 1972576056741726, guid: f9d8c67be3f279e4eaa105ecc867a791, type: 2}
   - {fileID: 1064643011964598, guid: 4831bdb7ff2cebc438620884323b26eb, type: 2}
   - {fileID: 1919671021765086, guid: 97c1ce9c3dbe7ae45a2de2fcb3b01487, type: 2}
-  - {fileID: 1575151665464940, guid: b7e8c61990b97544faada7ac2b36329d, type: 2}
+  - {fileID: 1032257904305354, guid: 280748a95d809194f814aaa79deb0871, type: 2}
+  - {fileID: 1032257904305354, guid: ec57ead58293a0e46986733ffbc7d915, type: 2}
+  - {fileID: 1032257904305354, guid: 61c7f16081364984ba0cc3497d33b6e6, type: 2}
+  - {fileID: 1032257904305354, guid: b786e2e866b177145bea4ee1a2fc5f35, type: 2}
+  - {fileID: 1032257904305354, guid: e13743104e3f6774babd58b5f8c03d8d, type: 2}
+  - {fileID: 1032257904305354, guid: 3e6ad3cb903a3974bb2ccf001ebeb691, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -828,7 +833,7 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.5
+    m_Strength: 0.2
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
