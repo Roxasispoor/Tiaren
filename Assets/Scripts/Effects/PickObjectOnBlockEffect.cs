@@ -23,6 +23,7 @@ public class PickObjectOnBlockEffect : EffectOnObjectBloc
         {
             Debug.Log("Object picked!");
             Target.transform.SetParent(Launcher.transform.Find("Inventory"));
+            Target.transform.localPosition = new Vector3();
             GameManager.instance.playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(GameManager.instance.playingPlaceable,
                 GameManager.instance.playingPlaceable.GetPosition());
         }

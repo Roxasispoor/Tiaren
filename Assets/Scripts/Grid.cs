@@ -129,7 +129,13 @@ public class Grid : MonoBehaviour
         }
 
     }
-
+    public GameObject InstanciateObjectOnBloc(GameObject prefab,Vector3Int position)
+    {
+        GameObject newObjectOnBloc = Instantiate(prefab, Grid.instance.GridMatrix[position.x,position.y,position.z].gameObject.transform.Find("Inventory"));
+        newObjectOnBloc.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
+        NetIdeable.currentMaxId++;
+        return newObjectOnBloc;
+    }
     /// <summary>
     /// Instanciate the new cube
     /// </summary>
@@ -141,7 +147,7 @@ public class Grid : MonoBehaviour
         {
             GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, GameManager.instance.gridFolder.transform);
             gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
-            
+            gridMatrix[position.x, position.y - 1, position.z].SomethingPutAbove();
             if (GameManager.instance.isClient)
             {
                 MeshFilter meshFilter = newBlock.GetComponent<MeshFilter>();

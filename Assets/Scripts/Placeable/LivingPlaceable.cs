@@ -943,6 +943,7 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects8 = new List<Effect>();
         List<Effect> ListEffects9 = new List<Effect>();
         List<Effect> ListEffects10 = new List<Effect>();
+        List<Effect> ListEffects11 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
@@ -952,9 +953,11 @@ public class LivingPlaceable : Placeable
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, o => o.MaxPMFlat));
         ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, o => o.MaxPMFlat,2,true,false));
-        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
+        ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 2, 0), false));
+        ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-3,0))); 
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
         ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
+        ListEffects11.Add(new CreateZipLine(Grid.instance.prefabsList[5], new Vector3Int(0, 1, 0))); 
         Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push", 0, 4, SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
@@ -967,16 +970,19 @@ public class LivingPlaceable : Placeable
         Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
         Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
         Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillArea.THROUGHBLOCKS);
+        Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "spell2", 0, 6);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
-        Skills.Add(skill7);
-        Skills.Add(skill8);
+        
+        //Skills.Add(skill7);
+        //Skills.Add(skill8);
         Skills.Add(skill9);
         Skills.Add(skill10);
+        Skills.Add(skill11);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
@@ -1021,6 +1027,7 @@ public class LivingPlaceable : Placeable
 
         if (this.Destroyable)
         {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (Effect effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.DirectAttack(effect);
@@ -1038,8 +1045,7 @@ public class LivingPlaceable : Placeable
         }
         this.IsDead = true;
         this.gameObject.SetActive(false);
-        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        CounterDeaths++;
+              CounterDeaths++;
     }
 
    /* public void HighlightForSpawn()

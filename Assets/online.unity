@@ -413,7 +413,6 @@ MonoBehaviour:
     effectarea: 0
     abilitySprite: {fileID: 0}
     skillType: 0
-  hovered: {fileID: 0}
   transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}
 --- !u!4 &823285885
@@ -463,6 +462,7 @@ MonoBehaviour:
   - {fileID: 1972576056741726, guid: f9d8c67be3f279e4eaa105ecc867a791, type: 2}
   - {fileID: 1064643011964598, guid: 4831bdb7ff2cebc438620884323b26eb, type: 2}
   - {fileID: 1919671021765086, guid: 97c1ce9c3dbe7ae45a2de2fcb3b01487, type: 2}
+  - {fileID: 1575151665464940, guid: b7e8c61990b97544faada7ac2b36329d, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
