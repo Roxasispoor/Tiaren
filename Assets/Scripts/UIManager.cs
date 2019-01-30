@@ -171,6 +171,7 @@ public class UIManager : MonoBehaviour {
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
+            button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
             numberInstantiated++;
         }
         if(character.EquipedWeapon!=null && character.EquipedWeapon.Skills!=null)

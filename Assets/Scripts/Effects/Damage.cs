@@ -75,6 +75,7 @@ public class Damage : EffectOnLiving
         else
         {
             animLauncher.Play("attack");
+            SoundHandler.Instance.PlayAttackSound();
             AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndGetHurt(Target, animTarget, GetTimeOfLauncherAnimation()));
 
         }
