@@ -452,6 +452,11 @@ public class Player : NetworkBehaviour
         }
         gameObject.transform.Find("TeamCanvas").transform.Find("GoTeam").gameObject.SetActive(false);
         gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other Player";
+        Button[] buttons = gameObject.transform.Find("TeamCanvas").transform.GetComponentsInChildren<Button>();
+        foreach (Button but in buttons)
+        {
+            Destroy(but.gameObject);
+        }
         CmdTeamReady(characterChoices);
     }
 
