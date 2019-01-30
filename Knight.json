@@ -18,4 +18,4 @@ CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"tu
 {"skillName":"piercing","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":10,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
 PiercingDamageEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":1,"sinFactor":0.30000001192092898,"diminutionRate":0.3400000035762787};
 {"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":6,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2}
-CreateZipLine{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}};
+CreateZipLine{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":11,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}};
