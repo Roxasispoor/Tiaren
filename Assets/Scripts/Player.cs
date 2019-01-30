@@ -805,8 +805,19 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+        }
+        else if (skill.SkillType == SkillType.SELF)
+        {
+            if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+            {
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+                if (skill.SkillEffect == SkillEffect.SPINNING)
+                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
+                playingPlaceable.TargetableUnits = targetableunits;
+                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+            }
         }
         else
         {

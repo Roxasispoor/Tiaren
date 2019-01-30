@@ -34,7 +34,9 @@ public class Skill
     private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
+    [SerializeField]
     private SkillArea skillarea;
+    [SerializeField]
     private SkillEffect skilleffect;
 
 

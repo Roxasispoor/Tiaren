@@ -29,7 +29,7 @@ public class Stats
     public Attribute deathLength;
     //public List<Skill> skills;
     public bool isDead;
-    //==================== initialize a mano
+    //initialize a mano
     public int serializeNumber;
     public int netId;
 

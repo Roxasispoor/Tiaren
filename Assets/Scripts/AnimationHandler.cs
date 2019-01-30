@@ -101,11 +101,8 @@ public class AnimationHandler : MonoBehaviour
         // TODO : check if startmovealongbezier cannot cause bug (rebatch)
         // TODO : give Damage to living on the way
 
-
     }
     
-
-
     public IEnumerator WaitAndGetHurt(LivingPlaceable target, Animator animator, float time)
     {
         bool interrupted = false;
