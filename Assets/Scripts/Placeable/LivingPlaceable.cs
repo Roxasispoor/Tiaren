@@ -788,7 +788,7 @@ public class LivingPlaceable : Placeable
             deathLength.PercentModif = value;
         }
     }
-    
+
     public string ClassName
     {
         get
@@ -878,7 +878,8 @@ public class LivingPlaceable : Placeable
     // Use this for initialization //TO KEEP AS IS
     private void Awake()
     {
-        /*
+        if(Grid.instance.UseAwakeLiving)
+        { 
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
 
         shouldBatch = false;
@@ -890,7 +891,7 @@ public class LivingPlaceable : Placeable
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
 
-        this.Crushable = CrushType.CRUSHDEATH;
+        this.Crushable = CrushType.CRUSHDAMAGE;
         this.OnDestroyEffects = new List<Effect>();
         this.HitablePoints = new List<HitablePoint>
         {
@@ -900,8 +901,8 @@ public class LivingPlaceable : Placeable
         this.OnEndTurn = new List<Effect>();
         this.MaxHP = 100;
         this.CurrentHP = 100;
-        this.MaxPM = 3;
-        this.CurrentPM = 3;
+        this.MaxPM = 5;
+        this.CurrentPM = 5;
         this.PaMax = 1;
         this.CurrentPA = 1;
         this.Jump = 1;
@@ -927,40 +928,45 @@ public class LivingPlaceable : Placeable
         List<Effect> ListEffects8 = new List<Effect>();
         List<Effect> ListEffects9 = new List<Effect>();
         List<Effect> ListEffects10 = new List<Effect>();
+        List<Effect> ListEffects11 = new List<Effect>();
         ListEffects.Add(new Push(null, this, 2, 500));
         ListEffects3.Add(new DestroyBloc());
         ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
         ListEffects4.Add(new DamageCalculated(30,DamageCalculated.DamageScale.STR));
-        ListEffects7.Add(new Damage(30,2));
+        ListEffects7.Add(new Damage(20,2));
         ListEffects5.Add(new DestroyBloc());
         ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
-        ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
+        //ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
+        //ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
+        ListEffects8.Add(new DamageCalculated(50, DamageCalculated.DamageScale.STR));
         ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
         ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0))); 
-        ListEffects10.Add(new PiercingDamageEffect(30,DamageCalculated.DamageScale.DEXT)); 
-        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "push",0,4,SkillEffect.MOVE,SkillArea.CROSS);
+        ListEffects10.Add(new PiercingDamageEffect(60,DamageCalculated.DamageScale.DEXT)); 
+        ListEffects11.Add(new CreateZipLine(11, new Vector3Int(0, 1, 0)));
+        Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "Basic_push",0,2,SkillEffect.MOVE,SkillArea.CROSS);
         skill1.Save();
         skill1.effects[0].Save();
-        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "spell2",0,5, SkillEffect.CREATE);
-        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "destroyBlock", 0, 3, SkillEffect.DESTROY);
-        Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "damage", 0, 2);
-        Skill skill5 = new Skill(0, 1, ListEffects3, SkillType.AREA, "destroyBlock", 0, 4, SkillEffect.DESTROY, SkillArea.NONE, 2);
-        Skill skill6 = new Skill(0, 1, ListEffects2, SkillType.AREA, "spell2", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
-        Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "damage", 0, 2);
-        Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "debuffPm", 0, 2);
-        Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
-        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "piercing", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
+        Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "Basic_creation",0,4, SkillEffect.CREATE);
+        Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction",0,3, SkillEffect.DESTROY);
+        Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack",0,2);
+        Skill skill5 = new Skill(0, 1, ListEffects3, SkillType.AREA, "Fissure", 0, 3, SkillEffect.DESTROY, SkillArea.LINE, 1);
+        Skill skill6 = new Skill(0, 1, ListEffects2, SkillType.AREA, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
+        Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.LIVING, "Bleeding", 0, 1);
+        Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+        Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "Higherground", 0, 1);
+        Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "Piercing_arrow", 0, 10,SkillEffect.NONE ,SkillArea.THROUGHBLOCKS);
+        Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "Range_buff", 0, 6);
         Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
         Skills.Add(skill5);
         Skills.Add(skill6);
-        Skills.Add(skill7);
+        //Skills.Add(skill7);
         Skills.Add(skill8);
         Skills.Add(skill9);
         Skills.Add(skill10);
+        Skills.Add(skill11);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
@@ -972,66 +978,63 @@ public class LivingPlaceable : Placeable
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-        */
+        }
     }
 
     public void Init(int classNumber)
     {
-        
-        base.Init();
-        shouldBatch = false;
-        this.className = "default";
-        this.Walkable = false;
-        this.Movable = true;
-        this.Destroyable = true;
-        this.TraversableChar = TraversableType.ALLIESTHROUGH;
-        this.TraversableBullet = TraversableType.NOTHROUGH;
-        this.GravityType = GravityType.SIMPLE_GRAVITY;
-
-        this.Crushable = CrushType.CRUSHDEATH;
-        this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>
+        if (!Grid.instance.UseAwakeLiving)
         {
-            new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-        };
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
-        this.AreaOfMouvement = new List<NodePath>();
-        targetArea = new List<Placeable>();
+            base.Init();
+            shouldBatch = false;
+            this.className = "default";
+            this.Walkable = false;
+            this.Movable = true;
+            this.Destroyable = true;
+            this.TraversableChar = TraversableType.ALLIESTHROUGH;
+            this.TraversableBullet = TraversableType.NOTHROUGH;
+            this.GravityType = GravityType.SIMPLE_GRAVITY;
+            this.Crushable = CrushType.CRUSHDAMAGE;
+            this.OnDestroyEffects = new List<Effect>();
+            this.HitablePoints = new List<HitablePoint>
+            {
+                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+            };
+            this.OnStartTurn = new List<Effect>();
+            this.OnEndTurn = new List<Effect>();
+            this.AreaOfMouvement = new List<NodePath>();
+            targetArea = new List<Placeable>();
 
-        targetableUnits = new List<LivingPlaceable>();
-        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
-        this.AttachedEffects = new List<Effect>();
+            targetableUnits = new List<LivingPlaceable>();
+            //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+            this.OnDestroyEffects = new List<Effect>();
+            this.HitablePoints = new List<HitablePoint>();
+            this.OnStartTurn = new List<Effect>();
+            this.OnEndTurn = new List<Effect>();
+            this.AttachedEffects = new List<Effect>();
 
+            this.Skills = new List<Skill>();
+            this.Weapons = new List<GameObject>();
+            this.IsDead = false;
+            this.CounterDeaths = 0;
+            this.TurnsRemaingingCemetery = 0;
+            this.ShootPosition = new Vector3(0, 0.5f, 0);
+            this.AreaOfMouvement = new List<NodePath>();
 
-        this.Skills = new List<Skill>();
-        this.Weapons = new List<GameObject>();
-        this.IsDead = false;
-        this.CounterDeaths = 0;
-        this.TurnsRemaingingCemetery = 0;
-        this.ShootPosition = new Vector3(0, 0.5f, 0);
-        this.AreaOfMouvement = new List<NodePath>();
-
-
-
-        rend = GetComponentInChildren<Renderer>();
-        originalShader = Shader.Find("Standard");
-        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-        rend.material.shader = outlineShader;
-        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
-        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
-        rend.material.SetFloat("_Outline", 0.02f);
-        rend.material.shader = originalShader;
-        ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
-        Debug.Log(className + ".json");
-        LoadFromjson(ClassName + ".json");
-        circleTeam.color = Player.color;
-        targetableUnits = new List<LivingPlaceable>();
-        
+            rend = GetComponentInChildren<Renderer>();
+            originalShader = Shader.Find("Standard");
+            outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+            rend.material.shader = outlineShader;
+            rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+            //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+            rend.material.SetFloat("_Outline", 0.02f);
+            rend.material.shader = originalShader;
+            ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
+            Debug.Log(className + ".json");
+            LoadFromjson(ClassName + ".json");
+            circleTeam.color = Player.color;
+            targetableUnits = new List<LivingPlaceable>();
+        }
     }
     
 
@@ -1064,6 +1067,7 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
         if (this.Destroyable)
         {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
             foreach (Effect effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.DirectAttack(effect);
@@ -1085,8 +1089,7 @@ public class LivingPlaceable : Placeable
         }
         this.IsDead = true;
         this.gameObject.SetActive(false);
-        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        CounterDeaths++;
+              CounterDeaths++;
     }
 
     /* public void HighlightForSpawn()
@@ -1249,9 +1252,10 @@ public class LivingPlaceable : Placeable
     {
         foreach (Placeable placeable in TargetArea)
         {
-            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null) //if we haven't seen this one before
+            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null && !placeable.IsLiving()) //if we haven't seen this one before
             {
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
+                
                 Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
                     Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
                 Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
@@ -1378,7 +1382,7 @@ public class LivingPlaceable : Placeable
                     {
                         Debug.LogError("no parameterChange with those types");
                     }
-                    eff.Initialize();
+                    eff.Initialize(this);
                     newSkill.effects.Add(eff);
                     if (isNewSkill)
                     {
@@ -1407,7 +1411,7 @@ public class LivingPlaceable : Placeable
                             }
                             Debug.Log(a);
                             Effect eff = (Effect)JsonUtility.FromJson(a, type);
-                            eff.Initialize();
+                            eff.Initialize(this);
                             newSkill.effects.Add(eff);
                             if (isNewSkill)
                             {

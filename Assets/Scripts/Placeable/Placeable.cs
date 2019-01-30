@@ -484,17 +484,27 @@ public abstract class Placeable: NetIdeable
         {
             if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-               
+                Skill skill = GameManager.instance.activeSkill;
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && GameManager.instance.activeSkill!= null && (GameManager.instance.activeSkill.SkillType == SkillType.LIVING && IsLiving() 
-                    || (GameManager.instance.activeSkill.SkillType == SkillType.BLOCK || GameManager.instance.activeSkill.SkillType == SkillType.AREA) && !IsLiving()))
+                    && skill!= null && (skill.SkillType == SkillType.LIVING && IsLiving() 
+                    || (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA) && !IsLiving()))
 
 
                 {
 
                     Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
                     List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
-                    if (area == null) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, new int[0]);
+                    if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0]);
+                    else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+                    {
+                        List<LivingPlaceable> Playerlist = GameManager.instance.playingPlaceable.TargetableUnits;
+                        int[] netidlist = new int[Playerlist.Count];
+                        for (int i = 0; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = Playerlist[i].netId;
+                        }
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist);
+                    }
                     else
                     {
                         int[] netidlist = new int[area.Count];
@@ -502,7 +512,7 @@ public abstract class Placeable: NetIdeable
                         {
                             netidlist[i] = area[i].netId;
                         }
-                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, GameManager.instance.activeSkill), netId, netidlist);
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist);
                     }
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }

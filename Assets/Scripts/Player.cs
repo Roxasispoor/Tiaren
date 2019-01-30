@@ -805,8 +805,19 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+        }
+        else if (skill.SkillType == SkillType.SELF)
+        {
+            if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+            {
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+                if (skill.SkillEffect == SkillEffect.SPINNING)
+                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
+                playingPlaceable.TargetableUnits = targetableunits;
+                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+            }
         }
         else
         {
@@ -998,6 +1009,7 @@ public class Player : NetworkBehaviour
     public static float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
+
         if (isBezier)// if difference of height
         {
             controlPoint = (nextNode + start + 2 * new Vector3(0, Mathf.Abs(nextNode.y - start.y), 0)) / 2;
@@ -1013,7 +1025,7 @@ public class Player : NetworkBehaviour
     }
 
     [Client]
-    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed,bool justLerp=false)
     {
          if(path.Count>1)
         {
@@ -1023,7 +1035,7 @@ public class Player : NetworkBehaviour
                 placeable.MoveCoroutine = null;
 
             }
-            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed));
+            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed,justLerp));
          }
     }
 
@@ -1156,7 +1168,7 @@ public class Player : NetworkBehaviour
     }
     
     // ONLY FOR OTHER PLACEABLE
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed,bool justLerp=false)
     {
         if (path.Count < 2)
         {
@@ -1173,15 +1185,23 @@ public class Player : NetworkBehaviour
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
-        bool isBezier = true;
+        bool isBezier = true;//TODO FIX NAN
 
 
         //For visual rotation
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
-
+        float distance=0;
         int i = 1;
-        float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        if(!justLerp)
+        { 
+        distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        }
+        else
+        {
+            isBezier = false;
+            distance = Vector3.Distance(startPosition, path[i]);
+        }
         float distanceParcourue = 0;
         while (timeBezier < 1)
         {

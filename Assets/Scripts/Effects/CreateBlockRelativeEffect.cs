@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class CreateBlockRelativeEffect : CreateBlock
 {
-
+    [SerializeField]
     private Vector3Int relativePosition;
     /// <summary>
     /// Warning not used!
     /// </summary>
     private bool inTargetDirection = false;
+
+    public override void Initialize(LivingPlaceable livingPlaceable)
+    {
+        base.Initialize(livingPlaceable);
+    }
 
     public CreateBlockRelativeEffect(CreateBlockRelativeEffect other) : base(other)
     {

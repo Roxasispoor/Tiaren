@@ -93,16 +93,16 @@ public class AnimationHandler : MonoBehaviour
         Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
     }
 
-    public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time)
+    public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time,bool justLerp=false)
     {
+
         yield return StartCoroutine(CheckInterruptions(time/2));
-        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed);
+        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed,justLerp);
         // TODO : check if startmovealongbezier cannot cause bug (rebatch)
         // TODO : give Damage to living on the way
 
     }
-
-
+    
     public IEnumerator WaitAndGetHurt(LivingPlaceable target, Animator animator, float time)
     {
         bool interrupted = false;

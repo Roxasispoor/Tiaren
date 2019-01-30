@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -189,7 +189,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -413,6 +413,8 @@ MonoBehaviour:
     effectarea: 0
     description: 
     skillType: 0
+    skillarea: 0
+    skilleffect: 0
   transmitter: {fileID: 0}
   playingPlaceable: {fileID: 0}
 --- !u!4 &823285885
@@ -454,6 +456,9 @@ MonoBehaviour:
   sizeX: 50
   sizeY: 10
   sizeZ: 50
+  falldamage: 15
+  blockfalldamage: 20
+  UseAwakeLiving: 0
   randomParameter: 90
   floaties: []
   prefabsList:
@@ -468,6 +473,7 @@ MonoBehaviour:
   - {fileID: 1032257904305354, guid: b786e2e866b177145bea4ee1a2fc5f35, type: 2}
   - {fileID: 1032257904305354, guid: e13743104e3f6774babd58b5f8c03d8d, type: 2}
   - {fileID: 1032257904305354, guid: 3e6ad3cb903a3974bb2ccf001ebeb691, type: 2}
+  - {fileID: 1575151665464940, guid: b7e8c61990b97544faada7ac2b36329d, type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,7 +831,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1023,7 +1029,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1089,7 +1095,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
