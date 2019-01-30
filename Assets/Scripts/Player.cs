@@ -397,6 +397,8 @@ public class Player : NetworkBehaviour
         List<int> numbers = new List<int>(characterChoices);
         gameObject.GetComponent<UIManager>().CurrentCharacters = numbers;
 
+        GameManager.instance.InitStartGame();
+
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
             GameManager.instance.player1.GetComponent<Player>().Isready = false;
@@ -456,6 +458,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcStartSpawn(int[] otherPlayerChoices)
     {
+        GameManager.instance.InitStartGame();
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
         GameManager.instance.State = States.Spawn;
@@ -508,7 +511,6 @@ public class Player : NetworkBehaviour
         {
             RpcEndSpawnAndStartGame();
             GameManager.instance.IsGameStarted = true;
-            GameManager.instance.InitStartGame();
             GameManager.instance.BeginningOfTurn();
         }
     }
@@ -613,7 +615,6 @@ public class Player : NetworkBehaviour
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.IsGameStarted = true;
-        GameManager.instance.InitStartGame();
         GameManager.instance.BeginningOfTurn();
     }
 

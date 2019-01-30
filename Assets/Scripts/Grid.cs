@@ -1046,9 +1046,6 @@ public class Grid : MonoBehaviour
         //Number of axis involved, the more, the more raycast i must shoot
         int sides = activex + activey + activez;
 
-        if (GridMatrix[(int)Playerposition.x + x, (int)Playerposition.y + y, (int)Playerposition.z + z].GetType() != typeof(StandardCube))
-            return true;
-
         switch (sides)
         {
             //One axis = straight line, i only check for any obstacle on that line

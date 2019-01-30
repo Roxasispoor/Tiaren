@@ -15,8 +15,11 @@ public abstract class Effect
     protected Animator animLauncher;
 
     private Placeable launcher;
+    [SerializeField]
     private int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    [SerializeField]
     private bool triggerAtOneOnly = false;
+    [SerializeField]
     private bool hitOnDirectAttack = true;
     public virtual Placeable Launcher
     {
@@ -108,7 +111,7 @@ public abstract class Effect
     public string Save()
     {
         string text = JsonUtility.ToJson(this);
-        text = GetType() + text;
+        text = GetType() + text + "\n";
         return text;
         // string path = "Skill1.json";
         //File.WriteAllText(path, text);

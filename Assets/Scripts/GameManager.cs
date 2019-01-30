@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -299,7 +300,7 @@ public class GameManager : NetworkBehaviour
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
         }
-
+        
 
         //init Posiible characters
         string path = "Teams.json";
@@ -648,24 +649,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void InitStartGame()
     {
-        // Flag hardcodé pour hill
-        /* 
-        //Create a flag
-        GameObject flag = Instantiate(Grid.instance.prefabsList[3], Grid.instance.GridMatrix[5, 3, 6].gameObject.transform.Find("Inventory"));///TODO modify with json
-        flag.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        NetIdeable.currentMaxId++;
-        //
-        GameObject GoalP1 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, 1), Quaternion.identity, gridFolder.transform);///TODO modify with json
-        GoalP1.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        Grid.instance.GridMatrix[10, 1, 1] = GoalP1.GetComponent<Placeable>();
-        GoalP1.GetComponent<Placeable>().Player = player1.GetComponent<Player>();
-        NetIdeable.currentMaxId++;
-
-        GameObject GoalP2 = Instantiate(Grid.instance.prefabsList[4], new Vector3(10, 1, Grid.instance.sizeZ - 2), Quaternion.identity, gridFolder.transform);///TODO modify with json
-        GoalP2.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
-        Grid.instance.GridMatrix[10, 1, Grid.instance.sizeZ - 2] = GoalP2.GetComponent<Placeable>();
-        GoalP2.GetComponent<Placeable>().Player = player2.GetComponent<Player>();
-        NetIdeable.currentMaxId++;*/
+        //Initialisation de MethodsForEffects
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
     }
     /// <summary>
     /// Add current combine instance to its batch
