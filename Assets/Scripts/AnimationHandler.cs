@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Hellmade.Sound;
 
 public class AnimationHandler : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class AnimationHandler : MonoBehaviour
         }
     }
 
+    // for sound 
+    
     // this coroutine allows to check if turn passes and thus finishes what has to be finished at this time
     public IEnumerator CheckInterruptions(float time)
     {
@@ -68,18 +71,22 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndCreateBlock(GameObject go, Vector3Int position, float time)
     {
+        SoundHandler.Instance.PlayCreateBlockSound();
         LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
         Grid.instance.InstantiateCube(go, position);
         Placeable cubeConcerned = Grid.instance.GetPlaceableFromVector(position);
         //cubeConcerned.gameObject.SetActive(false);
+        //GameManager.instance.RefreshBatch(cubeConcerned);
         yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
         //cubeConcerned.gameObject.SetActive(true);
+        //GameManager.instance.RefreshBatch(cubeConcerned);
 
         // TODO : fix this to sync with anim
     }
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
     {
+        SoundHandler.Instance.PlayDestroyBlockSound();
         Vector3 pos = go.transform.position;
         yield return StartCoroutine(CheckInterruptions(time));
         
@@ -95,7 +102,8 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time,bool justLerp=false)
     {
-
+        GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
+        int soundID = EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block move"));
         yield return StartCoroutine(CheckInterruptions(time/2));
         GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed,justLerp);
         // TODO : check if startmovealongbezier cannot cause bug (rebatch)

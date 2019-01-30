@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour {
     public GameObject TeamCanvas;
     public Button prefabAbilityButton;
     public Button prefabTeamButton;
+    public Button prefabCharacterSpawnButton;
+    public Sprite upChoice;
     public GameObject prefabCharacterImage;
     public RectTransform SkillZone;
     public RectTransform SpawnZone;
@@ -78,12 +80,13 @@ public class UIManager : MonoBehaviour {
                 //display Buttons
                 Button buttonUp = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonUp.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, 300);
-                buttonUp.GetComponentInChildren<Text>().text = "^";
+                buttonUp.image.sprite = upChoice;
+                buttonUp.transform.Rotate(new Vector3(0, 0, -1), 180);
                 int tmp = i;
                 buttonUp.onClick.AddListener( ()=> { UpChoice(tmp); });
                 Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
-                buttonDown.GetComponentInChildren<Text>().text = "!^";
+                buttonDown.image.sprite = upChoice;
                 buttonDown.onClick.AddListener(delegate { DownChoice(tmp); });
             }
         }
@@ -131,7 +134,7 @@ public class UIManager : MonoBehaviour {
         if (gameObject == GameManager.instance.player1)
         {
             foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters) {
-                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                Button button = Instantiate(prefabCharacterSpawnButton, SpawnZone);
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-398 + 200 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
                 button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
@@ -142,7 +145,7 @@ public class UIManager : MonoBehaviour {
         {
             foreach (GameObject character in GameManager.instance.player2.GetComponent<Player>().Characters)
             {
-                Button button = Instantiate(prefabAbilityButton, SpawnZone);
+                Button button = Instantiate(prefabCharacterSpawnButton, SpawnZone);
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-398 + 200 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
                 button.onClick.AddListener(character.GetComponent<LivingPlaceable>().ChangeSpawnCharacter);
@@ -171,6 +174,7 @@ public class UIManager : MonoBehaviour {
             button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
+            button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
             numberInstantiated++;
         }
         if(character.EquipedWeapon!=null && character.EquipedWeapon.Skills!=null)

@@ -452,6 +452,11 @@ public class Player : NetworkBehaviour
         }
         gameObject.transform.Find("TeamCanvas").transform.Find("GoTeam").gameObject.SetActive(false);
         gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other Player";
+        Button[] buttons = gameObject.transform.Find("TeamCanvas").transform.GetComponentsInChildren<Button>();
+        foreach (Button but in buttons)
+        {
+            Destroy(but.gameObject);
+        }
         CmdTeamReady(characterChoices);
     }
 
@@ -1047,7 +1052,7 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
-       
+        
         if (path.Count < 2)
         {
             yield break;
@@ -1077,6 +1082,7 @@ public class Player : NetworkBehaviour
         int iref = 1;
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
+        SoundHandler.Instance.StartWalkSound();
         while (timeBezier < 1)
         {
             distanceParcourue += (speed * Time.deltaTime);
@@ -1115,6 +1121,7 @@ public class Player : NetworkBehaviour
                     isJumping = true;
                     iref = i;
                     anim.Play("jump");
+                    SoundHandler.Instance.PauseWalkSound();
 
                 }
                 else
@@ -1139,10 +1146,12 @@ public class Player : NetworkBehaviour
                     isJumping = false;
                     anim.Play("land 1");
                     yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+                    SoundHandler.Instance.StartWalkSound();
                 }
                 else
                 {
                     anim.Play("walking");
+                    
                 }
                 
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
@@ -1163,6 +1172,7 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
+        SoundHandler.Instance.StopWalkSound();
         placeable.isMoving = false;
         //GameManager.instance.playingPlaceable.destination = new Vector3Int();
 
