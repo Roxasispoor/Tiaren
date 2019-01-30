@@ -6,11 +6,19 @@ using UnityEngine;
 /// </summary>
 public class DestroyBloc : EffectOnPlaceableOnly
 {
+    public int depthExceed=0;
     public DestroyBloc(DestroyBloc other) : base(other)
     {
+        this.depthExceed = other.depthExceed;
     }
-    public DestroyBloc() : base()
+    public DestroyBloc(int depth = 0) : base()
     {
+        depthExceed = depth;
+    }
+    public DestroyBloc(Placeable launcher,int depth) : base(launcher)
+    {
+        depthExceed = depth;
+        Launcher = launcher;
     }
 
     public override Effect Clone()
@@ -22,11 +30,14 @@ public class DestroyBloc : EffectOnPlaceableOnly
     override
     public void Use()
     {
-        
+        GetLauncherAnimation();
         animLauncher.Play("destroyBlock");
         
         AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndDestroyBlock(Target, GetTimeOfLauncherAnimation()));
-        //
+        for (int i = 0; i <depthExceed;i++)
+        {
 
+             new DestroyBlockRelative(Target, new Vector3Int(0, -i-1, 0)).Use();
+        }
     }
 }

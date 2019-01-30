@@ -61,6 +61,7 @@ public class MoveEffect : EffectOnLiving {
         this.Target = livingPlaceable;
         this.Launcher = livingPlaceable ;
     }
+
     /// <summary>
     /// create a damage object
     /// </summary>

@@ -313,8 +313,21 @@ MonoBehaviour:
   sizeX: 50
   sizeY: 6
   sizeZ: 50
+  falldamage: 15
+  blockfalldamage: 20
   UseAwakeLiving: 1
   randomParameter: 90
   floaties: []
   prefabsList:
   - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
+  - {fileID: 1032257904305354, guid: 280748a95d809194f814aaa79deb0871, type: 2}
+  - {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627, type: 2}
+  - {fileID: 1032257904305354, guid: 61c7f16081364984ba0cc3497d33b6e6, type: 2}
+  - {fileID: 1919671021765086, guid: 97c1ce9c3dbe7ae45a2de2fcb3b01487, type: 2}
+  - {fileID: 1032257904305354, guid: 3e6ad3cb903a3974bb2ccf001ebeb691, type: 2}
+  - {fileID: 1032257904305354, guid: b786e2e866b177145bea4ee1a2fc5f35, type: 2}
+  - {fileID: 1032257904305354, guid: ec57ead58293a0e46986733ffbc7d915, type: 2}
+  - {fileID: 1032257904305354, guid: 3e6ad3cb903a3974bb2ccf001ebeb691, type: 2}
+  - {fileID: 1032257904305354, guid: e13743104e3f6774babd58b5f8c03d8d, type: 2}
+  - {fileID: 1032257904305354, guid: b786e2e866b177145bea4ee1a2fc5f35, type: 2}
+  - {fileID: 1575151665464940, guid: b7e8c61990b97544faada7ac2b36329d, type: 2}

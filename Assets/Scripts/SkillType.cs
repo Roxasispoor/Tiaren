@@ -79,5 +79,9 @@ public enum SkillEffect
     /// <summary>
     /// Check if the character can go up
     /// </summary>
-    UP
+    UP,
+    /// <summary>
+    /// Keep only adjacent blocks for the case the character is spinnig
+    /// </summary>
+    SPINNING
 }

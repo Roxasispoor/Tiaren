@@ -11,8 +11,7 @@ using UnityEngine.Networking;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField]
-    private string mapToCharge = "Grid.json";
-
+    private string mapToCharge = "Castles.json";
     /// <summary>
     /// Enforce singleton pattern
     /// </summary>
@@ -622,6 +621,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z]
                 .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
     }
+
     public void MoveLogic(List<Vector3> bezierPath)
     {
         if (playingPlaceable.Player.isLocalPlayer)
