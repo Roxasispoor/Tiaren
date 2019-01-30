@@ -1229,7 +1229,7 @@ public class Grid : MonoBehaviour
     /// <param name="Cube">Current Placeable selected</param>
     /// <param name="effectrange">Range of the effect</param>
     /// <returns>List of blocks where the effect spreads</returns>
-    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange)
+    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, bool topblock)
     {
         List<Placeable> targetableBlocks = new List<Placeable>();
         Vector3 Position = Cube.transform.position;
@@ -1248,7 +1248,7 @@ public class Grid : MonoBehaviour
                 {
                     if (gridMatrix[x, y, z] != null
                         && !gridMatrix[x, y, z].IsLiving() && Mathf.Abs(x-Position.x)+Mathf.Abs(y-Position.y)+Mathf.Abs(z-Position.z) < effectrange
-                        && (y == sizeY - 1 || gridMatrix[x, y + 1, z] == null))
+                        && (!topblock || y == sizeY - 1 || gridMatrix[x, y + 1, z] == null))
                     {
                         targetableBlocks.Add(gridMatrix[x,y,z]);
                     }
@@ -1259,7 +1259,7 @@ public class Grid : MonoBehaviour
         return targetableBlocks;
     }
 
-    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, int state, SkillArea pattern)
+    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, bool topblock, int state, SkillArea pattern)
     {
         List<Placeable> targetableBlocks = new List<Placeable>();
         Vector3 Position = Cube.transform.position;
@@ -1272,7 +1272,7 @@ public class Grid : MonoBehaviour
                 x++)
                 {
                     if (gridMatrix[x, (int)Position.y, (int)Position.z] != null
-                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (Position.y == sizeY - 1 || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null))
+                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (!topblock || Position.y == sizeY - 1 || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null))
                     {
                         targetableBlocks.Add(gridMatrix[x, (int)Position.y, (int)Position.z]);
                     }
@@ -1285,7 +1285,7 @@ public class Grid : MonoBehaviour
                 z++)
                 {
                     if (gridMatrix[(int)Position.x, (int)Position.y, z] != null
-                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (Position.y == sizeY - 1 || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null))
+                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (!topblock || Position.y == sizeY - 1 || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null))
                     {
                         targetableBlocks.Add(gridMatrix[(int)Position.x, (int)Position.y, z]);
                     }

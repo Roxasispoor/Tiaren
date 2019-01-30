@@ -495,14 +495,27 @@ public abstract class Placeable: NetIdeable
                     Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
                     List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
                     if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0]);
-                    else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+                    else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING || skill.SkillArea == SkillArea.MIXEDAREA)
                     {
                         List<LivingPlaceable> Playerlist = GameManager.instance.playingPlaceable.TargetableUnits;
-                        int[] netidlist = new int[Playerlist.Count];
-                        for (int i = 0; i < netidlist.Length; i++)
+                        int j = 0;
+                        int[] netidlist;
+
+                        if (skill.SkillArea == SkillArea.MIXEDAREA)
                         {
-                            netidlist[i] = Playerlist[i].netId;
+                            netidlist = new int[Playerlist.Count + area.Count];
+                            for (j = 0; j < area.Count; j++)
+                            {
+                                netidlist[j] = area[j].netId;
+                            }
                         }
+                        else netidlist = new int[Playerlist.Count];
+
+                        for (int i = j ; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = Playerlist[i-j].netId;
+                        }
+
                         GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist);
                     }
                     else

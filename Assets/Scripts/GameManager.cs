@@ -808,8 +808,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.ResetTargets();
                 playingPlaceable.ResetAreaOfMovement();
                 playingPlaceable.ResetHighlightSkill();
-                playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().EffectArea = 0;
-                playingPlaceable.Player.GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                RaycastSelector rayselect = playingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
+                rayselect.EffectArea = 0;
+                rayselect.Pattern = SkillArea.NONE;
                 playingPlaceable.Player.cameraScript.Freecam = 1;
                 playingPlaceable.Player.cameraScript.SetTarget(TurnOrder[1].Character.transform);
                 //ResetAllBatches();

@@ -768,6 +768,7 @@ public class Player : NetworkBehaviour
 
         RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
         rayselector.Pattern = SkillArea.NONE;
+        rayselector.EffectArea = 0;
         GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
         GameManager.instance.playingPlaceable.ResetTargets();
@@ -797,7 +798,7 @@ public class Player : NetworkBehaviour
             playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
             rayselector.layerMask = LayerMask.GetMask("Placeable");
             rayselector.EffectArea = skill.EffectArea;
-            if (skill.SkillArea == SkillArea.LINE)
+            if (skill.SkillArea == SkillArea.LINE || skill.SkillArea == SkillArea.MIXEDAREA)
             {
                 rayselector.Pattern = skill.SkillArea;
             }
@@ -1403,8 +1404,9 @@ public class Player : NetworkBehaviour
 
             if (GetComponentInChildren<RaycastSelector>() != null)
             {
-                GetComponentInChildren<RaycastSelector>().EffectArea = 0;
-                GetComponentInChildren<RaycastSelector>().Pattern = SkillArea.NONE;
+                RaycastSelector rayselect = GetComponentInChildren<RaycastSelector>();
+                rayselect.EffectArea = 0;
+                rayselect.Pattern = SkillArea.NONE;
             }
         }
     }

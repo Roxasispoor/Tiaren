@@ -6,6 +6,7 @@ public class RaycastSelector : MonoBehaviour
 {
     public LayerMask layerMask = 0;
     private int effectarea; //effectarea radius
+    private bool topblock = true;
     private int state;
     private SkillArea pattern;
     private List<Placeable> area;
@@ -14,8 +15,8 @@ public class RaycastSelector : MonoBehaviour
     public SkillArea Pattern
     {get {return pattern;} set {pattern = value;}}
 
-    //public int State
-    //{ get { return state; } set { state = value; } }
+    //public bool Topblock
+    //{ get { return topblock; } set { topblock = value; } }
 
     public int EffectArea
     { get { return effectarea; } set { effectarea = value; } }
@@ -78,12 +79,28 @@ public class RaycastSelector : MonoBehaviour
                     }
                     else
                     {
-                        if (pattern == SkillArea.NONE)
-                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea);
+                        if (pattern == SkillArea.MIXEDAREA)
+                            topblock = false;
+                        else topblock = true;
+
+                        if (pattern == SkillArea.NONE || pattern == SkillArea.MIXEDAREA)
+                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock);
                         else
-                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, state, pattern);
-                        foreach (Placeable block in area)
-                            block.Highlight();
+                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock, state, pattern);
+
+                        if (pattern == SkillArea.MIXEDAREA)
+                        {
+                            List<LivingPlaceable> Targets = new List<LivingPlaceable>();
+                            foreach (Placeable block in area)
+                            {
+                                block.Highlight();
+                                Vector3 Pos = block.transform.position;
+                                if (Pos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z] != null && Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z].IsLiving())
+                                    Targets.Add((LivingPlaceable)Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z]);
+                            }
+                            GameManager.instance.PlayingPlaceable.TargetableUnits = Targets;
+                        }
+                        else foreach (Placeable block in area) block.Highlight();
                     }
                 }
             } else
