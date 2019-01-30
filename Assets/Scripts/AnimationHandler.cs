@@ -71,8 +71,7 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndCreateBlock(GameObject go, Vector3Int position, float time)
     {
-        int soundID = EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Blocksummon"));
-        //EazySoundManager.GetAudio(SoundHandler.Instance.cubeCreateCharacID).Play();
+        SoundHandler.Instance.PlayCreateBlockSound();
         LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
         Grid.instance.InstantiateCube(go, position);
         Placeable cubeConcerned = Grid.instance.GetPlaceableFromVector(position);
@@ -87,7 +86,7 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
     {
-        int soundID = EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block destruction"));
+        SoundHandler.Instance.PlayDestroyBlockSound();
         Vector3 pos = go.transform.position;
         yield return StartCoroutine(CheckInterruptions(time));
         

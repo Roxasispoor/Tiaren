@@ -54,4 +54,18 @@ public class SoundHandler : MonoBehaviour {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Click"));
     }
 
+    public void PlayCreateBlockSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Blocksummon"));
+    }
+
+    public void PlayDestroyBlockSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block destruction"));
+    }
+
+    public void PlayAttackSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Sword"));
+    }
 }
