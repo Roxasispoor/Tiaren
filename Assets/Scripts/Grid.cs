@@ -20,10 +20,10 @@ public class Grid : MonoBehaviour
     private int blockfalldamage = 20;
     //public DistanceAndParent[,,] gridBool;
 
+    public bool UseAwakeLiving = false;
     /// <summary>
     /// Represents grid for the game
     /// </summary>
-
     private Placeable[,,] gridMatrix;
     /// <summary>
     /// Parameters for generation the grid

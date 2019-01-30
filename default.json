@@ -1,46 +1,22 @@
-<<<<<<< HEAD
-{"className":"default","positionSave":{"x":0.0,"y":0.0,"z":0.0},"playerPosesser":"","maxHP":{"baseValue":200.0},"currentHP":{"baseValue":100.0},"pmMax":{"baseValue":3.0},"currentPM":{"baseValue":3.0},"currentPA":{"baseValue":1.0},"paMax":{"baseValue":1.0},"force":{"baseValue":100.0},"speed":{"baseValue":100.0},"dexterity":{"baseValue":100.0},"speedStack":{"baseValue":0.004999999888241291},"jump":{"baseValue":1.0},"def":{"baseValue":100.0},"mdef":{"baseValue":0.0},"mstr":{"baseValue":0.0},"deathLength":{"baseValue":0.0},"isDead":false,"serializeNumber":2,"netId":0}
-{"skillName":"push","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2}
-Push{"netIdLauncher":0,"animLauncher":{"instanceID":0},"netIdTarget":-1,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
-{"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":5,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3142},"face":{"x":0,"y":1,"z":0}};
-{"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2}
-DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1};
-{"skillName":"damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
-DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1};
-{"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":2,"description":"Ca tue","skillType":5}
-DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1};
-{"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3142},"face":{"x":0,"y":1,"z":0}};
-{"skillName":"damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
-Damage{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1,"damageValue":30.0};
-{"skillName":"debuffPm","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
-ParameterChangeV2`2[LivingPlaceable,System.Single]{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1}ParameterChangeV2`2[LivingPlaceable,System.Single]{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1};
-{"skillName":"HigherGround","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":6}
-MoveEffect{"netIdLauncher":0,"animLauncher":{"instanceID":0},"netIdTarget":0,"direction":{"x":0,"y":1,"z":0},"useBezier":false}CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3142},"face":{"x":0,"y":1,"z":0}};
-{"skillName":"piercing","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":10,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
-PiercingDamageEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"netIdTarget":-1,"diminutionRate":0.3400000035762787};
-=======
-{"className":"default","positionSave":{"x":0.0,"y":0.0,"z":0.0},"playerPosesser":"","maxHP":{"baseValue":100.0},"currentHP":{"baseValue":100.0},"pmMax":{"baseValue":5.0},"currentPM":{"baseValue":5.0},"currentPA":{"baseValue":1.0},"paMax":{"baseValue":1.0},"force":{"baseValue":100.0},"speed":{"baseValue":100.0},"dexterity":{"baseValue":100.0},"speedStack":{"baseValue":0.004999999888241291},"jump":{"baseValue":1.0},"def":{"baseValue":100.0},"mdef":{"baseValue":0.0},"mstr":{"baseValue":0.0},"deathLength":{"baseValue":0.0},"isDead":false,"serializeNumber":2,"netId":0}
+{"className":"default","positionSave":{"x":0.0,"y":0.0,"z":0.0},"playerPosesser":"","maxHP":{"baseValue":100.0},"currentHP":{"baseValue":100.0},"pmMax":{"baseValue":5.0},"currentPM":{"baseValue":5.0},"currentPA":{"baseValue":1.0},"paMax":{"baseValue":1.0},"force":{"baseValue":100.0},"speed":{"baseValue":100.0},"dexterity":{"baseValue":100.0},"speedStack":{"baseValue":0.009999999776482582},"jump":{"baseValue":1.0},"def":{"baseValue":100.0},"mdef":{"baseValue":0.0},"mstr":{"baseValue":0.0},"deathLength":{"baseValue":0.0},"isDead":false,"serializeNumber":2,"netId":0}
 {"skillName":"Basic_push","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":2,"skilleffect":1}
 Push{"netIdLauncher":0,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
-{"skillName":"Basic_create","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":0,"skilleffect":3}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3168},"face":{"x":0,"y":1,"z":0}};
-{"skillName":"Basic_destroy","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":0,"skilleffect":2}
+{"skillName":"Basic_creation","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":0,"skilleffect":3}
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3166},"face":{"x":0,"y":1,"z":0}};
+{"skillName":"Basic_destruction","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":0,"skilleffect":2}
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1};
-{"skillName":"Basic_damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":0}
+{"skillName":"Basic_attack","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":0}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":0,"sinFactor":0.30000001192092898};
 {"skillName":"Fissure","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5,"skillarea":3,"skilleffect":2}
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1};
 {"skillName":"Wall","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5,"skillarea":3,"skilleffect":3}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3168},"face":{"x":0,"y":1,"z":0}};
-{"skillName":"Bleeding","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":0}
-Damage{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":2,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"damageValue":20.0};
-{"skillName":"Spinning","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":5}
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3166},"face":{"x":0,"y":1,"z":0}};
+{"skillName":"Spinning","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":5,"skilleffect":5}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":50.0,"scaleOn":0,"sinFactor":0.30000001192092898};
 {"skillName":"Higherground","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":6,"skillarea":0,"skilleffect":0}
 MoveEffect{"netIdLauncher":0,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":0,"direction":{"x":0,"y":1,"z":0},"useBezier":false}
-CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3168},"face":{"x":0,"y":1,"z":0}};
+CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3166},"face":{"x":0,"y":1,"z":0},"relativePosition":{"x":0,"y":-2,"z":0}};
 {"skillName":"Piercing_arrow","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":10,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":4,"skilleffect":0}
 PiercingDamageEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":60.0,"scaleOn":1,"sinFactor":0.30000001192092898,"diminutionRate":0.3400000035762787};
->>>>>>> Targetselection
+{"skillName":"Range_buff","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":6,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2,"skillarea":0,"skilleffect":0}
+CreateZipLine{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":4960},"face":{"x":0,"y":1,"z":0}};
