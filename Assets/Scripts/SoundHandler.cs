@@ -68,4 +68,9 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Sword"));
     }
+
+    public void PlayPushBlockSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block move"));
+    }
 }

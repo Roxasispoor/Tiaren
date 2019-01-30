@@ -102,8 +102,8 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time,bool justLerp=false)
     {
+        SoundHandler.Instance.PlayPushBlockSound();
         GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
-        int soundID = EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block move"));
         yield return StartCoroutine(CheckInterruptions(time/2));
         GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed,justLerp);
         // TODO : check if startmovealongbezier cannot cause bug (rebatch)
