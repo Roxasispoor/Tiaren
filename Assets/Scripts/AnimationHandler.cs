@@ -74,6 +74,8 @@ public class AnimationHandler : MonoBehaviour
         //cubeConcerned.gameObject.SetActive(false);
         yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
         //cubeConcerned.gameObject.SetActive(true);
+
+        // TODO : fix this to sync with anim
     }
 
     public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
@@ -113,7 +115,7 @@ public class AnimationHandler : MonoBehaviour
 
         LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
         // le joueur qui joue
-        yield return StartCoroutine(CheckContinuousInterruptions(time, tmpPlaceable, interrupted));
+        yield return StartCoroutine(CheckContinuousInterruptions(time*0.75f, tmpPlaceable, interrupted));
         if (!interrupted)
         {
             animator.Play("hurt");
