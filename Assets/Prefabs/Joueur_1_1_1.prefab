@@ -1796,6 +1796,9 @@ MonoBehaviour:
     type: 2}
   prefabTeamButton: {fileID: 114497606097434598, guid: 73acb2c8c83fddf42ba1975aaef71bc3,
     type: 2}
+  prefabCharacterSpawnButton: {fileID: 114044413561937518, guid: bb3fa40d2c9432c44b742d3d942b3668,
+    type: 2}
+  upChoice: {fileID: 21300000, guid: 1c29db5e46e75c94fa2b23d8cd170c56, type: 3}
   prefabCharacterImage: {fileID: 1297186103065250, guid: fd09ea354e55db04a83ff8514673dc64,
     type: 2}
   SkillZone: {fileID: 224626617816494302}
@@ -1805,7 +1808,7 @@ MonoBehaviour:
   movDisplay: {fileID: 114792206895558292}
   prefabCharacterChoices: {fileID: 114889792028518860, guid: cf0558fd00e8c0f4e93b442f1e280311,
     type: 2}
-  numberOfPlayer: 4
+  numberOfPlayer: 3
   firstImagePosition: 319
   firstGap: 99
   timelineGap: 78

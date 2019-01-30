@@ -1383,8 +1383,8 @@ public class Grid : MonoBehaviour
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
-            if (totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
-                distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
+            if (totaldist == 0 || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
+                distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
@@ -1394,8 +1394,8 @@ public class Grid : MonoBehaviour
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
-            if (totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
-                distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
+            if (totaldist == 0 || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+                distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
@@ -1411,6 +1411,18 @@ public class Grid : MonoBehaviour
         {
             Vector3 Pos = Character.transform.position;
             if (Pos.y - Playerposition.y != 0 || Math.Abs(Pos.x - Playerposition.x) >1 || Math.Abs(Pos.z - Playerposition.z) >1 || Pos == Playerposition)
+                targetableunits.Remove(Character);
+        }
+        return targetableunits;
+    }
+
+    public List<LivingPlaceable> SwordRangePattern(List<LivingPlaceable> Targetlist, Vector3 Playerposition)
+    {
+        List<LivingPlaceable> targetableunits = new List<LivingPlaceable>(Targetlist);
+        foreach (LivingPlaceable Character in Targetlist)
+        {
+            Vector3 Pos = Character.transform.position;
+            if (Pos.y - Playerposition.y != 0 || Math.Abs(Pos.x - Playerposition.x) > 1 || Math.Abs(Pos.z - Playerposition.z) > 1)
                 targetableunits.Remove(Character);
         }
         return targetableunits;

@@ -961,7 +961,7 @@ public class LivingPlaceable : Placeable
         Skill skill12 = new Skill(0, 1, ListEffects12, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
       //  ListEffects9.Add(new MoveEffect(this, this, new Vector3Int(0, 1, 0), false));
        // ListEffects9.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),new Vector3Int(0,-2,0)));
-        Skills.Add(skill1);
+       Skills.Add(skill1);
         Skills.Add(skill2);
         Skills.Add(skill3);
         Skills.Add(skill4);
