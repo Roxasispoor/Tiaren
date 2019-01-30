@@ -77,7 +77,15 @@ public class Grid : MonoBehaviour
 
     public Placeable GetPlaceableFromVector(Vector3Int pos)
     {
+        if(CheckRange(pos))
+        { 
         return GridMatrix[pos.x, pos.y, pos.z];
+        }
+        else
+        {
+            Debug.Log("Out of range in getplaceablefromvector"+ pos);
+            return null;
+        }
     }
 
     public Placeable GetPlaceableFromVector(Vector3 pos)

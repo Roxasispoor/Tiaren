@@ -8,9 +8,11 @@ DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect
 {"skillName":"damage","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":0,"sinFactor":0.30000001192092898};
 {"skillName":"destroyBlock","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":2,"description":"Ca tue","skillType":5}
-DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1};
+DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1}
+DestroyBlockRelative{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"relativePosition":{"x":0,"y":-1,"z":0}};
 {"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":1,"description":"Ca tue","skillType":5}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}};
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}}
+CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0},"relativePosition":{"x":0,"y":1,"z":0}};
 {"skillName":"HigherGround","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":1,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":6}
 MoveEffect{"netIdLauncher":0,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":0,"direction":{"x":0,"y":2,"z":0},"useBezier":false}
 CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0},"relativePosition":{"x":0,"y":-3,"z":0}}
@@ -18,4 +20,4 @@ CreateBlockRelativeEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"tu
 {"skillName":"piercing","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":10,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1}
 PiercingDamageEffect{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":1,"sinFactor":0.30000001192092898,"diminutionRate":0.3400000035762787};
 {"skillName":"spell2","cost":0,"tourCooldownLeft":0,"cooldown":1,"maxRange":6,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":2}
-CreateZipLine{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":11,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}};
+CreateZipLine{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3176},"face":{"x":0,"y":1,"z":0}};
