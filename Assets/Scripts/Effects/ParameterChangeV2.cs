@@ -24,9 +24,9 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         }
     }
 
-    public override void Initialize()
+    public override void Initialize(LivingPlaceable livingPlaceable)
     {
-        base.Initialize();
+        base.Initialize(livingPlaceable);
         expression = MethodsForEffects[numberMethod];
     }
 
@@ -41,7 +41,7 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
     {
         this.value = value;
         this.numberMethod = numberMethod;
-        Initialize();
+        Initialize(Target);
     }
     public ParameterChangeV2(ParameterChangeV2<T,TProperty> other):base(other)
     {

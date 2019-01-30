@@ -57,7 +57,11 @@ public enum SkillArea
     /// <summary>
     /// Skill that affect blocks in the surrounding area (from user position)
     /// </summary>
-    SURROUNDINGBLOCKS
+    SURROUNDINGBLOCKS,
+    /// <summary>
+    /// Where targets are player and blocks in the area
+    /// </summary>
+    MIXEDAREA
 
 }
 
@@ -79,5 +83,13 @@ public enum SkillEffect
     /// <summary>
     /// Check if the character can go up
     /// </summary>
-    UP
+    UP,
+    /// <summary>
+    /// Keep only adjacent blocks for the case the character is spinnig
+    /// </summary>
+    SPINNING,
+    /// <summary>
+    /// Keep the 8 adjacent targets only
+    /// </summary>
+    SWORDRANGE
 }

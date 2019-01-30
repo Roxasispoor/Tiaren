@@ -132,7 +132,7 @@ public abstract class Effect
         reader.Close();
         return toReturn;
     }
-    public virtual void Initialize()
+    public virtual void Initialize(LivingPlaceable livingPlaceable)
     {
 
     }
@@ -144,7 +144,7 @@ public abstract class Effect
 
     public float GetTimeOfLauncherAnimation()
     {
-        return animLauncher.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+        return animLauncher.GetCurrentAnimatorStateInfo(0).length;
     }
 
 }

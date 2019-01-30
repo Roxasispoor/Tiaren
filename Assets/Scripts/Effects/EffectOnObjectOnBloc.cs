@@ -42,7 +42,7 @@
         Target = other.target;
 
     }
-    public EffectOnObjectBloc(ObjectOnBloc target, int numberOfTurns) : base(numberOfTurns)
+    public EffectOnObjectBloc(ObjectOnBloc target, int numberOfTurns=1) : base(numberOfTurns)
     {
         Target = target;
     }

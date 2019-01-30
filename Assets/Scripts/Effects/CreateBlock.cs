@@ -12,9 +12,9 @@ public class CreateBlock : EffectOnPlaceableOnly {
     public CreateBlock()
     {
     }
-    public override void Initialize()
+    public override void Initialize(LivingPlaceable livingPlaceable)
     {
-        base.Initialize();
+        base.Initialize(livingPlaceable);
         prefab = Grid.instance.prefabsList[prefabListNumber];
     }
 
@@ -32,6 +32,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
 
     public CreateBlock(int prefabNumber, Vector3Int face)
     {
+        prefabListNumber = prefabNumber;
         prefab = Grid.instance.prefabsList[prefabListNumber];
         this.face = face;
     }

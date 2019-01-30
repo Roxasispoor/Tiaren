@@ -11,8 +11,7 @@ using UnityEngine.Networking;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField]
-    private string mapToCharge = "Grid.json";
-
+    private string mapToCharge = "Castles.json";
     /// <summary>
     /// Enforce singleton pattern
     /// </summary>
@@ -134,6 +133,14 @@ public class GameManager : NetworkBehaviour
 
         set
         {
+            if (playingPlaceable != null)
+            {
+                playingPlaceable.EndingMyTurn();
+            }
+            if (value != null)
+            {
+                value.BeginningMyTurn();
+            }
             playingPlaceable = value;
         }
     }
@@ -363,6 +370,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
+        
+        if (GameManager.instance.isClient)
+        {
+            SoundHandler.Instance.PrepareAllSounds();
+            SoundHandler.Instance.StartFightMusic();
+        }
 
     }
 
@@ -614,6 +627,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z]
                 .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
     }
+
     public void MoveLogic(List<Vector3> bezierPath)
     {
         if (playingPlaceable.Player.isLocalPlayer)
@@ -642,7 +656,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void InitStartGame()
     {
         //Initialisation de MethodsForEffects
+        if(!Grid.instance.UseAwakeLiving)
+        { 
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+        }
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -720,7 +737,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         Grid.instance.Gravity();
         UpdateTimeline();
-        playingPlaceable = TurnOrder[0].Character;
+        PlayingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
 
         for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)

@@ -15,5 +15,9 @@
     /// <summary>
     /// remains under bloc when crushed
     /// </summary>
-    CRUSHSTAY
+    CRUSHSTAY,
+    /// <summary>
+    /// Take damage when crushed
+    /// </summary>
+    CRUSHDAMAGE
 }

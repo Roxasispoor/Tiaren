@@ -810,8 +810,22 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            playingPlaceable.TargetableUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange);
+            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+            if (skill.SkillEffect == SkillEffect.SWORDRANGE)
+                targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.transform.position);
+            playingPlaceable.TargetableUnits = targetableunits;
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+        }
+        else if (skill.SkillType == SkillType.SELF)
+        {
+            if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
+            {
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+                if (skill.SkillEffect == SkillEffect.SPINNING)
+                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
+                playingPlaceable.TargetableUnits = targetableunits;
+                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
+            }
         }
         else
         {
@@ -1003,6 +1017,7 @@ public class Player : NetworkBehaviour
     public static float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
+
         if (isBezier)// if difference of height
         {
             controlPoint = (nextNode + start + 2 * new Vector3(0, Mathf.Abs(nextNode.y - start.y), 0)) / 2;
@@ -1018,7 +1033,7 @@ public class Player : NetworkBehaviour
     }
 
     [Client]
-    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, float speed,bool justLerp=false)
     {
          if(path.Count>1)
         {
@@ -1028,7 +1043,7 @@ public class Player : NetworkBehaviour
                 placeable.MoveCoroutine = null;
 
             }
-            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed));
+            placeable.MoveCoroutine=StartCoroutine(MoveAlongBezier(path, placeable, speed,justLerp));
          }
     }
 
@@ -1037,7 +1052,7 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
-       
+        
         if (path.Count < 2)
         {
             yield break;
@@ -1067,6 +1082,7 @@ public class Player : NetworkBehaviour
         int iref = 1;
         float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
         float distanceParcourue = 0;
+        SoundHandler.Instance.StartWalkSound();
         while (timeBezier < 1)
         {
             distanceParcourue += (speed * Time.deltaTime);
@@ -1105,6 +1121,7 @@ public class Player : NetworkBehaviour
                     isJumping = true;
                     iref = i;
                     anim.Play("jump");
+                    SoundHandler.Instance.PauseWalkSound();
 
                 }
                 else
@@ -1129,10 +1146,12 @@ public class Player : NetworkBehaviour
                     isJumping = false;
                     anim.Play("land 1");
                     yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+                    SoundHandler.Instance.StartWalkSound();
                 }
                 else
                 {
                     anim.Play("walking");
+                    
                 }
                 
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
@@ -1153,6 +1172,7 @@ public class Player : NetworkBehaviour
         {
             anim.SetTrigger("idle");
         }
+        SoundHandler.Instance.StopWalkSound();
         placeable.isMoving = false;
         //GameManager.instance.playingPlaceable.destination = new Vector3Int();
 
@@ -1161,7 +1181,7 @@ public class Player : NetworkBehaviour
     }
     
     // ONLY FOR OTHER PLACEABLE
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed)
+    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, float speed,bool justLerp=false)
     {
         if (path.Count < 2)
         {
@@ -1178,15 +1198,23 @@ public class Player : NetworkBehaviour
         Vector3 delta = placeable.transform.position - path[0];
         Vector3 startPosition = path[0];
         Vector3 controlPoint = new Vector3();
-        bool isBezier = true;
+        bool isBezier = true;//TODO FIX NAN
 
 
         //For visual rotation
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
-
+        float distance=0;
         int i = 1;
-        float distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        if(!justLerp)
+        { 
+        distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);
+        }
+        else
+        {
+            isBezier = false;
+            distance = Vector3.Distance(startPosition, path[i]);
+        }
         float distanceParcourue = 0;
         while (timeBezier < 1)
         {
