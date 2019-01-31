@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 
-public class UIManager : MonoBehaviour {
+public class UIManager : MonoBehaviour
+{
 
     public GameObject gameCanvas;
     public GameObject spawnCanvas;
@@ -43,9 +42,7 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-   
-
-    int mod(int x, int m)
+    private int mod(int x, int m)
     {
         return (x % m + m) % m;
     }
@@ -67,7 +64,7 @@ public class UIManager : MonoBehaviour {
                 TeamParents[i].transform.localPosition = Vector3.zero;
                 TeamParents[i].transform.localScale = Vector3.one;
                 for (int j = 0; j < GameManager.instance.PossibleCharacters.Count; j++)
-                {                    
+                {
                     Image image = Instantiate(prefabCharacterChoices, TeamParents[i].transform);
                     image.GetComponent<RectTransform>().transform.localPosition = position;
                     Sprite sprite = Resources.Load<Sprite>(GameManager.instance.PossibleCharacters[j].spritePath);
@@ -84,7 +81,7 @@ public class UIManager : MonoBehaviour {
                 buttonUp.image.sprite = upChoice;
                 buttonUp.transform.Rotate(new Vector3(0, 0, -1), 180);
                 int tmp = i;
-                buttonUp.onClick.AddListener( ()=> { UpChoice(tmp); });
+                buttonUp.onClick.AddListener(() => { UpChoice(tmp); });
                 Button buttonDown = Instantiate(prefabTeamButton, TeamParents[i].transform);
                 buttonDown.GetComponent<RectTransform>().transform.localPosition = new Vector3(-700 + 350 * i, -300);
                 buttonDown.image.sprite = upChoice;
@@ -94,7 +91,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void UpChoice(int i)
-    {        
+    {
         Image[] images = TeamParents[i].GetComponentsInChildren<Image>(true);
         images[CurrentCharacters[i]].gameObject.SetActive(false);
         CurrentCharacters[i] = mod(CurrentCharacters[i] + 1, GameManager.instance.PossibleCharacters.Count);
@@ -109,7 +106,7 @@ public class UIManager : MonoBehaviour {
         images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
 
-	private void Update()
+    private void Update()
     {
         if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
         {
@@ -122,11 +119,11 @@ public class UIManager : MonoBehaviour {
             GameObject zoneToUpdate = gameObject.transform.Find("InGameCanvas").Find("Timeline").gameObject;
             Slider[] sliders = zoneToUpdate.GetComponentsInChildren<Slider>();
             for (int i = 0; i < sliders.Length; i++)
-			{
+            {
                 sliders[i].value = GameManager.instance.TurnOrder[i].Character.CurrentHP;
             }
         }
-	}
+    }
     public void SpawnUI()
     {
         TeamCanvas.SetActive(false);
@@ -134,7 +131,8 @@ public class UIManager : MonoBehaviour {
         int numberInstantiated = 0;
         if (gameObject == GameManager.instance.player1)
         {
-            foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters) {
+            foreach (GameObject character in GameManager.instance.player1.GetComponent<Player>().Characters)
+            {
                 Button button = Instantiate(prefabCharacterSpawnButton, SpawnZone);
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-398 + 200 * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = character.GetComponent<LivingPlaceable>().characterSprite;
@@ -153,13 +151,13 @@ public class UIManager : MonoBehaviour {
                 numberInstantiated++;
             }
         }
-            
+
     }
 
     public int UpdateAbilities(LivingPlaceable character, Vector3Int position)
 
     {
-        
+
         if (character == null)
         {
             return 0;
@@ -178,27 +176,31 @@ public class UIManager : MonoBehaviour {
             button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
             numberInstantiated++;
         }
-        if(character.EquipedWeapon!=null && character.EquipedWeapon.Skills!=null)
-        { 
-        foreach(Skill skill in character.EquipedWeapon.Skills)
+        if (character.EquipedWeapon != null && character.EquipedWeapon.Skills != null)
         {
-            Button button = Instantiate(prefabAbilityButton, SkillZone);
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
-            button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
-            button.onClick.AddListener(skill.Activate);
-            numberInstantiated++;
+            foreach (Skill skill in character.EquipedWeapon.Skills)
+            {
+                Button button = Instantiate(prefabAbilityButton, SkillZone);
+                button.GetComponent<SkillInfo>().Skill = skill;
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
+                button.onClick.AddListener(skill.Activate);
+                button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
+                numberInstantiated++;
                 Debug.Log("new skill from weapon");
             }
         }
         foreach (ObjectOnBloc obj in GameManager.instance.GetObjectsOnBlockUnder(position))
         {
-            foreach(Skill skill in obj.GivenSkills )
-            { 
-            Button button = Instantiate(prefabAbilityButton, SkillZone);
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + 106 * numberInstantiated, 0);
-            button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
-            button.onClick.AddListener(skill.Activate);
-            numberInstantiated++;
+            foreach (Skill skill in obj.GivenSkills)
+            {
+                Button button = Instantiate(prefabAbilityButton, SkillZone);
+                button.GetComponent<SkillInfo>().Skill = skill;
+                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+                button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
+                button.onClick.AddListener(skill.Activate);
+                button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
+                numberInstantiated++;
                 Debug.Log("new skill from objectonbloc");
             }
         }
@@ -218,7 +220,7 @@ public class UIManager : MonoBehaviour {
             GameObject filter = Instantiate(basicImage, image.transform);
             if (character.Character.Player.gameObject == gameObject)
             {
-                filter.GetComponent<Image>().color = new Color(0, 1, 1, 0.5f); 
+                filter.GetComponent<Image>().color = new Color(0, 1, 1, 0.5f);
             }
             else
             {
@@ -227,7 +229,7 @@ public class UIManager : MonoBehaviour {
             if (numberInstantiated >= 1)
             {
                 image.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
-                image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, firstImagePosition - firstGap - timelineGap * (numberInstantiated-1));
+                image.GetComponent<RectTransform>().transform.localPosition = new Vector3(0, firstImagePosition - firstGap - timelineGap * (numberInstantiated - 1));
             }
             else
             {
@@ -240,11 +242,11 @@ public class UIManager : MonoBehaviour {
     public void ChangeTurn()
     {
         if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
-         {
+        {
             GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
 
-            UpdateAbilities(GameManager.instance.playingPlaceable,GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
+            UpdateAbilities(GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
             zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();

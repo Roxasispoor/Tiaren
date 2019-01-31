@@ -7,14 +7,14 @@ using UnityEngine.Networking;
 [AddComponentMenu("Camera-Control/3dsMax Camera Style")]
 public class CameraScript : NetworkBehaviour
 {
-    public Transform target;
+    private Transform target;
     public Vector3 targetOffset;
-    public float distance = 5.0f;
-    public float maxDistance = 20;
+    public float distance = 6.0f;
+    public float maxDistance = 25;
     public float minDistance = .6f;
-    public float xSpeed = 200.0f;
-    public float ySpeed = 200.0f;
-    public int yMinLimit = 0;
+    public float xSpeed = 6.0f;
+    public float ySpeed = 6.0f;
+    public int yMinLimit = -80;
     public int yMaxLimit = 80;
     public int zoomRate = 70;
     public float panSpeed = 0.3f;
@@ -65,18 +65,18 @@ public class CameraScript : NetworkBehaviour
 
         Debug.Log(spawncenter);
         Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2) - spawncenter;
-        XDeg = Vector3.Angle(Vector3.forward, spawntoobjective);
-        YDeg = Vector3.Angle(Vector3.up, spawntoobjective)-90;
+        XDeg = spawntoobjective.x >= 0 ? Vector3.Angle(Vector3.forward, spawntoobjective) : -Vector3.Angle(Vector3.forward, spawntoobjective);
+        YDeg = Vector3.Angle(Vector3.up, spawntoobjective)-45;
         //Debug.Log(XDeg + "  " + YDeg);
         rotation = Quaternion.Euler(YDeg, XDeg, 0);
-
+        position = target.position;
     }
 
     public void SetTarget(Transform newtarget)
     {
         target = newtarget;
         Vector3 playertoobjective = new Vector3(grid.sizeX / 2, newtarget.position.y ,grid.sizeZ / 2) - newtarget.position;
-        XDeg = Vector3.Angle(Vector3.forward, playertoobjective);
+        XDeg = playertoobjective.x >= 0 ? Vector3.Angle(Vector3.forward, playertoobjective) : -Vector3.Angle(Vector3.forward, playertoobjective);
         YDeg = Vector3.Angle(Vector3.up, playertoobjective)-45;
         DesiredDistance = distance;
         //Debug.Log(XDeg + "  " + YDeg);
@@ -118,7 +118,8 @@ public class CameraScript : NetworkBehaviour
                     rotation = transform.rotation;
                     position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
                 }
-                Debug.Log("Camera mode changed");
+                else currentDistance = distance;
+                //Debug.Log("Camera mode changed");
             }
         }
 
@@ -143,8 +144,8 @@ public class CameraScript : NetworkBehaviour
 
         if (player.DicoCondition["OrbitCamera"]())
         {
-            XDeg += player.DicoAxis["AxisXCamera"]() * xSpeed * 0.02f;
-            YDeg -= player.DicoAxis["AxisYCamera"]() * ySpeed * 0.02f;
+            XDeg += player.DicoAxis["AxisXCamera"]() * xSpeed;
+            YDeg -= player.DicoAxis["AxisYCamera"]() * ySpeed;
 
             //Clamp the vertical axis for the orbit
             YDeg = ClampAngle(YDeg, yMinLimit, yMaxLimit);

@@ -910,14 +910,14 @@ public class Player : NetworkBehaviour
     }
     
 
-    [ClientRpc]
+    /*[ClientRpc]
     public void RpcSetCamera(int mustPlay)
     {
         Placeable potential = GameManager.instance.FindLocalObject(mustPlay).GetComponent<Placeable>();
 
         this.cameraScript.target = potential.gameObject.transform;
 
-    }
+    }*/
    
     
     public override void OnStartLocalPlayer()
