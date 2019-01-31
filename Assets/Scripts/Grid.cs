@@ -669,7 +669,7 @@ public class Grid : MonoBehaviour
     public void Gravity()
     {
         int y = 0;
-        bool blockfallen = false;
+        //bool blockfallen = false;
         //List<Placeable> batchlist = new List<Placeable>();
         while (y < sizeY)
         {
@@ -683,7 +683,8 @@ public class Grid : MonoBehaviour
                        (gridMatrix[x, y, z].Explored && !gridMatrix[x, y, z].Grounded)))
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
-                        blockfallen = true;
+                        //blockfallen = true;
+                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch(gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null
@@ -703,7 +704,7 @@ public class Grid : MonoBehaviour
         }
         /*foreach (Placeable block in batchlist)
             GameManager.instance.RemoveBlockFromBatch(block);*/
-        if (blockfallen) GameManager.instance.ResetAllBatches();
+        //if (blockfallen) GameManager.instance.ResetAllBatches();
     }
     /// <summary>
     /// Save grid in json file using jaggedarray
