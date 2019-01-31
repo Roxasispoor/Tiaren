@@ -401,11 +401,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-
-            //InitialiseBatchFolder(); <- a merge issue ?
             return player2;
-
-            //receive data from server
         }
 
     }
@@ -760,12 +756,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 playingPlaceable.Player.Respawn(playingPlaceable);
             }
 
-            if (playingPlaceable.IsDead)
-            {
-                playingPlaceable.IsDead = false;
-                playingPlaceable.Player.Respawn(playingPlaceable);
-            }
-
             //initialise UI
 
             player2.GetComponent<UIManager>().ChangeTurn();
@@ -779,13 +769,22 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
-            if (isClient && playingPlaceable.Player.isLocalPlayer)
+            if (isClient)
             {
-                playingPlaceable.Player.cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                playingPlaceable.Player.cameraScript.Freecam = 0;
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                if (playingPlaceable.Player.isLocalPlayer)
+                {
+                    PlayingPlaceable.Player.cameraScript.SetTarget(PlayingPlaceable.transform);
+                    PlayingPlaceable.Player.cameraScript.Freecam = 0;
+                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                }
+                else
+                {
+                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(PlayingPlaceable.transform);
+                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                }
             }
+
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
@@ -816,8 +815,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 RaycastSelector rayselect = playingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
                 rayselect.EffectArea = 0;
                 rayselect.Pattern = SkillArea.NONE;
-                playingPlaceable.Player.cameraScript.Freecam = 1;
-                playingPlaceable.Player.cameraScript.SetTarget(TurnOrder[1].Character.transform);
+                //playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();

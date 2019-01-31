@@ -962,7 +962,7 @@ public class LivingPlaceable : Placeable
             Skill skill9 = new Skill(0, 1, ListEffects9, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill10 = new Skill(0, 1, ListEffects10, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
             Skill skill11 = new Skill(0, 1, ListEffects11, SkillType.BLOCK, "Range_buff", 0, 6);
-            Skill skill12 = new Skill(0, 1, ListEffects12, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+            Skill skill12 = new Skill(0, 1, ListEffects12, SkillType.SELF, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
             Skill skill15 = new Skill(0, 1, ListEffects15, SkillType.AREA, "ExplosiveFireball", 0, 5, SkillEffect.NONE, SkillArea.MIXEDAREA, 2);
 
             Skills.Add(skill1);
@@ -976,7 +976,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill9);
             //Skills.Add(skill10);
             Skills.Add(skill11);
-            //Skills.Add(skill12);
+            Skills.Add(skill12);
             Skills.Add(skill15);
             this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + characterName);
             this.AreaOfMouvement = new List<NodePath>();
@@ -1041,7 +1041,7 @@ public class LivingPlaceable : Placeable
             rend.material.SetFloat("_Outline", 0.02f);
             rend.material.shader = originalShader;
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
-            Debug.Log(className + ".json");
+            //Debug.Log(className + ".json");
             LoadFromjson(ClassName + ".json");
             circleTeam.color = Player.color;
             targetableUnits = new List<LivingPlaceable>();
@@ -1420,7 +1420,7 @@ public class LivingPlaceable : Placeable
                                 a = a.Remove(a.Length - 1);
                                 isNewSkill = true;
                             }
-                            Debug.Log(a);
+                            //Debug.Log(a);
                             Effect eff = (Effect)JsonUtility.FromJson(a, type);
                             eff.Initialize(this);
                             newSkill.effects.Add(eff);
