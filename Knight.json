@@ -12,5 +12,5 @@ Damage{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":3,"
 {"skillName":"debuffPm","cost":1,"tourCooldownLeft":0,"cooldown":3,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":0,"skilleffect":0}
 ParameterChangeV2`2[LivingPlaceable,System.Single]{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"value":-1.0,"numberMethod":0}
 ParameterChangeV2`2[LivingPlaceable,System.Single]{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":2,"triggerAtOneOnly":true,"hitOnDirectAttack":false,"netIdTarget":-1,"value":0.0,"numberMethod":0};
-{"skillName":"Spinning","cost":1,"tourCooldownLeft":0,"cooldown":2,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":1,"skillarea":5,"skilleffect":5}
+{"skillName":"Spinning","cost":1,"tourCooldownLeft":0,"cooldown":2,"maxRange":2,"minRange":0,"effectarea":0,"description":"Ca tue","skillType":0,"skillarea":5,"skilleffect":5}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerAtOneOnly":false,"hitOnDirectAttack":true,"netIdTarget":-1,"power":30.0,"scaleOn":0,"sinFactor":0.30000001192092898};
