@@ -951,7 +951,7 @@ public class LivingPlaceable : Placeable
 
             Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
-            Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY, SkillArea.TOPBLOCK);
+            Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
             Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.AREA, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.AREA, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
