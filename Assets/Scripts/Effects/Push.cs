@@ -140,16 +140,16 @@ public class Push : EffectOnPlaceable
         {
             Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
             if (GameManager.instance.isClient)
-        { 
-        GameManager.instance.RemoveBlockFromBatch(Target);
-            //Could be either player, really...
-        path.Insert(0, Target.GetPosition());
-            // trigger visual effect and physics consequences
-             animLauncher.Play("pushBlock");
-            Vector3 pos = Target.transform.position;
+            { 
+                GameManager.instance.RemoveBlockFromBatch(Target);
+                //Could be either player, really...
+                path.Insert(0, Target.GetPosition());
+                // trigger visual effect and physics consequences
+                 animLauncher.Play("pushBlock");
+                Vector3 pos = Target.transform.position;
            
-            AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
-            Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
+                AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
+                Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
             }
         }
 
@@ -168,7 +168,7 @@ public class Push : EffectOnPlaceable
             Vector3Int positionCurrent = new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y,
                 Target.GetPosition().z + delta.y * i);
             if (!Grid.instance.CheckNull(positionCurrent)) 
-               {
+            {
                 directCollision=Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i];
             }
             else
