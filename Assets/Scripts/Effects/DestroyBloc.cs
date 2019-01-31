@@ -36,7 +36,6 @@ public class DestroyBloc : EffectOnPlaceableOnly
         AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndDestroyBlock(Target, GetTimeOfLauncherAnimation()));
         for (int i = 0; i <depthExceed;i++)
         {
-
              new DestroyBlockRelative(Target, new Vector3Int(0, -i-1, 0)).Use();
         }
     }

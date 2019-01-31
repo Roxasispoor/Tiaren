@@ -879,8 +879,6 @@ public class LivingPlaceable : Placeable
     {
         if(Grid.instance.UseAwakeLiving)
         {
-            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-
 
             shouldBatch = false;
             this.className = "default";
@@ -953,11 +951,11 @@ public class LivingPlaceable : Placeable
 
             Skill skill1 = new Skill(1, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(1, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
-            Skill skill3 = new Skill(1, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY, SkillArea.TOPBLOCK);
+            Skill skill3 = new Skill(1, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
             Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill5 = new Skill(1, 2, ListEffects5, SkillType.LIVING, "Bleeding", 0, 1);
             Skill skill6 = new Skill(1, 3, ListEffects6, SkillType.LIVING, "debuffPm", 0, 2);
-            Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+            Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.SELF, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -1047,7 +1045,7 @@ public class LivingPlaceable : Placeable
             rend.material.SetFloat("_Outline", 0.02f);
             rend.material.shader = originalShader;
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
-            Debug.Log(className + ".json");
+            //Debug.Log(className + ".json");
             LoadFromjson(ClassName + ".json");
             circleTeam.color = Player.color;
             targetableUnits = new List<LivingPlaceable>();
@@ -1099,14 +1097,19 @@ public class LivingPlaceable : Placeable
                 EffectManager.instance.DirectAttack(effect);
             }
             AttachedEffects.Clear();
+            if (GameManager.instance.playingPlaceable == this)
+            {
+                if(MoveCoroutine!=null)
+                {
+                    StopCoroutine(MoveCoroutine);
+                }
+                GameManager.instance.EndOFTurn();
+            }
+            this.IsDead = true;
+            this.gameObject.SetActive(false);
+            CounterDeaths++;
         }
-        if (GameManager.instance.playingPlaceable == this)
-        {
-            GameManager.instance.EndOFTurn();
-        }
-        this.IsDead = true;
-        this.gameObject.SetActive(false);
-              CounterDeaths++;
+        
     }
 
     /* public void HighlightForSpawn()
@@ -1426,7 +1429,7 @@ public class LivingPlaceable : Placeable
                                 a = a.Remove(a.Length - 1);
                                 isNewSkill = true;
                             }
-                            Debug.Log(a);
+                            //Debug.Log(a);
                             Effect eff = (Effect)JsonUtility.FromJson(a, type);
                             eff.Initialize(this);
                             newSkill.effects.Add(eff);

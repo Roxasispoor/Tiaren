@@ -1312,12 +1312,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   targetOffset: {x: 0, y: 0, z: 0}
-  distance: 5
-  maxDistance: 20
+  distance: 6
+  maxDistance: 25
   minDistance: 0.6
-  xSpeed: 200
-  ySpeed: 200
-  yMinLimit: 0
+  xSpeed: 6
+  ySpeed: 6
+  yMinLimit: -80
   yMaxLimit: 80
   zoomRate: 70
   panSpeed: 0.3

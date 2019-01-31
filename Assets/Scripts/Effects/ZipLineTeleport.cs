@@ -20,9 +20,10 @@ public class ZipLineTeleport : EffectOnObjectBloc
     public override void Use()
     {
         Vector3Int zip = ((ZipLine)Target).linkedTo.GetPosition();
+       // Debug.DrawRay(Target.GetPosition() + new Vector3(0, 1.5f, 0), zip - Target.GetPosition(),Color.green,10f);
         if (zip.y<Target.GetPosition().y && Grid.instance.CheckNull(zip + new Vector3Int(0,1,0))
-            && !Physics.Raycast(Target.GetPosition()+new Vector3(0,0.5f,0), Target.GetPosition()- zip,
-            (Target.GetPosition() - zip).magnitude*0.95f,LayerMask.GetMask("Placeable"))
+            && !Physics.Raycast(Target.GetPosition()+new Vector3(0,1.5f,0),  zip- Target.GetPosition(),
+            (Target.GetPosition() - zip).magnitude,LayerMask.GetMask("Placeable"))
             )
         {
             Grid.instance.MoveBlock(Launcher, zip + new Vector3Int(0, 1, 0),false);
