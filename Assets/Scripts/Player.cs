@@ -291,6 +291,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            FloatingTextController.Initialize(gameObject.transform.Find("InGameCanvas").gameObject);
             if (GameManager.instance.State == States.TeamSelect)
             {
                 GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;

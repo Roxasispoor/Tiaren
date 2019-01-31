@@ -65,6 +65,7 @@ public class Damage : EffectOnLiving
         Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
         Animator animTarget = Target.gameObject.GetComponent<Animator>();
         Target.CurrentHP -= DamageValue;
+        FloatingTextController.CreateFloatingText(DamageValue.ToString(), Target.transform);
 
         if (GameManager.instance.playingPlaceable == Target)
             // suicide
