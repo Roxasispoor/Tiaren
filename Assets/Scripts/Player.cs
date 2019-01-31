@@ -397,7 +397,7 @@ public class Player : NetworkBehaviour
         List<int> numbers = new List<int>(characterChoices);
         gameObject.GetComponent<UIManager>().CurrentCharacters = numbers;
 
-        GameManager.instance.InitStartGame();
+        //GameManager.instance.InitStartGame();
 
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
@@ -463,7 +463,6 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcStartSpawn(int[] otherPlayerChoices)
     {
-        GameManager.instance.InitStartGame();
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
         GameManager.instance.State = States.Spawn;

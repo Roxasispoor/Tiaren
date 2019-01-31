@@ -879,8 +879,6 @@ public class LivingPlaceable : Placeable
     {
         if(Grid.instance.UseAwakeLiving)
         {
-            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-
 
             shouldBatch = false;
             this.className = "default";
@@ -1099,14 +1097,19 @@ public class LivingPlaceable : Placeable
                 EffectManager.instance.DirectAttack(effect);
             }
             AttachedEffects.Clear();
+            if (GameManager.instance.playingPlaceable == this)
+            {
+                if(MoveCoroutine!=null)
+                {
+                    StopCoroutine(MoveCoroutine);
+                }
+                GameManager.instance.EndOFTurn();
+            }
+            this.IsDead = true;
+            this.gameObject.SetActive(false);
+            CounterDeaths++;
         }
-        if (GameManager.instance.playingPlaceable == this)
-        {
-            GameManager.instance.EndOFTurn();
-        }
-        this.IsDead = true;
-        this.gameObject.SetActive(false);
-              CounterDeaths++;
+        
     }
 
     /* public void HighlightForSpawn()
