@@ -12,7 +12,7 @@ public class SkillDisplayer : MonoBehaviour {
     public void Activate(Skill skill)
     {
         gameObject.SetActive(true);
-        skillName.text = "Name : " + skill.SkillName;
+        skillName.text = skill.SkillName;
         description.text = skill.Description;
         image.sprite = skill.AbilitySprite;
     }

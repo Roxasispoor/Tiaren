@@ -314,6 +314,7 @@ public class GameManager : NetworkBehaviour
         transmitter = GetComponent<TransmitterNoThread>();
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
+        
     }
 
 
