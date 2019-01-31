@@ -879,9 +879,7 @@ public class LivingPlaceable : Placeable
     private void Awake()
     {
         if(Grid.instance.UseAwakeLiving)
-        { 
-            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-
+        {
             shouldBatch = false;
             this.className = "default";
             this.Walkable = false;
