@@ -909,6 +909,8 @@ public class LivingPlaceable : Placeable
             this.Force = 100;
             this.Speed = 100;
             this.Def = 100;
+            this.Mdef = 100;
+            this.Mstr = 100;
             this.SpeedStack = 1 / Speed;
             this.Dexterity = 100;
             this.Skills = new List<Skill>();
@@ -935,9 +937,8 @@ public class LivingPlaceable : Placeable
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
             ListEffects4.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
-            ListEffects5.Add(new DestroyBloc());
-            ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
-            ListEffects6.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0), new Vector3Int(0, 1, 0)));
+            ListEffects5.Add(new DestroyBloc(1));
+            ListEffects6.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0),1));
             ListEffects7.Add(new Damage(20, 2));
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
@@ -948,6 +949,7 @@ public class LivingPlaceable : Placeable
             ListEffects11.Add(new CreateZipLine(11, new Vector3Int(0, 1, 0)));
             ListEffects12.Add(new DamageCalculated(50, DamageCalculated.DamageScale.STR));
             ListEffects15.Add(new DamageCalculated(30, DamageCalculated.DamageScale.MAG));
+            ListEffects15.Add(new DestroyBloc());
 
             Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
