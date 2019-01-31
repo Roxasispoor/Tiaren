@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour {
     public Button prefabCharacterSpawnButton;
     public Sprite upChoice;
     public GameObject prefabCharacterImage;
+    public GameObject basicImage;
     public RectTransform SkillZone;
     public RectTransform SpawnZone;
     public RectTransform TimelineZone;
@@ -214,13 +215,14 @@ public class UIManager : MonoBehaviour {
             image.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
             image.GetComponentInChildren<Slider>().maxValue = character.Character.MaxHP;
             image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
+            GameObject filter = Instantiate(basicImage, image.transform);
             if (character.Character.Player.gameObject == gameObject)
             {
-                image.GetComponent<Image>().color = Color.cyan;
+                filter.GetComponent<Image>().color = new Color(0, 1, 1, 0.5f); 
             }
             else
             {
-                image.GetComponent<Image>().color = Color.red;
+                filter.GetComponent<Image>().color = new Color(1, 0, 0, 0.5f);
             }
             if (numberInstantiated >= 1)
             {
