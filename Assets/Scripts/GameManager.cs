@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -168,8 +167,16 @@ public class GameManager : NetworkBehaviour
         set
         {
 
-            if (characterToSpawn != null) characterToSpawn.UnHighlightTarget();
-            if (value != null) value.HighlightForSpawn();
+            if (characterToSpawn != null)
+            {
+                characterToSpawn.UnHighlightTarget();
+            }
+
+            if (value != null)
+            {
+                value.HighlightForSpawn();
+            }
+
             characterToSpawn = value;
         }
     }
@@ -253,8 +260,16 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (hovered != null) hovered.UnHighlight();
-            if (value != null) value.Highlight();
+            if (hovered != null)
+            {
+                hovered.UnHighlight();
+            }
+
+            if (value != null)
+            {
+                value.Highlight();
+            }
+
             hovered = value;
         }
     }
@@ -299,7 +314,7 @@ public class GameManager : NetworkBehaviour
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
         }
-        
+
 
         //init Posiible characters
         string path = "Teams.json";
@@ -314,7 +329,7 @@ public class GameManager : NetworkBehaviour
         transmitter = GetComponent<TransmitterNoThread>();
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
-        
+
     }
 
 
@@ -339,7 +354,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //PHASE 0 : SET THE GAME UP
 
         //If you want to create one and save it
-        
+
         state = States.TeamSelect;
         while (player1 == null)
         {
@@ -373,7 +388,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
-        
+
         if (GameManager.instance.isClient)
         {
             SoundHandler.Instance.PrepareAllSounds();
@@ -548,14 +563,20 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void RefreshBatch(Placeable block)
     {
-        if (block.batch.batchObject == null)
+        if (block != null && block.batch != null)
         {
-            CreateNewBatch(block.batch);
+            if (block.batch.batchObject == null)
+            {
+                CreateNewBatch(block.batch);
+            }
+            if (block.batch.batchObject != null)
+            {
+                block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
+                block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
+                block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
+                block.batch.combineInstances.ToArray(), true, true);
+            }
         }
-        block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
-        block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
-        block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
-        block.batch.combineInstances.ToArray(), true, true);
     }
 
     /// <summary>
@@ -654,7 +675,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void InitStartGame()
     {
         //Initialisation de MethodsForEffects
-    
+
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -749,7 +770,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-            
+
             if (playingPlaceable.IsDead)
             {
                 playingPlaceable.IsDead = false;
