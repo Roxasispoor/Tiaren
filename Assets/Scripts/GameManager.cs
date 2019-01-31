@@ -312,6 +312,9 @@ public class GameManager : NetworkBehaviour
             PossibleCharacters.Add(spriteAndName);
         }
         transmitter = GetComponent<TransmitterNoThread>();
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
+        
     }
 
 
@@ -651,10 +654,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void InitStartGame()
     {
         //Initialisation de MethodsForEffects
-        if(!Grid.instance.UseAwakeLiving)
-        { 
-        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-        }
+    
     }
     /// <summary>
     /// Add current combine instance to its batch

@@ -22,8 +22,8 @@ GameObject:
   - component: {fileID: 33186608110191262}
   - component: {fileID: 65211554512087142}
   - component: {fileID: 23836669232815178}
-  - component: {fileID: 114105382873498880}
   - component: {fileID: 114945978310607720}
+  - component: {fileID: 114555885065080478}
   m_Layer: 10
   m_Name: Water
   m_TagString: Untagged
@@ -684,7 +684,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114105382873498880
+--- !u!114 &114555885065080478
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -692,7 +692,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032257904305354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f1e989823256d0438c381cbc3f6ada6, type: 3}
+  m_Script: {fileID: 11500000, guid: fcb4a184cfe27af4b924d6792b45261a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   netId: 0
