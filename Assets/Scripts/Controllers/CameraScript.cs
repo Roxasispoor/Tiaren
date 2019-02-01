@@ -1,7 +1,5 @@
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.Networking;
 
 [AddComponentMenu("Camera-Control/3dsMax Camera Style")]
@@ -66,7 +64,7 @@ public class CameraScript : NetworkBehaviour
         Debug.Log(spawncenter);
         Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2) - spawncenter;
         XDeg = spawntoobjective.x >= 0 ? Vector3.Angle(Vector3.forward, spawntoobjective) : -Vector3.Angle(Vector3.forward, spawntoobjective);
-        YDeg = Vector3.Angle(Vector3.up, spawntoobjective)-45;
+        YDeg = Vector3.Angle(Vector3.up, spawntoobjective) - 45;
         //Debug.Log(XDeg + "  " + YDeg);
         rotation = Quaternion.Euler(YDeg, XDeg, 0);
         position = target.position;
@@ -75,9 +73,9 @@ public class CameraScript : NetworkBehaviour
     public void SetTarget(Transform newtarget)
     {
         target = newtarget;
-        Vector3 playertoobjective = new Vector3(grid.sizeX / 2, newtarget.position.y ,grid.sizeZ / 2) - newtarget.position;
+        Vector3 playertoobjective = new Vector3(grid.sizeX / 2, newtarget.position.y, grid.sizeZ / 2) - newtarget.position;
         XDeg = playertoobjective.x >= 0 ? Vector3.Angle(Vector3.forward, playertoobjective) : -Vector3.Angle(Vector3.forward, playertoobjective);
-        YDeg = Vector3.Angle(Vector3.up, playertoobjective)-45;
+        YDeg = Vector3.Angle(Vector3.up, playertoobjective) - 45;
         DesiredDistance = distance;
         //Debug.Log(XDeg + "  " + YDeg);
         rotation = Quaternion.Euler(YDeg, XDeg, 0);
@@ -86,7 +84,7 @@ public class CameraScript : NetworkBehaviour
     /*
      * Camera logic on LateUpdate to only update after all character movement logic has been handled. 
      */
-    void LateUpdate()
+    private void LateUpdate()
     {
         //Storing y position in order to not modifie the high when travelling with keyboard
         float y = position.y;
@@ -118,7 +116,10 @@ public class CameraScript : NetworkBehaviour
                     rotation = transform.rotation;
                     position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
                 }
-                else currentDistance = distance;
+                else
+                {
+                    currentDistance = distance;
+                }
                 //Debug.Log("Camera mode changed");
             }
         }
@@ -127,14 +128,17 @@ public class CameraScript : NetworkBehaviour
         if (freecam == 1)
         {
             //move according to input keys
-            position += rotation * Vector3.right * Input.GetAxis("Horizontal") *0.5f;
-            position += rotation * Vector3.forward * Input.GetAxis("Vertical") *0.5f;
+            position += rotation * Vector3.right * Input.GetAxis("Horizontal") * 0.5f;
+            position += rotation * Vector3.forward * Input.GetAxis("Vertical") * 0.5f;
             //reset the good high
             position.y = y;
         }
 
         //if in stuck camera mode
-        else if (freecam == 0) position = target.position;
+        else if (freecam == 0)
+        {
+            position = target.position;
+        }
 
 
         //0 left 1 right 2 middle
@@ -171,15 +175,7 @@ public class CameraScript : NetworkBehaviour
         //resume the movement part
         if (player.DicoCondition["BackToMovement"]())
         {
-            if (GameManager.instance.playingPlaceable.Player == player)
-            {
-                GameManager.instance.playingPlaceable.ResetTargets();
-                GameManager.instance.State = States.Move;
-                GameManager.instance.activeSkill = null;
-                GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
-                GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
-                GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
-            }
+            BackToMovement();
         }
 
 
@@ -207,19 +203,36 @@ public class CameraScript : NetworkBehaviour
             transform.rotation = newrot;
             desiredRotation = newrot;
             DesiredDistance = newdist;
-            YDeg = currentRotation.eulerAngles.x > 180 ? currentRotation.eulerAngles.x-360 : currentRotation.eulerAngles.x;
+            YDeg = currentRotation.eulerAngles.x > 180 ? currentRotation.eulerAngles.x - 360 : currentRotation.eulerAngles.x;
             XDeg = currentRotation.eulerAngles.y;
         }
         //transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
         transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, 1), transform.position.z);
     }
-
+    public void BackToMovement()
+    {
+        if (GameManager.instance.playingPlaceable.Player == player)
+        {
+            GameManager.instance.playingPlaceable.ResetTargets();
+            GameManager.instance.State = States.Move;
+            GameManager.instance.activeSkill = null;
+            GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
+            GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
+            GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
+        }
+    }
     private static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
+        {
             angle += 360;
+        }
+
         if (angle > 360)
+        {
             angle -= 360;
+        }
+
         return Mathf.Clamp(angle, min, max);
     }
 }

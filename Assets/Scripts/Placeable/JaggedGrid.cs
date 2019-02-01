@@ -64,7 +64,8 @@ public class JaggedGrid
                     }
                     else
                     {
-                        this.gridTable[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = grid.GridMatrix[x, y, z].serializeNumber;
+                        Placeable plac = grid.GridMatrix[x, y, z];
+                        this.gridTable[y * grid.sizeZ * grid.sizeX + z * grid.sizeX + x] = plac.serializeNumber;
 
                     }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class NetIdeable : MonoBehaviour {
-
+    public int serializeNumber;
     public int netId;
     protected List<Effect> attachedEffects;
     public bool shouldBatch=true;
