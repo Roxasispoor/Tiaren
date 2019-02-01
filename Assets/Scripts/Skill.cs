@@ -247,10 +247,11 @@ public class Skill
     }
 
     // set SkillAnimationToPlay in AnimationHandler
-    public void SendAnimationInfo()
+    public void SendAnimationInfo(List<Animator> animTargets)
     {
         AnimationHandler.Instance.SkillAnimationToPlay = this.skillName;
         AnimationHandler.Instance.animLauncher = GameManager.instance.playingPlaceable.GetComponent<Animator>();
+        AnimationHandler.Instance.animTargets = animTargets;
     }
 
     // ask AnimationHandler to play it
@@ -270,11 +271,20 @@ public class Skill
         {
             return false;
         }
-        SendAnimationInfo();
+        
+        List<Animator> animTargets = new List<Animator>();
+        foreach (Placeable target in targets)
+        {
+            if (target.GetComponent<Animator>() != null)
+            {
+                animTargets.Add(target.GetComponent<Animator>());
+            }
+        }
+        SendAnimationInfo(animTargets);
         PlayAnimation();
         this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
         foreach (Placeable target in targets)
-        {
+        { 
             foreach (Effect effect in effects)
             {
                 //makes the deep copy, send it to effect manager and zoo

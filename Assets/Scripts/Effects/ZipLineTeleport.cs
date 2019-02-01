@@ -32,7 +32,7 @@ public class ZipLineTeleport : EffectOnObjectBloc
             {
 
                 List<Vector3> path = new List<Vector3>() { Launcher.GetPosition(), zip + new Vector3Int(0, 1, 0) };
-                GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Launcher, 4f, false);
+                GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Launcher, 4f, true);
             }
 
         }
