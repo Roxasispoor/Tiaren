@@ -10,7 +10,7 @@ public class AnimationHandler : MonoBehaviour
     Dictionary<string, string> AnimDictionary;
     public string SkillAnimationToPlay;
     public Animator animLauncher;
-    public Animator animTarget;
+    public List<Animator> animTargets;
     public static AnimationHandler Instance
     {
         get
@@ -134,6 +134,8 @@ public class AnimationHandler : MonoBehaviour
         yield return null;
         SoundHandler.Instance.PlayAttackSound();
         animLauncher.Play("attack");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length/2);
+        StartCoroutine("WaitAndGetHurt");
     }
 
     public IEnumerator WaitAndSpin()
@@ -141,6 +143,8 @@ public class AnimationHandler : MonoBehaviour
         yield return null;
         SoundHandler.Instance.PlaySpinSound();
         animLauncher.Play("tourbilol");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        StartCoroutine("WaitAndGetHurt");
     }
     
     public IEnumerator WaitAndBleed()
@@ -150,7 +154,7 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndLaunchFireball()
     {
-        yield return null;
+        yield return null;        
     }
 
     public IEnumerator WaitAndBuff()
@@ -162,6 +166,19 @@ public class AnimationHandler : MonoBehaviour
     public IEnumerator WaitAndArrowAttack()
     {
         yield return null;
+        SoundHandler.Instance.PlayBowSound();
         animLauncher.Play("shootArrow");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        StartCoroutine("WaitAndGetHurt");
+    }
+
+    public IEnumerator WaitAndGetHurt()
+    {
+        yield return null;
+        foreach (Animator animTarget in animTargets)
+        {
+            animTarget.Play("hurt");
+            SoundHandler.Instance.PlayHurtSound();
+        }
     }
 }

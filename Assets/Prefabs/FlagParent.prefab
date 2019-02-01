@@ -198,6 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e65e5d84b2979b84a930649156aa5a69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializeNumber: 4
   netId: 0
   shouldBatch: 0
   isMoving: 0

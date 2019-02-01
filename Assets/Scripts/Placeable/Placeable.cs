@@ -14,8 +14,6 @@ public abstract class Placeable: NetIdeable
     const float sizeChild = 1.02f;
     [NonSerialized]
     public Batch batch;
-    [SerializeField]
-    public int serializeNumber;
     private bool walkable;
     protected List<Effect> onWalkEffects;
     protected bool movable;
@@ -46,7 +44,7 @@ public abstract class Placeable: NetIdeable
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
-    private Player player;
+    public Player player;
     [SerializeField]
     private bool isSpawnPoint;
 
@@ -240,6 +238,7 @@ public abstract class Placeable: NetIdeable
 
         set
         {
+
             player = value;
         }
     }
@@ -397,7 +396,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.State!=States.Move  ||
+        if (GameManager.instance.State!=States.Move  || GameManager.instance.playingPlaceable!=null && GameManager.instance.playingPlaceable.AreaOfMouvement!=null &&
             !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
