@@ -88,4 +88,9 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Damage sound"),0.4f);
     }
+
+    public void PlayFireballSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Fireball"));
+    }
 }

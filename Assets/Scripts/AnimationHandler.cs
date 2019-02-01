@@ -11,6 +11,8 @@ public class AnimationHandler : MonoBehaviour
     public string SkillAnimationToPlay;
     public Animator animLauncher;
     public List<Animator> animTargets;
+    public List<Placeable> placeableTargets;
+    public List<Vector3> positionTargets;
     public static AnimationHandler Instance
     {
         get
@@ -154,7 +156,11 @@ public class AnimationHandler : MonoBehaviour
 
     public IEnumerator WaitAndLaunchFireball()
     {
-        yield return null;        
+        yield return null;
+        SoundHandler.Instance.PlayFireballSound();
+        GameObject tmp = Instantiate((GameObject)Resources.Load("FX/Fireball"),GameManager.instance.playingPlaceable.GetPosition(),Quaternion.identity);
+        tmp.GetComponent<Fireball>().Init(positionTargets[0]+new Vector3(0,1,0));
+        //tmp.Init(placeableTargets[0].GetPosition());
     }
 
     public IEnumerator WaitAndBuff()
