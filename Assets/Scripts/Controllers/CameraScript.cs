@@ -69,7 +69,6 @@ public class CameraScript : NetworkBehaviour
         YDeg = Vector3.Angle(Vector3.up, spawntoobjective)-45;
         //Debug.Log(XDeg + "  " + YDeg);
         rotation = Quaternion.Euler(YDeg, XDeg, 0);
-        position = target.position;
     }
 
     public void SetTarget(Transform newtarget)
@@ -81,6 +80,7 @@ public class CameraScript : NetworkBehaviour
         DesiredDistance = distance;
         //Debug.Log(XDeg + "  " + YDeg);
         rotation = Quaternion.Euler(YDeg, XDeg, 0);
+        position = target.position;
     }
 
     /*

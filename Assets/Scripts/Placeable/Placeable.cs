@@ -23,7 +23,7 @@ public abstract class Placeable: NetIdeable
     protected TraversableType tangible;
     protected TraversableType traversableBullet;
     public Color colorOfObject;
-    private float animationSpeed=1.0f;
+    private float animationSpeed=2.5f;
     [NonSerialized]
     public Material oldMaterial;
     public Material baseMaterial;
