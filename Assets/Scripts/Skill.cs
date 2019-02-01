@@ -245,6 +245,19 @@ public class Skill
         }
         return true;
     }
+    // set SkillAnimationToPlay in AnimationHandler
+    public void SendAnimationInfo()
+    {
+        AnimationHandler.Instance.SkillAnimationToPlay = this.skillName;
+        AnimationHandler.Instance.animLauncher = GameManager.instance.playingPlaceable.GetComponent<Animator>();
+    }
+
+    // ask AnimationHandler to play it
+    public void PlayAnimation()
+    {
+        AnimationHandler.Instance.PlayAnimation();
+    }
+
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
@@ -256,6 +269,9 @@ public class Skill
         {
             return false;
         }
+        SendAnimationInfo();
+        PlayAnimation();
+
         this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
         foreach (Placeable target in targets)
         {

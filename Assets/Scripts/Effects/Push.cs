@@ -145,10 +145,10 @@ public class Push : EffectOnPlaceable
             //Could be either player, really...
         path.Insert(0, Target.GetPosition());
             // trigger visual effect and physics consequences
-             animLauncher.Play("pushBlock");
             Vector3 pos = Target.transform.position;
-           
-            AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed,GetTimeOfLauncherAnimation()));
+
+                GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
+                GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
             Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
             }
         }

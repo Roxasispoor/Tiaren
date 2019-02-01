@@ -30,10 +30,15 @@ public class DestroyBloc : EffectOnPlaceableOnly
     override
     public void Use()
     {
-        GetLauncherAnimation();
-        animLauncher.Play("destroyBlock");
+        Vector3 pos = Target.transform.position;
+        if (GameManager.instance.isClient)
+        {
+            GameManager.instance.RemoveBlockFromBatch(Target);
+        }
+
+        Target.Destroy();
         
-        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndDestroyBlock(Target, GetTimeOfLauncherAnimation()));
+        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
         for (int i = 0; i <depthExceed;i++)
         {
 

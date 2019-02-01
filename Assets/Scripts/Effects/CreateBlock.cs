@@ -53,9 +53,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
 
     public override void Use()
     {
-        GetLauncherAnimation();
-        animLauncher.Play("createBlock");
-        AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndCreateBlock(prefab, Target.GetPosition() + face, GetTimeOfLauncherAnimation()));
+        Grid.instance.InstantiateCube(prefab, Target.GetPosition() + face);
         for (int i = 0; i < height; i++)
         {
            new CreateBlockRelativeEffect(Target,prefab, new Vector3Int(0, 1, 0),new Vector3Int(0,1+i,0)).Use();
