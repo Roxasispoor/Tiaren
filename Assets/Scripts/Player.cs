@@ -291,7 +291,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            FloatingTextController.Initialize(gameObject.transform.Find("InGameCanvas").gameObject);
+            FloatingTextController.Initialize(gameObject.transform.Find("InGameCanvas").gameObject, cameraScript.GetComponent<Camera>());
             if (GameManager.instance.State == States.TeamSelect)
             {
                 GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
