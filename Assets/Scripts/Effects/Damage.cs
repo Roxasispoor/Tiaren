@@ -64,6 +64,8 @@ public class Damage : EffectOnLiving
     {
         
         Target.CurrentHP -= DamageValue;
+        FloatingTextController.CreateFloatingText(DamageValue.ToString(), Target.transform);
+
         if (Target.CurrentHP <= 0)
         {
             Target.Destroy();

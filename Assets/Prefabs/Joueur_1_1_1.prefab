@@ -1312,12 +1312,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   targetOffset: {x: 0, y: 0, z: 0}
-  distance: 5
-  maxDistance: 20
+  distance: 6
+  maxDistance: 25
   minDistance: 0.6
-  xSpeed: 200
-  ySpeed: 200
-  yMinLimit: 0
+  xSpeed: 6
+  ySpeed: 6
+  yMinLimit: -80
   yMaxLimit: 80
   zoomRate: 70
   panSpeed: 0.3
@@ -1709,7 +1709,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: ClassName
+  m_Text: SkillName
 --- !u!114 &114674567756980660
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1801,6 +1801,7 @@ MonoBehaviour:
   upChoice: {fileID: 21300000, guid: 1c29db5e46e75c94fa2b23d8cd170c56, type: 3}
   prefabCharacterImage: {fileID: 1297186103065250, guid: fd09ea354e55db04a83ff8514673dc64,
     type: 2}
+  basicImage: {fileID: 1879499949662638, guid: 9084c73c9e8d2724aa03811376e2e020, type: 2}
   SkillZone: {fileID: 224626617816494302}
   SpawnZone: {fileID: 224461615103944622}
   TimelineZone: {fileID: 224355195658840442}
@@ -3342,10 +3343,10 @@ RectTransform:
   m_Father: {fileID: 224441289049995768}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1068, y: -852}
-  m_SizeDelta: {x: 407.7, y: 130.2}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 108, y: 228}
+  m_SizeDelta: {x: 407.69995, y: 130.20001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224789087085103632
 RectTransform:

@@ -168,7 +168,7 @@ public class Push : EffectOnPlaceable
             Vector3Int positionCurrent = new Vector3Int(Target.GetPosition().x + delta.x * i, Target.GetPosition().y,
                 Target.GetPosition().z + delta.y * i);
             if (!Grid.instance.CheckNull(positionCurrent)) 
-               {
+            {
                 directCollision=Grid.instance.GridMatrix[Target.GetPosition().x + delta.x * i, Target.GetPosition().y, Target.GetPosition().z + delta.y * i];
             }
             else

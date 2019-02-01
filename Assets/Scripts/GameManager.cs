@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -168,8 +167,16 @@ public class GameManager : NetworkBehaviour
         set
         {
 
-            if (characterToSpawn != null) characterToSpawn.UnHighlightTarget();
-            if (value != null) value.HighlightForSpawn();
+            if (characterToSpawn != null)
+            {
+                characterToSpawn.UnHighlightTarget();
+            }
+
+            if (value != null)
+            {
+                value.HighlightForSpawn();
+            }
+
             characterToSpawn = value;
         }
     }
@@ -253,8 +260,16 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (hovered != null) hovered.UnHighlight();
-            if (value != null) value.Highlight();
+            if (hovered != null)
+            {
+                hovered.UnHighlight();
+            }
+
+            if (value != null)
+            {
+                value.Highlight();
+            }
+
             hovered = value;
         }
     }
@@ -299,7 +314,7 @@ public class GameManager : NetworkBehaviour
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
         }
-        
+
 
         //init Posiible characters
         string path = "Teams.json";
@@ -312,6 +327,9 @@ public class GameManager : NetworkBehaviour
             PossibleCharacters.Add(spriteAndName);
         }
         transmitter = GetComponent<TransmitterNoThread>();
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
+
     }
 
 
@@ -336,7 +354,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //PHASE 0 : SET THE GAME UP
 
         //If you want to create one and save it
-        
+
         state = States.TeamSelect;
         while (player1 == null)
         {
@@ -370,7 +388,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
-        
+
         if (GameManager.instance.isClient)
         {
             SoundHandler.Instance.PrepareAllSounds();
@@ -401,11 +419,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-
-            //InitialiseBatchFolder(); <- a merge issue ?
             return player2;
-
-            //receive data from server
         }
 
     }
@@ -549,14 +563,20 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void RefreshBatch(Placeable block)
     {
-        if (block.batch.batchObject == null)
+        if (block != null && block.batch != null)
         {
-            CreateNewBatch(block.batch);
+            if (block.batch.batchObject == null)
+            {
+                CreateNewBatch(block.batch);
+            }
+            if (block.batch.batchObject != null)
+            {
+                block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
+                block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
+                block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
+                block.batch.combineInstances.ToArray(), true, true);
+            }
         }
-        block.batch.batchObject.GetComponent<MeshRenderer>().material = block.GetComponent<MeshRenderer>().material;
-        block.batch.batchObject.GetComponent<MeshFilter>().mesh = new Mesh();
-        block.batch.batchObject.GetComponent<MeshFilter>().mesh.CombineMeshes(
-        block.batch.combineInstances.ToArray(), true, true);
     }
 
     /// <summary>
@@ -624,8 +644,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public ObjectOnBloc[] GetObjectsOnBlockUnder(Vector3Int pos)
     {
-        return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z]
-                .transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>();
+        return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z] != null ? Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z].transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>() : new ObjectOnBloc[0];
     }
 
     public void MoveLogic(List<Vector3> bezierPath)
@@ -656,10 +675,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void InitStartGame()
     {
         //Initialisation de MethodsForEffects
-        if(!Grid.instance.UseAwakeLiving)
-        { 
-        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-        }
+
     }
     /// <summary>
     /// Add current combine instance to its batch
@@ -754,12 +770,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-            
-            if (playingPlaceable.IsDead)
-            {
-                playingPlaceable.IsDead = false;
-                playingPlaceable.Player.Respawn(playingPlaceable);
-            }
 
             if (playingPlaceable.IsDead)
             {
@@ -780,13 +790,22 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
-            if (isClient && playingPlaceable.Player.isLocalPlayer)
+            if (isClient)
             {
-                playingPlaceable.Player.cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                playingPlaceable.Player.cameraScript.Freecam = 0;
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                if (playingPlaceable.Player.isLocalPlayer)
+                {
+                    PlayingPlaceable.Player.cameraScript.SetTarget(PlayingPlaceable.transform);
+                    PlayingPlaceable.Player.cameraScript.Freecam = 0;
+                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                }
+                else
+                {
+                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(PlayingPlaceable.transform);
+                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                }
             }
+
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
@@ -817,8 +836,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 RaycastSelector rayselect = playingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
                 rayselect.EffectArea = 0;
                 rayselect.Pattern = SkillArea.NONE;
-                playingPlaceable.Player.cameraScript.Freecam = 1;
-                playingPlaceable.Player.cameraScript.SetTarget(TurnOrder[1].Character.transform);
+                //playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();

@@ -8,6 +8,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
     public GameObject prefab;
     [SerializeField]
     public Vector3Int face;
+    [SerializeField]
     public int height=0;
 
     public CreateBlock()
