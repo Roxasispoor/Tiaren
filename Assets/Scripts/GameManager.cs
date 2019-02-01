@@ -246,6 +246,11 @@ public class GameManager : NetworkBehaviour
             if (state == States.Spawn)
             {
                 EndSpawn();
+            } else if (state == States.UseSkill && value != state)
+            {
+                if (SkillInfo.currentSkill)
+                    SkillInfo.currentSkill.SetHighlight(false);
+                SkillInfo.currentSkill = null;
             }
             state = value;
         }

@@ -7,6 +7,12 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     private Skill skill;
 
+    public static SkillInfo currentSkill = null;
+
+    [SerializeField]
+    private GameObject highlight;
+    
+
     public Skill Skill
     {
         get
@@ -31,6 +37,19 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
+    }
+
+    public void BecomeCurrentSkill()
+    {
+        if (currentSkill)
+            SkillInfo.currentSkill.SetHighlight(false);
+        SkillInfo.currentSkill = this;
+        SetHighlight(true);
+    }
+
+    public void SetHighlight(bool active)
+    {
+        highlight.SetActive(active);
     }
 
 }

@@ -1791,7 +1791,7 @@ MonoBehaviour:
   gameCanvas: {fileID: 1042009469954942}
   spawnCanvas: {fileID: 1776758476538438}
   TeamCanvas: {fileID: 1343607698244232}
-  prefabAbilityButton: {fileID: 114656972979152582, guid: 847879a15b2fb0d4999bae25a7f59aee,
+  prefabAbilityButton: {fileID: 1112430853555570, guid: f4c182d38e8224f4396c9365fd92beb4,
     type: 2}
   prefabTeamButton: {fileID: 114497606097434598, guid: 73acb2c8c83fddf42ba1975aaef71bc3,
     type: 2}
@@ -1812,7 +1812,7 @@ MonoBehaviour:
   firstImagePosition: 319
   firstGap: 99
   timelineGap: 78
-  AbilityGap: 100
+  AbilityGap: 110
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1
