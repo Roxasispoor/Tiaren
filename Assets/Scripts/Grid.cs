@@ -721,7 +721,7 @@ public class Grid : MonoBehaviour
     /// </summary>
     public void SaveGridNetwork()
     {
-        JaggedGrid jagged = new NetworkJaggedGrid();
+        NetworkJaggedGrid jagged = new NetworkJaggedGrid();
         jagged.ToJagged(this);
         jagged.Save("NewGrid.json");
 

@@ -836,6 +836,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 RaycastSelector rayselect = playingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
                 rayselect.EffectArea = 0;
                 rayselect.Pattern = SkillArea.NONE;
+                playingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
                 //playingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }

@@ -108,7 +108,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
+        if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && GameManager.instance.PlayingPlaceable!=null && gameObject.GetComponent<Player>().isLocalPlayer)
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {
@@ -263,6 +263,11 @@ public class UIManager : MonoBehaviour
             gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(false);
             hpDisplay.SetActive(false);
         }
+    }
+
+    public void ResetEndTurn()
+    {
+        gameObject.GetComponentInChildren<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
     }
 
     public void ClearZone(GameObject zoneToClear)

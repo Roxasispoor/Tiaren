@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
-
+    public int netIdLinkedTo;
     private void Awake()
     {
         base.Awake();
@@ -21,6 +21,10 @@ public class ZipLine : ObjectOnBloc {
         Destroy(gameObject);
 
     }
+    public override string Save()
+    {
+        return base.Save()+linkedTo.netId;
+    }
     public override void SomethingPutAbove()
     {
         base.SomethingPutAbove();
@@ -33,5 +37,15 @@ public class ZipLine : ObjectOnBloc {
             
         }
        
+    }
+    public override void Load(string[] objectInfo)
+    {
+        //netIdLinkedTo
+        base.Load(objectInfo);
+    }
+    public override void Initialize()
+    {
+        base.Initialize();
+
     }
 }

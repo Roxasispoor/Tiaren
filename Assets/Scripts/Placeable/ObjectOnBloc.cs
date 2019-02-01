@@ -118,4 +118,17 @@ public class ObjectOnBloc : NetIdeable {
         }
 
     }
+    public virtual string Save()
+    {
+        return serializeNumber + ";" + netId + ";" + GetPosition();
+    }
+
+    public virtual void Load(string[] objectInfo)
+    {
+        
+    }
+    public virtual void Initialize()
+    {
+
+    }
 }

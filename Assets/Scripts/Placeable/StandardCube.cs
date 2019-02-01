@@ -12,10 +12,6 @@ public class StandardCube : Placeable
     protected new void Awake()
     {
         base.Awake();
-        
-        this.serializeNumber = 1;
-       
-
         this.Walkable = true;
         
         this.Movable = true;
