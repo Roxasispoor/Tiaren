@@ -102,7 +102,7 @@ public class CameraScript : NetworkBehaviour
             }
             target.transform.position = spawncenter;
         }
-
+        
         else
         {
             //If camera mode change
