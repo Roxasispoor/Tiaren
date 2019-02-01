@@ -62,23 +62,13 @@ public class Damage : EffectOnLiving
     override
         public void Use()
     {
-        Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
-        Animator animTarget = Target.gameObject.GetComponent<Animator>();
+        
         Target.CurrentHP -= DamageValue;
-
-        if (GameManager.instance.playingPlaceable == Target)
-            // suicide
+        FloatingTextController.CreateFloatingText(DamageValue.ToString(), Target.transform);
+        if (Target.CurrentHP <= 0)
         {
-            AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndGetHurt(Target, animTarget,0f));
+            Target.Destroy();
+            Target.gameObject.SetActive(false);
         }
-
-        else
-        {
-            animLauncher.Play("attack");
-            SoundHandler.Instance.PlayAttackSound();
-            AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndGetHurt(Target, animTarget, GetTimeOfLauncherAnimation()));
-
-        }
-
     }
 }

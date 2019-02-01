@@ -291,6 +291,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            FloatingTextController.Initialize(gameObject.transform.Find("InGameCanvas").gameObject, cameraScript.GetComponent<Camera>());
             if (GameManager.instance.State == States.TeamSelect)
             {
                 GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
@@ -1130,7 +1131,7 @@ public class Player : NetworkBehaviour
                     {
                         iref = i;
                         anim.Play("land 0");
-                        yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+                        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
 
                     }
                 }
@@ -1145,7 +1146,7 @@ public class Player : NetworkBehaviour
                 {
                     isJumping = false;
                     anim.Play("land 1");
-                    yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+                    yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
                     SoundHandler.Instance.StartWalkSound();
                 }
                 else
