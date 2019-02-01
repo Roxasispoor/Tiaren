@@ -15,8 +15,8 @@ public class RaycastSelector : MonoBehaviour
     public SkillArea Pattern
     {get {return pattern;} set {pattern = value;}}
 
-    //public bool Topblock
-    //{ get { return topblock; } set { topblock = value; } }
+    public int State
+    { get { return state; } set { state = value; } }
 
     public int EffectArea
     { get { return effectarea; } set { effectarea = value; } }

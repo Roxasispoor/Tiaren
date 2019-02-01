@@ -889,14 +889,14 @@ public class Grid : MonoBehaviour
     /// <param name="minrange">Maximale range of the skill</param>
     /// <param name="maxrange">Minimale range of the skill</param>
     /// <returns></returns>
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange)
     {
         int remainingrangeYZ; //remaining range
         int dirx; //x direction (0,-1,1)
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
-        Depthreading(Playerposition, targetableblocs, minrange, maxrange, 0, 0, throughtblocks);
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange);
 
         //Now case when x > 0
         dirx = 1;
@@ -910,7 +910,7 @@ public class Grid : MonoBehaviour
             if (x < sizeX)
             {
                 //exploring in y and z
-                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx, throughtblocks);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange);
             }
         }
 
@@ -923,7 +923,7 @@ public class Grid : MonoBehaviour
             if (x >= 0)
             {
                 //Exploring in y and z 
-                Depthreading(Playerposition, targetableblocs, minrange, remainingrangeYZ, i, dirx, throughtblocks);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange);
             }
         }
 
@@ -945,8 +945,8 @@ public class Grid : MonoBehaviour
     /// <param name="j">number of block on z axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
     /// <param name="dirz">z direction (0,-1,1)</param>
-    private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
-        int i, int j, int dirx, int dirz, bool throughtblocks)
+    private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
+        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange)
     {
         int diry = 0; //y direction
         //real block position
@@ -977,7 +977,7 @@ public class Grid : MonoBehaviour
         //When y<0
         diry = -1;
         //Starting from -2, because not including footing
-        for (int k = -2; k >= -remainingrange; k--)
+        for (int k = -2; k >= (highrange ? -maxrange+1 : -remainingrange); k--)
         {
             if (Math.Abs(i) + Math.Abs(j) - k > minrange)
             {
@@ -1005,8 +1005,8 @@ public class Grid : MonoBehaviour
     /// <param name="remainingrange">Remaining range of the spell (without x)</param>
     /// <param name="i">number of block on x axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
-    private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int remainingrange,
-        int i, int dirx, bool throughtblocks)
+    private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
+        int i, int dirx, bool throughtblocks, bool highrange)
     {
         int dirz = 0; //z direction
         int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
@@ -1033,7 +1033,7 @@ public class Grid : MonoBehaviour
                         targetableblocs.Add(newblock);
                     }
                 }
-                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz, throughtblocks);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange);
             }
             dirz = 1;
         }
@@ -1060,7 +1060,7 @@ public class Grid : MonoBehaviour
                     }
                 }
                 //Search on the y axis
-                Highreading(Playerposition, targetableblocs, minrange, remainingrange, i, j, dirx, dirz, throughtblocks);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange);
             }
         }
     }
@@ -1097,6 +1097,8 @@ public class Grid : MonoBehaviour
 
         switch (sides)
         {
+            case 0:
+                return false;
             //One axis = straight line, i only check for any obstacle on that line
             case 1:
                 //facing the block
@@ -1304,6 +1306,12 @@ public class Grid : MonoBehaviour
         return targetableBlocks;
     }
 
+    /// <summary>
+    /// Return a new liste of blocks apllying the filter when we can only hit on straight line
+    /// </summary>
+    /// <param name="Blocklist">All the blocks that need to be checked</param>
+    /// <param name="Playerposition"></param>
+    /// <returns></returns>
     public List<Vector3Int> DrawCrossPattern(List<Vector3Int> Blocklist, Vector3 Playerposition)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
@@ -1315,6 +1323,11 @@ public class Grid : MonoBehaviour
         return targetableblock;
     }
 
+    /// <summary>
+    /// Return a new liste of blocks apllying the filter when we can't hit blocks with something above
+    /// </summary>
+    /// <param name="Blocklist">All the blocks that need to be checked</param>
+    /// <returns></returns>
     public List<Vector3Int> TopBlockPattern(List<Vector3Int> Blocklist)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
@@ -1326,6 +1339,11 @@ public class Grid : MonoBehaviour
         return targetableblock;
     }
 
+    /// <summary>
+    /// Return a list of blocks that can be destroyed from a previous list
+    /// </summary>
+    /// <param name="Blocklist">All the blocks that need to be checked</param>
+    /// <returns></returns>
     public List<Vector3Int> DestroyBlockPattern(List<Vector3Int> Blocklist)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
@@ -1337,18 +1355,29 @@ public class Grid : MonoBehaviour
         return targetableblock;
     }
 
+    /// <summary>
+    /// Return a list of blocks where we can put blocks on from a previous list
+    /// </summary>
+    /// <param name="Blocklist">All the blocks that need to be checked</param>
+    /// <returns></returns>
     public List<Vector3Int> CreateBlockPattern(List<Vector3Int> Blocklist)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
             Placeable block = gridMatrix[Pos.x, Pos.y, Pos.z];
-            if (block.GetType()==typeof(Goal) || block.GetType()==typeof(Spawn))
+            if (block.GetType()==typeof(Goal) || block.IsSpawnPoint)
                 targetableblock.Remove(Pos);
         }
         return targetableblock;
     }
 
+    /// <summary>
+    /// Return a list of blocks that can be pushed from a previous list
+    /// </summary>
+    /// <param name="Blocklist">All the blocks that need to be checked</param>
+    /// <param name="playerposition"></param>
+    /// <returns></returns>
     public List<Vector3Int> PushPattern(List<Vector3Int> Blocklist, Vector3 playerposition)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
@@ -1376,14 +1405,22 @@ public class Grid : MonoBehaviour
         return targetableblock;
     }
 
-    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks)
+    /// <summary>
+    /// Return a list of all living targets in range
+    /// </summary>
+    /// <param name="Playerposition"></param>
+    /// <param name="minrange"></param>
+    /// <param name="maxrange"></param>
+    /// <param name="throughtblocks">If we can see targets through blocks</param>
+    /// <returns></returns>
+    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange)
     {
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
         foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
-            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
+            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + (highrange ? Math.Max(Math.Abs(distance.y), maxrange + 1) : Math.Abs(distance.y)); 
             if ((totaldist == 0 && minrange ==0)|| totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
                 distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
@@ -1394,7 +1431,8 @@ public class Grid : MonoBehaviour
         foreach (GameObject gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
-            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
+            float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange-1)+distance.y))*maxrange) : distance.y);
+            float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + yrange;
             if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                 distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
@@ -1405,6 +1443,12 @@ public class Grid : MonoBehaviour
         return targetableliving;
     }
 
+    /// <summary>
+    /// Return a list of targets hitable while spinning from the previous list
+    /// </summary>
+    /// <param name="Targetlist">All the characters that need to be checked</param>
+    /// <param name="Playerposition"></param>
+    /// <returns></returns>
     public List<LivingPlaceable> SpinningPattern(List<LivingPlaceable> Targetlist, Vector3 Playerposition)
     {
         List<LivingPlaceable> targetableunits = new List<LivingPlaceable>(Targetlist);
@@ -1417,13 +1461,19 @@ public class Grid : MonoBehaviour
         return targetableunits;
     }
 
+    /// <summary>
+    /// Return a list of targets hitable while hitting with range 1 from the previous list
+    /// </summary>
+    /// <param name="Targetlist">All the characters that need to be checked</param>
+    /// <param name="Playerposition"></param>
+    /// <returns></returns>
     public List<LivingPlaceable> SwordRangePattern(List<LivingPlaceable> Targetlist, Vector3 Playerposition)
     {
         List<LivingPlaceable> targetableunits = new List<LivingPlaceable>(Targetlist);
         foreach (LivingPlaceable Character in Targetlist)
         {
             Vector3 Pos = Character.transform.position;
-            if (Pos.y - Playerposition.y != 0 || Math.Abs(Pos.x - Playerposition.x) > 1 || Math.Abs(Pos.z - Playerposition.z) > 1)
+            if (Math.Abs(Pos.y - Playerposition.y) > 1 || Math.Abs(Pos.x - Playerposition.x) > 1 || Math.Abs(Pos.z - Playerposition.z) > 1)
                 targetableunits.Remove(Character);
         }
         return targetableunits;

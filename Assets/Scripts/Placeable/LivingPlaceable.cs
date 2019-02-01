@@ -980,10 +980,10 @@ public class LivingPlaceable : Placeable
             Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
             Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
-            Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Range_buff", 0, 6);
+            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Range_buff", 1, 6);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
