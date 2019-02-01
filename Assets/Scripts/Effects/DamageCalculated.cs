@@ -92,8 +92,8 @@ public class DamageCalculated : EffectOnLiving {
         }
         if (Launcher.GetPosition().y > Target.GetPosition().y)
         {
-            totalDmg *= SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
-                  (Launcher.GetPosition() - Target.GetPosition()).magnitude;
+            totalDmg *= ( 1 + SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
+                  (Launcher.GetPosition() - Target.GetPosition()).magnitude);
         }
         Debug.Log(totalDmg);
 
