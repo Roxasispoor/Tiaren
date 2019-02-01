@@ -108,7 +108,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && gameObject.GetComponent<Player>().isLocalPlayer)
+        if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && GameManager.instance.PlayingPlaceable!=null && gameObject.GetComponent<Player>().isLocalPlayer)
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {

@@ -10,7 +10,9 @@ public class AnimationHandler : MonoBehaviour
     Dictionary<string, string> AnimDictionary;
     public string SkillAnimationToPlay;
     public Animator animLauncher;
-    public Animator animTarget;
+    public List<Animator> animTargets;
+    public List<Placeable> placeableTargets;
+    public List<Vector3> positionTargets;
     public static AnimationHandler Instance
     {
         get
@@ -134,6 +136,8 @@ public class AnimationHandler : MonoBehaviour
         yield return null;
         SoundHandler.Instance.PlayAttackSound();
         animLauncher.Play("attack");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length/2);
+        StartCoroutine("WaitAndGetHurt");
     }
 
     public IEnumerator WaitAndSpin()
@@ -141,6 +145,8 @@ public class AnimationHandler : MonoBehaviour
         yield return null;
         SoundHandler.Instance.PlaySpinSound();
         animLauncher.Play("tourbilol");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        StartCoroutine("WaitAndGetHurt");
     }
     
     public IEnumerator WaitAndBleed()
@@ -151,6 +157,10 @@ public class AnimationHandler : MonoBehaviour
     public IEnumerator WaitAndLaunchFireball()
     {
         yield return null;
+        SoundHandler.Instance.PlayFireballSound();
+        GameObject tmp = Instantiate((GameObject)Resources.Load("FX/Fireball"),GameManager.instance.playingPlaceable.GetPosition(),Quaternion.identity);
+        tmp.GetComponent<Fireball>().Init(positionTargets[0]+new Vector3(0,1,0));
+        //tmp.Init(placeableTargets[0].GetPosition());
     }
 
     public IEnumerator WaitAndBuff()
@@ -162,6 +172,19 @@ public class AnimationHandler : MonoBehaviour
     public IEnumerator WaitAndArrowAttack()
     {
         yield return null;
+        SoundHandler.Instance.PlayBowSound();
         animLauncher.Play("shootArrow");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        StartCoroutine("WaitAndGetHurt");
+    }
+
+    public IEnumerator WaitAndGetHurt()
+    {
+        yield return null;
+        foreach (Animator animTarget in animTargets)
+        {
+            animTarget.Play("hurt");
+            SoundHandler.Instance.PlayHurtSound();
+        }
     }
 }

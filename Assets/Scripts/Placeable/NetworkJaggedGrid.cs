@@ -37,11 +37,6 @@ public class NetworkJaggedGrid : JaggedGrid {
                 }
             }
         }
-        attached.Add(new Damage(25));
-        foreach(Effect effect in attached)
-        {
-            attachedEffectsString +=effect.Save() + "\n";
-        }
     }
 
 }

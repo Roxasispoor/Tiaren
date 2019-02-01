@@ -41,6 +41,7 @@ public class Stats
     {
          living.serializeNumber = this.serializeNumber ;
          living.netId = this.netId ;
+        //Debug.LogError(living.PlayerPosesser);
         List<FieldInfo>livingFields= new List<FieldInfo>( );
         foreach (FieldInfo fieldInfo in this.GetType().GetFields())
         {
@@ -54,6 +55,7 @@ public class Stats
             }
 
         }
+      //  Debug.LogError("at the end" +this.playerPosesser);
     }
     /// <summary>
     /// Sets the values of this object from living

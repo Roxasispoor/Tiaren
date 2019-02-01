@@ -114,13 +114,13 @@ public class LivingPlaceable : Placeable
         set
         {
             base.Player = value;
-            if (GameManager.instance && GameManager.instance.player1 != null && GameManager.instance.player1 == Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player1 != null && Player!=null && GameManager.instance.player1 == Player.gameObject)
             {
-                playerPosesser = "player1";
+                PlayerPosesser = "player1";
             }
-            if (GameManager.instance && GameManager.instance.player2 != null && GameManager.instance.player2 == Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player2 != null && Player != null && GameManager.instance.player2 == Player.gameObject)
             {
-                playerPosesser = "player2";
+                PlayerPosesser = "player2";
             }
 
         }
@@ -801,6 +801,19 @@ public class LivingPlaceable : Placeable
         }
     }
 
+    public string PlayerPosesser
+    {
+        get
+        {
+            return playerPosesser;
+        }
+
+        set
+        {
+            playerPosesser = value;
+        }
+    }
+
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
         return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
@@ -1022,53 +1035,59 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill7);
         }
     }
+    public void InitNoClass()
+    {
+        base.Init();
+        shouldBatch = false;
+        this.className = "default";
+        this.Walkable = false;
+        this.Movable = true;
+        this.Destroyable = true;
+        this.TraversableChar = TraversableType.ALLIESTHROUGH;
+        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.GravityType = GravityType.SIMPLE_GRAVITY;
+        this.Crushable = CrushType.CRUSHDAMAGE;
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>
+            {
+                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
+            };
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AreaOfMouvement = new List<NodePath>();
+        targetArea = new List<Placeable>();
+
+        targetableUnits = new List<LivingPlaceable>();
+        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
+        this.OnDestroyEffects = new List<Effect>();
+        this.HitablePoints = new List<HitablePoint>();
+        this.OnStartTurn = new List<Effect>();
+        this.OnEndTurn = new List<Effect>();
+        this.AttachedEffects = new List<Effect>();
+
+        this.Skills = new List<Skill>();
+        this.Weapons = new List<GameObject>();
+        this.IsDead = false;
+        this.CounterDeaths = 0;
+        this.TurnsRemaingingCemetery = 0;
+        this.ShootPosition = new Vector3(0, 0.5f, 0);
+        this.AreaOfMouvement = new List<NodePath>();
+
+        rend = GetComponentInChildren<Renderer>();
+        originalShader = Shader.Find("Standard");
+        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
+        rend.material.shader = outlineShader;
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
+        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
+        rend.material.SetFloat("_Outline", 0.02f);
+        rend.material.shader = originalShader;
+    }
 
     public void Init(int classNumber)
     {
         if (!Grid.instance.UseAwakeLiving)
         {
-            base.Init();
-            shouldBatch = false;
-            this.className = "default";
-            this.Walkable = false;
-            this.Movable = true;
-            this.Destroyable = true;
-            this.TraversableChar = TraversableType.ALLIESTHROUGH;
-            this.TraversableBullet = TraversableType.NOTHROUGH;
-            this.GravityType = GravityType.SIMPLE_GRAVITY;
-            this.Crushable = CrushType.CRUSHDAMAGE;
-            this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>
-            {
-                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-            };
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
-            this.AreaOfMouvement = new List<NodePath>();
-            targetArea = new List<Placeable>();
-
-            targetableUnits = new List<LivingPlaceable>();
-            this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>();
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
-            this.AttachedEffects = new List<Effect>();
-
-            this.Skills = new List<Skill>();
-            this.Weapons = new List<GameObject>();
-            this.IsDead = false;
-            this.CounterDeaths = 0;
-            this.TurnsRemaingingCemetery = 0;
-            this.ShootPosition = new Vector3(0, 0.5f, 0);
-            this.AreaOfMouvement = new List<NodePath>();
-
-            rend = GetComponentInChildren<Renderer>();
-            originalShader = Shader.Find("Standard");
-            outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
-            rend.material.shader = outlineShader;
-            rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
-            rend.material.SetFloat("_Outline", 0.02f);
-            rend.material.shader = originalShader;
+            InitNoClass();
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
             LoadFromjson(ClassName + ".json");
             circleTeam.color = Player.color;
@@ -1337,6 +1356,8 @@ public class LivingPlaceable : Placeable
 
     public void Save(string path = "Living.json")
     {
+        //No joke keep it , it changes playerpossessser
+        Player = Player;
         positionSave = GetPosition();
         Stats stats = new Stats();
         stats.FillThis(this);
@@ -1475,6 +1496,7 @@ public class LivingPlaceable : Placeable
 
         }
         reader.Close();
-
+        //Actualize playerpossesser
+        Player = Player;
     }
 }
