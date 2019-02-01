@@ -129,6 +129,9 @@ public class ObjectOnBloc : NetIdeable {
     }
     public virtual void Initialize()
     {
-
+        if(isPickable && Grid.instance.GetPlaceableFromVector(GetPosition()).IsLiving())
+        {
+            isPicked = true;
+        }
     }
 }

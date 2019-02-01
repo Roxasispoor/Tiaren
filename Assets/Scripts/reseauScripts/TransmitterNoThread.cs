@@ -278,20 +278,20 @@ public class TransmitterNoThread : MonoBehaviour
                 }
                 else if(str.EndsWith(stringObjectOnBloc))
                 {
-                    string strCopy = str.TrimEnd(stringLiving.ToCharArray());
-                    string line = "";
-                    StreamReader reader = new StreamReader(LivingPlaceable.GenerateStreamFromString(strCopy));
-                    while ((line = reader.ReadLine()) != null)
+                    string strCopyObj = str.TrimEnd(stringObjectOnBloc.ToCharArray());
+                    string newline = "";
+                    StreamReader reader = new StreamReader(LivingPlaceable.GenerateStreamFromString(strCopyObj));
+                    while ((newline = reader.ReadLine()) != null)
                     {
-                        string[] objectInfo = line.Split(';');
+                        string[] objectInfo = newline.Split(';');
                         Vector3Int positionObj = StringToVector3Int(objectInfo[2]);
-                        GameObject objectonbloc = Instantiate(Grid.instance.prefabsList[Int32.Parse(objectInfo[0])],
+                        GameObject objectonbloc = Instantiate(Grid.instance.prefabsList[Int32.Parse(objectInfo[0]) - 1],
                        positionObj, Quaternion.identity, Grid.instance.GetPlaceableFromVector(positionObj).transform);
                         ObjectOnBloc objectOnBloc1 = objectonbloc.GetComponent<ObjectOnBloc>();
                         objectOnBloc1.netId = Int32.Parse(objectInfo[1]);
                         NetIdeable.currentMaxId = objectOnBloc1.netId >= NetIdeable.currentMaxId ? objectOnBloc1.netId + 1 : NetIdeable.currentMaxId;
                         objectOnBloc1.Load(objectInfo);
-
+                        GameManager.instance.idPlaceable[objectOnBloc1.netId] = objectOnBloc1;
                     }
                   
                 }

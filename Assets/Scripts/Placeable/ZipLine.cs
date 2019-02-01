@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,12 +41,13 @@ public class ZipLine : ObjectOnBloc {
     }
     public override void Load(string[] objectInfo)
     {
-        //netIdLinkedTo
+        netIdLinkedTo = Int32.Parse(objectInfo[4]);
         base.Load(objectInfo);
     }
     public override void Initialize()
     {
         base.Initialize();
+        linkedTo = GameManager.instance.FindLocalObject(netIdLinkedTo).GetComponent<ZipLine>();
 
     }
 }
