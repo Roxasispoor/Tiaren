@@ -245,6 +245,21 @@ public class Skill
         }
         return true;
     }
+
+    // set SkillAnimationToPlay in AnimationHandler
+    public void SendAnimationInfo(List<Animator> animTargets)
+    {
+        AnimationHandler.Instance.SkillAnimationToPlay = this.skillName;
+        AnimationHandler.Instance.animLauncher = GameManager.instance.playingPlaceable.GetComponent<Animator>();
+        AnimationHandler.Instance.animTargets = animTargets;
+    }
+
+    // ask AnimationHandler to play it
+    public void PlayAnimation()
+    {
+        AnimationHandler.Instance.PlayAnimation();
+    }
+
     ///TODO makes the copy and return if succeeded launching the skill
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
@@ -256,9 +271,20 @@ public class Skill
         {
             return false;
         }
-        this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
+        
+        List<Animator> animTargets = new List<Animator>();
         foreach (Placeable target in targets)
         {
+            if (target.GetComponent<Animator>() != null)
+            {
+                animTargets.Add(target.GetComponent<Animator>());
+            }
+        }
+        SendAnimationInfo(animTargets);
+        PlayAnimation();
+        this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
+        foreach (Placeable target in targets)
+        { 
             foreach (Effect effect in effects)
             {
                 //makes the deep copy, send it to effect manager and zoo

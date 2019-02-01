@@ -265,6 +265,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ResetEndTurn()
+    {
+        gameObject.GetComponentInChildren<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
+    }
+
     public void ClearZone(GameObject zoneToClear)
     {
         foreach (Transform child in zoneToClear.transform)

@@ -1384,7 +1384,7 @@ public class Grid : MonoBehaviour
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
-            if (totaldist == 0 || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
+            if ((totaldist == 0 && minrange ==0)|| totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
                 distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
@@ -1395,7 +1395,7 @@ public class Grid : MonoBehaviour
         {
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.y) + Mathf.Abs(distance.z);
-            if (totaldist == 0 || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                 distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());

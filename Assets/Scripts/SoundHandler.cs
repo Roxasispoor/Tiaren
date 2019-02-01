@@ -73,4 +73,19 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block move"));
     }
+
+    public void PlaySpinSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Spin attack"));
+    }
+
+    public void PlayBowSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Bow shot"));
+    }
+
+    public void PlayHurtSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Damage sound"),0.4f);
+    }
 }
