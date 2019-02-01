@@ -1066,7 +1066,7 @@ public class LivingPlaceable : Placeable
             originalShader = Shader.Find("Standard");
             outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
             rend.material.shader = outlineShader;
-            rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+            rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
             rend.material.SetFloat("_Outline", 0.02f);
             rend.material.shader = originalShader;
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
