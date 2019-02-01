@@ -6,6 +6,11 @@ using Hellmade.Sound;
 public class AnimationHandler : MonoBehaviour
 {
     private static AnimationHandler m_Instance = null;
+    // dictionary of enums
+    Dictionary<string, string> AnimDictionary;
+    public string SkillAnimationToPlay;
+    public Animator animLauncher;
+    public Animator animTarget;
     public static AnimationHandler Instance
     {
         get
@@ -14,13 +19,43 @@ public class AnimationHandler : MonoBehaviour
             {
                 m_Instance = (new GameObject("AnimationHandler")).AddComponent<AnimationHandler>();
                 DontDestroyOnLoad(m_Instance.gameObject);
+                m_Instance.AnimDictionary = new Dictionary<string, string>() {
+
+                    {"Basic_attack", "WaitAndBasicAttack" },
+                    {"Basic_destruction", "WaitAndDestroyBlock" },
+                    {"Basic_push", "WaitAndPushBlock" },
+                    {"Basic_creation", "WaitAndSummonBlock" },
+                    {"Fissure","WaitAndDestroyBlock"},
+                    {"Wall","WaitAndSummonBlock" },
+                    {"Bleeding","WaitAndBleed"},
+                    {"debuffPm","WaitAndBuff" },
+                    {"HigherGround","WaitAndSummonBlock"},
+                    {"Piercing_arrow","WaitAndArrowAttack" },
+                    {"Range_buff","WaitAndBuff" },
+                    {"Spinning","WaitAndSpin" },
+                    {"ExplosiveFireball","WaitAndLaunchFireball" },
+
+                };
             }
             return m_Instance;
         }
     }
 
-    // for sound 
-    
+    public void PlayAnimation()
+    {
+        StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
+
+        //StartCoroutine("PlayAnimationCoroutine");
+    }
+
+    public IEnumerator PlayAnimationCoroutine()
+    {
+        yield return StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
+    }
+
+
+    // CHECKING INTERRUPTIONS
+
     // this coroutine allows to check if turn passes and thus finishes what has to be finished at this time
     public IEnumerator CheckInterruptions(float time)
     {
@@ -69,86 +104,64 @@ public class AnimationHandler : MonoBehaviour
         }
     }
 
-    public IEnumerator WaitAndCreateBlock(GameObject go, Vector3Int position, float time)
-    {
-        SoundHandler.Instance.PlayCreateBlockSound();
-        LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
-        Grid.instance.InstantiateCube(go, position);
-        Placeable cubeConcerned = Grid.instance.GetPlaceableFromVector(position);
-        //cubeConcerned.gameObject.SetActive(false);
-        //GameManager.instance.RefreshBatch(cubeConcerned);
-        yield return StartCoroutine(CheckInterruptionsWithRef(time, tmpPlaceable));
-        //cubeConcerned.gameObject.SetActive(true);
-        //GameManager.instance.RefreshBatch(cubeConcerned);
+    // ROUTINES FOR ANIMATION 
 
-        // TODO : fix this to sync with anim
-    }
-
-    public IEnumerator WaitAndDestroyBlock(Placeable go, float time)
+    public IEnumerator WaitAndDestroyBlock()
     {
+        yield return null;
         SoundHandler.Instance.PlayDestroyBlockSound();
-        Vector3 pos = go.transform.position;
-        yield return StartCoroutine(CheckInterruptions(time));
-        
-        if (GameManager.instance.isClient)
-        {
-            GameManager.instance.RemoveBlockFromBatch(go);
-        }
-        
-        go.Destroy();
-        
-        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
+        animLauncher.Play("destroyBlock");
+
     }
 
-    public IEnumerator WaitAndPushBlock(Placeable Target, List <Vector3>  path, float speed, float time,bool justLerp=false)
+    public IEnumerator WaitAndPushBlock()
     {
+        yield return null;
         SoundHandler.Instance.PlayPushBlockSound();
-        GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
-        yield return StartCoroutine(CheckInterruptions(time/2));
-        GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, speed,justLerp);
-        // TODO : check if startmovealongbezier cannot cause bug (rebatch)
-        // TODO : give Damage to living on the way
+        animLauncher.Play("pushBlock");
+    }
 
+    public IEnumerator WaitAndSummonBlock()
+    {
+        yield return null;
+        animLauncher.Play("createBlock");
+        SoundHandler.Instance.PlayCreateBlockSound();
+    }
+
+    // ATTACKS
+    public IEnumerator WaitAndBasicAttack()
+    {
+        yield return null;
+        SoundHandler.Instance.PlayAttackSound();
+        animLauncher.Play("attack");
+    }
+
+    public IEnumerator WaitAndSpin()
+    {
+        yield return null;
+        SoundHandler.Instance.PlaySpinSound();
+        animLauncher.Play("tourbilol");
     }
     
-    public IEnumerator WaitAndGetHurt(LivingPlaceable target, Animator animator, float time)
+    public IEnumerator WaitAndBleed()
     {
-        bool interrupted = false;
-        bool finishHim = false;
-        if (target.CurrentHP <= 0)
-        {
-            target.Destroy();
-            finishHim = true;
-        }
-
-        LivingPlaceable tmpPlaceable = GameManager.instance.PlayingPlaceable;
-        // le joueur qui joue
-        yield return StartCoroutine(CheckContinuousInterruptions(time*0.75f, tmpPlaceable, interrupted));
-        if (!interrupted)
-        {
-            animator.Play("hurt");
-        }
-
-        if (finishHim) {
-            
-            yield return StartCoroutine(CheckContinuousInterruptions(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length, tmpPlaceable, interrupted));
-            if (!interrupted)
-            {
-                animator.Play("die");
-                yield return StartCoroutine(CheckContinuousInterruptions(animator.GetCurrentAnimatorClipInfo(0)[0].clip.length, tmpPlaceable, interrupted));
-            }
-            if (!(GameManager.instance.PlayingPlaceable == target && tmpPlaceable != target))
-            {
-                target.gameObject.SetActive(false);
-            }
-            if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name != "idle")
-            {
-                animator.Play("idle");
-            }
-
-        }
+        yield return null;
     }
 
-   
+    public IEnumerator WaitAndLaunchFireball()
+    {
+        yield return null;
+    }
 
+    public IEnumerator WaitAndBuff()
+    {
+        yield return null;
+        animLauncher.Play("buff");
+    }
+
+    public IEnumerator WaitAndArrowAttack()
+    {
+        yield return null;
+        animLauncher.Play("shootArrow");
+    }
 }

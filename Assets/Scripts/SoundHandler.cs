@@ -73,4 +73,9 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Block move"));
     }
+
+    public void PlaySpinSound()
+    {
+
+    }
 }
