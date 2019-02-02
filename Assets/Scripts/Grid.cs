@@ -1284,7 +1284,8 @@ public class Grid : MonoBehaviour
                 {
                     if (gridMatrix[x, (int)Position.y, (int)Position.z] != null
                             && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (!topblock || Position.y == sizeY - 1 
-                            || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null) || gridMatrix[x, (int)Position.y + 1, (int)Position.z].IsLiving())
+                            || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null) 
+                            || (gridMatrix[x, (int)Position.y + 1, (int)Position.z] && gridMatrix[x, (int)Position.y + 1, (int)Position.z].IsLiving()))
                     {
                         targetableBlocks.Add(gridMatrix[x, (int)Position.y, (int)Position.z]);
                     }
