@@ -964,10 +964,10 @@ public class LivingPlaceable : Placeable
 
             Skill skill1 = new Skill(1, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(1, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
-            Skill skill3 = new Skill(1, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
+            Skill skill3 = new Skill(1, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 4, SkillEffect.DESTROY);
             Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(1, 2, ListEffects5, SkillType.LIVING, "Bleeding", 0, 1);
-            Skill skill6 = new Skill(1, 3, ListEffects6, SkillType.LIVING, "debuffPm", 0, 2);
+            Skill skill5 = new Skill(1, 2, ListEffects5, SkillType.LIVING, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill6 = new Skill(1, 3, ListEffects6, SkillType.LIVING, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.SELF, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
 
             Skills.Add(skill1);
@@ -992,11 +992,11 @@ public class LivingPlaceable : Placeable
 
             Skill skill1 = new Skill(0, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
             Skill skill2 = new Skill(0, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
-            Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
-            Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.SELF, "HigherGround", 0, 1);
+            Skill skill3 = new Skill(0, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 4, SkillEffect.DESTROY);
+            Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
+            Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Range_buff", 0, 6);
+            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Range_buff", 1, 5);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -1077,7 +1077,7 @@ public class LivingPlaceable : Placeable
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.shader = outlineShader;
-        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.175f));
+        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
         //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
         rend.material.SetFloat("_Outline", 0.02f);
         rend.material.shader = originalShader;

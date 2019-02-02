@@ -549,6 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75987a0629a25944bf8104d80ab128d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializeNumber: 12
   netId: 0
   shouldBatch: 0
   isMoving: 0
@@ -558,6 +559,7 @@ MonoBehaviour:
   dropOnDeathPicker: 0
   dropOnDeathBlocUnder: 0
   linkedTo: {fileID: 0}
+  netIdLinkedTo: 0
 --- !u!114 &114315981001411880
 MonoBehaviour:
   m_ObjectHideFlags: 1

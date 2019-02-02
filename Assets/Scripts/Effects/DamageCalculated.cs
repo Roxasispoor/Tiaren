@@ -97,7 +97,7 @@ public class DamageCalculated : EffectOnLiving {
         }
         Debug.Log(totalDmg);
 
-        return totalDmg;
+        return (int) totalDmg;
     }
 
     override

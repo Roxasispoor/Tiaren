@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     public GameObject gameCanvas;
     public GameObject spawnCanvas;
     public GameObject TeamCanvas;
-    public Button prefabAbilityButton;
+    public GameObject prefabAbilityButton;
     public Button prefabTeamButton;
     public Button prefabCharacterSpawnButton;
     public Sprite upChoice;
@@ -168,9 +168,10 @@ public class UIManager : MonoBehaviour
 
         foreach (Skill skill in character.Skills)
         {
-            Button button = Instantiate(prefabAbilityButton, SkillZone);
+            GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
+            Button button = ability.GetComponentInChildren<Button>();
             button.GetComponent<SkillInfo>().Skill = skill;
-            button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+            ability.transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.onClick.AddListener(skill.Activate);
             button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
@@ -180,7 +181,7 @@ public class UIManager : MonoBehaviour
         {
             foreach (Skill skill in character.EquipedWeapon.Skills)
             {
-                Button button = Instantiate(prefabAbilityButton, SkillZone);
+                Button button = Instantiate(prefabAbilityButton, SkillZone).GetComponentInChildren<Button>();
                 button.GetComponent<SkillInfo>().Skill = skill;
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
@@ -194,7 +195,7 @@ public class UIManager : MonoBehaviour
         {
             foreach (Skill skill in obj.GivenSkills)
             {
-                Button button = Instantiate(prefabAbilityButton, SkillZone);
+                Button button = Instantiate(prefabAbilityButton, SkillZone).GetComponentInChildren<Button>();
                 button.GetComponent<SkillInfo>().Skill = skill;
                 button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;

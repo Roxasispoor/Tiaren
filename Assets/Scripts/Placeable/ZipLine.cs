@@ -24,7 +24,7 @@ public class ZipLine : ObjectOnBloc {
     }
     public override string Save()
     {
-        return base.Save()+linkedTo.netId;
+        return base.Save() + ";"+ linkedTo.netId;
     }
     public override void SomethingPutAbove()
     {
@@ -41,13 +41,13 @@ public class ZipLine : ObjectOnBloc {
     }
     public override void Load(string[] objectInfo)
     {
-        netIdLinkedTo = Int32.Parse(objectInfo[4]);
+        netIdLinkedTo = Int32.Parse(objectInfo[3]);
         base.Load(objectInfo);
     }
     public override void Initialize()
     {
         base.Initialize();
-        linkedTo = GameManager.instance.FindLocalObject(netIdLinkedTo).GetComponent<ZipLine>();
-
+        linkedTo = GameManager.instance.FindLocalIdeable(netIdLinkedTo).GetComponent<ZipLine>();
+        zip1.GetComponentInChildren<ZiplineFX>().ConnectZipline(zip2.GetComponentInChildren<ZiplineFX>());
     }
 }

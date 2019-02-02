@@ -155,6 +155,7 @@ public class TransmitterNoThread : MonoBehaviour
     /// <returns></returns>
     public IEnumerator ListenToData(Player player)
     {
+        List<ObjectOnBloc> toInit = new List<ObjectOnBloc>();
         server = new TcpClient("localhost", networkManager.matchPort);
         Byte[] bytes = new Byte[1024];
         string serverMessage = "";
@@ -292,9 +293,14 @@ public class TransmitterNoThread : MonoBehaviour
                         NetIdeable.currentMaxId = objectOnBloc1.netId >= NetIdeable.currentMaxId ? objectOnBloc1.netId + 1 : NetIdeable.currentMaxId;
                         objectOnBloc1.Load(objectInfo);
                         GameManager.instance.idPlaceable[objectOnBloc1.netId] = objectOnBloc1;
+                        toInit.Add(objectOnBloc1);
                     }
                   
                 }
+            }
+            foreach (ObjectOnBloc objToInit in toInit)
+            {
+                objToInit.Initialize();
             }
             GameManager.instance.ResetAllBatches();
             Debug.Log("I ended the coroutine reconnect me now");

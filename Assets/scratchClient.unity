@@ -279,13 +279,17 @@ MonoBehaviour:
   tutorial: {fileID: 1053244926}
   credits: {fileID: 1812386875}
   slides:
-  - {fileID: 21300000, guid: adfa44fd2b3e8584a917c5a46467e4ae, type: 3}
-  - {fileID: 21300000, guid: 48e3f6719f95ab54d9b0e97db90b8970, type: 3}
-  - {fileID: 21300000, guid: e618ea0617979744fa61e1c42040c06e, type: 3}
-  - {fileID: 21300000, guid: e7eb00d627740a749b5825bada428a28, type: 3}
-  - {fileID: 21300000, guid: 1285136bc2931b34c9af87fe0185239f, type: 3}
+  - {fileID: 21300000, guid: aea12f5c9168ddd45ae41b85247ccec6, type: 3}
+  - {fileID: 21300000, guid: 2d3c65b66c307634683708faf0e7678e, type: 3}
+  - {fileID: 21300000, guid: c716a2ea840bb174ba5e0e5bfb1749fc, type: 3}
+  - {fileID: 21300000, guid: 4bce6c1c9ffdeac41b2a2859be138259, type: 3}
+  - {fileID: 21300000, guid: b2742887da566394a81b487a44ca9481, type: 3}
+  - {fileID: 21300000, guid: b5788fe2361e1714b8779658ccfb0e63, type: 3}
+  - {fileID: 21300000, guid: fcfd26c52b71d7f4ab6c607af295e055, type: 3}
+  - {fileID: 21300000, guid: 2788e9d63c1be384885815529f7156b6, type: 3}
   PrefabImageTuto: {fileID: 700577095}
   slideNumber: 0
+  descriptions: []
   explaination: {fileID: 1178874997}
   path: Tutorial.json
 --- !u!1 &184123152
@@ -837,7 +841,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 800, y: 0}
+  m_AnchoredPosition: {x: 800, y: 75}
   m_SizeDelta: {x: 150, y: 133}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &368606081
@@ -1074,7 +1078,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 90}
-  m_SizeDelta: {x: 1200, y: 600}
+  m_SizeDelta: {x: 1420, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &700577095
 MonoBehaviour:
@@ -1634,7 +1638,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1123, y: 158.3}
+  m_SizeDelta: {x: 1160, y: 158.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1178874997
 MonoBehaviour:
@@ -1833,7 +1837,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -800, y: 0}
+  m_AnchoredPosition: {x: -800, y: 75}
   m_SizeDelta: {x: 150, y: 133}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1341195270
@@ -2875,7 +2879,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: -331}
-  m_SizeDelta: {x: 1123, y: 158.3}
+  m_SizeDelta: {x: 1216.73, y: 171.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1936629145
 MonoBehaviour:

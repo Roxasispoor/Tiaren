@@ -247,11 +247,13 @@ public class Skill
     }
 
     // set SkillAnimationToPlay in AnimationHandler
-    public void SendAnimationInfo(List<Animator> animTargets)
+    public void SendAnimationInfo(List<Animator> animTargets, List<Placeable> placeableTargets, List<Vector3> positionTargets)
     {
         AnimationHandler.Instance.SkillAnimationToPlay = this.skillName;
         AnimationHandler.Instance.animLauncher = GameManager.instance.playingPlaceable.GetComponent<Animator>();
         AnimationHandler.Instance.animTargets = animTargets;
+        AnimationHandler.Instance.placeableTargets = placeableTargets;
+        AnimationHandler.Instance.positionTargets = positionTargets;
     }
 
     // ask AnimationHandler to play it
@@ -273,14 +275,18 @@ public class Skill
         }
         
         List<Animator> animTargets = new List<Animator>();
+        List<Placeable> placeableTargets = new List<Placeable>();
+        List<Vector3> positionTargets = new List<Vector3>();
         foreach (Placeable target in targets)
         {
+            placeableTargets.Add(target);
+            positionTargets.Add(target.GetPosition());
             if (target.GetComponent<Animator>() != null)
             {
                 animTargets.Add(target.GetComponent<Animator>());
             }
         }
-        SendAnimationInfo(animTargets);
+        SendAnimationInfo(animTargets, placeableTargets, positionTargets);
         PlayAnimation();
         this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
         foreach (Placeable target in targets)
