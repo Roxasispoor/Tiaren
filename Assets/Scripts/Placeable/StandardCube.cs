@@ -9,7 +9,7 @@ using UnityEngine;
 public class StandardCube : Placeable
 {
 
-    protected new void Awake()
+    protected override void Awake()
     {
         base.Awake();
         this.Walkable = true;

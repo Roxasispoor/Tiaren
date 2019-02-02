@@ -49,7 +49,7 @@ public class ObjectOnBloc : NetIdeable {
             givenSkills = value;
         }
     }
-    protected void Awake()
+    protected virtual void Awake()
     {
         shouldBatch = false;
         givenSkills = new List<Skill>();

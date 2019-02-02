@@ -6,7 +6,7 @@ using UnityEngine;
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
     public int netIdLinkedTo;
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         isPickable = false;

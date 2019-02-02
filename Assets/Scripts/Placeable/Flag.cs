@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Flag : ObjectOnBloc {
 
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         isPickable=true;

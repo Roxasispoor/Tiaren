@@ -10,7 +10,7 @@ public class RaycastSelector : MonoBehaviour
     private int state;
     private SkillArea pattern;
     private List<Placeable> area;
-    public Camera camera;
+    new public Camera camera;
 
     public SkillArea Pattern
     {get {return pattern;} set {pattern = value;}}
