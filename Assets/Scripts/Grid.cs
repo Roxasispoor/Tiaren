@@ -818,14 +818,23 @@ public class Grid : MonoBehaviour
                 {
                     if (jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] != 0) //assuming grid was empty and never filled
                     {
-
-                        GameObject obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
-                            new Vector3(x, y, z), Quaternion.identity, parent.transform);
-
+                        GameObject obj;
+                        if (y == 0)
+                        {
+                            obj = Instantiate(prefabsList[13], // bedrock
+                                   new Vector3(x, y, z), Quaternion.identity, parent.transform);
+                            obj.GetComponent<Placeable>().Destroyable = false;
+                        }
+                        else
+                        {
+                            obj = Instantiate(prefabsList[jagged.gridTable[y * sizeZ * sizeX + z * sizeX + x] - 1],
+                                   new Vector3(x, y, z), Quaternion.identity, parent.transform);
+                        }
                         //Debug.Log(x + "-" + y + "-" + z);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>(); //we're not interested in the gameObject
                         obj.GetComponent<NetIdeable>().netId = Placeable.currentMaxId;
                         GameManager.instance.idPlaceable[Placeable.currentMaxId] = obj.GetComponent<Placeable>();
+
                         Placeable.currentMaxId++;
                         // NetworkServer.Spawn(obj);
 
