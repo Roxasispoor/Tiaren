@@ -87,14 +87,14 @@ public class NetworkManagerExtended : NetworkManager
     /// <param name="player"></param>
     private void OnPlayerJoined(UnetMsfPlayer player)
     {
-        Debug.Log("Player joined");
+        Debug.LogError("Player trigerred OnPlayerJoined");
 
         // Create an instance of the player prefab we made earlier
-     //   var playerObj = Instantiate(playerPrefab);
+        var playerObj = Instantiate(playerPrefab);
 
         
         //add the connection to the game server to make sure the player can update on the client and the gameserver
-        //NetworkServer.AddPlayerForConnection(player.Connection, playerObj.gameObject, 0);
+       NetworkServer.AddPlayerForConnection(player.Connection, playerObj.gameObject, 0);
 
         return;
     }

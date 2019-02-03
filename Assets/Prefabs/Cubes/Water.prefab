@@ -695,13 +695,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb4a184cfe27af4b924d6792b45261a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializeNumber: 11
   netId: 0
   shouldBatch: 1
   isMoving: 0
   destination: {x: 0, y: 0, z: 0}
-  serializeNumber: 11
   colorOfObject: {r: 0, g: 0, b: 0, a: 0}
   baseMaterial: {fileID: 0}
+  player: {fileID: 0}
   isSpawnPoint: 0
 --- !u!114 &114945978310607720
 MonoBehaviour:

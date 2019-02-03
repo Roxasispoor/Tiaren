@@ -525,7 +525,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    private void UpdateTimeline()
+    public void UpdateTimeline()
     {
         TurnOrder.Clear();
         //add every character once and sort them
@@ -795,37 +795,44 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
-            if (isClient)
-            {
-                if (playingPlaceable.Player.isLocalPlayer)
-                {
-                    PlayingPlaceable.Player.cameraScript.SetTarget(PlayingPlaceable.transform);
-                    PlayingPlaceable.Player.cameraScript.Freecam = 0;
-                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                    //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
-                }
-                else
-                {
-                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(PlayingPlaceable.transform);
-                    GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
-                }
-            }
+            SetCamera();
 
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
-            if (playingPlaceable.Player.isLocalPlayer)
-            {
-                playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
-                playingPlaceable.Jump, playingPlaceable.Player);
-                playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
-            }
+            CanGoNewTurn();
             player1.GetComponent<Timer>().StartTimer(30f);
             player2.GetComponent<Timer>().StartTimer(30f);
 
         }
     }
-
+    public void CanGoNewTurn()
+    {
+        if (playingPlaceable.Player.isLocalPlayer)
+        {
+            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
+            playingPlaceable.Jump, playingPlaceable.Player);
+            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+        }
+    }
+    public void SetCamera()
+    {
+        if (isClient)
+        {
+            if (playingPlaceable.Player.isLocalPlayer)
+            {
+                PlayingPlaceable.Player.cameraScript.SetTarget(PlayingPlaceable.transform);
+                PlayingPlaceable.Player.cameraScript.Freecam = 0;
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+            }
+            else
+            {
+                GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(PlayingPlaceable.transform);
+                GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+            }
+        }
+    }
 
     public void EndOFTurn()
     {
