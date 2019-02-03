@@ -53,6 +53,7 @@ public class NetworkManagerExtended : NetworkManager
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
+        Debug.Log(launchedFromMaster);
         if(!launchedFromMaster)
         {
 

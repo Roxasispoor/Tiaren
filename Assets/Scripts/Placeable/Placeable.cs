@@ -559,7 +559,7 @@ public abstract class Placeable: NetIdeable
        
     }
 
-    protected void Awake()
+    protected virtual void Awake()
     {
 
         baseMaterial = GetComponent<Renderer>().material;

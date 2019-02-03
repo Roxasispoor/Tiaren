@@ -1259,7 +1259,7 @@ public class Grid : MonoBehaviour
                 {
                     if (gridMatrix[x, y, z] != null
                         && !gridMatrix[x, y, z].IsLiving() && Mathf.Abs(x-Position.x)+Mathf.Abs(y-Position.y)+Mathf.Abs(z-Position.z) < effectrange
-                        && (!topblock || y == sizeY - 1 || gridMatrix[x, y + 1, z] == null))
+                        && (!topblock || y == sizeY - 1 || gridMatrix[x, y + 1, z] == null || gridMatrix[x, y + 1, z].IsLiving()))
                     {
                         targetableBlocks.Add(gridMatrix[x,y,z]);
                     }
@@ -1283,7 +1283,9 @@ public class Grid : MonoBehaviour
                 x++)
                 {
                     if (gridMatrix[x, (int)Position.y, (int)Position.z] != null
-                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (!topblock || Position.y == sizeY - 1 || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null))
+                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (!topblock || Position.y == sizeY - 1 
+                            || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null) 
+                            || (gridMatrix[x, (int)Position.y + 1, (int)Position.z] && gridMatrix[x, (int)Position.y + 1, (int)Position.z].IsLiving()))
                     {
                         targetableBlocks.Add(gridMatrix[x, (int)Position.y, (int)Position.z]);
                     }
@@ -1296,7 +1298,8 @@ public class Grid : MonoBehaviour
                 z++)
                 {
                     if (gridMatrix[(int)Position.x, (int)Position.y, z] != null
-                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (!topblock || Position.y == sizeY - 1 || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null))
+                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (!topblock || Position.y == sizeY - 1 
+                            || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null || gridMatrix[(int)Position.x, (int)Position.y + 1, z].IsLiving()))
                     {
                         targetableBlocks.Add(gridMatrix[(int)Position.x, (int)Position.y, z]);
                     }

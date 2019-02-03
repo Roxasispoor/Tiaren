@@ -93,4 +93,19 @@ public class SoundHandler : MonoBehaviour {
     {
         EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Fireball"));
     }
+
+    public void PlayPunchSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/punch"));
+    }
+
+    public void PlayHealingSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/Healing sound"),0.5f);
+    }
+
+    public void PlaySwordSound()
+    {
+        EazySoundManager.PlaySound((AudioClip)Resources.Load("Sounds/OneSword"));
+    }
 }

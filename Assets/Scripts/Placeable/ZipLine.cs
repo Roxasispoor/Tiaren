@@ -6,7 +6,7 @@ using UnityEngine;
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
     public int netIdLinkedTo;
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         isPickable = false;
@@ -48,6 +48,6 @@ public class ZipLine : ObjectOnBloc {
     {
         base.Initialize();
         linkedTo = GameManager.instance.FindLocalIdeable(netIdLinkedTo).GetComponent<ZipLine>();
-        zip1.GetComponentInChildren<ZiplineFX>().ConnectZipline(zip2.GetComponentInChildren<ZiplineFX>());
+        GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>());
     }
 }

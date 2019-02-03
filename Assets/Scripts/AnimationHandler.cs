@@ -30,10 +30,10 @@ public class AnimationHandler : MonoBehaviour
                     {"Fissure","WaitAndDestroyBlock"},
                     {"Wall","WaitAndSummonBlock" },
                     {"Bleeding","WaitAndBleed"},
-                    {"debuffPm","WaitAndBuff" },
+                    {"debuffPm","WaitAndLowKick" },
                     {"HigherGround","WaitAndSummonBlock"},
                     {"Piercing_arrow","WaitAndArrowAttack" },
-                    {"Range_buff","WaitAndBuff" },
+                    {"Zipline","WaitAndBuff" },
                     {"Spinning","WaitAndSpin" },
                     {"ExplosiveFireball","WaitAndLaunchFireball" },
 
@@ -45,9 +45,10 @@ public class AnimationHandler : MonoBehaviour
 
     public void PlayAnimation()
     {
-        StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
-
-        //StartCoroutine("PlayAnimationCoroutine");
+        if (AnimDictionary.ContainsKey(SkillAnimationToPlay))
+        {
+            StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
+        }
     }
 
     public IEnumerator PlayAnimationCoroutine()
@@ -152,6 +153,10 @@ public class AnimationHandler : MonoBehaviour
     public IEnumerator WaitAndBleed()
     {
         yield return null;
+        SoundHandler.Instance.PlaySwordSound();
+        animLauncher.Play("makebleed");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        StartCoroutine("WaitAndGetHurt");
     }
 
     public IEnumerator WaitAndLaunchFireball()
@@ -167,6 +172,7 @@ public class AnimationHandler : MonoBehaviour
     {
         yield return null;
         animLauncher.Play("buff");
+        SoundHandler.Instance.PlayHealingSound();
     }
 
     public IEnumerator WaitAndArrowAttack()
@@ -186,5 +192,13 @@ public class AnimationHandler : MonoBehaviour
             animTarget.Play("hurt");
             SoundHandler.Instance.PlayHurtSound();
         }
+    }
+
+    public IEnumerator WaitAndLowKick()
+    {
+        yield return null;
+        animLauncher.Play("lowkick");
+        yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
+        SoundHandler.Instance.PlayPunchSound();
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class MyMatchMakerModule : MatchmakerModule
 {
-    protected virtual void Awake()
+    protected override void Awake()
     {
         AddOptionalDependency<RoomsModule>();
         AddOptionalDependency<LobbiesModule>();

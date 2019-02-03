@@ -888,7 +888,7 @@ public class LivingPlaceable : Placeable
     }
 
     // Use this for initialization //TO KEEP AS IS
-    private void Awake()
+    protected override void Awake()
     {
         if(Grid.instance.UseAwakeLiving)
         {

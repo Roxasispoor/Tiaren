@@ -122,6 +122,16 @@ public class UIManager : MonoBehaviour
             {
                 sliders[i].value = GameManager.instance.TurnOrder[i].Character.CurrentHP;
             }
+
+            Button[] buttons = SkillZone.transform.GetComponentsInChildren<Button>();
+            foreach (Button button in buttons)
+            {
+                if (button.GetComponent<SkillInfo>().Skill.TourCooldownLeft > 0)
+                {
+                    button.GetComponent<Image>().color = Color.gray;
+                    button.transform.Find("Cooldown").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.TourCooldownLeft.ToString();
+                }
+            }
         }
     }
     public void SpawnUI()
@@ -168,11 +178,17 @@ public class UIManager : MonoBehaviour
 
         foreach (Skill skill in character.Skills)
         {
+            skill.TourCooldownLeft--;
             GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
             Button button = ability.GetComponentInChildren<Button>();
             button.GetComponent<SkillInfo>().Skill = skill;
             ability.transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
+            if (skill.TourCooldownLeft > 0)
+            {
+                //button.GetComponent<Text>().text = skill.TourCooldownLeft.ToString();
+                button.GetComponentInChildren<Image>().color = Color.gray;
+            }
             button.onClick.AddListener(skill.Activate);
             button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
             numberInstantiated++;

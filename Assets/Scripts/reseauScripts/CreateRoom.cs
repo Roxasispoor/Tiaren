@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
@@ -124,6 +122,7 @@ namespace Barebones.MasterServer
 
                     return;
                 }
+                GameObject.Find("Canvas").SetActive(false);
                 SceneManager.LoadScene("online");
                 this.access = access;
                 SceneManager.sceneLoaded += OnSceneLoaded;
