@@ -305,7 +305,7 @@ public class Player : NetworkBehaviour
                 firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
             }
             account = FindObjectOfType<PlayerAccount>();
-            if (account != null && account.AccountInfoPacket.Username != null)
+            if (account != null && account.AccountInfoPacket!=null && account.AccountInfoPacket.Username != null)
             {
                 CmdSetName(account.AccountInfoPacket.Username);
             }
