@@ -13,7 +13,9 @@ public class ZipLine : ObjectOnBloc {
         isPicked = false;
         dropOnDeathPicker = false;
         dropOnDeathBlocUnder = false;
-        GivenSkills.Add(new Skill(0, 0, new List<Effect>() { new ZipLineTeleport(this) }, SkillType.ALREADYTARGETED, "Zip", 0, 0));
+        Skill newSkill = new Skill(0, 0, new List<Effect>() { new ZipLineTeleport(this) }, SkillType.ALREADYTARGETED, "Zip", 0, 0);
+        GivenSkills.Add(newSkill);
+        Resources.Load<Sprite>("UI_Images/Abilities" + newSkill.SkillName);
     }
     public override void Destroy()
     {

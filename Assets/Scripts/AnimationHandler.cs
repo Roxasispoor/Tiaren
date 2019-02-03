@@ -23,7 +23,9 @@ public class AnimationHandler : MonoBehaviour
                 DontDestroyOnLoad(m_Instance.gameObject);
                 m_Instance.AnimDictionary = new Dictionary<string, string>() {
 
-                    {"Basic_attack", "WaitAndBasicAttack" },
+                    {"Knight_attack", "WaitAndBasicAttack" },
+                    {"Mage_attack", "WaitAndBasicAttack" },
+                    {"Ranger_attack", "WaitAndBasicAttack" },
                     {"Basic_destruction", "WaitAndDestroyBlock" },
                     {"Basic_push", "WaitAndPushBlock" },
                     {"Basic_creation", "WaitAndSummonBlock" },
