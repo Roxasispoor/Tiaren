@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4132919823526086}
   - component: {fileID: 135445451974260230}
   - component: {fileID: 114460734483631130}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FlagParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4346271707507008}
   - component: {fileID: 33091689409486522}
   - component: {fileID: 23687144628465996}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: tiare_unicolor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4036330073651494}
   - component: {fileID: 33398267902226678}
   - component: {fileID: 23194295642826392}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Flag
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -101,27 +101,25 @@ public class CameraScript : NetworkBehaviour
             target.transform.position = spawncenter;
         }
         
-        else
-        {
-            //If camera mode change
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                //updating camera mode
-                freecam = freecam == 1 ? 0 : freecam + 1;
 
-                //if skyview mode
-                if (freecam == 2)
-                {
-                    transform.LookAt(target.transform);
-                    rotation = transform.rotation;
-                    position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
-                }
-                else
-                {
-                    currentDistance = distance;
-                }
-                //Debug.Log("Camera mode changed");
+        //If camera mode change
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            //updating camera mode
+            freecam = freecam == 1 ? 0 : freecam + 1;
+
+            //if skyview mode
+            if (freecam == 2)
+            {
+                transform.LookAt(target.transform);
+                rotation = transform.rotation;
+                position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
             }
+            else
+            {
+                currentDistance = distance;
+            }
+            //Debug.Log("Camera mode changed");
         }
 
         //if free cam mode
@@ -214,6 +212,9 @@ public class CameraScript : NetworkBehaviour
         if (GameManager.instance.playingPlaceable.Player == player)
         {
             GameManager.instance.playingPlaceable.ResetTargets();
+            RaycastSelector rayselect = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>();
+            rayselect.EffectArea = 0;
+            rayselect.Pattern = SkillArea.NONE;
             GameManager.instance.State = States.Move;
             GameManager.instance.activeSkill = null;
             GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,

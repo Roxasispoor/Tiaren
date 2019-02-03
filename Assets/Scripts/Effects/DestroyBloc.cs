@@ -39,10 +39,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
         Target.Destroy();
 
-        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
         for (int i = 0; i <depthExceed;i++)
         {
              new DestroyBlockRelative(Target, new Vector3Int(0, -i-1, 0)).Use();
         }
+
+        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
     }
 }
