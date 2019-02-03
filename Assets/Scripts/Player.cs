@@ -262,14 +262,14 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if(state==States.Move || state == States.UseSkill)
-            {  
+            if (state == States.Move || state == States.UseSkill)
+            {
                 GameManager.instance.State = state;
                 Debug.LogError("Client listen to data start coroutine");
-                
+
                 StartCoroutine(GameManager.instance.transmitter.ListenToData(this));
             }
-            
+
         }
     }
 
@@ -305,7 +305,7 @@ public class Player : NetworkBehaviour
                 firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
             }
             account = FindObjectOfType<PlayerAccount>();
-            if (account != null && account.AccountInfoPacket!=null && account.AccountInfoPacket.Username != null)
+            if (account != null && account.AccountInfoPacket != null && account.AccountInfoPacket.Username != null)
             {
                 CmdSetName(account.AccountInfoPacket.Username);
             }
@@ -597,8 +597,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcEndSpawnAndStartGame()
+    public void ChangeUi()
     {
         Debug.Log("Try to change UI");
         // Make the other player's characters visiblr again
@@ -643,6 +642,13 @@ public class Player : NetworkBehaviour
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.IsGameStarted = true;
+    }
+
+
+    [ClientRpc]
+    public void RpcEndSpawnAndStartGame()
+    {
+        ChangeUi();
         GameManager.instance.BeginningOfTurn();
     }
 
@@ -666,9 +672,18 @@ public class Player : NetworkBehaviour
         {
             RpcGivePlayingPlaceable(GameManager.instance.playingPlaceable.netId);
         }
-        RpcEndSpawnAndStartGame();
+        RpcEndReco();
         //Reforge server links
         //Reforge on the good player on both clients
+
+    }
+    [ClientRpc]
+    public void RpcEndReco()
+    {
+        ChangeUi();
+        GameManager.instance.UpdateTimeline();
+        GameManager.instance.SetCamera();
+        GameManager.instance.CanGoNewTurn();
 
     }
 
@@ -792,10 +807,15 @@ public class Player : NetworkBehaviour
             if (skill.SkillEffect == SkillEffect.UP)
             {
                 Vector3 Playerpos = playingPlaceable.GetPosition();
-                if (Playerpos.y+1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z]==null)
-                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0],0);
+                if (Playerpos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z] == null)
+                {
+                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0);
+                }
             }
-            else CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0],0); //whatever, auto targeted do not go through dispatch
+            else
+            {
+                CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
+            }
 
             GameManager.instance.playingPlaceable.ResetAreaOfMovement();//whatever, auto targeted do not go through dispatch
             return;
@@ -811,7 +831,7 @@ public class Player : NetworkBehaviour
         playingPlaceable.ResetTargets();
         if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
-            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange >0);
+            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
 
             if (skill.SkillArea == SkillArea.CROSS)
             {
@@ -1397,29 +1417,42 @@ public class Player : NetworkBehaviour
                                 if (state % 2 == 0)
                                 {
                                     if (TargetDist.y == 0 && TargetDist.z == 0 && Math.Abs(TargetDist.x) < skill.EffectArea)
+                                    {
                                         blockallowed = true;
+                                    }
                                 }
                                 else
                                 {
                                     if (TargetDist.y == 0 && TargetDist.x == 0 && Math.Abs(TargetDist.z) < skill.EffectArea)
+                                    {
                                         blockallowed = true;
+                                    }
                                 }
                             }
                             else if (skill.SkillType == SkillType.AREA)
                             {
                                 bool topblock = true;
                                 if (skill.SkillArea == SkillArea.MIXEDAREA)
+                                {
                                     topblock = false;
+                                }
+
                                 if (Mathf.Abs(TargetDist.x) + Mathf.Abs(TargetDist.y) + Mathf.Abs(TargetDist.z) < skill.EffectArea &&
-                                    (!topblock || PlaceablePos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[(int)PlaceablePos.x, (int)PlaceablePos.y + 1, (int)PlaceablePos.z] == null))
+                                    (!topblock || PlaceablePos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[PlaceablePos.x, PlaceablePos.y + 1, PlaceablePos.z] == null))
+                                {
                                     blockallowed = true;
+                                }
                             }
 
                             if (blockallowed)
+                            {
                                 blockallowed = CheckEffectSkill(skill, PlaceablePos, Pos, TargetDist);
+                            }
 
                             if (blockallowed)
+                            {
                                 idlist.Add(GameManager.instance.FindLocalObject(blockid));
+                            }
                         }
                         skill.Use(GameManager.instance.playingPlaceable, idlist);
                         RpcUseSkill(numSkill, netidTarget, netidArea);
@@ -1436,43 +1469,57 @@ public class Player : NetworkBehaviour
         if (skill.SkillEffect == SkillEffect.DESTROY)
         {
             if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+            {
                 blockallowed = false;
+            }
         }
         else if (skill.SkillEffect == SkillEffect.CREATE)
         {
             Placeable block = Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z];
             if (block.GetType() == typeof(Goal) || block.IsSpawnPoint)
+            {
                 blockallowed = false;
+            }
         }
         else if (skill.SkillEffect == SkillEffect.MOVE)
         {
             if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Movable)
+            {
                 blockallowed = false;
+            }
             else
             {
-                if (Math.Abs((int)Playerpos.x - Pos.x) - Math.Abs((int)Playerpos.z - Pos.z) > 0)
+                if (Math.Abs(Playerpos.x - Pos.x) - Math.Abs(Playerpos.z - Pos.z) > 0)
                 {
-                    int direction = (Pos.x - (int)Playerpos.x) / Math.Abs((int)Playerpos.x - Pos.x);
+                    int direction = (Pos.x - Playerpos.x) / Math.Abs(Playerpos.x - Pos.x);
                     if (Pos.x + direction < 0 || Pos.x + direction >= Grid.instance.sizeX || Grid.instance.GridMatrix[Pos.x + direction, Pos.y, Pos.z] != null)
+                    {
                         blockallowed = false;
+                    }
                 }
                 else
                 {
-                    int direction = (Pos.z - (int)Playerpos.z) / Math.Abs((int)Playerpos.z - Pos.z);
+                    int direction = (Pos.z - Playerpos.z) / Math.Abs(Playerpos.z - Pos.z);
                     if (Pos.z + direction < 0 || Pos.z + direction >= Grid.instance.sizeZ || Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
+                    {
                         blockallowed = false;
+                    }
                 }
             }
         }
         else if (skill.SkillEffect == SkillEffect.SWORDRANGE)
         {
             if (Math.Abs(VectDist.y) > 1 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1)
+            {
                 blockallowed = false;
+            }
         }
         else if (skill.SkillEffect == SkillEffect.SPINNING)
         {
             if (VectDist.y != 0 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1 || VectDist == new Vector3Int(0, 0, 0))
+            {
                 blockallowed = false;
+            }
         }
 
         return blockallowed;
