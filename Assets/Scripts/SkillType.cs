@@ -61,7 +61,11 @@ public enum SkillArea
     /// <summary>
     /// Where targets are player and blocks in the area
     /// </summary>
-    MIXEDAREA
+    MIXEDAREA,
+    /// <summary>
+    /// Target can only be the block under playingplaceable
+    /// </summary>
+    BLOCKUNDER
 
 }
 

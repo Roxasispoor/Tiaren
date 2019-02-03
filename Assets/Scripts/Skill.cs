@@ -302,6 +302,10 @@ public class Skill
             }
         }
         GameManager.instance.activeSkill = null;
+        if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+        { 
+        GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
+        }
         return true;
     }
     public string Save()

@@ -588,7 +588,7 @@ public class Grid : MonoBehaviour
                 }
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position = desiredPosition; //shifting model
             }
-            if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
+            if(desiredPosition.y-1>=0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
             {
                 Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
             }

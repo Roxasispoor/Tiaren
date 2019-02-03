@@ -893,6 +893,13 @@ public class Player : NetworkBehaviour
                 playingPlaceable.TargetableUnits = targetableunits;
                 GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
             }
+            else
+            {
+
+                playingPlaceable.TargetArea = new List < Placeable>(){
+                    Grid.instance.GetPlaceableFromVector(playingPlaceable.GetPosition()-new Vector3Int(0,1,0))};
+                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
+            }
         }
         else
         {

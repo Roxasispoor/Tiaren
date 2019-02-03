@@ -6,10 +6,6 @@ public class Spawn : Placeable {
     new void Awake()
     {
         base.Awake();
-
-        this.serializeNumber = 1;
-
-
         this.Walkable = true;
 
         this.Movable = false;
@@ -30,4 +26,5 @@ public class Spawn : Placeable {
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
     }
+ 
 }
