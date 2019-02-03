@@ -23,9 +23,7 @@ public class AnimationHandler : MonoBehaviour
                 DontDestroyOnLoad(m_Instance.gameObject);
                 m_Instance.AnimDictionary = new Dictionary<string, string>() {
 
-                    {"Knight_attack", "WaitAndBasicAttack" },
-                    {"Mage_attack", "WaitAndBasicAttack" },
-                    {"Ranger_attack", "WaitAndBasicAttack" },
+                    {"Basic_attack", "WaitAndBasicAttack" },
                     {"Basic_destruction", "WaitAndDestroyBlock" },
                     {"Basic_push", "WaitAndPushBlock" },
                     {"Basic_creation", "WaitAndSummonBlock" },
@@ -116,7 +114,6 @@ public class AnimationHandler : MonoBehaviour
         yield return null;
         SoundHandler.Instance.PlayDestroyBlockSound();
         animLauncher.Play("destroyBlock");
-
     }
 
     public IEnumerator WaitAndPushBlock()

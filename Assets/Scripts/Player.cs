@@ -1360,6 +1360,16 @@ public class Player : NetworkBehaviour
         }
         else
         {
+            List<NetIdeable> targets = new List<NetIdeable>();
+            targets.Add(GameManager.instance.FindLocalObject(netidTarget));
+            foreach (int id in netidArea)
+            {
+                targets.Add(GameManager.instance.FindLocalObject(id));
+            }
+            skill.Use(GameManager.instance.playingPlaceable, targets);
+            RpcUseSkill(numSkill, netidTarget, netidArea);
+        
+            /*
             NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
             if (this == GameManager.instance.playingPlaceable.Player)
             {
@@ -1467,6 +1477,7 @@ public class Player : NetworkBehaviour
                     }
                 }
             }
+        */
         }
     }
 

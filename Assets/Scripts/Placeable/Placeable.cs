@@ -331,9 +331,10 @@ public abstract class Placeable : NetIdeable
             if (above != null && !above.IsLiving())
             {
                 above.Destroy();
-                Grid.instance.ConnexeFall(GetPosition().x,GetPosition().y,GetPosition().z);
-                GameManager.instance.ResetAllBatches();
+//                GameManager.instance.ResetAllBatches();
             }
+
+            Grid.instance.ConnexeFall(GetPosition().x, GetPosition().y, GetPosition().z);
         }
     }
     /// <summary>
@@ -352,9 +353,9 @@ public abstract class Placeable : NetIdeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-         //   GameManager.instance.RemoveBlockFromBatch(this);
-            Destroy(this);
-            Destroy(this.gameObject);
+            //   GameManager.instance.RemoveBlockFromBatch(this);
+            gameObject.SetActive(false);
+//            Destroy(this.gameObject);
         }
 
     }

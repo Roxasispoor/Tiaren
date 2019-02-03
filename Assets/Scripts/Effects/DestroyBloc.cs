@@ -34,7 +34,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
         if (GameManager.instance.isClient)
         {
-            GameManager.instance.RemoveBlockFromBatch(Target);
+            GameManager.instance.ResetAllBatches();
         }
 
         Target.Destroy();
