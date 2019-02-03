@@ -49,7 +49,7 @@ public class ObjectOnBloc : NetIdeable {
             givenSkills = value;
         }
     }
-    protected void Awake()
+    protected virtual void Awake()
     {
         shouldBatch = false;
         givenSkills = new List<Skill>();
@@ -129,6 +129,9 @@ public class ObjectOnBloc : NetIdeable {
     }
     public virtual void Initialize()
     {
-
+        if(isPickable && Grid.instance.GetPlaceableFromVector(GetPosition()).IsLiving())
+        {
+            isPicked = true;
+        }
     }
 }

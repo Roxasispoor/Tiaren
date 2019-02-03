@@ -10,13 +10,13 @@ public class RaycastSelector : MonoBehaviour
     private int state;
     private SkillArea pattern;
     private List<Placeable> area;
-    public Camera camera;
+    new public Camera camera;
 
     public SkillArea Pattern
     {get {return pattern;} set {pattern = value;}}
 
-    //public bool Topblock
-    //{ get { return topblock; } set { topblock = value; } }
+    public int State
+    { get { return state; } set { state = value; } }
 
     public int EffectArea
     { get { return effectarea; } set { effectarea = value; } }

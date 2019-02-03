@@ -246,6 +246,11 @@ public class GameManager : NetworkBehaviour
             if (state == States.Spawn)
             {
                 EndSpawn();
+            } else if (state == States.UseSkill && value != state)
+            {
+                if (SkillInfo.currentSkill)
+                    SkillInfo.currentSkill.SetHighlight(false);
+                SkillInfo.currentSkill = null;
             }
             state = value;
         }
@@ -304,7 +309,7 @@ public class GameManager : NetworkBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
         }
-
+        
         idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
@@ -854,7 +859,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             caster.CurrentPA = caster.CurrentPA - skill.Cost > 0 ? caster.CurrentPA - skill.Cost : 0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
         }
     }
+    public NetIdeable FindLocalIdeable(int id)
+    {
 
+        return idPlaceable[id];
+    }
     public Placeable FindLocalObject(int id)
     {
 

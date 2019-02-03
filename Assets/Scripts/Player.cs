@@ -378,6 +378,9 @@ public class Player : NetworkBehaviour
             Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
                 localPlayer.spawnList[i].y - 1,
                 localPlayer.spawnList[i].z].IsSpawnPoint = true;
+            Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
+                localPlayer.spawnList[i].y - 1,
+                localPlayer.spawnList[i].z].Destroyable = false;
             if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -393,6 +396,8 @@ public class Player : NetworkBehaviour
                 enemyPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
             Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
                 enemyPlayer.spawnList[i].z].IsSpawnPoint = true;
+            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
+                enemyPlayer.spawnList[i].z].Destroyable = false;
             if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -434,6 +439,9 @@ public class Player : NetworkBehaviour
                 Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
                     Grid.instance.SpawnPlayer1[i].y - 1,
                     Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
+                    Grid.instance.SpawnPlayer1[i].y - 1,
+                    Grid.instance.SpawnPlayer1[i].z].Destroyable = false;
                 if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -443,6 +451,8 @@ public class Player : NetworkBehaviour
             {
                 Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
                     Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
+                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
+                    Grid.instance.SpawnPlayer2[i].z].Destroyable = false;
                 if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -781,16 +791,11 @@ public class Player : NetworkBehaviour
         {
             if (skill.SkillEffect == SkillEffect.UP)
             {
-                Vector3 Playerpos = playingPlaceable.transform.position;
-                if (Playerpos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z] == null)
-                {
-                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0]);
-                }
+                Vector3 Playerpos = playingPlaceable.GetPosition();
+                if (Playerpos.y+1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z]==null)
+                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0],0);
             }
-            else
-            {
-                CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0]); //whatever, auto targeted do not go through dispatch
-            }
+            else CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0],0); //whatever, auto targeted do not go through dispatch
 
             GameManager.instance.playingPlaceable.ResetAreaOfMovement();//whatever, auto targeted do not go through dispatch
             return;
@@ -806,7 +811,7 @@ public class Player : NetworkBehaviour
         playingPlaceable.ResetTargets();
         if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
-            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+            List<Vector3Int> vect= Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange >0);
 
             if (skill.SkillArea == SkillArea.CROSS)
             {
@@ -846,7 +851,7 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
                 targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.transform.position);
@@ -859,7 +864,7 @@ public class Player : NetworkBehaviour
         {
             if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
             {
-                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS);
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
                 if (skill.SkillEffect == SkillEffect.SPINNING)
                 {
                     targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
@@ -1317,7 +1322,7 @@ public class Player : NetworkBehaviour
     /// <param name="numSkill"></param>
     /// <param name="netidTarget"></param>
     [Command]
-    public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea)
+    public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
     {
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
         if (skill.SkillType == SkillType.ALREADYTARGETED)
@@ -1333,7 +1338,9 @@ public class Player : NetworkBehaviour
                 Vector3Int Playerpos = GameManager.instance.playingPlaceable.GetPosition();
                 Vector3Int Pos = target.GetPosition();
                 Vector3Int VectDist = Pos - Playerpos;
-                int blockdistance = Math.Abs(VectDist.x) + Math.Abs(VectDist.z) + (VectDist.y == -1 ? 0 : Math.Abs(VectDist.y));
+                int yrange = target.IsLiving() ? VectDist.y : (VectDist.y == -1 ? 0 : VectDist.y);
+                yrange = (skill.Minrange > 0 ? (yrange >= 0 ? yrange : Math.Max(0, (-(skill.Maxrange - 1) + yrange)) * skill.Maxrange) : yrange);
+                int blockdistance = Math.Abs(VectDist.x) + Math.Abs(VectDist.z) + Math.Abs(yrange);
                 bool blockallowed = false;
 
                 if (blockdistance <= skill.Maxrange && blockdistance >= skill.Minrange)
@@ -1363,52 +1370,12 @@ public class Player : NetworkBehaviour
 
                         if (blockallowed)
                         {
-                            if (skill.SkillEffect == SkillEffect.DESTROY)
-                            {
-                                if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
-                                {
-                                    blockallowed = false;
-                                }
-                            }
-                            else if (skill.SkillEffect == SkillEffect.CREATE)
-                            {
-                                Placeable block = Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z];
-                                if (block.GetType() == typeof(Goal) || block.GetType() == typeof(Spawn))
-                                {
-                                    blockallowed = false;
-                                }
-                            }
-                            else if (skill.SkillEffect == SkillEffect.MOVE)
-                            {
-                                if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Movable)
-                                {
-                                    blockallowed = false;
-                                }
-                                else
-                                {
-                                    if (Math.Abs(Playerpos.x - Pos.x) - Math.Abs(Playerpos.z - Pos.z) > 0)
-                                    {
-                                        int direction = (Pos.x - Playerpos.x) / Math.Abs(Playerpos.x - Pos.x);
-                                        if (Pos.x + direction < 0 || Pos.x + direction >= Grid.instance.sizeX || Grid.instance.GridMatrix[Pos.x + direction, Pos.y, Pos.z] != null)
-                                        {
-                                            blockallowed = false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        int direction = (Pos.z - Playerpos.z) / Math.Abs(Playerpos.z - Pos.z);
-                                        if (Pos.z + direction < 0 || Pos.z + direction >= Grid.instance.sizeZ || Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
-                                        {
-                                            blockallowed = false;
-                                        }
-                                    }
-                                }
-                            }
+                            blockallowed = CheckEffectSkill(skill, Pos, Playerpos, VectDist);
                         }
                     }
                 }
 
-                Debug.Log(blockallowed);
+                //Debug.Log(blockallowed);
                 if (blockallowed)
                 {
                     if (netidArea.Length == 0)
@@ -1421,18 +1388,96 @@ public class Player : NetworkBehaviour
                         List<NetIdeable> idlist = new List<NetIdeable>();
                         foreach (int blockid in netidArea)
                         {
-                            idlist.Add(GameManager.instance.FindLocalObject(blockid));
-                        }
+                            blockallowed = false;
+                            Vector3Int PlaceablePos = GameManager.instance.FindLocalObject(blockid).GetPosition();
+                            Vector3Int TargetDist = PlaceablePos - Pos;
+                            //if (skill.SkillType == SkillType.AREA || (skill.SkillType == SkillType.SELF && skill.SkillArea == SkillArea.SURROUNDINGLIVING) {
+                            if (skill.SkillArea == SkillArea.LINE)
+                            {
+                                if (state % 2 == 0)
+                                {
+                                    if (TargetDist.y == 0 && TargetDist.z == 0 && Math.Abs(TargetDist.x) < skill.EffectArea)
+                                        blockallowed = true;
+                                }
+                                else
+                                {
+                                    if (TargetDist.y == 0 && TargetDist.x == 0 && Math.Abs(TargetDist.z) < skill.EffectArea)
+                                        blockallowed = true;
+                                }
+                            }
+                            else if (skill.SkillType == SkillType.AREA)
+                            {
+                                bool topblock = true;
+                                if (skill.SkillArea == SkillArea.MIXEDAREA)
+                                    topblock = false;
+                                if (Mathf.Abs(TargetDist.x) + Mathf.Abs(TargetDist.y) + Mathf.Abs(TargetDist.z) < skill.EffectArea &&
+                                    (!topblock || PlaceablePos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[(int)PlaceablePos.x, (int)PlaceablePos.y + 1, (int)PlaceablePos.z] == null))
+                                    blockallowed = true;
+                            }
 
+                            if (blockallowed)
+                                blockallowed = CheckEffectSkill(skill, PlaceablePos, Pos, TargetDist);
+
+                            if (blockallowed)
+                                idlist.Add(GameManager.instance.FindLocalObject(blockid));
+                        }
                         skill.Use(GameManager.instance.playingPlaceable, idlist);
                         RpcUseSkill(numSkill, netidTarget, netidArea);
                     }
-
                 }
-
             }
         }
     }
+
+    public bool CheckEffectSkill(Skill skill, Vector3Int Pos, Vector3Int Playerpos, Vector3Int VectDist)
+    {
+        bool blockallowed = true;
+
+        if (skill.SkillEffect == SkillEffect.DESTROY)
+        {
+            if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+                blockallowed = false;
+        }
+        else if (skill.SkillEffect == SkillEffect.CREATE)
+        {
+            Placeable block = Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z];
+            if (block.GetType() == typeof(Goal) || block.IsSpawnPoint)
+                blockallowed = false;
+        }
+        else if (skill.SkillEffect == SkillEffect.MOVE)
+        {
+            if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Movable)
+                blockallowed = false;
+            else
+            {
+                if (Math.Abs((int)Playerpos.x - Pos.x) - Math.Abs((int)Playerpos.z - Pos.z) > 0)
+                {
+                    int direction = (Pos.x - (int)Playerpos.x) / Math.Abs((int)Playerpos.x - Pos.x);
+                    if (Pos.x + direction < 0 || Pos.x + direction >= Grid.instance.sizeX || Grid.instance.GridMatrix[Pos.x + direction, Pos.y, Pos.z] != null)
+                        blockallowed = false;
+                }
+                else
+                {
+                    int direction = (Pos.z - (int)Playerpos.z) / Math.Abs((int)Playerpos.z - Pos.z);
+                    if (Pos.z + direction < 0 || Pos.z + direction >= Grid.instance.sizeZ || Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
+                        blockallowed = false;
+                }
+            }
+        }
+        else if (skill.SkillEffect == SkillEffect.SWORDRANGE)
+        {
+            if (Math.Abs(VectDist.y) > 1 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1)
+                blockallowed = false;
+        }
+        else if (skill.SkillEffect == SkillEffect.SPINNING)
+        {
+            if (VectDist.y != 0 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1 || VectDist == new Vector3Int(0, 0, 0))
+                blockallowed = false;
+        }
+
+        return blockallowed;
+    }
+
 
     public void UseTargeted(Skill skill)
     {

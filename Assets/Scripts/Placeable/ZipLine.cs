@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
     public int netIdLinkedTo;
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         isPickable = false;
@@ -23,7 +24,7 @@ public class ZipLine : ObjectOnBloc {
     }
     public override string Save()
     {
-        return base.Save()+linkedTo.netId;
+        return base.Save() + ";"+ linkedTo.netId;
     }
     public override void SomethingPutAbove()
     {
@@ -40,12 +41,13 @@ public class ZipLine : ObjectOnBloc {
     }
     public override void Load(string[] objectInfo)
     {
-        //netIdLinkedTo
+        netIdLinkedTo = Int32.Parse(objectInfo[3]);
         base.Load(objectInfo);
     }
     public override void Initialize()
     {
         base.Initialize();
-
+        linkedTo = GameManager.instance.FindLocalIdeable(netIdLinkedTo).GetComponent<ZipLine>();
+        GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>());
     }
 }

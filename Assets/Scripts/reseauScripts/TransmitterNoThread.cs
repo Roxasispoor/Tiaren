@@ -155,6 +155,7 @@ public class TransmitterNoThread : MonoBehaviour
     /// <returns></returns>
     public IEnumerator ListenToData(Player player)
     {
+        List<ObjectOnBloc> toInit = new List<ObjectOnBloc>();
         server = new TcpClient("localhost", networkManager.matchPort);
         Byte[] bytes = new Byte[1024];
         string serverMessage = "";
@@ -278,23 +279,28 @@ public class TransmitterNoThread : MonoBehaviour
                 }
                 else if(str.EndsWith(stringObjectOnBloc))
                 {
-                    string strCopy = str.TrimEnd(stringLiving.ToCharArray());
-                    string line = "";
-                    StreamReader reader = new StreamReader(LivingPlaceable.GenerateStreamFromString(strCopy));
-                    while ((line = reader.ReadLine()) != null)
+                    string strCopyObj = str.TrimEnd(stringObjectOnBloc.ToCharArray());
+                    string newline = "";
+                    StreamReader reader = new StreamReader(LivingPlaceable.GenerateStreamFromString(strCopyObj));
+                    while ((newline = reader.ReadLine()) != null)
                     {
-                        string[] objectInfo = line.Split(';');
+                        string[] objectInfo = newline.Split(';');
                         Vector3Int positionObj = StringToVector3Int(objectInfo[2]);
-                        GameObject objectonbloc = Instantiate(Grid.instance.prefabsList[Int32.Parse(objectInfo[0])],
+                        GameObject objectonbloc = Instantiate(Grid.instance.prefabsList[Int32.Parse(objectInfo[0]) - 1],
                        positionObj, Quaternion.identity, Grid.instance.GetPlaceableFromVector(positionObj).transform);
                         ObjectOnBloc objectOnBloc1 = objectonbloc.GetComponent<ObjectOnBloc>();
                         objectOnBloc1.netId = Int32.Parse(objectInfo[1]);
                         NetIdeable.currentMaxId = objectOnBloc1.netId >= NetIdeable.currentMaxId ? objectOnBloc1.netId + 1 : NetIdeable.currentMaxId;
                         objectOnBloc1.Load(objectInfo);
-
+                        GameManager.instance.idPlaceable[objectOnBloc1.netId] = objectOnBloc1;
+                        toInit.Add(objectOnBloc1);
                     }
                   
                 }
+            }
+            foreach (ObjectOnBloc objToInit in toInit)
+            {
+                objToInit.Initialize();
             }
             GameManager.instance.ResetAllBatches();
             Debug.Log("I ended the coroutine reconnect me now");
