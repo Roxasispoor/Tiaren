@@ -356,7 +356,7 @@ public abstract class Placeable : NetIdeable
             }
             //   GameManager.instance.RemoveBlockFromBatch(this);
             gameObject.SetActive(false);
-//            Destroy(this.gameObject);
+            Destroy(this.gameObject);
         }
 
     }
