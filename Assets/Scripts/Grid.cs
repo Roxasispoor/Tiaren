@@ -568,13 +568,25 @@ public class Grid : MonoBehaviour
          (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
           gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable != CrushType.CRUSHSTAY))
         {
-            Vector3 oldPosition = bloc.transform.position;
+            Vector3 oldPosition = bloc.GetPosition();
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
             gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
             if (updateTransform)
             {
-                gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position += (desiredPosition - bloc.GetPosition());//shifting model
+                if(bloc.isMoving)
+                {
+                    if(bloc.IsLiving())
+                    {
+
+
+                        Animator anim = bloc.gameObject.GetComponent<Animator>();
+                        anim.SetTrigger("idle");
+                    }
+                    bloc.isMoving = false;
+                    StopCoroutine(bloc.MoveCoroutine);
+                }
+                gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position = desiredPosition; //shifting model
             }
             if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
             {
