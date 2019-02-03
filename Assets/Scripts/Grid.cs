@@ -556,7 +556,7 @@ public class Grid : MonoBehaviour
                 gridMatrix[x, y, z - 1].Grounded = ExploreConnexity(x, y, z - 1);
                 somethingfall = somethingfall || !gridMatrix[x, y, z-1].Grounded;
             }
-            if (somethingfall) Gravity();
+            Gravity();
         }
     }
 
@@ -578,8 +578,6 @@ public class Grid : MonoBehaviour
                 {
                     if(bloc.IsLiving())
                     {
-
-
                         Animator anim = bloc.gameObject.GetComponent<Animator>();
                         anim.SetTrigger("idle");
                     }

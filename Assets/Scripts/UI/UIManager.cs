@@ -210,9 +210,10 @@ public class UIManager : MonoBehaviour
         {
             foreach (Skill skill in obj.GivenSkills)
             {
-                Button button = Instantiate(prefabAbilityButton, SkillZone).GetComponentInChildren<Button>();
+                GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
+                Button button = ability.GetComponentInChildren<Button>();
                 button.GetComponent<SkillInfo>().Skill = skill;
-                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+                ability.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
                 button.onClick.AddListener(skill.Activate);
                 button.onClick.AddListener(SoundHandler.Instance.PlayUISound);

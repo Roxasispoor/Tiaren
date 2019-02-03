@@ -1810,7 +1810,7 @@ MonoBehaviour:
   prefabCharacterChoices: {fileID: 114889792028518860, guid: cf0558fd00e8c0f4e93b442f1e280311,
     type: 2}
   numberOfPlayer: 3
-  firstImagePosition: 319
+  firstImagePosition: 370
   firstGap: 99
   timelineGap: 78
   AbilityGap: 110

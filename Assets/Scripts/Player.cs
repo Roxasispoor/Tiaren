@@ -370,17 +370,15 @@ public class Player : NetworkBehaviour
 
     private void SpawnLocalPlayer(Player localPlayer)
     {
+        Placeable spawnpoint;
         for (int i = 0; i < localPlayer.spawnList.Count; i++)
         {
-            Grid.instance.GridMatrix[localPlayer.spawnList[i].x, localPlayer.spawnList[i].y - 1,
-                localPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
-
-            Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
-                localPlayer.spawnList[i].y - 1,
-                localPlayer.spawnList[i].z].IsSpawnPoint = true;
-            Grid.instance.GridMatrix[localPlayer.spawnList[i].x,
-                localPlayer.spawnList[i].y - 1,
-                localPlayer.spawnList[i].z].Destroyable = false;
+            spawnpoint = Grid.instance.GridMatrix[localPlayer.spawnList[i].x, localPlayer.spawnList[i].y - 1, localPlayer.spawnList[i].z];   
+            spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            spawnpoint.IsSpawnPoint = true;
+            spawnpoint.Destroyable = false;
+            spawnpoint.Movable = false;
+            spawnpoint.GravityType = GravityType.NULL_GRAVITY;
             if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -390,14 +388,15 @@ public class Player : NetworkBehaviour
 
     private void SpawnEnemyPlayer(Player enemyPlayer)
     {
+        Placeable spawnpoint;
         for (int i = 0; i < enemyPlayer.spawnList.Count; i++)
         {
-            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
-                enemyPlayer.spawnList[i].z].GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
-            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
-                enemyPlayer.spawnList[i].z].IsSpawnPoint = true;
-            Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1,
-                enemyPlayer.spawnList[i].z].Destroyable = false;
+            spawnpoint = Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1, enemyPlayer.spawnList[i].z];
+            spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            spawnpoint.IsSpawnPoint = true;
+            spawnpoint.Destroyable = false;
+            spawnpoint.Movable = false;
+            spawnpoint.GravityType = GravityType.NULL_GRAVITY;
             if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -433,15 +432,15 @@ public class Player : NetworkBehaviour
                 choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
             }
 
+            Placeable spawnpoint;
             // Spawn the characters
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
-                    Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].IsSpawnPoint = true;
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x,
-                    Grid.instance.SpawnPlayer1[i].y - 1,
-                    Grid.instance.SpawnPlayer1[i].z].Destroyable = false;
+                spawnpoint = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1, Grid.instance.SpawnPlayer1[i].z];
+                spawnpoint.IsSpawnPoint = true;
+                spawnpoint.Destroyable = false;
+                spawnpoint.Movable = false;
+                spawnpoint.GravityType = GravityType.NULL_GRAVITY;
                 if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -449,10 +448,11 @@ public class Player : NetworkBehaviour
             }
             for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
             {
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].IsSpawnPoint = true;
-                Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                    Grid.instance.SpawnPlayer2[i].z].Destroyable = false;
+                spawnpoint = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1, Grid.instance.SpawnPlayer2[i].z];
+                spawnpoint.IsSpawnPoint = true;
+                spawnpoint.Destroyable = false;
+                spawnpoint.Movable = false;
+                spawnpoint.GravityType = GravityType.NULL_GRAVITY;
                 if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -1298,8 +1298,6 @@ public class Player : NetworkBehaviour
 
             while (timeBezier > 1 && i < path.Count - 1) //on go through 
             {
-
-
                 distanceParcourue -= distance;
                 startPosition = path[i];
                 i++; // changing movement
@@ -1308,7 +1306,6 @@ public class Player : NetworkBehaviour
 
                 distance = CalculateDistance(startPosition, path[i], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
                 timeBezier = distanceParcourue / distance; //on recalcule
-
             }
             if (i == path.Count - 1 && timeBezier > 1)
             {
@@ -1326,16 +1323,9 @@ public class Player : NetworkBehaviour
             }
             else
             {
-
                 placeable.transform.position = Vector3.Lerp(startPosition + delta, path[i] + delta, timeBezier);
-
             }
-
-
-
             yield return null;
-
-
         }
 
         //GameManager.instance.OnEndAnimationEffectEnd();
@@ -1566,7 +1556,6 @@ public class Player : NetworkBehaviour
         {
             skill.UseTargeted(skill);
             GameManager.instance.playingPlaceable.ResetTargets();
-
         }
         else
         {

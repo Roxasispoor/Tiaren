@@ -331,10 +331,11 @@ public abstract class Placeable : NetIdeable
             if (above != null && !above.IsLiving())
             {
                 above.Destroy();
-//                GameManager.instance.ResetAllBatches();
+
+                Grid.instance.ConnexeFall(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
+                //                GameManager.instance.ResetAllBatches();
             }
 
-            Grid.instance.ConnexeFall(GetPosition().x, GetPosition().y, GetPosition().z);
         }
     }
     /// <summary>
