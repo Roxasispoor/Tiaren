@@ -129,7 +129,7 @@ public class UIManager : MonoBehaviour
                 if (button.GetComponent<SkillInfo>().Skill.TourCooldownLeft > 0)
                 {
                     button.GetComponent<Image>().color = Color.gray;
-                    button.GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.TourCooldownLeft.ToString();
+                    button.transform.Find("Cooldown").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.TourCooldownLeft.ToString();
                 }
             }
         }
@@ -186,7 +186,7 @@ public class UIManager : MonoBehaviour
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             if (skill.TourCooldownLeft > 0)
             {
-                button.GetComponent<Text>().text = skill.TourCooldownLeft.ToString();
+                //button.GetComponent<Text>().text = skill.TourCooldownLeft.ToString();
                 button.GetComponentInChildren<Image>().color = Color.gray;
             }
             button.onClick.AddListener(skill.Activate);
