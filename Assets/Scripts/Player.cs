@@ -553,6 +553,7 @@ public class Player : NetworkBehaviour
                 CmdRespawn(transmit, character.netId);
             }
         }
+        GameManager.instance.playingPlaceable.CurrentHP = GameManager.instance.playingPlaceable.MaxHP;
     }
 
     [Command]
