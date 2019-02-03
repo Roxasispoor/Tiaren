@@ -881,7 +881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LogLevel: 3
-  SpawnControllerLogLevel: 4
+  SpawnControllerLogLevel: 2
   DefaultMachineIp: 127.0.0.1
   DefaultExePath: E:\Tiaren\Build\Tiaren.exe
   DefaultSpawnInBatchmode: 0
