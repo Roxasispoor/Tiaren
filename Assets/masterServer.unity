@@ -883,15 +883,15 @@ MonoBehaviour:
   LogLevel: 3
   SpawnControllerLogLevel: 4
   DefaultMachineIp: 127.0.0.1
-  DefaultExePath: E:\Tiaren\Build\Tiaren.exe
-  DefaultSpawnInBatchmode: 0
+  DefaultExePath: D:\Users\Plobi\Documents\JIN\PFE\Tiaren\Build\Tiaren.exe
+  DefaultSpawnInBatchmode: 1
   MaxSpawnedProcesses: 5
   SpawnWebglServers: 0
   DontDestroyIfStarted: 1
   KillProcessesWhenSpawnerQuits: 1
   AutoStartInEditor: 0
   OverrideExePathInEditor: 1
-  ExePathFromEditor: E:\Tiaren\Build\Tiaren.exe
+  ExePathFromEditor: D:\Users\Plobi\Documents\JIN\PFE\Tiaren\Build\Tiaren.exe
 --- !u!4 &1013522746
 Transform:
   m_ObjectHideFlags: 0
