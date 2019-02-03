@@ -88,11 +88,11 @@ namespace Barebones.MasterServer
             //the progress of the spawn request
             Msf.Client.Matchmaker.FindAppropriateMatch(settings, (gameInfo) =>
                 {
-                if (gameInfo.Address == "")
+                if (gameInfo==null || gameInfo.Address == "")
                 {
                         Debug.Log("Failed to find a ssuitable game creating one: ");
                         OnCreateClick();
-}
+                }
                 else
                     {
                   
