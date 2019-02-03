@@ -354,7 +354,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private IEnumerator Start()
     {
-
+        Debug.Log("Game starting");
 
         //PHASE 0 : SET THE GAME UP
 
