@@ -509,13 +509,14 @@ GameObject:
   - component: {fileID: 224951508959303996}
   - component: {fileID: 222741271808405634}
   - component: {fileID: 114792206895558292}
+  - component: {fileID: 114728383231846152}
   m_Layer: 5
   m_Name: MovDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1738973256885296
 GameObject:
   m_ObjectHideFlags: 1
@@ -1813,6 +1814,20 @@ MonoBehaviour:
   firstGap: 99
   timelineGap: 78
   AbilityGap: 110
+--- !u!114 &114728383231846152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1736104419408438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114761683628331658
 MonoBehaviour:
   m_ObjectHideFlags: 1

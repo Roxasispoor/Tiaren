@@ -122,6 +122,7 @@ namespace Barebones.MasterServer
 
                     return;
                 }
+                GameObject.Find("Canvas").SetActive(false);
                 SceneManager.LoadScene("online");
                 this.access = access;
                 SceneManager.sceneLoaded += OnSceneLoaded;
