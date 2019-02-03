@@ -33,7 +33,7 @@ public class AnimationHandler : MonoBehaviour
                     {"debuffPm","WaitAndLowKick" },
                     {"HigherGround","WaitAndSummonBlock"},
                     {"Piercing_arrow","WaitAndArrowAttack" },
-                    {"Range_buff","WaitAndBuff" },
+                    {"Zipline","WaitAndBuff" },
                     {"Spinning","WaitAndSpin" },
                     {"ExplosiveFireball","WaitAndLaunchFireball" },
 
@@ -45,9 +45,10 @@ public class AnimationHandler : MonoBehaviour
 
     public void PlayAnimation()
     {
-        StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
-
-        //StartCoroutine("PlayAnimationCoroutine");
+        if (AnimDictionary.ContainsKey(SkillAnimationToPlay))
+        {
+            StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
+        }
     }
 
     public IEnumerator PlayAnimationCoroutine()
