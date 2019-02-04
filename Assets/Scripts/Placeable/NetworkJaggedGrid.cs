@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Extends Jagged grid so that it contains netIds
+/// </summary>
 public class NetworkJaggedGrid : JaggedGrid {
 
     public int[] netId;
@@ -37,6 +39,7 @@ public class NetworkJaggedGrid : JaggedGrid {
                 }
             }
         }
+
     }
 
 }

@@ -36,8 +36,8 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
-    private List<Vector3Int> spawnPlayer1;
-    private List<Vector3Int> spawnPlayer2;
+    public List<Vector3Int> spawnPlayer1;
+    public List<Vector3Int> spawnPlayer2;
 
     public int FallDamage
     {
@@ -798,7 +798,8 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
         Placeable.currentMaxId=Mathf.Max(Placeable.currentMaxId,maxfound+1);
     }
 
