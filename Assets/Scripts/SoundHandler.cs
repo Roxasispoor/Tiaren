@@ -18,20 +18,15 @@ public class SoundHandler : MonoBehaviour {
             return m_Instance;
         }
     }
-
-
-    
-    public int fightSceneMusicID;
-    public int cubeCreateCharacID;
-
-    public void PrepareAllSounds()
+    public void StartMenuMusic()
     {
-        int fightSceneMusicID = EazySoundManager.PrepareMusic((AudioClip)Resources.Load("Sounds/backgroundmusic"), 1f, true, false, 0f, 0f);
-        //int cubeCreateCharacID = EazySoundManager.PrepareSound((AudioClip)Resources.Load("Sounds/Blocksummon"), false);
+        EazySoundManager.StopAllMusic();
+        EazySoundManager.PlayMusic((AudioClip)Resources.Load("Sounds/MenuMusic"), 1f, true, false, 0f, 0f);
     }
     public void StartFightMusic()
     {
-        EazySoundManager.GetAudio(fightSceneMusicID).Play();
+        EazySoundManager.StopAllMusic();
+        EazySoundManager.PlayMusic((AudioClip)Resources.Load("Sounds/backgroundmusic"), 1f, true, false, 0f, 0f);
     }
     
     public void StartWalkSound()
