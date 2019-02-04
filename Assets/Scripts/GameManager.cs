@@ -396,7 +396,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         if (GameManager.instance.isClient)
         {
-            SoundHandler.Instance.PrepareAllSounds();
             SoundHandler.Instance.StartFightMusic();
         }
 
