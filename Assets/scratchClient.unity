@@ -457,7 +457,7 @@ Prefab:
     - target: {fileID: 114628823794450154, guid: 4d75527e070e7644eb86609370a53e80,
         type: 2}
       propertyPath: ServerIp
-      value: 127.0.0.1
+      value: 192.168.43.138
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d75527e070e7644eb86609370a53e80, type: 2}
