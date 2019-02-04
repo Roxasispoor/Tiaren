@@ -46,7 +46,7 @@ public class TransmitterNoThread : MonoBehaviour
             tcpListener = null;
             Debug.LogError("Destroyed tcplistenner for new reconnection");
         }
-        tcpListener = new TcpListener(IPAddress.Parse(adress), networkManager.matchPort);
+        tcpListener = new TcpListener(IPAddress.Parse(adress), networkManager.networkPort);
         tcpListener.Start();
         while (client == null)
         {
@@ -156,7 +156,7 @@ public class TransmitterNoThread : MonoBehaviour
     public IEnumerator ListenToData(Player player)
     {
         List<ObjectOnBloc> toInit = new List<ObjectOnBloc>();
-        server = new TcpClient("localhost", networkManager.matchPort);
+        server = new TcpClient(networkManager.networkAddress, networkManager.networkPort);
         Byte[] bytes = new Byte[1024];
         string serverMessage = "";
         string totalMessage = "";
