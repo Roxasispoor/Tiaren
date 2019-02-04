@@ -477,6 +477,8 @@ MonoBehaviour:
   - {fileID: 1431839064352928, guid: 3437068eee7f7ea4c9689096fce13a07, type: 2}
   - {fileID: 1143159617411820, guid: fae692dc4e436eb4080ed81177860dd0, type: 2}
   - {fileID: 1032257904305354, guid: 671061ba0126b58498597af2531c3378, type: 2}
+  spawnPlayer1: []
+  spawnPlayer2: []
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -532,7 +534,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 829413191}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 227461547, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
