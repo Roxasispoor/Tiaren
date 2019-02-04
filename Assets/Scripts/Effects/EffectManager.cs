@@ -29,7 +29,6 @@ public class EffectManager : MonoBehaviour
     {
         NetIdeable target = effect.GetTarget();
         bool isBlocked = CalculateEffectBlocked(effect);
-        effect.GetLauncherAnimation();
         if (!isBlocked)
         {
             if (effect.HitOnDirectAttack)

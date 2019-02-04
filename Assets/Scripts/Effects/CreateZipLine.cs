@@ -22,11 +22,6 @@ public class CreateZipLine : CreateBlock
     {
         if (prefab.GetComponent<ZipLine>() != null)
         {
-            if (GameManager.instance.isClient)
-            {
-                GetLauncherAnimation();
-                animLauncher.Play("createBlock");
-            }
             GameObject zip1 = Grid.instance.InstanciateObjectOnBloc(prefab, Launcher.GetPosition() - new Vector3Int(0, 1, 0));
             GameObject zip2 = Grid.instance.InstanciateObjectOnBloc(prefab, Target.GetPosition());
             zip1.GetComponent<ZipLine>().linkedTo = zip2.GetComponent<ZipLine>();
