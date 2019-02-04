@@ -21,14 +21,18 @@ public class NetworkManagerExtended : NetworkManager
                 launchedFromMenu = true;
             }
         }
-        if(launchedFromMenu)
+        if (Msf.Args.AssignedPort != -1)
+        {
+            networkPort = Msf.Args.AssignedPort;
+        }
+        Debug.LogError("mynetworkPort" + networkPort);
+        if (launchedFromMenu)
         {
             foreach (string arg in arguments)
             {
                 if (arg == "server")
                 {
-                    networkPort = Msf.Args.AssignedPort;
-                    Debug.LogError("mynetworkPort" +networkPort);
+
                     StartServer();
                       
                 }
