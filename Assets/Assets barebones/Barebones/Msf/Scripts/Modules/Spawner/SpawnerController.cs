@@ -217,7 +217,7 @@ namespace Barebones.MasterServer
             // If spawn in batchmode was set and `DontSpawnInBatchmode` arg is not provided
             var spawnInBatchmode = controller.DefaultSpawnerSettings.SpawnInBatchmode
                                    && !Msf.Args.DontSpawnInBatchmode;
-
+          
             var startProcessInfo = new ProcessStartInfo(path)
             {
                 CreateNoWindow = false,

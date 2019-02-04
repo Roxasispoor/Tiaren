@@ -884,7 +884,7 @@ MonoBehaviour:
   SpawnControllerLogLevel: 2
   DefaultMachineIp: 127.0.0.1
   DefaultExePath: ..\Tiaren.exe
-  DefaultSpawnInBatchmode: 1
+  DefaultSpawnInBatchmode: 0
   MaxSpawnedProcesses: 5
   SpawnWebglServers: 0
   DontDestroyIfStarted: 0

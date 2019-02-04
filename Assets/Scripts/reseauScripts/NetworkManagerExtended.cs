@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barebones.MasterServer;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -14,7 +15,7 @@ public class NetworkManagerExtended : NetworkManager
         bool launchedFromMenu = false;
         foreach (string arg in arguments)
         {
-         //   Debug.LogError(arg);
+          //  Debug.LogError(arg +"\n");
             if(arg=="launchedFromMenu")
             {
                 launchedFromMenu = true;
@@ -24,9 +25,10 @@ public class NetworkManagerExtended : NetworkManager
         {
             foreach (string arg in arguments)
             {
-            
                 if (arg == "server")
                 {
+                    networkPort = Msf.Args.AssignedPort;
+                    Debug.LogError("mynetworkPort" +networkPort);
                     StartServer();
                       
                 }
