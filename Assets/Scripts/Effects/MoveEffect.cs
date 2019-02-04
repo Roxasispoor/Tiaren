@@ -85,7 +85,6 @@ public class MoveEffect : EffectOnLiving {
     {
         if(Target.Movable && Grid.instance.CheckNull(Target.GetPosition() + direction))
         {
-            GetLauncherAnimation();
             Grid.instance.MoveBlock(Target, Target.GetPosition() + direction, !UseBezier);
             Debug.Log("Has been logically moved");
            if(UseBezier) //Coroutine conflicts, annoying, sorry

@@ -30,11 +30,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
     override
     public void Use()
     {
-        Vector3 pos = Target.transform.position;
+        Vector3 pos = Target.GetPosition();
 
         if (GameManager.instance.isClient)
         {
-            GameManager.instance.RemoveBlockFromBatch(Target);
+            GameManager.instance.ResetAllBatches();
         }
 
         Target.Destroy();

@@ -54,7 +54,6 @@ public class JaggedGrid
         {
             for (int x = 0; x < grid.sizeX; x++)
             {
-
                 for (int z = 0; z < grid.sizeZ; z++)
                 {
                     if (grid.GridMatrix[x, y, z] == null)
@@ -71,6 +70,22 @@ public class JaggedGrid
 
                 }
             }
+        }
+        spawnPlayerOne = new int[grid.spawnPlayer1.Count * 3];
+        for (int i = 0; i < grid.spawnPlayer1.Count; i++)
+        {
+            spawnPlayerOne[3 * i] = grid.spawnPlayer1[i].x;
+            spawnPlayerOne[3 * i + 2] = grid.spawnPlayer1[i].y;
+            spawnPlayerOne[3 * i + 1] = grid.spawnPlayer1[i].z;
+
+        }
+        spawnPlayerTwo = new int[grid.spawnPlayer2.Count * 3];
+        for (int i = 0; i < grid.spawnPlayer2.Count; i++)
+        {
+            spawnPlayerTwo[3 * i] = grid.spawnPlayer2[i].x;
+            spawnPlayerTwo[3 * i + 2] = grid.spawnPlayer2[i].y;
+            spawnPlayerTwo[3 * i + 1] = grid.spawnPlayer2[i].z;
+
         }
     }
 

@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour
     }
 
     private void Update()
-    {    
+    {
         if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && GameManager.instance.PlayingPlaceable!=null && gameObject.GetComponent<Player>().isLocalPlayer)
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
@@ -178,7 +178,6 @@ public class UIManager : MonoBehaviour
 
         foreach (Skill skill in character.Skills)
         {
-            skill.TourCooldownLeft--;
             GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
             Button button = ability.GetComponentInChildren<Button>();
             button.GetComponent<SkillInfo>().Skill = skill;

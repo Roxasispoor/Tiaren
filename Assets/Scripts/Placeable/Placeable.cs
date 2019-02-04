@@ -1,17 +1,15 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
 /// Represents something able to fill a bloc of the grid
 /// </summary>
 [Serializable]
-public abstract class Placeable: NetIdeable
+public abstract class Placeable : NetIdeable
 {
-    const float sizeChild = 1.02f;
+    private const float sizeChild = 1.02f;
     [NonSerialized]
     public Batch batch;
     private bool walkable;
@@ -21,7 +19,7 @@ public abstract class Placeable: NetIdeable
     protected TraversableType tangible;
     protected TraversableType traversableBullet;
     public Color colorOfObject;
-    private float animationSpeed=2.5f;
+    private float animationSpeed = 2.5f;
     [NonSerialized]
     public Material oldMaterial;
     public Material baseMaterial;
@@ -78,7 +76,7 @@ public abstract class Placeable: NetIdeable
         }
     }
 
-   
+
 
     /// <summary>
     /// indicates if gravity tests have been already done on placeable 
@@ -174,7 +172,7 @@ public abstract class Placeable: NetIdeable
             hitablePoints = value;
         }
     }
-    
+
     public TraversableType TraversableChar
     {
         get
@@ -241,7 +239,7 @@ public abstract class Placeable: NetIdeable
         }
     }
 
-   
+
 
     public bool Destroyable
     {
@@ -318,14 +316,26 @@ public abstract class Placeable: NetIdeable
     /// <returns>Return a copy of the object</returns>
     public virtual Placeable Cloner()
     {
-        var copy = (Placeable)this.MemberwiseClone();
+        Placeable copy = (Placeable)this.MemberwiseClone();
         return copy;
     }
-    public void SomethingPutAbove()
+    public virtual void SomethingPutAbove()
     {
         foreach (Transform obj in transform.Find("Inventory"))
         {
             obj.GetComponent<ObjectOnBloc>().SomethingPutAbove();
+        }
+        if (isSpawnPoint)
+        {
+            Placeable above = Grid.instance.GetPlaceableFromVector(GetPosition() + new Vector3Int(0, 1, 0));
+            if (above != null && !above.IsLiving())
+            {
+                above.Destroy();
+
+                Grid.instance.ConnexeFall(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
+                //                GameManager.instance.ResetAllBatches();
+            }
+
         }
     }
     /// <summary>
@@ -336,18 +346,19 @@ public abstract class Placeable: NetIdeable
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (var effect in this.OnDestroyEffects)
+            foreach (Effect effect in this.OnDestroyEffects)
             {
                 EffectManager.instance.DirectAttack(effect);
             }
-            foreach(Transform obj in transform.Find("Inventory") )
+            foreach (Transform obj in transform.Find("Inventory"))
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-            Destroy(this);
+            //   GameManager.instance.RemoveBlockFromBatch(this);
+            gameObject.SetActive(false);
             Destroy(this.gameObject);
         }
-       
+
     }
     public virtual void Highlight()
     {
@@ -394,7 +405,7 @@ public abstract class Placeable: NetIdeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.State!=States.Move  || GameManager.instance.playingPlaceable!=null && GameManager.instance.playingPlaceable.AreaOfMouvement!=null &&
+        if (GameManager.instance.State != States.Move || GameManager.instance.playingPlaceable != null && GameManager.instance.playingPlaceable.AreaOfMouvement != null &&
             !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
@@ -407,7 +418,7 @@ public abstract class Placeable: NetIdeable
 
             }
         }
-       
+
     }
 
     public void OnMouseOverWithLayer()
@@ -419,12 +430,12 @@ public abstract class Placeable: NetIdeable
                 isClicked = true;
 
                 if (this.IsSpawnPoint == true // AMELIORATION: Maybe could be remove
-                        // Check if it is a spawn point for that player
-                        && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains( GetPosition() + Vector3Int.up)
-                        && GameManager.instance.CharacterToSpawn != null) 
+                                              // Check if it is a spawn point for that player
+                        && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains(GetPosition() + Vector3Int.up)
+                        && GameManager.instance.CharacterToSpawn != null)
                 {
                     Debug.Log("You have authority to ask to spawn");
-                    
+
                     if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
                     {
                         Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
@@ -432,7 +443,7 @@ public abstract class Placeable: NetIdeable
                             GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
                         GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
                     }
-                    else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving() 
+                    else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving()
                         && Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].player == GameManager.instance.GetLocalPlayer())
                     {
                         Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
@@ -444,12 +455,14 @@ public abstract class Placeable: NetIdeable
                         GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
                     }
                     GameManager.instance.CharacterToSpawn = null;
-                } else if (IsLiving() && player == GameManager.instance.GetLocalPlayer())
+                }
+                else if (IsLiving() && player == GameManager.instance.GetLocalPlayer())
                 {
                     if (!GameManager.instance.CharacterToSpawn)
                     {
                         GameManager.instance.CharacterToSpawn = (LivingPlaceable)this;
-                    } else
+                    }
+                    else
                     {
                         /*
                         //Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y - 1, this.GetPosition().z];
@@ -472,8 +485,9 @@ public abstract class Placeable: NetIdeable
                         GameManager.instance.CharacterToSpawn = null;
                     }
                 }
-              
-            } else
+
+            }
+            else
             {
                 isClicked = false;
             }
@@ -481,9 +495,9 @@ public abstract class Placeable: NetIdeable
         else if (GameManager.instance.State == States.Move)
         {
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable )
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
             {
-                
+
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
                     && this.GetPosition() + new Vector3Int(0, 1, 0) != GameManager.instance.playingPlaceable.GetPosition())
 
@@ -502,15 +516,21 @@ public abstract class Placeable: NetIdeable
             {
                 Skill skill = GameManager.instance.activeSkill;
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
-                    && skill!= null /*&& (skill.SkillType == SkillType.LIVING && IsLiving() 
+                    && skill != null && (GameManager.instance.PlayingPlaceable.TargetArea.Contains(this) ||
+                    IsLiving() && GameManager.instance.PlayingPlaceable.TargetableUnits.Contains((LivingPlaceable)this))
+
+                    /*&& (skill.SkillType == SkillType.LIVING && IsLiving() 
                     || (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA) && !IsLiving())*/)
 
 
                 {
 
-                    Debug.Log("You have authority to ask to act on "+ netId + " On position"+ GetPosition() + "Time : " + Time.time);
+                    Debug.Log("You have authority to ask to act on " + netId + " On position" + GetPosition() + "Time : " + Time.time);
                     List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
-                    if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING) GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0],0);
+                    if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING)
+                    {
+                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0], 0);
+                    }
                     else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING || skill.SkillArea == SkillArea.MIXEDAREA)
                     {
                         List<LivingPlaceable> Playerlist = GameManager.instance.playingPlaceable.TargetableUnits;
@@ -525,11 +545,14 @@ public abstract class Placeable: NetIdeable
                                 netidlist[j] = area[j].netId;
                             }
                         }
-                        else netidlist = new int[Playerlist.Count];
-
-                        for (int i = j ; i < netidlist.Length; i++)
+                        else
                         {
-                            netidlist[i] = Playerlist[i-j].netId;
+                            netidlist = new int[Playerlist.Count];
+                        }
+
+                        for (int i = j; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = Playerlist[i - j].netId;
                         }
 
                         GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
@@ -538,7 +561,7 @@ public abstract class Placeable: NetIdeable
                     else
                     {
                         int[] netidlist = new int[area.Count];
-                        for (int i =0; i < netidlist.Length; i++)
+                        for (int i = 0; i < netidlist.Length; i++)
                         {
                             netidlist[i] = area[i].netId;
                         }
@@ -548,7 +571,7 @@ public abstract class Placeable: NetIdeable
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
                 }
             }
-            
+
         }
     }
     /// <summary>
@@ -556,7 +579,7 @@ public abstract class Placeable: NetIdeable
     /// </summary>
     protected void OnMouseOver()
     {
-       
+
     }
 
     protected virtual void Awake()
@@ -570,7 +593,7 @@ public abstract class Placeable: NetIdeable
     /// </summary>
     public virtual void Init()
     {
-        
+
     }
 
     /// <summary>

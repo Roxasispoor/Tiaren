@@ -36,8 +36,8 @@ public class Grid : MonoBehaviour
 
     public GameObject[] prefabsList;
 
-    private List<Vector3Int> spawnPlayer1;
-    private List<Vector3Int> spawnPlayer2;
+    public List<Vector3Int> spawnPlayer1;
+    public List<Vector3Int> spawnPlayer2;
 
     public int FallDamage
     {
@@ -586,7 +586,7 @@ public class Grid : MonoBehaviour
                 }
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position = desiredPosition; //shifting model
             }
-            if(desiredPosition.y-1>0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
+            if(desiredPosition.y-1>=0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
             {
                 Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
             }
@@ -798,7 +798,8 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-
+        SpawnPlayer1 = jagged.GetSpawnsP1();
+        SpawnPlayer2 = jagged.GetSpawnsP2();
         Placeable.currentMaxId=Mathf.Max(Placeable.currentMaxId,maxfound+1);
     }
 

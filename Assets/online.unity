@@ -477,6 +477,8 @@ MonoBehaviour:
   - {fileID: 1431839064352928, guid: 3437068eee7f7ea4c9689096fce13a07, type: 2}
   - {fileID: 1143159617411820, guid: fae692dc4e436eb4080ed81177860dd0, type: 2}
   - {fileID: 1032257904305354, guid: 671061ba0126b58498597af2531c3378, type: 2}
+  spawnPlayer1: []
+  spawnPlayer2: []
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0

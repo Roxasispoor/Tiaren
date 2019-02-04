@@ -393,10 +393,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
-
+        NetworkManagerHUD hud = FindObjectOfType<NetworkManagerHUD>();
+        if (hud != null)
+            hud.showGUI = false;
         if (GameManager.instance.isClient)
         {
-            SoundHandler.Instance.PrepareAllSounds();
             SoundHandler.Instance.StartFightMusic();
         }
 

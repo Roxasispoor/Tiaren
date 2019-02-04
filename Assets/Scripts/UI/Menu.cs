@@ -26,6 +26,8 @@ public class Menu : MonoBehaviour{
             descriptions.Add(line);
         }
         reader.Close();
+
+        SoundHandler.Instance.StartMenuMusic();
     }
 
     public void ToggleTuto()
