@@ -137,14 +137,4 @@ public abstract class Effect
 
     }
 
-    public void GetLauncherAnimation()
-    {
-        animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
-    }
-
-    public float GetTimeOfLauncherAnimation()
-    {
-        return animLauncher.GetCurrentAnimatorStateInfo(0).length;
-    }
-
 }

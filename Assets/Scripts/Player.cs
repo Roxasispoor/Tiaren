@@ -1386,7 +1386,7 @@ public class Player : NetworkBehaviour
                         }
                         else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
                         {
-                            if (Pos.y != Grid.instance.sizeY - 1 && Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] == null)
+                            if (Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] == null || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z].IsLiving())
                             {
                                 blockallowed = true;
                             }
@@ -1485,7 +1485,7 @@ public class Player : NetworkBehaviour
         else if (skill.SkillEffect == SkillEffect.CREATE)
         {
             Placeable block = Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z];
-            if (block.GetType() == typeof(Goal) || block.IsSpawnPoint)
+            if (block.GetType() == typeof(Goal) || block.IsSpawnPoint || Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] != null)
             {
                 blockallowed = false;
             }
