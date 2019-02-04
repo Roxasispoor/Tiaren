@@ -1359,25 +1359,26 @@ public class Player : NetworkBehaviour
             skill.Use(GameManager.instance.playingPlaceable, targets);
             RpcUseSkill(numSkill, netidTarget, netidArea);
         
-            /*
+ /*            
             NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-            if (this == GameManager.instance.playingPlaceable.Player)
+            if (this == GameManager.instance.playingPlaceable.Player) //First check targets
             {
                 Vector3Int Playerpos = GameManager.instance.playingPlaceable.GetPosition();
                 Vector3Int Pos = target.GetPosition();
                 Vector3Int VectDist = Pos - Playerpos;
+                //prends en compte la hauteur
                 int yrange = target.IsLiving() ? VectDist.y : (VectDist.y == -1 ? 0 : VectDist.y);
                 yrange = (skill.Minrange > 0 ? (yrange >= 0 ? yrange : Math.Max(0, (-(skill.Maxrange - 1) + yrange)) * skill.Maxrange) : yrange);
                 int blockdistance = Math.Abs(VectDist.x) + Math.Abs(VectDist.z) + Math.Abs(yrange);
                 bool blockallowed = false;
-
+                
                 if (blockdistance <= skill.Maxrange && blockdistance >= skill.Minrange)
                 {
                     if (skill.SkillArea == SkillArea.THROUGHBLOCKS || !Grid.instance.RayCastBlock(VectDist.x, VectDist.y, VectDist.z,
                         VectDist.x == 0 ? 0 : VectDist.x / Math.Abs(VectDist.x), VectDist.y == 0 ? 0 : VectDist.y / Math.Abs(VectDist.y),
                         VectDist.z == 0 ? 0 : VectDist.z / Math.Abs(VectDist.z), GameManager.instance.playingPlaceable.GetPosition()))
                     {
-                        if (skill.SkillArea == SkillArea.CROSS)
+                        if (skill.SkillArea == SkillArea.CROSS) //Ligne droites
                         {
                             if (VectDist.y == 0 && (VectDist.x == 0 || VectDist.z == 0))
                             {
@@ -1467,7 +1468,7 @@ public class Player : NetworkBehaviour
                     }
                 }
             }
-        */
+   */     
         }
     }
 
