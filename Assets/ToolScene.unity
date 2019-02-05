@@ -332,3 +332,5 @@ MonoBehaviour:
   - {fileID: 1032257904305354, guid: b786e2e866b177145bea4ee1a2fc5f35, type: 2}
   - {fileID: 0}
   - {fileID: 1143159617411820, guid: fae692dc4e436eb4080ed81177860dd0, type: 2}
+  spawnPlayer1: []
+  spawnPlayer2: []

@@ -34,7 +34,7 @@ public class GameManager : NetworkBehaviour
 
     public Material spawnAllyMaterial;
     public Material spawnEnemyMaterial;
-
+    public float timerLength;
     /// <summary>
     /// Manages all the network part once in game
     /// </summary>
@@ -802,8 +802,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             playingPlaceable.Player.clock.IsFinished = false;
             CanGoNewTurn();
-            player1.GetComponent<Timer>().StartTimer(30f);
-            player2.GetComponent<Timer>().StartTimer(30f);
+            player1.GetComponent<Timer>().StartTimer(timerLength);
+            player2.GetComponent<Timer>().StartTimer(timerLength);
 
         }
     }
