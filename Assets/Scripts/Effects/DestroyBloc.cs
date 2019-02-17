@@ -31,12 +31,6 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public void Use()
     {
         Vector3 pos = Target.GetPosition();
-
-        if (GameManager.instance.isClient)
-        {
-            GameManager.instance.ResetAllBatches();
-        }
-
         Target.Destroy();
 
         for (int i = 0; i <depthExceed;i++)

@@ -731,7 +731,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         //Todo: if necessary chose them by big cube or something
         foreach (MeshFilter meshFilter in meshFilters)
         {
-            if (meshFilter.GetComponent<NetIdeable>() != null && meshFilter.GetComponent<NetIdeable>().shouldBatch)
+            if (meshFilter.GetComponent<NetIdeable>() != null && meshFilter.GetComponent<NetIdeable>().shouldBatch 
+                && !meshFilter.GetComponent<NetIdeable>().isMoving)
             {
                 CombineInstance currentInstance = new CombineInstance
                 {

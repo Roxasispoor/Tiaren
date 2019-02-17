@@ -15,6 +15,7 @@ namespace Barebones.MasterServer
     /// </summary>
     public class CreateRoom : MonoBehaviour
     {
+        private string tempAdressMaster;
         public PlayerAccount account;
         RoomAccessPacket access;
         EventsChannel.Promise promise;
@@ -90,14 +91,13 @@ namespace Barebones.MasterServer
                 {
                 if (gameInfo==null || gameInfo.Address == "")
                 {
-                        Debug.Log("Failed to find a ssuitable game creating one: ");
+                        Debug.Log("Failed to find a suitable game creating one: ");
                         OnCreateClick();
                 }
                 else
                     {
                   
                         Debug.Log("Start on found game");
-
 
 
                         GetAccess(gameInfo.Id);
@@ -124,6 +124,7 @@ namespace Barebones.MasterServer
                 }
                 GameObject.Find("Canvas").SetActive(false);
                 SceneManager.LoadScene("online");
+                tempAdressMaster = FindObjectOfType<ConnectionToMaster>().ServerIp;
                 this.access = access;
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 //StartCoroutine(WaitSceneLoaded(access));
@@ -236,6 +237,7 @@ namespace Barebones.MasterServer
             networkManager.networkAddress = access.RoomIp;
             networkManager.networkPort = access.RoomPort;
             networkManager.launchedFromMaster = true;
+            FindObjectOfType<ConnectionToMaster>().ServerIp = tempAdressMaster;
             //networkManager.username=
             // Start connecting
             networkManager.StartClient();
