@@ -591,11 +591,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// <param name="block"></param>
     public void RemoveBlockFromBatch(Placeable block)
     {
+        if (block != null && block.batch != null && block.batch.combineInstances != null)
+        {
+            block.batch.combineInstances.Remove(block.MeshInCombined);
+            block.GetComponent<MeshRenderer>().enabled = true;
 
-        block.batch.combineInstances.Remove(block.MeshInCombined);
-        block.GetComponent<MeshRenderer>().enabled = true;
-
-        RefreshBatch(block);
+            RefreshBatch(block);
+        }
 
     }
     /// <summary>
