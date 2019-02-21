@@ -1567,11 +1567,7 @@ public class Player : NetworkBehaviour
         else
         {
             NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-            Debug.LogError("Netid is" + netidTarget + "and target is at" + target.GetPosition());
-            foreach (int k in netidArea)
-            {
-                Debug.LogError(k);
-            }
+
             GameManager.instance.playingPlaceable.ResetTargets();
 
             if (netidArea.Length == 0)
