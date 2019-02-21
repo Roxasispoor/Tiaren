@@ -234,7 +234,7 @@ namespace Barebones.MasterServer
     private void OnSceneLoaded(Scene aScene, LoadSceneMode aMode)
     {
             var networkManager = FindObjectOfType<NetworkManagerExtended>();
-            networkManager.networkAddress = access.RoomIp;
+            networkManager.networkAddress = tempAdressMaster;
             networkManager.networkPort = access.RoomPort;
             networkManager.launchedFromMaster = true;
             FindObjectOfType<ConnectionToMaster>().ServerIp = tempAdressMaster;
