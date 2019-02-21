@@ -354,10 +354,12 @@ public abstract class Placeable : NetIdeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-            
+            if(!IsLiving())
+            { 
             GameManager.instance.RemoveBlockFromBatch(this);
-            
+            }
             gameObject.SetActive(false);
+            this.UnHighlight();
             Destroy(this.gameObject);
         }
 

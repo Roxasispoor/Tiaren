@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 [Serializable]
@@ -114,7 +112,7 @@ public class LivingPlaceable : Placeable
         set
         {
             base.Player = value;
-            if (GameManager.instance && GameManager.instance.player1 != null && Player!=null && GameManager.instance.player1 == Player.gameObject)
+            if (GameManager.instance && GameManager.instance.player1 != null && Player != null && GameManager.instance.player1 == Player.gameObject)
             {
                 PlayerPosesser = "player1";
             }
@@ -890,7 +888,7 @@ public class LivingPlaceable : Placeable
     // Use this for initialization //TO KEEP AS IS
     protected override void Awake()
     {
-        if(Grid.instance.UseAwakeLiving)
+        if (Grid.instance.UseAwakeLiving)
         {
 
             shouldBatch = false;
@@ -1094,7 +1092,7 @@ public class LivingPlaceable : Placeable
             targetableUnits = new List<LivingPlaceable>();
         }
     }
-    
+
 
     /// <summary>
     /// To call at the beginning of the turn of the character
@@ -1111,7 +1109,7 @@ public class LivingPlaceable : Placeable
     {
         circleTeam.color = Player.color;
     }
-    
+
     /// <summary>
     /// method to call to destroy the object 
     /// </summary>
@@ -1134,25 +1132,29 @@ public class LivingPlaceable : Placeable
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();
             }
-            foreach (Effect effect in AttachedEffects)
+            if (AttachedEffects != null)
             {
-                effect.TurnActiveEffect = 1;
-                EffectManager.instance.DirectAttack(effect);
+                foreach (Effect effect in AttachedEffects)
+                {
+                    effect.TurnActiveEffect = 1;
+                    EffectManager.instance.DirectAttack(effect);
+                }
+                AttachedEffects.Clear();
             }
-            AttachedEffects.Clear();
             if (GameManager.instance.playingPlaceable == this)
             {
-                if(MoveCoroutine!=null)
+                if (MoveCoroutine != null)
                 {
                     StopCoroutine(MoveCoroutine);
                 }
                 GameManager.instance.EndOFTurn();
             }
+
             this.IsDead = true;
             this.gameObject.SetActive(false);
             CounterDeaths++;
         }
-        
+
     }
 
     /* public void HighlightForSpawn()
@@ -1318,7 +1320,7 @@ public class LivingPlaceable : Placeable
             if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null && !placeable.IsLiving()) //if we haven't seen this one before
             {
                 // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                
+
                 Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
                     Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
                 Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
@@ -1440,7 +1442,7 @@ public class LivingPlaceable : Placeable
                     {
                         if (TProperty == "System.Single")
                         {
-                            eff = (Effect)JsonUtility.FromJson<ParameterChangeV2<LivingPlaceable, float>>(a);
+                            eff = JsonUtility.FromJson<ParameterChangeV2<LivingPlaceable, float>>(a);
                         }
                     }
                     if (eff == null)
