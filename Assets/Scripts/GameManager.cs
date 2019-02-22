@@ -432,10 +432,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void ResetGrid()
     {
-        foreach (Transform child in GameManager.instance.batchFolder.transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
+        ResetBatchFolder();
         Grid.instance.GridMatrix = new Placeable[Grid.instance.sizeX, Grid.instance.sizeY, Grid.instance.sizeZ];
         foreach (Transform child in GameManager.instance.gridFolder.transform)
         {
@@ -633,20 +630,45 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         else
         {
             Debug.Log("erreur,batch material non trouvé" + batch.material);
+            Destroy(newBatch.GetComponent<MeshFilter>().mesh);
+            Destroy(newBatch.GetComponent<MeshFilter>().sharedMesh);
+            Destroy(newBatch);
         }
 
     }
+    public void DestroyAllBatches()
+    {
+        if(dictionaryMaterialsFilling!=null)
+        { 
+        foreach (List<Batch> batches in dictionaryMaterialsFilling.Values)
+        {
+            foreach (Batch batch in batches)
+            {
+                batch.combineInstances.Clear();
+            }
+            batches.Clear();
+        }
+        dictionaryMaterialsFilling.Clear();
+        }
+        ResetBatchFolder();
+    }
+    public void ResetBatchFolder()
+    {
+        foreach (Transform child in batchFolder.transform)
+        {
+            MeshFilter meshFilter = child.gameObject.GetComponent<MeshFilter>();
+            Destroy(meshFilter.mesh);
+            Destroy(meshFilter.sharedMesh);
+            Destroy(child.gameObject);
+        }
 
+    }
     public void ResetAllBatches()
     {
 
         if (Hovered != null)
         {
             Hovered.UnHighlight();
-        }
-        foreach (Transform child in batchFolder.transform)
-        {
-            Destroy(child.gameObject);
         }
         GameManager.instance.InitialiseBatchFolder();
     }
@@ -680,9 +702,32 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             GameManager.instance.State = States.Move;
         }
     }
-    public void InitStartGame()
+    public void InitStartGameServer()
     {
-        //Initialisation de MethodsForEffects
+        List<float> biases = new List<float>();
+        for (int i = 0; i < Player1.Characters.Count * 2; i++)
+        {
+            biases.Add(Random.value/100);
+            Debug.Log(biases[i]);
+        }
+        List<float> biasesJ1 = new List<float>();
+        List<float> biasesJ2 = new List<float>();
+        biases.Sort();
+        for (int i = 0; i < biases.Count; i++)
+        {
+            if (i%2 == 0)
+            {
+                biasesJ1.Add(biases[i]);
+            }
+            else
+            {
+                biasesJ2.Add(biases[i]);
+            }
+        }
+        Player1.RpcBiasSpeed(biasesJ1.ToArray());
+        Player1.BiasSpeed(biasesJ1.ToArray());
+        Player2.RpcBiasSpeed(biasesJ2.ToArray());
+        Player2.BiasSpeed(biasesJ2.ToArray());
 
     }
     /// <summary>
@@ -727,7 +772,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void InitialiseBatchFolder()
     {
-        dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
+        DestroyAllBatches();
+        if (dictionaryMaterialsFilling != null)
+        {
+            dictionaryMaterialsFilling.Clear();
+        }
+        else
+        {
+            dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
+        }
 
         MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
