@@ -26,7 +26,7 @@ public class ZipLineTeleport : EffectOnObjectBloc
             (Target.GetPosition() - zip).magnitude,LayerMask.GetMask("Placeable"))
             )
         {
-            Grid.instance.MoveBlock(Launcher, zip + new Vector3Int(0, 1, 0),false);
+            Grid.instance.MoveBlock(Launcher, zip + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
             
             if (GameManager.instance.isClient)
             {
