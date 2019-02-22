@@ -9,8 +9,6 @@ public class WaterCube : StandardCube {
         this.movable = false;
         this.Walkable = false;
 
-        OnWalkEffects.Add(new Damage(9999));
-
     }
     private void Start()
     {

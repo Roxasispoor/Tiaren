@@ -115,7 +115,6 @@ public class ObjectOnBloc : NetIdeable {
             isPicked = false;
             transform.SetParent(Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z].transform.Find("Inventory"));
             transform.localPosition = new Vector3();
-            GetComponentInChildren<Transform>().localPosition = Vector3.up;
         }
 
     }
