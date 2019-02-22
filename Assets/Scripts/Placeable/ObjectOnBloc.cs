@@ -57,7 +57,6 @@ public class ObjectOnBloc : NetIdeable {
         {
             PickObjectOnBlockEffect eff = new PickObjectOnBlockEffect(this);
             Skill taker = new Skill(0, 0, new List<Effect>() { eff }, SkillType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
-            //taker.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities" + taker.SkillName);
             givenSkills.Add(taker);
         }
     }

@@ -882,7 +882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LogLevel: 3
   SpawnControllerLogLevel: 2
-  DefaultMachineIp: 127.0.0.1
+  DefaultMachineIp: 192.168.43.138
   DefaultExePath: ..\Tiaren.exe
   DefaultSpawnInBatchmode: 0
   MaxSpawnedProcesses: 5
@@ -1160,6 +1160,11 @@ Prefab:
     - target: {fileID: 4269424499726786, guid: 4d75527e070e7644eb86609370a53e80, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114628823794450154, guid: 4d75527e070e7644eb86609370a53e80,
+        type: 2}
+      propertyPath: ServerIp
+      value: 192.168.43.138
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d75527e070e7644eb86609370a53e80, type: 2}

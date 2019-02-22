@@ -784,10 +784,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             }
 
             //initialise UI
-
-            player2.GetComponent<UIManager>().ChangeTurn();
-            player1.GetComponent<UIManager>().ChangeTurn();
-            State = States.Move;
             // reducing cooldown of skill by 1
             foreach (Skill sk in playingPlaceable.Skills)
             {
@@ -796,6 +792,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.TourCooldownLeft--;
                 }
             }
+            player2.GetComponent<UIManager>().ChangeTurn();
+            player1.GetComponent<UIManager>().ChangeTurn();
+            State = States.Move;
+            
             SetCamera();
 
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
