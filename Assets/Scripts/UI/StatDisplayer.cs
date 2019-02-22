@@ -26,7 +26,7 @@ public class StatDisplayer : MonoBehaviour {
         team.text = "Team : " + character.Player.name;
         hp.text = "HP : " + character.CurrentHP;
         mov.text = "MOV : " + character.CurrentPM;
-        speed.text = "SPEED : " + character.Speed;
+        speed.text = "SPEED : " + (int) character.Speed;
         dext.text = "DEXT : " + character.Dexterity;
         def.text = "DEF : " + character.Def;
         mDef.text = "M.DEF : " + character.Mdef;

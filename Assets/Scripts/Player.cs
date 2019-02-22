@@ -599,6 +599,7 @@ public class Player : NetworkBehaviour
         foreach (GameObject chara in Characters)
         {
             chara.GetComponent<LivingPlaceable>().Speed += biases[i];
+            chara.GetComponent<LivingPlaceable>().SpeedStack = 1 / chara.GetComponent<LivingPlaceable>().Speed;
             i++;
         }
     }
