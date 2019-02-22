@@ -22,7 +22,5 @@ public class Flag : ObjectOnBloc {
             transform.localPosition = new Vector3();
             currentPos = new Vector3Int(currentPos.x, currentPos.y + 1, currentPos.z);
         }
-
-       
     }
 }

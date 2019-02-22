@@ -30,7 +30,7 @@ public class Skill
     [SerializeField]
     public DelegateCondition condition;
     [SerializeField]
-    private string description = "Ca tue";
+    private string description = "Use the object";
     private Sprite abilitySprite;
     [SerializeField]
     private SkillType skillType;
