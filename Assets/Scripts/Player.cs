@@ -534,6 +534,7 @@ public class Player : NetworkBehaviour
         Isready = true;
         if (GameManager.instance.player1.GetComponent<Player>().Isready && GameManager.instance.player2.GetComponent<Player>().Isready)
         {
+            GameManager.instance.InitStartGameServer();
             RpcEndSpawnAndStartGame();
             GameManager.instance.IsGameStarted = true;
             GameManager.instance.BeginningOfTurn();
@@ -575,6 +576,30 @@ public class Player : NetworkBehaviour
             Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
             Grid.instance.MoveBlock(placeable, pos, true);
             placeable.gameObject.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// To call to update the speed with the bias to avoid conflicting speed (the same)
+    /// </summary>
+    /// <param name="biases"></param>
+    [ClientRpc]
+    public void RpcBiasSpeed(float[] biases)
+    {
+        BiasSpeed(biases);
+    }
+
+    /// <summary>
+    /// To call to update the speed with the bias to avoid conflicting speed (the same)
+    /// </summary>
+    /// <param name="biases"></param>
+    public void BiasSpeed(float[] biases)
+    {
+        int i = 0;
+        foreach (GameObject chara in Characters)
+        {
+            chara.GetComponent<LivingPlaceable>().Speed += biases[i];
+            i++;
         }
     }
 

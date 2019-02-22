@@ -680,9 +680,32 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             GameManager.instance.State = States.Move;
         }
     }
-    public void InitStartGame()
+    public void InitStartGameServer()
     {
-        //Initialisation de MethodsForEffects
+        List<float> biases = new List<float>();
+        for (int i = 0; i < Player1.Characters.Count * 2; i++)
+        {
+            biases.Add(Random.value/100);
+            Debug.Log(biases[i]);
+        }
+        List<float> biasesJ1 = new List<float>();
+        List<float> biasesJ2 = new List<float>();
+        biases.Sort();
+        for (int i = 0; i < biases.Count; i++)
+        {
+            if (i%2 == 0)
+            {
+                biasesJ1.Add(biases[i]);
+            }
+            else
+            {
+                biasesJ2.Add(biases[i]);
+            }
+        }
+        Player1.RpcBiasSpeed(biasesJ1.ToArray());
+        Player1.BiasSpeed(biasesJ1.ToArray());
+        Player2.RpcBiasSpeed(biasesJ2.ToArray());
+        Player2.BiasSpeed(biasesJ2.ToArray());
 
     }
     /// <summary>
