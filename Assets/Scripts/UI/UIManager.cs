@@ -261,6 +261,7 @@ public class UIManager : MonoBehaviour
         if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
         {
             GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
+            zoneToclear.gameObject.SetActive(true);
             ClearZone(zoneToclear);
 
             UpdateAbilities(GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
@@ -268,17 +269,22 @@ public class UIManager : MonoBehaviour
             ClearZone(zoneToclear);
             UpdateTimeline();
             gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(true);
+            
             hpDisplay.SetActive(true);
+            movDisplay.gameObject.SetActive(true);
         }
         else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
             GameObject zoneToclear = gameCanvas.transform.Find("Skill Zone").gameObject;
             ClearZone(zoneToclear);
+            zoneToclear.gameObject.SetActive(false);
+
             zoneToclear = gameCanvas.transform.Find("Timeline").gameObject;
             ClearZone(zoneToclear);
             UpdateTimeline();
             gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(false);
             hpDisplay.SetActive(false);
+            movDisplay.gameObject.SetActive(false);
         }
     }
 
