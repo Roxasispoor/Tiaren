@@ -83,7 +83,6 @@ public class GameManager : NetworkBehaviour
     private Player winner;
     public LivingPlaceable playingPlaceable;
 
-
     private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
 
     /// <summary>
@@ -309,7 +308,6 @@ public class GameManager : NetworkBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
         }
-        
         idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         //    DontDestroyOnLoad(gameObject);
@@ -592,10 +590,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             block.batch.combineInstances.Remove(block.MeshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
-
             RefreshBatch(block);
         }
-
     }
     /// <summary>
     /// Creates a new batch from the material given, combines instances in dico 
@@ -657,8 +653,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         foreach (Transform child in batchFolder.transform)
         {
             MeshFilter meshFilter = child.gameObject.GetComponent<MeshFilter>();
-            Destroy(meshFilter.mesh);
             Destroy(meshFilter.sharedMesh);
+            Destroy(meshFilter.mesh);
             Destroy(child.gameObject);
         }
 
@@ -670,6 +666,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             Hovered.UnHighlight();
         }
+        Resources.UnloadUnusedAssets();
         GameManager.instance.InitialiseBatchFolder();
     }
     public ObjectOnBloc[] GetObjectsOnBlockUnder(Vector3Int pos)
