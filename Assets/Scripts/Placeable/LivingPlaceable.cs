@@ -1121,6 +1121,7 @@ public class LivingPlaceable : Placeable
         this.IsDead = true;
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
+        TurnsRemaingingCemetery = (int) DeathLength;
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
