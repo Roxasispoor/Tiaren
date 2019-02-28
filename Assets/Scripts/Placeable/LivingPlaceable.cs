@@ -1070,8 +1070,9 @@ public class LivingPlaceable : Placeable
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
-
-        rend = GetComponentInChildren<Renderer>();
+        
+        
+        rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.shader = outlineShader;
