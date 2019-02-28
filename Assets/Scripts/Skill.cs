@@ -288,7 +288,10 @@ public class Skill
         }
         SendAnimationInfo(animTargets, placeableTargets, positionTargets);
         PlayAnimation();
-        this.tourCooldownLeft = this.cooldown;//On pourrait avoir de la cdr dans les effets afterall
+        this.tourCooldownLeft = this.cooldown;
+        Debug.Log(this.Cost);
+        caster.CurrentPA -= this.Cost;
+        Debug.Log(caster.CurrentPA);
         foreach (Placeable target in targets)
         { 
             foreach (Effect effect in effects)
@@ -301,10 +304,11 @@ public class Skill
 
             }
         }
+
         GameManager.instance.activeSkill = null;
         if(GameManager.instance.playingPlaceable.Player.isLocalPlayer)
         { 
-        GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
+            GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
         }
         return true;
     }

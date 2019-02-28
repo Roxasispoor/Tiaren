@@ -856,6 +856,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
+            Debug.Log(PlayingPlaceable.CurrentPA);
             playingPlaceable.Player.clock.IsFinished = false;
             CanGoNewTurn();
             player1.GetComponent<Timer>().StartTimer(timerLength);

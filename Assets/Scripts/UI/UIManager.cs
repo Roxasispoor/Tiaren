@@ -131,9 +131,14 @@ public class UIManager : MonoBehaviour
                     button.GetComponent<Image>().color = Color.gray;
                     button.transform.Find("Cooldown").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.TourCooldownLeft.ToString();
                 }
+                else if(button.GetComponent<SkillInfo>().Skill.Cost > GameManager.instance.PlayingPlaceable.CurrentPA)
+                {
+                    button.GetComponent<Image>().color = Color.gray;
+                }
             }
         }
     }
+
     public void SpawnUI()
     {
         TeamCanvas.SetActive(false);
@@ -167,7 +172,6 @@ public class UIManager : MonoBehaviour
     public int UpdateAbilities(LivingPlaceable character, Vector3Int position)
 
     {
-
         if (character == null)
         {
             return 0;

@@ -843,8 +843,7 @@ public class Player : NetworkBehaviour
             {
                 CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
             }
-
-            GameManager.instance.playingPlaceable.ResetAreaOfMovement();//whatever, auto targeted do not go through dispatch
+            GameManager.instance.playingPlaceable.ResetAreaOfMovement();
             return;
         }
 
@@ -899,6 +898,7 @@ public class Player : NetworkBehaviour
         else if (skill.SkillType == SkillType.LIVING)
         {
             List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
                 targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.transform.position);
