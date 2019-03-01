@@ -1173,6 +1173,7 @@ public class LivingPlaceable : Placeable
     {
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
+        Debug.Log("area of movement " + areaOfMouvement.Count);
         foreach (NodePath node in AreaOfMouvement)
         {
 

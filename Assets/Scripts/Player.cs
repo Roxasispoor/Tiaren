@@ -816,40 +816,37 @@ public class Player : NetworkBehaviour
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
-
+        
         if (skill.SkillType == SkillType.ALREADYTARGETED)
         {
+            Vector3 Playerpos = playingPlaceable.GetPosition();
             if (skill.SkillEffect == SkillEffect.UP)
             {
-                Vector3 Playerpos = playingPlaceable.GetPosition();
                 if (Playerpos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z] == null)
                 {
-                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0);
+                    OnUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0);
                 }
             }
             else
             {
-                CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
+                OnUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
             }
-            GameManager.instance.playingPlaceable.ResetAreaOfMovement();
             return;
         }
 
         RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
         rayselector.Pattern = SkillArea.NONE;
         rayselector.EffectArea = 0;
-        GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
-        GameManager.instance.playingPlaceable.ResetTargets();
         playingPlaceable.ResetAreaOfMovement();
         playingPlaceable.ResetTargets();
         if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
-            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
 
             if (skill.SkillArea == SkillArea.CROSS)
             {
-                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.transform.position);
+                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.GetPosition());
             }
             else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
             {
@@ -866,7 +863,7 @@ public class Player : NetworkBehaviour
             }
             else if (skill.SkillEffect == SkillEffect.MOVE)
             {
-                vect = Grid.instance.PushPattern(vect, playingPlaceable.transform.position);
+                vect = Grid.instance.PushPattern(vect, playingPlaceable.GetPosition());
             }
 
             foreach (Vector3Int v3 in vect)
@@ -885,11 +882,11 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
 
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
-                targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.transform.position);
+                targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.GetPosition());
             }
 
             playingPlaceable.TargetableUnits = targetableunits;
@@ -899,10 +896,10 @@ public class Player : NetworkBehaviour
         {
             if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
             {
-                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
                 if (skill.SkillEffect == SkillEffect.SPINNING)
                 {
-                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
+                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
                 }
 
                 playingPlaceable.TargetableUnits = targetableunits;
@@ -1511,7 +1508,10 @@ public class Player : NetworkBehaviour
         }
         else
         {
+            GameManager.instance.activeSkill = null;
+            GameManager.instance.State = States.Move;
             FloatingTextController.CreateFloatingText("Not enought PA", GameManager.instance.PlayingPlaceable.transform);
+            cameraScript.BackToMovement();
         }
     }
 

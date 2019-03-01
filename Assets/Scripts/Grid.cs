@@ -343,7 +343,7 @@ public class Grid : MonoBehaviour
                 CheckColumn(current, 0, 0, +1, toCheck, ref accessibleBloc, distance, jumpValue);
             }
         }
-
+        Debug.Log("Accessible blocs : " + accessibleBloc.Count);
         return accessibleBloc;
     }
 
