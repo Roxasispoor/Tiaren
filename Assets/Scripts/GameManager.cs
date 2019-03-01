@@ -130,13 +130,20 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public bool isGameStarted = false;
     /// <summary>
-    /// Ask alban
+    /// Used for the network
     /// </summary>
     public TransmitterNoThread transmitter;
-
-    private Player winner;
+    /// <summary>
+    /// The winner of the game.
+    /// </summary>
+    public Player winner;
+    /// <summary>
+    /// The character currently
+    /// </summary>
     public LivingPlaceable playingPlaceable;
-
+    /// <summary>
+    /// Characters you can create
+    /// </summary>
     private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
 
     /// <summary>
@@ -150,21 +157,6 @@ public class GameManager : NetworkBehaviour
             return numberTurn;
         }
     }
-
-
-    public Player Winner
-    {
-        get
-        {
-            return winner;
-        }
-
-        set
-        {
-            winner = value;
-        }
-    }
-
 
     public LivingPlaceable PlayingPlaceable
     {
@@ -311,16 +303,13 @@ public class GameManager : NetworkBehaviour
     private void Awake()
 
     {
-
-        //CSVReader.ReadVectors("untitled.txt");
-        //MapConverter.ConvertGridFromText("Towers.txt", "Towers.json");
+        // Singleton patern
         if (instance == null)
         {
 
             //if not, set instance to this
             instance = this;
         }
-
         //If instance already exists and it's not this:
         else if (instance != this)
         {
@@ -328,9 +317,12 @@ public class GameManager : NetworkBehaviour
             //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
         }
+
+
         idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
-        //    DontDestroyOnLoad(gameObject);
+        batchFolder = new GameObject("Batch Folder");
+
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         networkManager = (NetworkManager)FindObjectOfType(typeof(NetworkManager));
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
@@ -339,7 +331,7 @@ public class GameManager : NetworkBehaviour
         }
 
 
-        //init Posiible characters
+        //init Posissible characters
         string path = "Teams.json";
         string line;
 
@@ -349,6 +341,7 @@ public class GameManager : NetworkBehaviour
             SpriteAndName spriteAndName = JsonUtility.FromJson<SpriteAndName>(line);
             PossibleCharacters.Add(spriteAndName);
         }
+
         transmitter = GetComponent<TransmitterNoThread>();
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
