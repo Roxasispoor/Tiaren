@@ -235,8 +235,6 @@ public class TransmitterNoThread : MonoBehaviour
                         Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
                                 (int)newLivingStats.positionSave.z);
                         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
-                        charac1.Weapons.Add(Instantiate(GameManager.instance.prefabWeapons[0], charac.transform)); // to change in function of the start weapon
-                        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
                         charac1.InitNoClass();
                         charac1.LoadFromString(strCopy);
                         GameManager.instance.idPlaceable[charac1.netId] = charac1;
@@ -259,8 +257,6 @@ public class TransmitterNoThread : MonoBehaviour
                         Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
                                 (int)newLivingStats.positionSave.z);
                         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
-                        charac1.Weapons.Add(Instantiate(GameManager.instance.prefabWeapons[0], charac.transform)); // to change in function of the start weapon
-                        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
                         charac1.InitNoClass();
                         charac1.LoadFromString(strCopy);
 

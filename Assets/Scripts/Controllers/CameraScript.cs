@@ -89,7 +89,7 @@ public class CameraScript : NetworkBehaviour
         //Storing y position in order to not modifie the high when travelling with keyboard
         float y = position.y;
 
-        if (!GameManager.instance.IsGameStarted)
+        if (!GameManager.instance.isGameStarted)
         {
             //If there is no target, create a temporary target at 'distance' from the cameras current viewpoint
             if (!target)
