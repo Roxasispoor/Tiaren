@@ -196,20 +196,6 @@ public class UIManager : MonoBehaviour
             button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
             numberInstantiated++;
         }
-        if (character.EquipedWeapon != null && character.EquipedWeapon.Skills != null)
-        {
-            foreach (Skill skill in character.EquipedWeapon.Skills)
-            {
-                Button button = Instantiate(prefabAbilityButton, SkillZone).GetComponentInChildren<Button>();
-                button.GetComponent<SkillInfo>().Skill = skill;
-                button.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
-                button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
-                button.onClick.AddListener(skill.Activate);
-                button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
-                numberInstantiated++;
-                Debug.Log("new skill from weapon");
-            }
-        }
         foreach (ObjectOnBloc obj in GameManager.instance.GetObjectsOnBlockUnder(position))
         {
             foreach (Skill skill in obj.GivenSkills)

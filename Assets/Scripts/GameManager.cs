@@ -9,6 +9,9 @@ using UnityEngine.Networking;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
+    /// <summary>
+    /// Name of the file to charge for the map
+    /// </summary>
     [SerializeField]
     private string mapToCharge = "Castles.json";
     /// <summary>
@@ -31,9 +34,17 @@ public class GameManager : NetworkBehaviour
     ///  Material used to highlight target cubes (not quads) when skill is used
     /// </summary>
     public Material targetMaterial;
-
+    /// <summary>
+    /// Material used for ally block (atm : spawn and goals)
+    /// </summary>
     public Material spawnAllyMaterial;
+    /// <summary>
+    /// Material used for ally block (atm : spawn and goals)
+    /// </summary>
     public Material spawnEnemyMaterial;
+    /// <summary>
+    /// Length of turn in second
+    /// </summary>
     public float timerLength;
     /// <summary>
     /// Manages all the network part once in game
@@ -48,7 +59,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     private int numberTurn = 0;
     /// <summary>
-    /// Allows to find very fast placeable corresponding to netId
+    /// Allows to find placeable corresponding to netId efficiently
     /// </summary>
     public Dictionary<int, NetIdeable> idPlaceable;
     /// <summary>
@@ -59,34 +70,77 @@ public class GameManager : NetworkBehaviour
     /// Parent of batches in hierarchy
     /// </summary>
     public GameObject batchFolder;
+    /// <summary>
+    /// Array where are stored all the character's prefabs
+    /// </summary>
     public GameObject[] prefabCharacs;
-    public GameObject[] prefabWeapons;
+    // TODO: redondance avec Grid.instance ?
     public GameObject gridFolder;
+    /// <summary>
+    /// GameObject representing player 1
+    /// </summary>
     public GameObject player1; //Should be Object
+    /// <summary>
+    /// GameObject representing player 1
+    /// </summary>
     public GameObject player2; //Should be Object
+    /// <summary>
+    /// Used during the spawn, the character selected
+    /// </summary>
     private LivingPlaceable characterToSpawn;
+    /// <summary>
+    /// Username of player 1 (Used for reconnection)
+    /// </summary>
     public string player1Username = "";
+    /// <summary>
+    /// Username of player 1 (Used for reconnection)
+    /// </summary>
     public string player2Username = ""; //TODOShould instead be account and serialize 
+    /// <summary>
+    /// Color representing the local player
+    /// </summary>
     public Color localPlayerColor = Color.blue;
+    /// <summary>
+    /// Color reprensenting the remote player
+    /// </summary>
     public Color ennemyPlayerColor = Color.red;
-    public GameObject[] prefabMonsters;
+    /// <summary>
+    /// Skill currently selected
+    /// </summary>
     public Skill activeSkill;
+    /// <summary>
+    /// The states of the game
+    /// </summary>
     private States state;
+    /// <summary>
+    /// The placeable currently hovered (filled by the camera script)
+    /// </summary>
     private Placeable hovered;
-    private bool areaffect = false;
-
+    /// <summary>
+    /// A list sorted by the apparition order of the next characters (the list is wide enough
+    /// to have each characters appearing at least once).
+    /// </summary>
     private List<StackAndPlaceable> turnOrder;
+    /// <summary>
+    /// Dictionnary referencing the batch per material
+    /// </summary>
     private Dictionary<string, List<Batch>> dictionaryMaterialsFilling;
-
-    private bool isGameStarted = false;
+    /// <summary>
+    /// True if the game started (Set before the 1st turn)
+    /// </summary>
+    public bool isGameStarted = false;
+    /// <summary>
+    /// Ask alban
+    /// </summary>
     public TransmitterNoThread transmitter;
+
     private Player winner;
     public LivingPlaceable playingPlaceable;
 
     private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
 
     /// <summary>
-    /// display number of the current turn
+    /// Display number of the current turn
     /// </summary>
     /// 
     public int NumberTurn
@@ -95,17 +149,7 @@ public class GameManager : NetworkBehaviour
         {
             return numberTurn;
         }
-
-        set
-        {
-            numberTurn = value;
-        }
     }
-
-    /// <summary>
-    /// Indique player having turn
-    /// </summary>
-
 
 
     public Player Winner
@@ -179,30 +223,6 @@ public class GameManager : NetworkBehaviour
             characterToSpawn = value;
         }
     }
-    public bool AreaEffect
-    {
-        get
-        {
-            return areaffect;
-        }
-        set
-        {
-            areaffect = value;
-        }
-    }
-
-    public bool IsGameStarted
-    {
-        get
-        {
-            return isGameStarted;
-        }
-        set
-        {
-            isGameStarted = value;
-        }
-    }
-
 
     public List<SpriteAndName> PossibleCharacters
     {
@@ -811,6 +831,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void BeginningOfTurn()
     {
         Grid.instance.Gravity();
+        numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
         playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
@@ -951,8 +972,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         charac1.Init(prefabNumber);
         Vector3Int posPers = spawnCoordinates;
         Grid.instance.GridMatrix[posPers.x, posPers.y, posPers.z] = charac1;
-        charac1.Weapons.Add(Instantiate(prefabWeapons[0], charac.transform)); // to change in function of the start weapon
-        charac1.EquipedWeapon = charac1.Weapons[0].GetComponent<Weapon>();
         charac1.netId = Placeable.currentMaxId;
         //Debug.Log(charac1.netId);
         idPlaceable[charac1.netId] = charac1;
@@ -972,40 +991,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     private void Update()
     {
-
-    }
-    // <summary>
-    /// Unused function to apply function to all visible characters
-    /// </summary>
-    /// <param name="shooter"></param>
-    public void Shootable(LivingPlaceable shooter)
-    {
-        Vector3 shootPos = shooter.GetPosition() + shooter.ShootPosition;
-        foreach (GameObject iterCharac1 in player1.GetComponent<Player>().Characters)
-        {
-
-            LivingPlaceable charac1 = iterCharac1.GetComponent<LivingPlaceable>();
-
-            if (shooter.CanHit(charac1).Count > 0)
-            {
-
-                //typically, changing color
-            }
-
-        }
-
-        foreach (GameObject iterCharac2 in player2.GetComponent<Player>().Characters)
-        {
-            LivingPlaceable charac2 = iterCharac2.GetComponent<LivingPlaceable>();
-
-            if (shooter.CanHit(charac2).Count > 0)
-            {
-
-                //typically, changing color
-            }
-
-
-        }
 
     }
 

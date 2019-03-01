@@ -49,10 +49,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private List<Skill> skills;
     [SerializeField]
-    private List<GameObject> weapons;
-    [SerializeField]
     private SpriteRenderer circleTeam;
-    private Weapon equipedWeapon;
     [SerializeField]
     private bool isDead;
     private int counterDeaths;
@@ -264,32 +261,6 @@ public class LivingPlaceable : Placeable
         set
         {
             isDead = value;
-        }
-    }
-
-    public List<GameObject> Weapons
-    {
-        get
-        {
-            return weapons;
-        }
-
-        set
-        {
-            weapons = value;
-        }
-    }
-
-    public Weapon EquipedWeapon
-    {
-        get
-        {
-            return equipedWeapon;
-        }
-
-        set
-        {
-            equipedWeapon = value;
         }
     }
 
@@ -829,56 +800,6 @@ public class LivingPlaceable : Placeable
         effect.TargetAndInvokeEffectManager(this);
     }
 
-    /// <summary>
-    /// return points of placeable where player can shoot
-    /// </summary>
-    /// <returns></returns>
-    public List<HitablePoint> CanHit(Placeable placeable)
-    {
-        List<HitablePoint> pointsToSend = new List<HitablePoint>();
-
-        Vector3 starting = this.transform.position + this.shootPosition;
-
-
-        foreach (HitablePoint x in placeable.HitablePoints)
-        {
-            Vector3 arrival = placeable.transform.position + x.RelativePosition;
-            Vector3 direction = arrival - starting;
-            if (direction.magnitude > this.EquipedWeapon.Range)
-            {
-                x.Shootable = false;
-            }
-            else
-            {
-
-                RaycastHit[] hits = Physics.RaycastAll(starting,
-                    direction, (starting - arrival).magnitude + 0.1f);//les arrondis i guess
-                int significantItemShot = 0;
-                foreach (RaycastHit hit in hits) //a while would be better
-                {
-
-                    Placeable placeableShot = hit.transform.gameObject.GetComponent(typeof(Placeable)) as Placeable;
-                    if (!(placeableShot.TraversableBullet == TraversableType.ALLTHROUGH ||
-                        placeableShot.TraversableBullet == TraversableType.ALLIESTHROUGH && placeableShot.Player != this.Player))
-                    {
-                        significantItemShot++;
-                    }
-                }
-                if (significantItemShot == 1)
-                {
-                    x.Shootable = true;
-                    pointsToSend.Add(x);
-                }
-                else
-                {
-                    x.Shootable = false;
-                }
-            }
-
-        }
-        return pointsToSend;
-    }
-
 
     public override bool IsLiving()
     {
@@ -923,7 +844,6 @@ public class LivingPlaceable : Placeable
             this.SpeedStack = 1 / Speed;
             this.Dexterity = 100;
             this.Skills = new List<Skill>();
-            this.Weapons = new List<GameObject>();
             this.IsDead = false;
             this.CounterDeaths = 0;
             this.TurnsRemaingingCemetery = 0;
@@ -1064,14 +984,14 @@ public class LivingPlaceable : Placeable
         this.AttachedEffects = new List<Effect>();
 
         this.Skills = new List<Skill>();
-        this.Weapons = new List<GameObject>();
         this.IsDead = false;
         this.CounterDeaths = 0;
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
-
-        rend = GetComponentInChildren<Renderer>();
+        
+        
+        rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
         originalShader = Shader.Find("Standard");
         outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.shader = outlineShader;
