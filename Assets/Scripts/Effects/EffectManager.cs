@@ -93,10 +93,13 @@ public class EffectManager : MonoBehaviour
     }
     private void UseEffect(Effect effect)
     {
-        effect.TurnActiveEffect--;
         effect.Use();
-        effect.GetTarget().AttachedEffects.RemoveAll((x) => x.TurnActiveEffect <= 0);
-        GameManager.instance.CheckWinCondition();
+        effect.TurnActiveEffect--;
+        if (effect.TurnActiveEffect <= 0)
+        {
+            effect.GetTarget().AttachedEffects.Remove(effect);
+        }
+        //GameManager.instance.CheckWinCondition();
 
     }
 

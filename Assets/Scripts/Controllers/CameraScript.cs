@@ -207,6 +207,7 @@ public class CameraScript : NetworkBehaviour
         //transform.position = position - (rotation * Vector3.forward * currentDistance + targetOffset);
         transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, 1), transform.position.z);
     }
+
     public void BackToMovement()
     {
         if (GameManager.instance.playingPlaceable.Player == player)
@@ -222,6 +223,7 @@ public class CameraScript : NetworkBehaviour
             GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
         }
     }
+
     private static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)

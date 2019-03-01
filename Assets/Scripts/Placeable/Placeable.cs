@@ -533,7 +533,7 @@ public abstract class Placeable : NetIdeable
                     List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
                     if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING)
                     {
-                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0], 0);
+                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0], 0);
                     }
                     else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING || skill.SkillArea == SkillArea.MIXEDAREA)
                     {
@@ -559,7 +559,7 @@ public abstract class Placeable : NetIdeable
                             netidlist[i] = Playerlist[i - j].netId;
                         }
 
-                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
+                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
                             GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
                     else
@@ -569,7 +569,7 @@ public abstract class Placeable : NetIdeable
                         {
                             netidlist[i] = area[i].netId;
                         }
-                        GameManager.instance.playingPlaceable.player.CmdUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
+                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
                             GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
                     //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});

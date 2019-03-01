@@ -1041,6 +1041,7 @@ public class LivingPlaceable : Placeable
         this.IsDead = true;
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
         CounterDeaths++;
+        CurrentHP = 0;
         TurnsRemaingingCemetery = (int) DeathLength;
         if (this.Destroyable)
         {
@@ -1055,11 +1056,7 @@ public class LivingPlaceable : Placeable
             }
             if (AttachedEffects != null)
             {
-                foreach (Effect effect in AttachedEffects)
-                {
-                    effect.TurnActiveEffect = 1;
-                    EffectManager.instance.DirectAttack(effect);
-                }
+                ResetStats();
                 AttachedEffects.Clear();
             }
             if (GameManager.instance.playingPlaceable == this)
@@ -1073,9 +1070,35 @@ public class LivingPlaceable : Placeable
 
             this.IsDead = true;
             this.gameObject.SetActive(false);
-            CounterDeaths++;
         }
 
+    }
+
+    public void ResetStats()
+    {
+        MaxHPFlat = 0;
+        MaxPAFlat = 0;
+        MaxPMFlat = 0;
+        DeathLengthFlat = 0;
+        DefFlat = 0;
+        DexterityFlat = 0;
+        ForceFlat = 0;
+        JumpFlat = 0;
+        MDefFlat = 0;
+        MStrFlat = 0;
+        SpeedFlat = 0;
+        SpeedStackFlat = 0;
+        
+        DefPercent = 0;
+        DexterityPercent = 0;
+        ForcePercent = 0;
+        MaxHPPercent = 0;
+        MaxPAPercent = 0;
+        MaxPMPercent = 0;
+        MDefPercent = 0;
+        MStrPercent = 0;
+        SpeedPercent = 0;
+        SpeedStackPercent = 0;
     }
 
     /* public void HighlightForSpawn()
@@ -1150,6 +1173,7 @@ public class LivingPlaceable : Placeable
     {
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
+        Debug.Log("area of movement " + areaOfMouvement.Count);
         foreach (NodePath node in AreaOfMouvement)
         {
 

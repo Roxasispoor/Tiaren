@@ -816,41 +816,37 @@ public class Player : NetworkBehaviour
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
-
+        
         if (skill.SkillType == SkillType.ALREADYTARGETED)
         {
+            Vector3 Playerpos = playingPlaceable.GetPosition();
             if (skill.SkillEffect == SkillEffect.UP)
             {
-                Vector3 Playerpos = playingPlaceable.GetPosition();
                 if (Playerpos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z] == null)
                 {
-                    CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0);
+                    OnUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0);
                 }
             }
             else
             {
-                CmdUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
+                OnUseSkill(SkillToNumber(playingPlaceable, skill), playingPlaceable.netId, new int[0], 0); //whatever, auto targeted do not go through dispatch
             }
-
-            GameManager.instance.playingPlaceable.ResetAreaOfMovement();//whatever, auto targeted do not go through dispatch
             return;
         }
 
         RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
         rayselector.Pattern = SkillArea.NONE;
         rayselector.EffectArea = 0;
-        GameManager.instance.playingPlaceable.ResetAreaOfMovement();
         GameManager.instance.playingPlaceable.ResetHighlightSkill();
-        GameManager.instance.playingPlaceable.ResetTargets();
         playingPlaceable.ResetAreaOfMovement();
         playingPlaceable.ResetTargets();
         if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
         {
-            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+            List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
 
             if (skill.SkillArea == SkillArea.CROSS)
             {
-                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.transform.position);
+                vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.GetPosition());
             }
             else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
             {
@@ -867,7 +863,7 @@ public class Player : NetworkBehaviour
             }
             else if (skill.SkillEffect == SkillEffect.MOVE)
             {
-                vect = Grid.instance.PushPattern(vect, playingPlaceable.transform.position);
+                vect = Grid.instance.PushPattern(vect, playingPlaceable.GetPosition());
             }
 
             foreach (Vector3Int v3 in vect)
@@ -886,10 +882,11 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
+
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
-                targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.transform.position);
+                targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.GetPosition());
             }
 
             playingPlaceable.TargetableUnits = targetableunits;
@@ -899,10 +896,10 @@ public class Player : NetworkBehaviour
         {
             if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
             {
-                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.transform.position, skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
+                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
                 if (skill.SkillEffect == SkillEffect.SPINNING)
                 {
-                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.transform.position);
+                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
                 }
 
                 playingPlaceable.TargetableUnits = targetableunits;
@@ -1349,7 +1346,7 @@ public class Player : NetworkBehaviour
     }
 
     /// <summary>
-    /// Check if use is possible and send rpc
+    /// Check if use is possible (server side) and send rpc
     /// </summary>
     /// <param name="numSkill"></param>
     /// <param name="netidTarget"></param>
@@ -1357,138 +1354,164 @@ public class Player : NetworkBehaviour
     public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
     {
         Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
-        if (skill.SkillType == SkillType.ALREADYTARGETED)
+        if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
         {
-            skill.UseTargeted(skill);
-            RpcUseSkill(numSkill, netidTarget, new int[0]);
-        }
-        else
-        {
-            if (netidArea.Length == 0)
+            if (skill.SkillType == SkillType.ALREADYTARGETED)
             {
-                skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget)});
+                skill.UseTargeted(skill);
+                RpcUseSkill(numSkill, netidTarget, new int[0]);
             }
             else
             {
-                List<NetIdeable> targets = new List<NetIdeable>();
-                foreach (int id in netidArea)
+                if (netidArea.Length == 0)
                 {
-                    targets.Add(GameManager.instance.FindLocalObject(id));
+                    skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget) });
                 }
-                skill.Use(GameManager.instance.playingPlaceable, targets);
-            }
-            RpcUseSkill(numSkill, netidTarget, netidArea);
-            
-            /*            
-                       NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-                       if (this == GameManager.instance.playingPlaceable.Player) //First check targets
-                       {
-                           Vector3Int Playerpos = GameManager.instance.playingPlaceable.GetPosition();
-                           Vector3Int Pos = target.GetPosition();
-                           Vector3Int VectDist = Pos - Playerpos;
-                           //prends en compte la hauteur
-                           int yrange = target.IsLiving() ? VectDist.y : (VectDist.y == -1 ? 0 : VectDist.y);
-                           yrange = (skill.Minrange > 0 ? (yrange >= 0 ? yrange : Math.Max(0, (-(skill.Maxrange - 1) + yrange)) * skill.Maxrange) : yrange);
-                           int blockdistance = Math.Abs(VectDist.x) + Math.Abs(VectDist.z) + Math.Abs(yrange);
-                           bool blockallowed = false;
+                else
+                {
+                    List<NetIdeable> targets = new List<NetIdeable>();
+                    foreach (int id in netidArea)
+                    {
+                        targets.Add(GameManager.instance.FindLocalObject(id));
+                    }
+                    skill.Use(GameManager.instance.playingPlaceable, targets);
+                }
+                RpcUseSkill(numSkill, netidTarget, netidArea);
 
-                           if (blockdistance <= skill.Maxrange && blockdistance >= skill.Minrange)
+                /*            
+                           NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
+                           if (this == GameManager.instance.playingPlaceable.Player) //First check targets
                            {
-                               if (skill.SkillArea == SkillArea.THROUGHBLOCKS || !Grid.instance.RayCastBlock(VectDist.x, VectDist.y, VectDist.z,
-                                   VectDist.x == 0 ? 0 : VectDist.x / Math.Abs(VectDist.x), VectDist.y == 0 ? 0 : VectDist.y / Math.Abs(VectDist.y),
-                                   VectDist.z == 0 ? 0 : VectDist.z / Math.Abs(VectDist.z), GameManager.instance.playingPlaceable.GetPosition()))
-                               {
-                                   if (skill.SkillArea == SkillArea.CROSS) //Ligne droites
-                                   {
-                                       if (VectDist.y == 0 && (VectDist.x == 0 || VectDist.z == 0))
-                                       {
-                                           blockallowed = true;
-                                       }
-                                   }
-                                   else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
-                                   {
-                                       if (Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] == null || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z].IsLiving())
-                                       {
-                                           blockallowed = true;
-                                       }
-                                   }
-                                   else
-                                   {
-                                       blockallowed = true;
-                                   }
+                               Vector3Int Playerpos = GameManager.instance.playingPlaceable.GetPosition();
+                               Vector3Int Pos = target.GetPosition();
+                               Vector3Int VectDist = Pos - Playerpos;
+                               //prends en compte la hauteur
+                               int yrange = target.IsLiving() ? VectDist.y : (VectDist.y == -1 ? 0 : VectDist.y);
+                               yrange = (skill.Minrange > 0 ? (yrange >= 0 ? yrange : Math.Max(0, (-(skill.Maxrange - 1) + yrange)) * skill.Maxrange) : yrange);
+                               int blockdistance = Math.Abs(VectDist.x) + Math.Abs(VectDist.z) + Math.Abs(yrange);
+                               bool blockallowed = false;
 
-                                   if (blockallowed)
-                                   {
-                                       blockallowed = CheckEffectSkill(skill, Pos, Playerpos, VectDist);
-                                   }
-                               }
-                           }
-
-                           //Debug.Log(blockallowed);
-                           if (blockallowed)
-                           {
-                               if (netidArea.Length == 0)
+                               if (blockdistance <= skill.Maxrange && blockdistance >= skill.Minrange)
                                {
-                                   skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
-                                   RpcUseSkill(numSkill, netidTarget, new int[0]);
-                               }
-                               else
-                               {
-                                   List<NetIdeable> idlist = new List<NetIdeable>();
-                                   foreach (int blockid in netidArea)
+                                   if (skill.SkillArea == SkillArea.THROUGHBLOCKS || !Grid.instance.RayCastBlock(VectDist.x, VectDist.y, VectDist.z,
+                                       VectDist.x == 0 ? 0 : VectDist.x / Math.Abs(VectDist.x), VectDist.y == 0 ? 0 : VectDist.y / Math.Abs(VectDist.y),
+                                       VectDist.z == 0 ? 0 : VectDist.z / Math.Abs(VectDist.z), GameManager.instance.playingPlaceable.GetPosition()))
                                    {
-                                       blockallowed = false;
-                                       Vector3Int PlaceablePos = GameManager.instance.FindLocalObject(blockid).GetPosition();
-                                       Vector3Int TargetDist = PlaceablePos - Pos;
-                                       //if (skill.SkillType == SkillType.AREA || (skill.SkillType == SkillType.SELF && skill.SkillArea == SkillArea.SURROUNDINGLIVING) {
-                                       if (skill.SkillArea == SkillArea.LINE)
+                                       if (skill.SkillArea == SkillArea.CROSS) //Ligne droites
                                        {
-                                           if (state % 2 == 0)
-                                           {
-                                               if (TargetDist.y == 0 && TargetDist.z == 0 && Math.Abs(TargetDist.x) < skill.EffectArea)
-                                               {
-                                                   blockallowed = true;
-                                               }
-                                           }
-                                           else
-                                           {
-                                               if (TargetDist.y == 0 && TargetDist.x == 0 && Math.Abs(TargetDist.z) < skill.EffectArea)
-                                               {
-                                                   blockallowed = true;
-                                               }
-                                           }
-                                       }
-                                       else if (skill.SkillType == SkillType.AREA)
-                                       {
-                                           bool topblock = true;
-                                           if (skill.SkillArea == SkillArea.MIXEDAREA)
-                                           {
-                                               topblock = false;
-                                           }
-
-                                           if (Mathf.Abs(TargetDist.x) + Mathf.Abs(TargetDist.y) + Mathf.Abs(TargetDist.z) < skill.EffectArea &&
-                                               (!topblock || PlaceablePos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[PlaceablePos.x, PlaceablePos.y + 1, PlaceablePos.z] == null))
+                                           if (VectDist.y == 0 && (VectDist.x == 0 || VectDist.z == 0))
                                            {
                                                blockallowed = true;
                                            }
                                        }
-
-                                       if (blockallowed)
+                                       else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
                                        {
-                                           blockallowed = CheckEffectSkill(skill, PlaceablePos, Pos, TargetDist);
+                                           if (Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] == null || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z].IsLiving())
+                                           {
+                                               blockallowed = true;
+                                           }
+                                       }
+                                       else
+                                       {
+                                           blockallowed = true;
                                        }
 
                                        if (blockallowed)
                                        {
-                                           idlist.Add(GameManager.instance.FindLocalObject(blockid));
+                                           blockallowed = CheckEffectSkill(skill, Pos, Playerpos, VectDist);
                                        }
                                    }
-                                   skill.Use(GameManager.instance.playingPlaceable, idlist);
-                                   RpcUseSkill(numSkill, netidTarget, netidArea);
+                               }
+
+                               //Debug.Log(blockallowed);
+                               if (blockallowed)
+                               {
+                                   if (netidArea.Length == 0)
+                                   {
+                                       skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+                                       RpcUseSkill(numSkill, netidTarget, new int[0]);
+                                   }
+                                   else
+                                   {
+                                       List<NetIdeable> idlist = new List<NetIdeable>();
+                                       foreach (int blockid in netidArea)
+                                       {
+                                           blockallowed = false;
+                                           Vector3Int PlaceablePos = GameManager.instance.FindLocalObject(blockid).GetPosition();
+                                           Vector3Int TargetDist = PlaceablePos - Pos;
+                                           //if (skill.SkillType == SkillType.AREA || (skill.SkillType == SkillType.SELF && skill.SkillArea == SkillArea.SURROUNDINGLIVING) {
+                                           if (skill.SkillArea == SkillArea.LINE)
+                                           {
+                                               if (state % 2 == 0)
+                                               {
+                                                   if (TargetDist.y == 0 && TargetDist.z == 0 && Math.Abs(TargetDist.x) < skill.EffectArea)
+                                                   {
+                                                       blockallowed = true;
+                                                   }
+                                               }
+                                               else
+                                               {
+                                                   if (TargetDist.y == 0 && TargetDist.x == 0 && Math.Abs(TargetDist.z) < skill.EffectArea)
+                                                   {
+                                                       blockallowed = true;
+                                                   }
+                                               }
+                                           }
+                                           else if (skill.SkillType == SkillType.AREA)
+                                           {
+                                               bool topblock = true;
+                                               if (skill.SkillArea == SkillArea.MIXEDAREA)
+                                               {
+                                                   topblock = false;
+                                               }
+
+                                               if (Mathf.Abs(TargetDist.x) + Mathf.Abs(TargetDist.y) + Mathf.Abs(TargetDist.z) < skill.EffectArea &&
+                                                   (!topblock || PlaceablePos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[PlaceablePos.x, PlaceablePos.y + 1, PlaceablePos.z] == null))
+                                               {
+                                                   blockallowed = true;
+                                               }
+                                           }
+
+                                           if (blockallowed)
+                                           {
+                                               blockallowed = CheckEffectSkill(skill, PlaceablePos, Pos, TargetDist);
+                                           }
+
+                                           if (blockallowed)
+                                           {
+                                               idlist.Add(GameManager.instance.FindLocalObject(blockid));
+                                           }
+                                       }
+                                       skill.Use(GameManager.instance.playingPlaceable, idlist);
+                                       RpcUseSkill(numSkill, netidTarget, netidArea);
+                                   }
                                }
                            }
-                       }
-              */
+                  */
+            }
+        }
+    }
+
+    /// <summary>
+    /// Local check of PA to notify player
+    /// </summary>
+    /// <param name="numSkill"></param>
+    /// <param name="netidTarget"></param>
+    /// <param name="netidArea"></param>
+    /// <param name="state"></param>
+    public void OnUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
+    {
+        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
+        {
+            CmdUseSkill(numSkill, netidTarget, netidArea, state);
+        }
+        else
+        {
+            GameManager.instance.activeSkill = null;
+            GameManager.instance.State = States.Move;
+            FloatingTextController.CreateFloatingText("Not enought PA", GameManager.instance.PlayingPlaceable.transform);
+            cameraScript.BackToMovement();
         }
     }
 
@@ -1606,6 +1629,10 @@ public class Player : NetworkBehaviour
                 rayselect.Pattern = SkillArea.NONE;
             }
         }
+        if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+        {
+            GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
+        }
     }
-
+    
 }

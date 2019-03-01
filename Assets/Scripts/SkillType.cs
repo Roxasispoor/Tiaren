@@ -39,7 +39,7 @@ public enum SkillArea
     /// </summary>
     TOPBLOCK,
     /// <summary>
-    /// Skill trageting blocks in straight line
+    /// Skill trageting blocks in cross shape
     /// </summary>
     CROSS,
     /// <summary>
