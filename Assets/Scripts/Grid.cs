@@ -835,7 +835,7 @@ public class Grid : MonoBehaviour
                         {
                             obj = Instantiate(prefabsList[13], // bedrock
                                    new Vector3(x, y, z), Quaternion.identity, parent.transform);
-                            obj.GetComponent<Placeable>().Destroyable = false;
+                            obj.GetComponent<StandardCube>().Destroyable = false;
                         }
                         else
                         {
@@ -1372,7 +1372,7 @@ public class Grid : MonoBehaviour
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
-            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+            if (!((StandardCube)this.GetPlaceableFromVector(Pos)).Destroyable)
                 targetableblock.Remove(Pos);
         }
         return targetableblock;

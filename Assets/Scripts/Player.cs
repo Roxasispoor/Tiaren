@@ -368,12 +368,13 @@ public class Player : NetworkBehaviour
         }
     }
 
+    //TODO: Use the class component
     private void SpawnLocalPlayer(Player localPlayer)
     {
-        Placeable spawnpoint;
+        StandardCube spawnpoint;
         for (int i = 0; i < localPlayer.spawnList.Count; i++)
         {
-            spawnpoint = Grid.instance.GridMatrix[localPlayer.spawnList[i].x, localPlayer.spawnList[i].y - 1, localPlayer.spawnList[i].z];
+            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(localPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
             spawnpoint.IsSpawnPoint = true;
             spawnpoint.Destroyable = false;
@@ -388,10 +389,10 @@ public class Player : NetworkBehaviour
 
     private void SpawnEnemyPlayer(Player enemyPlayer)
     {
-        Placeable spawnpoint;
+        StandardCube spawnpoint;
         for (int i = 0; i < enemyPlayer.spawnList.Count; i++)
         {
-            spawnpoint = Grid.instance.GridMatrix[enemyPlayer.spawnList[i].x, enemyPlayer.spawnList[i].y - 1, enemyPlayer.spawnList[i].z];
+            spawnpoint = (StandardCube) Grid.instance.GetPlaceableFromVector(enemyPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
             spawnpoint.IsSpawnPoint = true;
             spawnpoint.Destroyable = false;
@@ -432,11 +433,11 @@ public class Player : NetworkBehaviour
                 choicesP2[i] = GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i];
             }
 
-            Placeable spawnpoint;
+            StandardCube spawnpoint;
             // Spawn the characters
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
-                spawnpoint = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1, Grid.instance.SpawnPlayer1[i].z];
+                spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer1[i] + Vector3.down);
                 spawnpoint.IsSpawnPoint = true;
                 spawnpoint.Destroyable = false;
                 spawnpoint.Movable = false;
@@ -448,7 +449,7 @@ public class Player : NetworkBehaviour
             }
             for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
             {
-                spawnpoint = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1, Grid.instance.SpawnPlayer2[i].z];
+                spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer2[i] + Vector3.down);
                 spawnpoint.IsSpawnPoint = true;
                 spawnpoint.Destroyable = false;
                 spawnpoint.Movable = false;
@@ -1514,70 +1515,6 @@ public class Player : NetworkBehaviour
             cameraScript.BackToMovement();
         }
     }
-
-    public bool CheckEffectSkill(Skill skill, Vector3Int Pos, Vector3Int Playerpos, Vector3Int VectDist)
-    {
-        bool blockallowed = true;
-
-        if (skill.SkillEffect == SkillEffect.DESTROY)
-        {
-            if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
-            {
-                blockallowed = false;
-            }
-        }
-        else if (skill.SkillEffect == SkillEffect.CREATE)
-        {
-            Placeable block = Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z];
-            if (block.GetType() == typeof(Goal) || block.IsSpawnPoint || Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] != null)
-            {
-                blockallowed = false;
-            }
-        }
-        else if (skill.SkillEffect == SkillEffect.MOVE)
-        {
-            if (!Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z].Movable)
-            {
-                blockallowed = false;
-            }
-            else
-            {
-                if (Math.Abs(Playerpos.x - Pos.x) - Math.Abs(Playerpos.z - Pos.z) > 0)
-                {
-                    int direction = (Pos.x - Playerpos.x) / Math.Abs(Playerpos.x - Pos.x);
-                    if (Pos.x + direction < 0 || Pos.x + direction >= Grid.instance.sizeX || Grid.instance.GridMatrix[Pos.x + direction, Pos.y, Pos.z] != null)
-                    {
-                        blockallowed = false;
-                    }
-                }
-                else
-                {
-                    int direction = (Pos.z - Playerpos.z) / Math.Abs(Playerpos.z - Pos.z);
-                    if (Pos.z + direction < 0 || Pos.z + direction >= Grid.instance.sizeZ || Grid.instance.GridMatrix[Pos.x, Pos.y, Pos.z + direction] != null)
-                    {
-                        blockallowed = false;
-                    }
-                }
-            }
-        }
-        else if (skill.SkillEffect == SkillEffect.SWORDRANGE)
-        {
-            if (Math.Abs(VectDist.y) > 1 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1)
-            {
-                blockallowed = false;
-            }
-        }
-        else if (skill.SkillEffect == SkillEffect.SPINNING)
-        {
-            if (VectDist.y != 0 || Math.Abs(VectDist.x) > 1 || Math.Abs(VectDist.z) > 1 || VectDist == new Vector3Int(0, 0, 0))
-            {
-                blockallowed = false;
-            }
-        }
-
-        return blockallowed;
-    }
-
 
     public void UseTargeted(Skill skill)
     {

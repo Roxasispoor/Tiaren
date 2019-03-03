@@ -816,7 +816,6 @@ public class LivingPlaceable : Placeable
             this.className = "default";
             this.Walkable = false;
             this.Movable = true;
-            this.Destroyable = true;
             this.TraversableChar = TraversableType.ALLIESTHROUGH;
             this.TraversableBullet = TraversableType.NOTHROUGH;
             this.GravityType = GravityType.SIMPLE_GRAVITY;
@@ -955,7 +954,6 @@ public class LivingPlaceable : Placeable
         this.className = "default";
         this.Walkable = false;
         this.Movable = true;
-        this.Destroyable = true;
         this.TraversableChar = TraversableType.ALLIESTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
@@ -1033,34 +1031,31 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
         CurrentHP = 0;
         TurnsRemaingingCemetery = (int) DeathLength;
-        if (this.Destroyable)
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+        foreach (Effect effect in this.OnDestroyEffects)
         {
-            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Effect effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.DirectAttack(effect);
-            }
-            foreach (Transform obj in transform.Find("Inventory"))
-            {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
-            }
-            if (AttachedEffects != null)
-            {
-                ResetStats();
-                AttachedEffects.Clear();
-            }
-            if (GameManager.instance.playingPlaceable == this)
-            {
-                if (MoveCoroutine != null)
-                {
-                    StopCoroutine(MoveCoroutine);
-                }
-                GameManager.instance.EndOFTurn();
-            }
-
-            this.IsDead = true;
-            this.gameObject.SetActive(false);
+            EffectManager.instance.DirectAttack(effect);
         }
+        foreach (Transform obj in transform.Find("Inventory"))
+        {
+            obj.GetComponent<ObjectOnBloc>().Destroy();
+        }
+        if (AttachedEffects != null)
+        {
+            ResetStats();
+            AttachedEffects.Clear();
+        }
+        if (GameManager.instance.playingPlaceable == this)
+        {
+            if (MoveCoroutine != null)
+            {
+                StopCoroutine(MoveCoroutine);
+            }
+            GameManager.instance.EndOFTurn();
+        }
+
+        this.IsDead = true;
+        this.gameObject.SetActive(false);
 
     }
 

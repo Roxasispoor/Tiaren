@@ -17,8 +17,10 @@ public abstract class Placeable : NetIdeable
     /// Can we walk on it.
     /// </summary>
     private bool walkable;
+    /// <summary>
+    /// Is the placeable movable (for push, etc.).
+    /// </summary>
     protected bool movable;
-    protected bool destroyable;
     protected TraversableType tangible;
     protected TraversableType traversableBullet;
     public Color colorOfObject;
@@ -215,21 +217,7 @@ public abstract class Placeable : NetIdeable
             player = value;
         }
     }
-
-
-
-    public bool Destroyable
-    {
-        get
-        {
-            return destroyable;
-        }
-
-        set
-        {
-            destroyable = value;
-        }
-    }
+    
 
     public float AnimationSpeed
     {
@@ -315,32 +303,12 @@ public abstract class Placeable : NetIdeable
 
         }
     }
+
     /// <summary>
     /// method to call for destroying object
     /// </summary>
-    public virtual void Destroy()
-    {
-        if (this.Destroyable)
-        {
-            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Effect effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.DirectAttack(effect);
-            }
-            foreach (Transform obj in transform.Find("Inventory"))
-            {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
-            }
-            if(!IsLiving())
-            { 
-            GameManager.instance.RemoveBlockFromBatch((StandardCube) this);
-            }
-            gameObject.SetActive(false);
-            this.UnHighlight();
-            Destroy(this.gameObject);
-        }
+    public abstract void Destroy();
 
-    }
     public virtual void Highlight()
     {
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)

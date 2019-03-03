@@ -12,6 +12,7 @@ public class StandardCube : Placeable
     [NonSerialized]
     public Batch batch;
     protected List<Effect> onWalkEffects;
+    protected bool destroyable;
 
     public List<Effect> OnWalkEffects
     {
@@ -23,6 +24,19 @@ public class StandardCube : Placeable
         set
         {
             onWalkEffects = value;
+        }
+    }
+
+    public bool Destroyable
+    {
+        get
+        {
+            return destroyable;
+        }
+
+        set
+        {
+            destroyable = value;
         }
     }
 
@@ -49,6 +63,32 @@ public class StandardCube : Placeable
         this.AttachedEffects = new List<Effect>();
     }
 
-    // Update is called once per frame
- 
+    /// <summary>
+    /// method to call for destroying object
+    /// </summary>
+    override
+    public void Destroy()
+    {
+        if (this.Destroyable)
+        {
+            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+            foreach (Effect effect in this.OnDestroyEffects)
+            {
+                EffectManager.instance.DirectAttack(effect);
+            }
+            foreach (Transform obj in transform.Find("Inventory"))
+            {
+                obj.GetComponent<ObjectOnBloc>().Destroy();
+            }
+            if (!IsLiving())
+            {
+                GameManager.instance.RemoveBlockFromBatch((StandardCube)this);
+            }
+            gameObject.SetActive(false);
+            this.UnHighlight();
+            Destroy(this.gameObject);
+        }
+
+    }
+
 }
