@@ -18,7 +18,8 @@ public class UIManager : MonoBehaviour
     public RectTransform SpawnZone;
     public RectTransform TimelineZone;
     public GameObject hpDisplay;
-    public Text movDisplay;
+    public GameObject movDisplay;
+    public GameObject paDisplay;
     public Image prefabCharacterChoices;
     public int numberOfPlayer;
     public float firstImagePosition;
@@ -112,9 +113,10 @@ public class UIManager : MonoBehaviour
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {
-                hpDisplay.transform.Find("HPDisplay").GetComponent<Text>().text = "HP : " + GameManager.instance.PlayingPlaceable.CurrentHP + " / " + GameManager.instance.PlayingPlaceable.MaxHP;
+                hpDisplay.transform.Find("HeartDisplay").transform.Find("HpDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentHP.ToString();
                 hpDisplay.transform.Find("Bar").GetComponent<Image>().fillAmount = GameManager.instance.PlayingPlaceable.CurrentHP / GameManager.instance.PlayingPlaceable.MaxHP;
-                movDisplay.text = "MOV : " + GameManager.instance.PlayingPlaceable.CurrentPM;
+                movDisplay.transform.Find("MovDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentPM.ToString();
+                paDisplay.transform.Find("PaDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentPA.ToString();
             }
             GameObject zoneToUpdate = gameObject.transform.Find("InGameCanvas").Find("Timeline").gameObject;
             Slider[] sliders = zoneToUpdate.GetComponentsInChildren<Slider>();
@@ -185,8 +187,9 @@ public class UIManager : MonoBehaviour
             GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
             Button button = ability.GetComponentInChildren<Button>();
             button.GetComponent<SkillInfo>().Skill = skill;
-            ability.transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+            ability.transform.localPosition = new Vector3(-357 + AbilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
+            button.transform.Find("Cost").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.Cost.ToString();
             if (skill.TourCooldownLeft > 0)
             {
                 //button.GetComponent<Text>().text = skill.TourCooldownLeft.ToString();
@@ -203,7 +206,7 @@ public class UIManager : MonoBehaviour
                 GameObject ability = Instantiate(prefabAbilityButton, SkillZone);
                 Button button = ability.GetComponentInChildren<Button>();
                 button.GetComponent<SkillInfo>().Skill = skill;
-                ability.GetComponent<RectTransform>().transform.localPosition = new Vector3(-431 + AbilityGap * numberInstantiated, 0);
+                ability.GetComponent<RectTransform>().transform.localPosition = new Vector3(-357 + AbilityGap * numberInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
                 button.onClick.AddListener(skill.Activate);
                 button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
@@ -262,6 +265,7 @@ public class UIManager : MonoBehaviour
             
             hpDisplay.SetActive(true);
             movDisplay.gameObject.SetActive(true);
+            paDisplay.gameObject.SetActive(true);
         }
         else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
@@ -275,6 +279,7 @@ public class UIManager : MonoBehaviour
             gameObject.transform.Find("InGameCanvas").Find("SkipButton").gameObject.SetActive(false);
             hpDisplay.SetActive(false);
             movDisplay.gameObject.SetActive(false);
+            paDisplay.gameObject.SetActive(false);
         }
     }
 
