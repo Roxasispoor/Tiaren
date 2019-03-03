@@ -14,7 +14,7 @@ public class FlagVictoryEffect : EffectOnLiving {
        if(GameManager.instance.gameMode==GameMode.FLAG &&  Target.Player!=Launcher.Player &&
             Target.transform.Find("Inventory") && Target.transform.Find("Inventory").GetComponentInChildren<Flag>()!=null)
         {
-            GameManager.instance.Winner = Target.Player;
+            GameManager.instance.winner = Target.Player;
             Target.Player.isWinner = true;
             GameManager.instance.CheckWinCondition();
         }
