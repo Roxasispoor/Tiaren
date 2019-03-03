@@ -823,10 +823,6 @@ public class LivingPlaceable : Placeable
 
             this.Crushable = CrushType.CRUSHDAMAGE;
             this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>
-            {
-                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-            };
             this.OnStartTurn = new List<Effect>();
             this.OnEndTurn = new List<Effect>();
             this.MaxHP = 100;
@@ -856,7 +852,6 @@ public class LivingPlaceable : Placeable
 
             targetableUnits = new List<LivingPlaceable>();
             this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>();
             this.OnStartTurn = new List<Effect>();
             this.OnEndTurn = new List<Effect>();
             this.AttachedEffects = new List<Effect>();
@@ -966,10 +961,6 @@ public class LivingPlaceable : Placeable
         this.GravityType = GravityType.SIMPLE_GRAVITY;
         this.Crushable = CrushType.CRUSHDAMAGE;
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>
-            {
-                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-            };
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AreaOfMouvement = new List<NodePath>();
@@ -978,7 +969,6 @@ public class LivingPlaceable : Placeable
         targetableUnits = new List<LivingPlaceable>();
         //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
@@ -1282,6 +1272,7 @@ public class LivingPlaceable : Placeable
     {
         foreach (Placeable plac in targetArea)
         {
+            //TODO : make this part in the standard cube
             if (Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
             {
 
@@ -1292,7 +1283,7 @@ public class LivingPlaceable : Placeable
         }
         if (targetArea.Count > 0)
         {
-            GameManager.instance.RefreshBatch(targetArea[0]);
+            GameManager.instance.RefreshBatch((StandardCube)targetArea[0]);
         }
         targetArea.Clear();
 

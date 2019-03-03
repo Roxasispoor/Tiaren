@@ -141,7 +141,7 @@ public class Push : EffectOnPlaceable
             Grid.instance.MoveBlock(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
             if (GameManager.instance.isClient)
             { 
-                GameManager.instance.RemoveBlockFromBatch(Target);
+                GameManager.instance.RemoveBlockFromBatch((StandardCube) Target);
                 //Could be either player, really...
                 path.Insert(0, Target.GetPosition());
                 // trigger visual effect and physics consequences

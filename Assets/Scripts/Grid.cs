@@ -202,7 +202,7 @@ public class Grid : MonoBehaviour
 
                     GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
                     newBlock.GetComponent<Placeable>().MeshInCombined = currentInstance;
-                    GameManager.instance.RefreshBatch(newBlock.GetComponent<Placeable>());
+                    GameManager.instance.RefreshBatch(newBlock.GetComponent<StandardCube>());
                 }
             }
         }
@@ -695,7 +695,7 @@ public class Grid : MonoBehaviour
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
                         //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch(gridMatrix[x, y, z]);
+                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch((StandardCube) gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null

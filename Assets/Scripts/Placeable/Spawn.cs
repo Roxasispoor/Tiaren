@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawn : Placeable {
+public class Spawn : StandardCube {
     new void Awake()
     {
         base.Awake();
@@ -21,7 +21,6 @@ public class Spawn : Placeable {
         this.Grounded = false;
         this.OnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();

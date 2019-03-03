@@ -9,6 +9,23 @@ using UnityEngine;
 public class StandardCube : Placeable
 {
 
+    [NonSerialized]
+    public Batch batch;
+    protected List<Effect> onWalkEffects;
+
+    public List<Effect> OnWalkEffects
+    {
+        get
+        {
+            return onWalkEffects;
+        }
+
+        set
+        {
+            onWalkEffects = value;
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -25,9 +42,8 @@ public class StandardCube : Placeable
         this.Crushable = CrushType.CRUSHSTAY;
         this.Explored = false;
         this.Grounded = false;
-        this.OnWalkEffects = new List<Effect>();
+        this.onWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();

@@ -575,7 +575,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     }
 
-    public void RefreshBatch(Placeable block)
+    public void RefreshBatch(StandardCube block)
     {
         if (block != null && block.batch != null)
         {
@@ -597,7 +597,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// Removes block From Batch
     /// </summary>
     /// <param name="block"></param>
-    public void RemoveBlockFromBatch(Placeable block)
+    public void RemoveBlockFromBatch(StandardCube block)
     {
         if (block != null && block.batch != null && block.batch.combineInstances != null)
         {
@@ -771,7 +771,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         if (meshFilter.GetComponent<Placeable>())//Add batch to placeable
         {
-            meshFilter.GetComponent<Placeable>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
+            meshFilter.GetComponent<StandardCube>().batch = dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]
             [dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name].Count - 1];
         }
         dictionaryMaterialsFilling[meshFilter.GetComponent<MeshRenderer>().material.name]

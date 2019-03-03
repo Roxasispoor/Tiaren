@@ -939,7 +939,7 @@ public class Player : NetworkBehaviour
             //Trigger effect the ones after the others, does not interrupt path
             foreach (Vector3 current in path)
             {
-                foreach (Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+                foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
                 {
 
                     //makes the deep copy, send it to effect manager and zoo
@@ -963,7 +963,7 @@ public class Player : NetworkBehaviour
     {
         foreach (Vector3 current in path)
         {
-            foreach (Effect effect in Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z].OnWalkEffects)
+            foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
             {
                 //makes the deep copy, send it to effect manager and zoo
                 Effect effectToConsider = effect.Clone();

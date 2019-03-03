@@ -9,11 +9,14 @@ using UnityEngine.EventSystems;
 [Serializable]
 public abstract class Placeable : NetIdeable
 {
-    private const float sizeChild = 1.02f;
-    [NonSerialized]
-    public Batch batch;
+    /// <summary>
+    /// Size of the child quads.
+    /// </summary>
+    private const float sizeQuad = 1.02f;
+    /// <summary>
+    /// Can we walk on it.
+    /// </summary>
     private bool walkable;
-    protected List<Effect> onWalkEffects;
     protected bool movable;
     protected bool destroyable;
     protected TraversableType tangible;
@@ -144,32 +147,6 @@ public abstract class Placeable : NetIdeable
         set
         {
             onDestroyEffects = value;
-        }
-    }
-
-    public List<Effect> OnWalkEffects
-    {
-        get
-        {
-            return onWalkEffects;
-        }
-
-        set
-        {
-            onWalkEffects = value;
-        }
-    }
-
-    public List<HitablePoint> HitablePoints
-    {
-        get
-        {
-            return hitablePoints;
-        }
-
-        set
-        {
-            hitablePoints = value;
         }
     }
 
@@ -356,7 +333,7 @@ public abstract class Placeable : NetIdeable
             }
             if(!IsLiving())
             { 
-            GameManager.instance.RemoveBlockFromBatch(this);
+            GameManager.instance.RemoveBlockFromBatch((StandardCube) this);
             }
             gameObject.SetActive(false);
             this.UnHighlight();
@@ -377,19 +354,19 @@ public abstract class Placeable : NetIdeable
             quadUp.SetActive(true);
 
             quadRight.SetActive(true);
-            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeChild, 1);
+            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeQuad, 1);
             quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0, quadRight.transform.localPosition.z);
 
             quadLeft.SetActive(true);
-            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeChild, 1);
+            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeQuad, 1);
             quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0, quadLeft.transform.localPosition.z);
 
             quadFront.SetActive(true);
-            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeChild, 1);
+            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeQuad, 1);
             quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0, quadFront.transform.localPosition.z);
 
             quadBack.SetActive(true);
-            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeChild, 1);
+            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeQuad, 1);
             quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
 
         }
