@@ -9,13 +9,11 @@ public class StatDisplayer : MonoBehaviour {
     public Text player;
     public Text team;
     public Text hp;
+    public Text pa;
     public Text mov;
     public Text speed;
-    public Text dext;
     public Text def;
     public Text mDef;
-    public Text str;
-    public Text mStr;
     public Image image;
 
     public void Activate(LivingPlaceable character)
@@ -26,12 +24,10 @@ public class StatDisplayer : MonoBehaviour {
         team.text = "Team : " + character.Player.name;
         hp.text = "HP : " + character.CurrentHP;
         mov.text = "MOV : " + character.CurrentPM;
+        pa.text = "PA : " + character.CurrentPA;
         speed.text = "SPEED : " + (int) character.Speed;
-        dext.text = "DEXT : " + character.Dexterity;
         def.text = "DEF : " + character.Def;
         mDef.text = "M.DEF : " + character.Mdef;
-        str.text = "STR : " + character.Force;
-        mStr.text = "M.STR : " + character.Mstr;
         image.sprite = character.characterSprite; 
     }
 
