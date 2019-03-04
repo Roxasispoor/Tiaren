@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine.UI;
 using UnityEngine;
 
 [Serializable]
@@ -60,6 +61,7 @@ public class LivingPlaceable : Placeable
 
     private List<Placeable> targetArea;
     private List<LivingPlaceable> targetableUnits;
+    public Canvas flyingInfo;
     public Sprite characterSprite;
 
     // Variable used for the highligh
@@ -96,6 +98,7 @@ public class LivingPlaceable : Placeable
         set
         {
             currentHP.BaseValue = value;
+            flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = value / MaxHP;
         }
     }
 
@@ -999,6 +1002,11 @@ public class LivingPlaceable : Placeable
             circleTeam.color = Player.color;
             targetableUnits = new List<LivingPlaceable>();
         }
+    }
+
+    private void Update()
+    {
+        flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
     }
 
 
