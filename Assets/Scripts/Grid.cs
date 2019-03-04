@@ -202,7 +202,7 @@ public class Grid : MonoBehaviour
 
                     GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
                     newBlock.GetComponent<Placeable>().MeshInCombined = currentInstance;
-                    GameManager.instance.RefreshBatch(newBlock.GetComponent<Placeable>());
+                    GameManager.instance.RefreshBatch(newBlock.GetComponent<StandardCube>());
                 }
             }
         }
@@ -695,7 +695,7 @@ public class Grid : MonoBehaviour
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
                         //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch(gridMatrix[x, y, z]);
+                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch((StandardCube) gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null
@@ -835,7 +835,7 @@ public class Grid : MonoBehaviour
                         {
                             obj = Instantiate(prefabsList[13], // bedrock
                                    new Vector3(x, y, z), Quaternion.identity, parent.transform);
-                            obj.GetComponent<Placeable>().Destroyable = false;
+                            obj.GetComponent<StandardCube>().Destroyable = false;
                         }
                         else
                         {
@@ -1372,7 +1372,8 @@ public class Grid : MonoBehaviour
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
-            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Destroyable)
+            Placeable plac = GetPlaceableFromVector(Pos);
+            if (!plac.IsLiving() && !((StandardCube)this.GetPlaceableFromVector(Pos)).Destroyable)
                 targetableblock.Remove(Pos);
         }
         return targetableblock;

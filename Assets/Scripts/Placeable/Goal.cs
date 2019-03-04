@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goal : Placeable {
+public class Goal : StandardCube {
     new void Awake()
     {
         base.Awake();
@@ -23,10 +23,5 @@ public class Goal : Placeable {
         this.Explored = false;
         this.Grounded = false;
         this.OnWalkEffects = new List<Effect>() { new FlagVictoryEffect()};
-        this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
-        this.AttachedEffects = new List<Effect>();
     }
 }

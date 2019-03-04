@@ -816,17 +816,12 @@ public class LivingPlaceable : Placeable
             this.className = "default";
             this.Walkable = false;
             this.Movable = true;
-            this.Destroyable = true;
             this.TraversableChar = TraversableType.ALLIESTHROUGH;
             this.TraversableBullet = TraversableType.NOTHROUGH;
             this.GravityType = GravityType.SIMPLE_GRAVITY;
 
             this.Crushable = CrushType.CRUSHDAMAGE;
             this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>
-            {
-                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-            };
             this.OnStartTurn = new List<Effect>();
             this.OnEndTurn = new List<Effect>();
             this.MaxHP = 100;
@@ -856,7 +851,6 @@ public class LivingPlaceable : Placeable
 
             targetableUnits = new List<LivingPlaceable>();
             this.OnDestroyEffects = new List<Effect>();
-            this.HitablePoints = new List<HitablePoint>();
             this.OnStartTurn = new List<Effect>();
             this.OnEndTurn = new List<Effect>();
             this.AttachedEffects = new List<Effect>();
@@ -960,16 +954,11 @@ public class LivingPlaceable : Placeable
         this.className = "default";
         this.Walkable = false;
         this.Movable = true;
-        this.Destroyable = true;
         this.TraversableChar = TraversableType.ALLIESTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
         this.Crushable = CrushType.CRUSHDAMAGE;
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>
-            {
-                new HitablePoint(new Vector3(0, 0.5f, 0), 1)
-            };
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AreaOfMouvement = new List<NodePath>();
@@ -978,7 +967,6 @@ public class LivingPlaceable : Placeable
         targetableUnits = new List<LivingPlaceable>();
         //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
-        this.HitablePoints = new List<HitablePoint>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
@@ -1043,34 +1031,31 @@ public class LivingPlaceable : Placeable
         CounterDeaths++;
         CurrentHP = 0;
         TurnsRemaingingCemetery = (int) DeathLength;
-        if (this.Destroyable)
+        Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
+        foreach (Effect effect in this.OnDestroyEffects)
         {
-            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Effect effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.DirectAttack(effect);
-            }
-            foreach (Transform obj in transform.Find("Inventory"))
-            {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
-            }
-            if (AttachedEffects != null)
-            {
-                ResetStats();
-                AttachedEffects.Clear();
-            }
-            if (GameManager.instance.playingPlaceable == this)
-            {
-                if (MoveCoroutine != null)
-                {
-                    StopCoroutine(MoveCoroutine);
-                }
-                GameManager.instance.EndOFTurn();
-            }
-
-            this.IsDead = true;
-            this.gameObject.SetActive(false);
+            EffectManager.instance.DirectAttack(effect);
         }
+        foreach (Transform obj in transform.Find("Inventory"))
+        {
+            obj.GetComponent<ObjectOnBloc>().Destroy();
+        }
+        if (AttachedEffects != null)
+        {
+            ResetStats();
+            AttachedEffects.Clear();
+        }
+        if (GameManager.instance.playingPlaceable == this)
+        {
+            if (MoveCoroutine != null)
+            {
+                StopCoroutine(MoveCoroutine);
+            }
+            GameManager.instance.EndOFTurn();
+        }
+
+        this.IsDead = true;
+        this.gameObject.SetActive(false);
 
     }
 
@@ -1153,22 +1138,6 @@ public class LivingPlaceable : Placeable
         previousColor = Color.red;
         isTarget = true;
     }
-
-    public void ChangeMaterialAreaOfMovementBatch(Material pathfinding)
-    {
-
-        foreach (NodePath node in AreaOfMouvement)
-        {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
-            {
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
-            }
-        }
-        GameManager.instance.ResetAllBatches();
-
-    }
     public void ChangeMaterialAreaOfMovement(Material pathfinding)
     {
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
@@ -1207,23 +1176,6 @@ public class LivingPlaceable : Placeable
             // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
             //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
         }
-    }
-
-
-    public void ResetAreaOfMovementBatch()
-    {
-        foreach (NodePath node in AreaOfMouvement)
-        {
-
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial != null)//if we haven't already reset this one
-            {
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material =
-                        Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial;
-                Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = null;
-            }
-        }
-        AreaOfMouvement.Clear();
     }
 
     public void ResetAreaOfMovement()
@@ -1282,6 +1234,7 @@ public class LivingPlaceable : Placeable
     {
         foreach (Placeable plac in targetArea)
         {
+            //TODO : make this part in the standard cube
             if (Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
             {
 
@@ -1292,7 +1245,7 @@ public class LivingPlaceable : Placeable
         }
         if (targetArea.Count > 0)
         {
-            GameManager.instance.RefreshBatch(targetArea[0]);
+            GameManager.instance.RefreshBatch((StandardCube)targetArea[0]);
         }
         targetArea.Clear();
 

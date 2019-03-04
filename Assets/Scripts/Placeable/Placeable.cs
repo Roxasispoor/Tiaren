@@ -9,19 +9,40 @@ using UnityEngine.EventSystems;
 [Serializable]
 public abstract class Placeable : NetIdeable
 {
-    private const float sizeChild = 1.02f;
-    [NonSerialized]
-    public Batch batch;
+    /// <summary>
+    /// Size of the child quads.
+    /// </summary>
+    private const float sizeQuad = 1.02f;
+    /// <summary>
+    /// Can we walk on it.
+    /// </summary>
     private bool walkable;
-    protected List<Effect> onWalkEffects;
+    /// <summary>
+    /// Is the placeable movable (for push, etc.).
+    /// </summary>
     protected bool movable;
-    protected bool destroyable;
+    /// <summary>
+    /// Is the placeable traversable by another Placeable.
+    /// </summary>
     protected TraversableType tangible;
+    /// <summary>
+    /// Is the placeable traversable by bullets.
+    /// </summary>
     protected TraversableType traversableBullet;
-    public Color colorOfObject;
+    /// <summary>
+    /// The speed used for the animation.
+    /// </summary>
     private float animationSpeed = 2.5f;
+    /// <summary>
+    /// Previous material (used for highlighting)
+    /// </summary>
+    // AMELIORATION: move to cube ?
     [NonSerialized]
     public Material oldMaterial;
+    /// <summary>
+    /// Base material.
+    /// </summary>
+    // AMELIORATION: move to cube ?
     public Material baseMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
@@ -147,32 +168,6 @@ public abstract class Placeable : NetIdeable
         }
     }
 
-    public List<Effect> OnWalkEffects
-    {
-        get
-        {
-            return onWalkEffects;
-        }
-
-        set
-        {
-            onWalkEffects = value;
-        }
-    }
-
-    public List<HitablePoint> HitablePoints
-    {
-        get
-        {
-            return hitablePoints;
-        }
-
-        set
-        {
-            hitablePoints = value;
-        }
-    }
-
     public TraversableType TraversableChar
     {
         get
@@ -238,32 +233,13 @@ public abstract class Placeable : NetIdeable
             player = value;
         }
     }
-
-
-
-    public bool Destroyable
-    {
-        get
-        {
-            return destroyable;
-        }
-
-        set
-        {
-            destroyable = value;
-        }
-    }
+    
 
     public float AnimationSpeed
     {
         get
         {
             return animationSpeed;
-        }
-
-        set
-        {
-            animationSpeed = value;
         }
     }
 
@@ -338,32 +314,12 @@ public abstract class Placeable : NetIdeable
 
         }
     }
+
     /// <summary>
     /// method to call for destroying object
     /// </summary>
-    public virtual void Destroy()
-    {
-        if (this.Destroyable)
-        {
-            Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Effect effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.DirectAttack(effect);
-            }
-            foreach (Transform obj in transform.Find("Inventory"))
-            {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
-            }
-            if(!IsLiving())
-            { 
-            GameManager.instance.RemoveBlockFromBatch(this);
-            }
-            gameObject.SetActive(false);
-            this.UnHighlight();
-            Destroy(this.gameObject);
-        }
+    public abstract void Destroy();
 
-    }
     public virtual void Highlight()
     {
         if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
@@ -377,19 +333,19 @@ public abstract class Placeable : NetIdeable
             quadUp.SetActive(true);
 
             quadRight.SetActive(true);
-            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeChild, 1);
+            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeQuad, 1);
             quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0, quadRight.transform.localPosition.z);
 
             quadLeft.SetActive(true);
-            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeChild, 1);
+            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeQuad, 1);
             quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0, quadLeft.transform.localPosition.z);
 
             quadFront.SetActive(true);
-            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeChild, 1);
+            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeQuad, 1);
             quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0, quadFront.transform.localPosition.z);
 
             quadBack.SetActive(true);
-            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeChild, 1);
+            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeQuad, 1);
             quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
 
         }
