@@ -21,9 +21,17 @@ public abstract class Placeable : NetIdeable
     /// Is the placeable movable (for push, etc.).
     /// </summary>
     protected bool movable;
+    /// <summary>
+    /// Is the placeable traversable by another Placeable.
+    /// </summary>
     protected TraversableType tangible;
+    /// <summary>
+    /// Is the placeable traversable by bullets.
+    /// </summary>
     protected TraversableType traversableBullet;
-    public Color colorOfObject;
+    /// <summary>
+    /// The speed used for the animation.
+    /// </summary>
     private float animationSpeed = 2.5f;
     [NonSerialized]
     public Material oldMaterial;
@@ -224,11 +232,6 @@ public abstract class Placeable : NetIdeable
         get
         {
             return animationSpeed;
-        }
-
-        set
-        {
-            animationSpeed = value;
         }
     }
 

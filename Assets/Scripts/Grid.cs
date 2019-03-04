@@ -1372,7 +1372,8 @@ public class Grid : MonoBehaviour
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
-            if (!((StandardCube)this.GetPlaceableFromVector(Pos)).Destroyable)
+            Placeable plac = GetPlaceableFromVector(Pos);
+            if (!plac.IsLiving() && !((StandardCube)this.GetPlaceableFromVector(Pos)).Destroyable)
                 targetableblock.Remove(Pos);
         }
         return targetableblock;
