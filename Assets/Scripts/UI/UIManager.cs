@@ -283,6 +283,7 @@ public class UIManager : MonoBehaviour
             ClearZone(skillZone.gameObject);
             ClearZone(specialSkillZone.gameObject);
             skillZone.gameObject.SetActive(false);
+            specialSkillZone.gameObject.SetActive(false);
             
             ClearZone(timelineZone.gameObject);
             UpdateTimeline();
