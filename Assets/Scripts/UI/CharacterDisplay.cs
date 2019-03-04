@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
 
     private LivingPlaceable character;
     private bool isHovered = false;
@@ -19,6 +19,11 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         {
             character = value;
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -869,21 +869,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.CurrentPA = playingPlaceable.PaMax;
             Debug.Log(PlayingPlaceable.CurrentPA);
             playingPlaceable.Player.clock.IsFinished = false;
-            CanGoNewTurn();
+            playingPlaceable.Player.cameraScript.BackToMovement();
             player1.GetComponent<Timer>().StartTimer(timerLength);
             player2.GetComponent<Timer>().StartTimer(timerLength);
-
         }
     }
-    public void CanGoNewTurn()
-    {
-        if (playingPlaceable.Player.isLocalPlayer)
-        {
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(playingPlaceable.GetPosition(), playingPlaceable.CurrentPM,
-            playingPlaceable.Jump, playingPlaceable.Player);
-            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
-        }
-    }
+    
     public void SetCamera()
     {
         if (isClient)

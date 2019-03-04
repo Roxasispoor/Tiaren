@@ -212,7 +212,8 @@ public class CameraScript : NetworkBehaviour
     {
         if (GameManager.instance.playingPlaceable.Player == player)
         {
-            GameManager.instance.playingPlaceable.ResetTargets();
+            GameManager.instance.PlayingPlaceable.ResetTargets();
+            GameManager.instance.PlayingPlaceable.ResetAreaOfMovement();
             RaycastSelector rayselect = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>();
             rayselect.EffectArea = 0;
             rayselect.Pattern = SkillArea.NONE;

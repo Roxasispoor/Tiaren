@@ -223,6 +223,7 @@ public class Skill
         GameManager.instance.activeSkill = this;
         GameManager.instance.playingPlaceable.Player.ShowSkillEffectTarget(GameManager.instance.playingPlaceable, this);
     }
+
     public bool UseTargeted(Skill skill)
     {
         if (this.tourCooldownLeft > 0)

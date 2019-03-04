@@ -665,7 +665,7 @@ public class Player : NetworkBehaviour
         }
 
         localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
-        localPlayer.GetComponent<UIManager>().TeamCanvas.SetActive(false); //just making sure and useful for recon
+        localPlayer.GetComponent<UIManager>().teamCanvas.SetActive(false); //just making sure and useful for recon
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.isGameStarted = true;
@@ -710,7 +710,7 @@ public class Player : NetworkBehaviour
         ChangeUi();
         GameManager.instance.UpdateTimeline();
         GameManager.instance.SetCamera();
-        GameManager.instance.CanGoNewTurn();
+        GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();
 
     }
 
