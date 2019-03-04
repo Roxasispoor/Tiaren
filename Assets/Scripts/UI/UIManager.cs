@@ -223,18 +223,19 @@ public class UIManager : MonoBehaviour
         foreach (StackAndPlaceable character in GameManager.instance.TurnOrder)
         {
             GameObject image = Instantiate(prefabCharacterImage, TimelineZone);
+            Image icon = image.transform.Find("CharacterIcon").GetComponent<Image>();
+            Image filter = image.transform.Find("Filter").GetComponent<Image>();
             image.GetComponent<CharacterDisplay>().Character = character.Character;
-            image.GetComponentInChildren<Image>().sprite = character.Character.characterSprite;
+            icon.sprite = character.Character.characterSprite;
             image.GetComponentInChildren<Slider>().maxValue = character.Character.MaxHP;
             image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
-            GameObject filter = Instantiate(basicImage, image.transform);
             if (character.Character.Player.gameObject == gameObject)
             {
-                filter.GetComponent<Image>().color = new Color(0, 1, 1, 0.5f);
+                filter.color = new Color(0, 1, 1, 0.5f);
             }
             else
             {
-                filter.GetComponent<Image>().color = new Color(1, 0, 0, 0.5f);
+                filter.color = new Color(1, 0, 0, 0.5f);
             }
             if (numberInstantiated >= 1)
             {
