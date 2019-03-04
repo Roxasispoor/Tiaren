@@ -33,8 +33,16 @@ public abstract class Placeable : NetIdeable
     /// The speed used for the animation.
     /// </summary>
     private float animationSpeed = 2.5f;
+    /// <summary>
+    /// Previous material (used for highlighting)
+    /// </summary>
+    // AMELIORATION: move to cube ?
     [NonSerialized]
     public Material oldMaterial;
+    /// <summary>
+    /// Base material.
+    /// </summary>
+    // AMELIORATION: move to cube ?
     public Material baseMaterial;
     protected GravityType gravityType;
     protected CrushType crushable;
