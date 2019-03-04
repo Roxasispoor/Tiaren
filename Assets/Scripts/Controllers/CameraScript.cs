@@ -210,7 +210,7 @@ public class CameraScript : NetworkBehaviour
 
     public void BackToMovement()
     {
-        if (GameManager.instance.playingPlaceable.Player == player)
+        if (GameManager.instance.playingPlaceable.Player == player && player.isLocalPlayer)
         {
             GameManager.instance.PlayingPlaceable.ResetTargets();
             GameManager.instance.PlayingPlaceable.ResetAreaOfMovement();
