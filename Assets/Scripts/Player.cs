@@ -1130,7 +1130,14 @@ public class Player : NetworkBehaviour
                 placeable.MoveCoroutine = null;
 
             }
-            placeable.MoveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed, justLerp));
+            if (placeable.IsLiving())
+            {
+                placeable.MoveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed));
+            } else
+            {
+                placeable.MoveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed, justLerp));
+            }
+            
         }
     }
 
@@ -1139,7 +1146,6 @@ public class Player : NetworkBehaviour
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
-
         if (path.Count < 2)
         {
             yield break;
