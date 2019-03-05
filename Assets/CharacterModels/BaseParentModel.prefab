@@ -85,8 +85,9 @@ MonoBehaviour:
   isMoving: 0
   destination: {x: 0, y: 0, z: 0}
   baseMaterial: {fileID: 0}
+  explored: 0
+  grounded: 0
   player: {fileID: 0}
-  isSpawnPoint: 0
   className: default
   positionSave: {x: 0, y: 0, z: 0}
   playerPosesser: 
@@ -419,7 +420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.94117653, b: 0.04705883, a: 1}
+  m_Color: {r: 0, g: 0.8235294, b: 0.078431375, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -472,7 +473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.9}
+  m_AnchoredPosition: {x: 0, y: 0.75}
   m_SizeDelta: {x: 763, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3217190440809706523

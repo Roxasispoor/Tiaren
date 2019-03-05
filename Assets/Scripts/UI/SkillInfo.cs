@@ -30,6 +30,7 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (GameManager.instance.State != States.TeamSelect && GameManager.instance.State != States.Spawn)
         {
+            gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
             gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Activate(Skill);
         }
     }
@@ -37,6 +38,7 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
+        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
     }
 
     public void BecomeCurrentSkill()

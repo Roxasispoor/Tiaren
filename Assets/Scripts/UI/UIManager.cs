@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     public float firstGap;
     public float timelineGap;
     public float abilityGap;
+    public float specialAbilityGap;
     public float firstAbility;
     public float firstSpecialAbility;
 
@@ -209,9 +210,10 @@ public class UIManager : MonoBehaviour
             {
                 specialSkillZone.gameObject.SetActive(true);
                 GameObject ability = Instantiate(prefabAbilityButton, specialSkillZone);
+                ability.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
                 Button button = ability.GetComponentInChildren<Button>();
                 button.GetComponent<SkillInfo>().Skill = skill;
-                ability.GetComponent<RectTransform>().transform.localPosition = new Vector3(firstSpecialAbility + abilityGap * specialInstantiated, 0);
+                ability.GetComponent<RectTransform>().transform.localPosition = new Vector3(firstSpecialAbility + specialAbilityGap * specialInstantiated, 0);
                 button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
                 button.onClick.AddListener(skill.Activate);
                 button.onClick.AddListener(SoundHandler.Instance.PlayUISound);
@@ -277,6 +279,12 @@ public class UIManager : MonoBehaviour
             hpDisplay.SetActive(true);
             movDisplay.gameObject.SetActive(true);
             paDisplay.gameObject.SetActive(true);
+
+            if (GameManager.instance.isClient)
+            {
+                GameManager.instance.GetLocalPlayer().gameObject.GetComponentInChildren<Canvas>().gameObject.transform.Find("StatsDisplayer")
+                    .GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
+            }
         }
         else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
         {
