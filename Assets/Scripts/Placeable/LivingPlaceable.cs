@@ -1256,7 +1256,9 @@ public class LivingPlaceable : Placeable
         }
         if (targetArea.Count > 0)
         {
-            GameManager.instance.RefreshBatch((StandardCube)targetArea[0]);
+            if (!IsLiving()) {
+                GameManager.instance.RefreshBatch((StandardCube)targetArea[0]);
+            }
         }
         targetArea.Clear();
 
