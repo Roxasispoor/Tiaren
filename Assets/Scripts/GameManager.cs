@@ -601,7 +601,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if (block != null && block.batch != null && block.batch.combineInstances != null)
         {
-            block.batch.combineInstances.Remove(block.MeshInCombined);
+            block.batch.combineInstances.Remove(block.meshInCombined);
             block.GetComponent<MeshRenderer>().enabled = true;
             RefreshBatch(block);
         }
@@ -806,9 +806,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 };
                 // If it is the first of this material
                 AddMeshToBatches(meshFilter, currentInstance);
-                if (meshFilter.GetComponent<Placeable>() != null)
+                if (meshFilter.GetComponent<StandardCube>() != null)
                 {
-                    meshFilter.GetComponent<Placeable>().MeshInCombined = currentInstance;
+                    meshFilter.GetComponent<StandardCube>().meshInCombined = currentInstance;
                 }
             }
         }

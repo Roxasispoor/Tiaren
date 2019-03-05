@@ -376,7 +376,7 @@ public class Player : NetworkBehaviour
         {
             spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(localPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
-            spawnpoint.IsSpawnPoint = true;
+            spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
             spawnpoint.Movable = false;
             spawnpoint.GravityType = GravityType.NULL_GRAVITY;
@@ -394,7 +394,7 @@ public class Player : NetworkBehaviour
         {
             spawnpoint = (StandardCube) Grid.instance.GetPlaceableFromVector(enemyPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
-            spawnpoint.IsSpawnPoint = true;
+            spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
             spawnpoint.Movable = false;
             spawnpoint.GravityType = GravityType.NULL_GRAVITY;
@@ -438,7 +438,7 @@ public class Player : NetworkBehaviour
             for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
             {
                 spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer1[i] + Vector3.down);
-                spawnpoint.IsSpawnPoint = true;
+                spawnpoint.isSpawnPoint = true;
                 spawnpoint.Destroyable = false;
                 spawnpoint.Movable = false;
                 spawnpoint.GravityType = GravityType.NULL_GRAVITY;
@@ -450,7 +450,7 @@ public class Player : NetworkBehaviour
             for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
             {
                 spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer2[i] + Vector3.down);
-                spawnpoint.IsSpawnPoint = true;
+                spawnpoint.isSpawnPoint = true;
                 spawnpoint.Destroyable = false;
                 spawnpoint.Movable = false;
                 spawnpoint.GravityType = GravityType.NULL_GRAVITY;
@@ -549,7 +549,7 @@ public class Player : NetworkBehaviour
             Placeable spawn = Grid.instance.GridMatrix[spawns.x, spawns.y, spawns.z];
             if (spawn == null)
             {
-                Grid.instance.MoveBlock(character, spawns);
+                Grid.instance.MovePlaceable(character, spawns);
                 character.gameObject.SetActive(true);
                 Vector3 transmit = new Vector3(spawns.x, spawns.y, spawns.z);
                 CmdRespawn(transmit, character.netId);
@@ -563,7 +563,7 @@ public class Player : NetworkBehaviour
     {
         Placeable placeable = GameManager.instance.FindLocalObject(netID);
         Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
-        Grid.instance.MoveBlock(placeable, pos, true);
+        Grid.instance.MovePlaceable(placeable, pos, true);
         placeable.gameObject.SetActive(true);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<Player>().RpcRespawn(position, netID);
     }
@@ -575,7 +575,7 @@ public class Player : NetworkBehaviour
         {
             Placeable placeable = GameManager.instance.FindLocalObject(netID);
             Vector3Int pos = new Vector3Int((int)position.x, (int)position.y, (int)position.z);
-            Grid.instance.MoveBlock(placeable, pos, true);
+            Grid.instance.MovePlaceable(placeable, pos, true);
             placeable.gameObject.SetActive(true);
         }
     }
@@ -615,7 +615,7 @@ public class Player : NetworkBehaviour
             Placeable oldPlac = Grid.instance.GetPlaceableFromVector(space);
             if (oldPlac == null)
             {
-                Grid.instance.MoveBlock(GameManager.instance.FindLocalObject(ids[i]), space, true);
+                Grid.instance.MovePlaceable(GameManager.instance.FindLocalObject(ids[i]), space, true);
             }
             else
             {

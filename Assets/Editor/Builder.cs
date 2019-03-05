@@ -3,6 +3,12 @@ using System.Diagnostics;
 
 public class Builder
 {
+    [MenuItem("MyTools/Recompile scripts")]
+    public static void RecompileAll()
+    {
+        AssetDatabase.Refresh();
+    }
+
     [MenuItem("MyTools/Windows Build With Postprocess")]
     public static void BuildGame()
     {

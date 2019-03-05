@@ -179,11 +179,21 @@ public class Grid : MonoBehaviour
     /// <param name="position"></param>
     public void InstantiateCube(GameObject prefab, Vector3Int position)
     {
+        if (!prefab.GetComponent<StandardCube>())
+        {
+            Debug.LogError("InstantiateCube: trying to instantiate a non-cube prefab: " + prefab.name);
+        }
         if (CheckNull(position))
         {
             GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, GameManager.instance.gridFolder.transform);
             gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
-            gridMatrix[position.x, position.y - 1, position.z].SomethingPutAbove();
+
+            Placeable blockUnder = GetPlaceableFromVector(position + Vector3Int.down);
+            if (blockUnder && !blockUnder.IsLiving())
+            {
+                ((StandardCube)blockUnder).SomethingPutAbove();
+            }
+            
             newBlock.GetComponent<Placeable>().netId = Placeable.currentMaxId;
             GameManager.instance.idPlaceable[Placeable.currentMaxId] = newBlock.GetComponent<Placeable>();
             Placeable.currentMaxId++;
@@ -201,7 +211,7 @@ public class Grid : MonoBehaviour
                     };
 
                     GameManager.instance.AddMeshToBatches(meshFilter, currentInstance);
-                    newBlock.GetComponent<Placeable>().MeshInCombined = currentInstance;
+                    newBlock.GetComponent<StandardCube>().meshInCombined = currentInstance;
                     GameManager.instance.RefreshBatch(newBlock.GetComponent<StandardCube>());
                 }
             }
@@ -424,74 +434,74 @@ public class Grid : MonoBehaviour
         //Initialise variable connected, value is true if the curretn block is connected to the ground
         bool connected = false;
         //We've explored this block, so no need to check in again (avoiding loops)
-        gridMatrix[x, y, z].Explored = true;
+        gridMatrix[x, y, z].explored = true;
 
         //first we check the block under us, if there is one
         if (y > 0 && gridMatrix[x, y - 1, z] != null && !gridMatrix[x, y - 1, z].IsLiving()) {
             //if it's the ground (level 0) to the current block is connected to the ground
             if (y - 1 == 0) return true;
             //if the block has no been explored, we check it
-            if (!gridMatrix[x, y - 1, z].Explored)
+            if (!gridMatrix[x, y - 1, z].explored)
                 connected = ExploreConnexity(x, y - 1, z);
             //else then we check if it's a floating block or a grounded one
-            else connected = gridMatrix[x, y - 1, z].Grounded;
+            else connected = gridMatrix[x, y - 1, z].grounded;
             // then if we find something, no need to check the other block, let's return true
             if (connected)
             {
-                gridMatrix[x, y, z].Grounded = true;
+                gridMatrix[x, y, z].grounded = true;
                 return connected;
             }
         }
 
         //And here is the same with other directions
         if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null && !gridMatrix[x+1, y, z].IsLiving()) {
-            if (!gridMatrix[x + 1, y, z].Explored)
+            if (!gridMatrix[x + 1, y, z].explored)
                 connected = ExploreConnexity(x + 1, y, z);
-            else connected = gridMatrix[x + 1, y, z].Grounded;
+            else connected = gridMatrix[x + 1, y, z].grounded;
             if (connected)
             {
-                gridMatrix[x, y, z].Grounded = true;
+                gridMatrix[x, y, z].grounded = true;
                 return connected;
             }
         }
 
         if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null && !gridMatrix[x, y , z+1].IsLiving()) {
-            if (!gridMatrix[x, y, z + 1].Explored)
+            if (!gridMatrix[x, y, z + 1].explored)
                 connected = ExploreConnexity(x, y, z + 1);
-            else connected = gridMatrix[x, y, z + 1].Grounded;
+            else connected = gridMatrix[x, y, z + 1].grounded;
         }
         if (connected)
         {
-            gridMatrix[x, y, z].Grounded = true;
+            gridMatrix[x, y, z].grounded = true;
             return connected;
         }
 
         if (x > 0 && gridMatrix[x - 1, y, z] != null && !gridMatrix[x-1, y, z].IsLiving()) {
-            if (!gridMatrix[x - 1, y, z].Explored)
+            if (!gridMatrix[x - 1, y, z].explored)
                 connected = ExploreConnexity(x - 1, y, z);
-            else connected = gridMatrix[x - 1, y, z].Grounded;
+            else connected = gridMatrix[x - 1, y, z].grounded;
             if (connected)
             {
-                gridMatrix[x, y, z].Grounded = true;
+                gridMatrix[x, y, z].grounded = true;
                 return connected;
             }
         }
 
         if (z > 0 && gridMatrix[x, y, z - 1] != null && !gridMatrix[x, y, z-1].IsLiving()) {
-            if (!gridMatrix[x, y, z - 1].Explored)
+            if (!gridMatrix[x, y, z - 1].explored)
                 connected = ExploreConnexity(x, y, z - 1);
-            else connected = gridMatrix[x, y, z - 1].Grounded;
+            else connected = gridMatrix[x, y, z - 1].grounded;
             if (connected)
             {
-                gridMatrix[x, y, z].Grounded = true;
+                gridMatrix[x, y, z].grounded = true;
                 return connected;
             }
         }
 
         if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null && !gridMatrix[x, y + 1, z].IsLiving()) {
-            if (!gridMatrix[x, y + 1, z].Explored)
+            if (!gridMatrix[x, y + 1, z].explored)
                 connected = ExploreConnexity(x, y + 1, z);
-            else connected=gridMatrix[x, y + 1, z].Grounded;
+            else connected=gridMatrix[x, y + 1, z].grounded;
         }
         
         return connected;
@@ -516,8 +526,8 @@ public class Grid : MonoBehaviour
                 {
                     if (gridMatrix[i,j,k]!=null)
                     {
-                        gridMatrix[i, j, k].Explored = false;
-                        gridMatrix[i, j, k].Grounded = false;
+                        gridMatrix[i, j, k].explored = false;
+                        gridMatrix[i, j, k].grounded = false;
                     }
                 }
 
@@ -525,7 +535,7 @@ public class Grid : MonoBehaviour
         }
         //no need to check this block back
         if (gridMatrix[x, y, z] != null)
-            gridMatrix[x, y, z].Explored = true;
+            gridMatrix[x, y, z].explored = true;
 
         //if the block is in , it's the ground, this shouldn't have been destroyed or moved
         if (y != 0)
@@ -533,35 +543,35 @@ public class Grid : MonoBehaviour
             //for each direction, we check each block that need to fall due to the destruction of the current block
             if (y > 0 && gridMatrix[x, y - 1, z] != null && !gridMatrix[x, y - 1, z].IsLiving())
             {
-                if (y - 1 == 0) gridMatrix[x, y - 1, z].Grounded = true;
-                else gridMatrix[x, y - 1, z].Grounded = ExploreConnexity(x, y - 1, z);
-                somethingfall = !gridMatrix[x, y - 1, z].Grounded || somethingfall;
+                if (y - 1 == 0) gridMatrix[x, y - 1, z].grounded = true;
+                else gridMatrix[x, y - 1, z].grounded = ExploreConnexity(x, y - 1, z);
+                somethingfall = !gridMatrix[x, y - 1, z].grounded || somethingfall;
             }
             if (y + 1 < sizeY && gridMatrix[x, y + 1, z] != null && !gridMatrix[x, y + 1, z].IsLiving()) {
-                gridMatrix[x, y + 1, z].Grounded = ExploreConnexity(x, y + 1, z);
-                somethingfall = somethingfall || !gridMatrix[x, y + 1, z].Grounded;
+                gridMatrix[x, y + 1, z].grounded = ExploreConnexity(x, y + 1, z);
+                somethingfall = somethingfall || !gridMatrix[x, y + 1, z].grounded;
             }
             if (x + 1 < sizeX && gridMatrix[x + 1, y, z] != null && !gridMatrix[x+1, y, z].IsLiving()) {
-                gridMatrix[x + 1, y, z].Grounded = ExploreConnexity(x + 1, y, z);
-                somethingfall = somethingfall || !gridMatrix[x+1, y, z].Grounded;
+                gridMatrix[x + 1, y, z].grounded = ExploreConnexity(x + 1, y, z);
+                somethingfall = somethingfall || !gridMatrix[x+1, y, z].grounded;
             }
             if (x > 0 && gridMatrix[x - 1, y, z] != null && !gridMatrix[x-1, y , z].IsLiving()) { 
-                gridMatrix[x - 1, y, z].Grounded = ExploreConnexity(x - 1, y, z);
-                somethingfall = somethingfall || !gridMatrix[x-1, y, z].Grounded;
+                gridMatrix[x - 1, y, z].grounded = ExploreConnexity(x - 1, y, z);
+                somethingfall = somethingfall || !gridMatrix[x-1, y, z].grounded;
             }
             if (z + 1 < sizeZ && gridMatrix[x, y, z + 1] != null && !gridMatrix[x, y, z+1].IsLiving()) { 
-                gridMatrix[x, y, z + 1].Grounded = ExploreConnexity(x, y, z + 1);
-                somethingfall = somethingfall || !gridMatrix[x, y, z+1].Grounded;
+                gridMatrix[x, y, z + 1].grounded = ExploreConnexity(x, y, z + 1);
+                somethingfall = somethingfall || !gridMatrix[x, y, z+1].grounded;
             }
             if (z > 0 && gridMatrix[x, y, z - 1] != null && !gridMatrix[x, y, z-1].IsLiving()) {
-                gridMatrix[x, y, z - 1].Grounded = ExploreConnexity(x, y, z - 1);
-                somethingfall = somethingfall || !gridMatrix[x, y, z-1].Grounded;
+                gridMatrix[x, y, z - 1].grounded = ExploreConnexity(x, y, z - 1);
+                somethingfall = somethingfall || !gridMatrix[x, y, z-1].grounded;
             }
             Gravity();
         }
     }
 
-    public void MoveBlock(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
+    public void MovePlaceable(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
     {
         if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
            && desiredPosition.y >= 0 && desiredPosition.y < sizeY
@@ -587,9 +597,10 @@ public class Grid : MonoBehaviour
                 }
                 gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position = desiredPosition; //shifting model
             }
-            if(desiredPosition.y-1>=0 && Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z]!=null)
+            if(!bloc.IsLiving()
+                && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null)
             {
-                Grid.instance.GridMatrix[desiredPosition.x, desiredPosition.y - 1, desiredPosition.z].SomethingPutAbove();
+                ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
             }
 
         }
@@ -632,7 +643,7 @@ public class Grid : MonoBehaviour
     {
         if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
-            MoveBlock(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
+            MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC && !GridMatrix[x,y,z].IsLiving())// destroy bloc, trigger effects
         {
@@ -691,7 +702,7 @@ public class Grid : MonoBehaviour
                 {
                     if (gridMatrix[x, y, z] != null &&
                        (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
-                       (gridMatrix[x, y, z].Explored && !gridMatrix[x, y, z].Grounded)))
+                       (gridMatrix[x, y, z].explored && !gridMatrix[x, y, z].grounded)))
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
                         //blockfallen = true;
@@ -1384,13 +1395,16 @@ public class Grid : MonoBehaviour
     /// </summary>
     /// <param name="Blocklist">All the blocks that need to be checked</param>
     /// <returns></returns>
+    // TODO: Rename this as something like Filter
     public List<Vector3Int> CreateBlockPattern(List<Vector3Int> Blocklist)
     {
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
             Placeable block = gridMatrix[Pos.x, Pos.y, Pos.z];
-            if (block.GetType()==typeof(Goal) || block.IsSpawnPoint || Pos.y == sizeY - 1 || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
+            if ((block.IsLiving() && (((StandardCube)block).GetType()==typeof(Goal) || ((StandardCube)block).isSpawnPoint ))
+                || Pos.y == sizeY - 1 
+                || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
                 targetableblock.Remove(Pos);
         }
         return targetableblock;
