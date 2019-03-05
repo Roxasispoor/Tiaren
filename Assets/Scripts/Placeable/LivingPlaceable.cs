@@ -1006,7 +1006,10 @@ public class LivingPlaceable : Placeable
 
     private void Update()
     {
-        flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
+        if (GameManager.instance.isClient)
+        {
+            flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
+        }
     }
 
 

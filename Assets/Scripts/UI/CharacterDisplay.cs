@@ -38,6 +38,7 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
         isHovered = false;
         character.UnHighlight();
+        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
     }
 
     public void Update()
