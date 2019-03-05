@@ -52,14 +52,30 @@ public abstract class Placeable : NetIdeable
     /// How it react when crushed.
     /// </summary>
     protected CrushType crushable;
-    private bool explored;
-    private bool grounded;
+    /// <summary>
+    /// Used for gravity - Indicates if gravity tests have been already done on placeable.
+    /// </summary>
+    public bool explored;
+    /// <summary>
+    /// Used for gravity - Indicates if it is connected to the ground.
+    /// </summary>
+    public bool grounded;
+    /// <summary>
+    /// Effect which proc when the Placeable is destroyed.
+    /// </summary>
     protected List<Effect> onDestroyEffects;
+    /// <summary>
+    /// Effect which proc at the beginning of the turn.
+    /// </summary>
     protected List<Effect> onStartTurn;
+    /// <summary>
+    /// Effect which proc at the end of the turn.
+    /// </summary>
     protected List<Effect> onEndTurn;
+    /// <summary>
+    /// Current coroutine used for the movement.
+    /// </summary>
     private Coroutine moveCoroutine;
-
-    protected CombineInstance meshInCombined;
 
     // Bool to avoid doubleclick with the same input
     private static bool isClicked = false;
@@ -68,8 +84,6 @@ public abstract class Placeable : NetIdeable
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
     public Player player;
-    [SerializeField]
-    private bool isSpawnPoint;
 
     public override bool IsLiving()
     {
@@ -100,38 +114,6 @@ public abstract class Placeable : NetIdeable
             movable = value;
         }
     }
-
-
-
-    /// <summary>
-    /// indicates if gravity tests have been already done on placeable 
-    /// </summary>
-    public bool Explored
-    {
-        get
-        {
-            return explored;
-        }
-
-        set
-        {
-            explored = value;
-        }
-    }
-
-    public bool Grounded
-    {
-        get
-        {
-            return grounded;
-        }
-
-        set
-        {
-            grounded = value;
-        }
-    }
-
 
     public List<Effect> OnStartTurn
     {
@@ -242,33 +224,6 @@ public abstract class Placeable : NetIdeable
         }
     }
 
-
-    public CombineInstance MeshInCombined
-    {
-        get
-        {
-            return meshInCombined;
-        }
-
-        set
-        {
-            meshInCombined = value;
-        }
-    }
-
-    public bool IsSpawnPoint
-    {
-        get
-        {
-            return isSpawnPoint;
-        }
-
-        set
-        {
-            isSpawnPoint = value;
-        }
-    }
-
     public Coroutine MoveCoroutine
     {
         get
@@ -293,25 +248,6 @@ public abstract class Placeable : NetIdeable
     {
         Placeable copy = (Placeable)this.MemberwiseClone();
         return copy;
-    }
-    public virtual void SomethingPutAbove()
-    {
-        foreach (Transform obj in transform.Find("Inventory"))
-        {
-            obj.GetComponent<ObjectOnBloc>().SomethingPutAbove();
-        }
-        if (isSpawnPoint)
-        {
-            Placeable above = Grid.instance.GetPlaceableFromVector(GetPosition() + new Vector3Int(0, 1, 0));
-            if (above != null && !above.IsLiving())
-            {
-                above.Destroy();
-
-                Grid.instance.ConnexeFall(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
-                //                GameManager.instance.ResetAllBatches();
-            }
-
-        }
     }
 
     /// <summary>
@@ -388,7 +324,7 @@ public abstract class Placeable : NetIdeable
             {
                 isClicked = true;
 
-                if (this.IsSpawnPoint == true // AMELIORATION: Maybe could be remove
+                if (!this.IsLiving() && ((StandardCube)this).isSpawnPoint == true // AMELIORATION: Maybe could be remove
                                               // Check if it is a spawn point for that player
                         && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains(GetPosition() + Vector3Int.up)
                         && GameManager.instance.CharacterToSpawn != null)
@@ -415,7 +351,7 @@ public abstract class Placeable : NetIdeable
                     }
                     GameManager.instance.CharacterToSpawn = null;
                 }
-                else if (IsLiving() && player == GameManager.instance.GetLocalPlayer())
+                else if (player == GameManager.instance.GetLocalPlayer())
                 {
                     if (!GameManager.instance.CharacterToSpawn)
                     {

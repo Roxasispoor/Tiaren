@@ -17,8 +17,8 @@ public class Spawn : StandardCube {
         this.GravityType = GravityType.NULL_GRAVITY;
 
         this.crushable = CrushType.CRUSHDESTROYBLOC;
-        this.Explored = false;
-        this.Grounded = false;
+        this.explored = false;
+        this.grounded = false;
         this.OnWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
         this.OnStartTurn = new List<Effect>();

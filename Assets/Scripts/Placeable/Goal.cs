@@ -20,8 +20,8 @@ public class Goal : StandardCube {
 
         this.GravityType = GravityType.NULL_GRAVITY;
         this.crushable = CrushType.CRUSHDESTROYBLOC;
-        this.Explored = false;
-        this.Grounded = false;
+        this.explored = false;
+        this.grounded = false;
         this.OnWalkEffects = new List<Effect>() { new FlagVictoryEffect()};
     }
 }

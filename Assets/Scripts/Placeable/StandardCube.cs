@@ -13,6 +13,12 @@ public class StandardCube : Placeable
     public Batch batch;
     protected List<Effect> onWalkEffects;
     protected bool destroyable;
+    /// <summary>
+    /// Used for batching.
+    /// </summary>
+    public CombineInstance meshInCombined;
+    [SerializeField]
+    public bool isSpawnPoint;
 
     public List<Effect> OnWalkEffects
     {
@@ -54,8 +60,8 @@ public class StandardCube : Placeable
         this.GravityType = GravityType.RELATED_GRAVITY;
        
         this.crushable = CrushType.CRUSHSTAY;
-        this.Explored = false;
-        this.Grounded = false;
+        this.explored = false;
+        this.grounded = false;
         this.onWalkEffects = new List<Effect>();
         this.OnDestroyEffects = new List<Effect>();
         this.OnStartTurn = new List<Effect>();
@@ -89,6 +95,29 @@ public class StandardCube : Placeable
             Destroy(this.gameObject);
         }
 
+    }
+
+    /// <summary>
+    /// To call when something is put above
+    /// </summary>
+    public virtual void SomethingPutAbove()
+    {
+        foreach (Transform obj in transform.Find("Inventory"))
+        {
+            obj.GetComponent<ObjectOnBloc>().SomethingPutAbove();
+        }
+        if (isSpawnPoint)
+        {
+            Placeable above = Grid.instance.GetPlaceableFromVector(GetPosition() + new Vector3Int(0, 1, 0));
+            if (above != null && !above.IsLiving())
+            {
+                above.Destroy();
+
+                Grid.instance.ConnexeFall(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
+                //                GameManager.instance.ResetAllBatches();
+            }
+
+        }
     }
 
 }
