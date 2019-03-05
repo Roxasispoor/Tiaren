@@ -44,16 +44,20 @@ public abstract class Placeable : NetIdeable
     /// </summary>
     // AMELIORATION: move to cube ?
     public Material baseMaterial;
+    /// <summary>
+    /// How it react to gravity.
+    /// </summary>
     protected GravityType gravityType;
+    /// <summary>
+    /// How it react when crushed.
+    /// </summary>
     protected CrushType crushable;
     private bool explored;
     private bool grounded;
     protected List<Effect> onDestroyEffects;
-    protected List<HitablePoint> hitablePoints;
     protected List<Effect> onStartTurn;
     protected List<Effect> onEndTurn;
     private Coroutine moveCoroutine;
-    //private List<ObjectOnBloc> objectOnBlocs;
 
     protected CombineInstance meshInCombined;
 
@@ -212,11 +216,6 @@ public abstract class Placeable : NetIdeable
         get
         {
             return crushable;
-        }
-
-        set
-        {
-            crushable = value;
         }
     }
 

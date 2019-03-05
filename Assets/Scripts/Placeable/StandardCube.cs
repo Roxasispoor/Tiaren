@@ -53,7 +53,7 @@ public class StandardCube : Placeable
 
         this.GravityType = GravityType.RELATED_GRAVITY;
        
-        this.Crushable = CrushType.CRUSHSTAY;
+        this.crushable = CrushType.CRUSHSTAY;
         this.Explored = false;
         this.Grounded = false;
         this.onWalkEffects = new List<Effect>();
