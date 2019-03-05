@@ -823,7 +823,7 @@ public class LivingPlaceable : Placeable
             this.TraversableBullet = TraversableType.NOTHROUGH;
             this.GravityType = GravityType.SIMPLE_GRAVITY;
 
-            this.Crushable = CrushType.CRUSHDAMAGE;
+            this.crushable = CrushType.CRUSHDAMAGE;
             this.OnDestroyEffects = new List<Effect>();
             this.OnStartTurn = new List<Effect>();
             this.OnEndTurn = new List<Effect>();
@@ -960,7 +960,7 @@ public class LivingPlaceable : Placeable
         this.TraversableChar = TraversableType.ALLIESTHROUGH;
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
-        this.Crushable = CrushType.CRUSHDAMAGE;
+        this.crushable = CrushType.CRUSHDAMAGE;
         this.OnDestroyEffects = new List<Effect>();
         this.OnStartTurn = new List<Effect>();
         this.OnEndTurn = new List<Effect>();
