@@ -1402,7 +1402,7 @@ public class Grid : MonoBehaviour
         foreach (Vector3Int Pos in Blocklist)
         {
             Placeable block = gridMatrix[Pos.x, Pos.y, Pos.z];
-            if ((block.IsLiving() && (((StandardCube)block).GetType()==typeof(Goal) || ((StandardCube)block).isSpawnPoint ))
+            if ((!block.IsLiving() && (((StandardCube)block).GetType()==typeof(Goal) || ((StandardCube)block).isSpawnPoint ))
                 || Pos.y == sizeY - 1 
                 || gridMatrix[Pos.x, Pos.y+1, Pos.z]!=null)
                 targetableblock.Remove(Pos);
