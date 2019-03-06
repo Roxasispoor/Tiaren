@@ -77,9 +77,6 @@ public abstract class Placeable : NetIdeable
     /// </summary>
     private Coroutine moveCoroutine;
 
-    // Bool to avoid doubleclick with the same input
-    private static bool isClicked = false;
-
     /// <summary>
     /// player who owns the placeable. players, neutral monsters, and null (independant blocs)
     /// </summary>
@@ -320,9 +317,8 @@ public abstract class Placeable : NetIdeable
     {
         if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && !isClicked)
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
             {
-                isClicked = true;
 
                 if (!this.IsLiving() && ((StandardCube)this).isSpawnPoint == true // AMELIORATION: Maybe could be remove
                                               // Check if it is a spawn point for that player
@@ -381,10 +377,6 @@ public abstract class Placeable : NetIdeable
                     }
                 }
 
-            }
-            else
-            {
-                isClicked = false;
             }
         }
         else if (GameManager.instance.State == States.Move)
