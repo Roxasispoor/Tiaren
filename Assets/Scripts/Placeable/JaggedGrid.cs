@@ -94,7 +94,7 @@ public class JaggedGrid
         this.gridTable[y * sizeZ * sizeX + z * sizeX + x] = value;
     }
 
-    public void Save(string path = "Grid.json")
+    public void Save(string path)
     {
         string text = JsonUtility.ToJson(this);
 
@@ -107,7 +107,7 @@ public class JaggedGrid
     }
 
 
-    static string ReadString(string path = "Grid.json")
+    static string ReadString(string path)
     {
 
         //Read the text from directly from the test.txt file

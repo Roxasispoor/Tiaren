@@ -113,7 +113,7 @@ public class StandardCube : Placeable
             {
                 above.Destroy();
 
-                Grid.instance.ConnexeFall(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
+                Grid.instance.Gravity(above.GetPosition().x, above.GetPosition().y, above.GetPosition().z);
                 //                GameManager.instance.ResetAllBatches();
             }
 

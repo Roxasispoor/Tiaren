@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEditor;
 
 /// <summary>
 /// Class representing a grid for a game
@@ -139,7 +140,6 @@ public class Grid : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Create a random grid from randomParameter
     /// </summary>
@@ -156,9 +156,6 @@ public class Grid : MonoBehaviour
                         GameObject obj = Instantiate(prefabsList[0], new Vector3(x, y, z), Quaternion.identity, parent.transform);
                         gridMatrix[x, y, z] = obj.GetComponent<Placeable>();
                         NetworkServer.Spawn(obj);
-
-
-
                     }
                 }
             }
@@ -567,7 +564,6 @@ public class Grid : MonoBehaviour
                 gridMatrix[x, y, z - 1].grounded = ExploreConnexity(x, y, z - 1);
                 somethingfall = somethingfall || !gridMatrix[x, y, z-1].grounded;
             }
-            Gravity();
         }
     }
 
@@ -582,7 +578,11 @@ public class Grid : MonoBehaviour
             Vector3 oldPosition = bloc.GetPosition();
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
-            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to 0
+            if (true)
+            {
+                gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to null
+            }
+
             if (updateTransform)
             {
                 if(bloc.isMoving)
@@ -595,7 +595,7 @@ public class Grid : MonoBehaviour
                     bloc.isMoving = false;
                     StopCoroutine(bloc.MoveCoroutine);
                 }
-                gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].transform.position = desiredPosition; //shifting model
+                bloc.transform.position = desiredPosition; //shifting model
             }
             if(!bloc.IsLiving()
                 && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null)
@@ -688,7 +688,13 @@ public class Grid : MonoBehaviour
     /// for other objects, if not link to the ground, they fall
     /// Batching is applying at the end of gravuty application if blocks have fallen
     /// </summary>
-    public void Gravity()
+    public void Gravity(int x, int y, int z)
+    {
+        ConnexeFall(x, y, z);
+        simpleGravity();
+    }
+    
+    public void simpleGravity()
     {
         int y = 0;
         //bool blockfallen = false;
@@ -706,7 +712,7 @@ public class Grid : MonoBehaviour
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
                         //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch((StandardCube) gridMatrix[x, y, z]);
+                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch((StandardCube)gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null
@@ -724,20 +730,8 @@ public class Grid : MonoBehaviour
             }
             y++;
         }
-        /*foreach (Placeable block in batchlist)
-            GameManager.instance.RemoveBlockFromBatch(block);*/
-        //if (blockfallen) GameManager.instance.ResetAllBatches();
     }
-    /// <summary>
-    /// Save grid in json file using jaggedarray
-    /// </summary>
-    public void SaveGridFile()
-    {
-        JaggedGrid jagged = new JaggedGrid();
-        jagged.ToJagged(this);
-        jagged.Save();
 
-    }
     /// <summary>
     /// Save grid in json file using jaggedarray
     /// </summary>

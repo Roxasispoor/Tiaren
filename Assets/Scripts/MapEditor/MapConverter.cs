@@ -133,7 +133,7 @@ public class MapConverter : MonoBehaviour {
         jaggedGrid.goalP1 = goalP1.ToArray();
         jaggedGrid.goalP2 = goalP2.ToArray();
         jaggedGrid.flagCoord = flag.ToArray();
-        jaggedGrid.Save(_outPath);
+        jaggedGrid.Save(Path.Combine(Application.streamingAssetsPath, _outPath));
         Debug.Log("MapConverter: successfully converted to " + _outPath);
     }
 

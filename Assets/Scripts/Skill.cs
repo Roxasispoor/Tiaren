@@ -234,6 +234,7 @@ public class Skill
         {
             return false;
         }
+        GameManager.instance.PlayingPlaceable.CurrentPA -= this.Cost;
         this.tourCooldownLeft = this.cooldown;
         if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
         {

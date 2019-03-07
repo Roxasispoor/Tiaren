@@ -998,7 +998,7 @@ public class LivingPlaceable : Placeable
         {
             InitNoClass();
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
-            LoadFromjson(ClassName + ".json");
+            LoadFromjson(Path.Combine(Application.streamingAssetsPath, ClassName + ".json"));
             circleTeam.color = Player.color;
             targetableUnits = new List<LivingPlaceable>();
         }
@@ -1267,7 +1267,7 @@ public class LivingPlaceable : Placeable
 
     }
 
-    public void Save(string path = "Living.json")
+    public void Save(string path)
     {
         //No joke keep it , it changes playerpossessser
         Player = Player;
