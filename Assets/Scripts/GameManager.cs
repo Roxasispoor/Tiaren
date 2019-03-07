@@ -74,8 +74,6 @@ public class GameManager : NetworkBehaviour
     /// Array where are stored all the character's prefabs
     /// </summary>
     public GameObject[] prefabCharacs;
-    // TODO: redondance avec Grid.instance ?
-    public GameObject gridFolder;
     /// <summary>
     /// GameObject representing player 1
     /// </summary>
@@ -380,8 +378,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
-
-        Grid.instance.FillGridAndSpawn(gridFolder, mapToCharge);
+        GameObject grid = new GameObject("GridFolder");
+        grid.AddComponent<NetworkIdentity>();
+        Grid.instance.CreareGrid(grid, mapToCharge);
         transmitter.networkManager = networkManager;
 
         Grid.instance.Gravity();
@@ -445,7 +444,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         ResetBatchFolder();
         Grid.instance.GridMatrix = new Placeable[Grid.instance.sizeX, Grid.instance.sizeY, Grid.instance.sizeZ];
-        foreach (Transform child in GameManager.instance.gridFolder.transform)
+        foreach (Transform child in Grid.instance.gameObject.transform)
         {
             GameObject.Destroy(child.gameObject);
         }
@@ -792,7 +791,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
         }
 
-        MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
+        MeshFilter[] meshFilters = Grid.instance.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
         foreach (MeshFilter meshFilter in meshFilters)
         {

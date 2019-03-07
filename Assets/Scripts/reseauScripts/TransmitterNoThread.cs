@@ -205,7 +205,7 @@ public class TransmitterNoThread : MonoBehaviour
                     GameManager.instance.ResetGrid();
                     //Deletes old grid, fill it anew
 
-                    Grid.instance.FillGridAndSpawnNetwork(GameManager.instance.gridFolder, strCopy);
+                    Grid.instance.FillGridAndSpawnNetwork(Grid.instance.gameObject, strCopy);
                 }
 
                 else if (str.EndsWith(stringLiving))
