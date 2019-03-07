@@ -31,7 +31,7 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            if (effect.HitOnDirectAttack)
+            if (effect.TriggerOnApply)
             {
                 UseEffect(effect);
             }
@@ -48,7 +48,7 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            if(!effect.TriggerAtOneOnly || effect.TriggerAtOneOnly && effect.TurnActiveEffect==1)
+            if(!effect.TriggerOnce || effect.TriggerOnce && effect.TurnActiveEffect==1)
             {
                 UseEffect(effect);
             }

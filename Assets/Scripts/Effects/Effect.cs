@@ -17,10 +17,16 @@ public abstract class Effect
     private Placeable launcher;
     [SerializeField]
     private int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    /// <summary>
+    /// Should the effect trigger only once at the when its countdown is finished.
+    /// </summary>
     [SerializeField]
-    private bool triggerAtOneOnly = false;
+    protected bool triggerOnce = false;
+    /// <summary>
+    /// Should the effect trigger when attached to the target.
+    /// </summary>
     [SerializeField]
-    private bool hitOnDirectAttack = true;
+    protected bool triggerOnApply = true;
     public virtual Placeable Launcher
     {
         get
@@ -55,29 +61,35 @@ public abstract class Effect
         }
     }
 
-    public bool TriggerAtOneOnly
+    /// <summary>
+    /// Should the effect trigger only once at the when its countdown is finished.
+    /// </summary>
+    public bool TriggerOnce
     {
         get
         {
-            return triggerAtOneOnly;
+            return triggerOnce;
         }
 
         set
         {
-            triggerAtOneOnly = value;
+            triggerOnce = value;
         }
     }
 
-    public bool HitOnDirectAttack
+    /// <summary>
+    /// Should the effect trigger when attached to the target.
+    /// </summary>
+    public bool TriggerOnApply
     {
         get
         {
-            return hitOnDirectAttack;
+            return triggerOnApply;
         }
 
         set
         {
-            hitOnDirectAttack = value;
+            triggerOnApply = value;
         }
     }
 
@@ -90,14 +102,14 @@ public abstract class Effect
         TurnActiveEffect = other.TurnActiveEffect;
         Launcher = other.Launcher;
         turnActiveEffect = other.TurnActiveEffect;
-        TriggerAtOneOnly = other.TriggerAtOneOnly;
-        HitOnDirectAttack = other.HitOnDirectAttack;
+        TriggerOnce = other.TriggerOnce;
+        TriggerOnApply = other.TriggerOnApply;
     }
-    protected Effect(int numberOfTurns, bool triggerAtEnd = false, bool hitOnDirectAttack = true)
+    protected Effect(int numberOfTurns, bool triggerAtEnd = false, bool triggerOnApply = true)
     {
         TurnActiveEffect = numberOfTurns;
-        TriggerAtOneOnly = triggerAtEnd;
-        HitOnDirectAttack = hitOnDirectAttack;
+        TriggerOnce = triggerAtEnd;
+        TriggerOnApply = triggerOnApply;
     }
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);

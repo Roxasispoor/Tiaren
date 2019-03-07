@@ -29,6 +29,9 @@ public class CreateZipLine : CreateBlock
             zip1.GetComponentInChildren<ZiplineFX>().ConnectZipline(zip2.GetComponentInChildren<ZiplineFX>());
             GameManager.instance.playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(GameManager.instance.playingPlaceable,
                 GameManager.instance.playingPlaceable.GetPosition());
+        } else
+        {
+            Debug.LogError("Zipline not found");
         }
     }
 }
