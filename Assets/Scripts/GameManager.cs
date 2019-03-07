@@ -13,7 +13,7 @@ public class GameManager : NetworkBehaviour
     /// Name of the file to charge for the map
     /// </summary>
     [SerializeField]
-    private string mapToCharge = "Castles.json";
+    private string mapToCharge;
     /// <summary>
     /// Enforce singleton pattern
     /// </summary>
@@ -330,7 +330,7 @@ public class GameManager : NetworkBehaviour
 
 
         //init Posissible characters
-        string path = "Teams.json";
+        string path = Path.Combine(Application.streamingAssetsPath , "Teams.json");
         string line;
 
         StreamReader reader = new StreamReader(path);
@@ -378,12 +378,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
+
+
         GameObject grid = new GameObject("GridFolder");
         grid.AddComponent<NetworkIdentity>();
-        Grid.instance.CreareGrid(grid, mapToCharge);
+        string pathToMap = Path.Combine(Application.streamingAssetsPath, mapToCharge);
+        Grid.instance.CreareGrid(grid, pathToMap);
         transmitter.networkManager = networkManager;
-
-        Grid.instance.Gravity();
+        
         Debug.Log("Right before select");
         TeamSelectDisplay();
         InitialiseBatchFolder();
@@ -606,7 +608,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
     /// <summary>
-    /// Creates a new batch from the material given, combines instances in dico 
+    /// Creates a new batch from the material given, combines instances in       
     /// </summary>
     /// <param name="meshFilter"></param>
     /// <param name="dictionaryMaterialsFilling"></param>
@@ -822,7 +824,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void BeginningOfTurn()
     {
-        Grid.instance.Gravity();
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;

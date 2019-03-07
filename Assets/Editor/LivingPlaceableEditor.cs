@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 [CustomEditor(typeof(LivingPlaceable))]
 public class LivingPlaceableEditor : Editor {
@@ -14,7 +15,7 @@ public class LivingPlaceableEditor : Editor {
 
         if (GUILayout.Button("Convert"))
         {
-            living.Save(living.ClassName + ".json");
+            living.Save(Path.Combine(Application.streamingAssetsPath, living.ClassName + ".json"));
         }
     }
 }

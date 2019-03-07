@@ -103,10 +103,8 @@ public class Push : EffectOnPlaceable
             {
                 Debug.Log("The hell, push caster is push target");
             }
-
-                GetDirection();
-              
-                direction.Normalize();
+            GetDirection();
+            direction.Normalize();
             if(doesHeightCount)
             {
                 direction.z = 0;
@@ -138,23 +136,21 @@ public class Push : EffectOnPlaceable
         }
         if(path.Count>0)
         {
-            Grid.instance.MovePlaceable(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z),GameManager.instance.isServer);
+            Grid.instance.MovePlaceable(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z), GameManager.instance.isServer);
+            GameManager.instance.RemoveBlockFromBatch((StandardCube)Target);
             if (GameManager.instance.isClient)
             { 
-                GameManager.instance.RemoveBlockFromBatch((StandardCube) Target);
                 //Could be either player, really...
                 path.Insert(0, Target.GetPosition());
                 // trigger visual effect and physics consequences
-                Vector3 pos = Target.transform.position;
                 GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
                 GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
-                Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
             }
+            Vector3 pos = Target.transform.position;
+            Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
         }
-
-        
-        //cmdMoveBlock(Target
     }
+
     //Todo check que ça sort pas du terrain...
     public List<Vector3> CheckPath(int distance, Vector2Int delta,out Placeable directCollision, out List<Placeable> diagonalCollisions)
     {

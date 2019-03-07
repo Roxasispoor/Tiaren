@@ -287,6 +287,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
+        DicoCondition.Add("ResetTarget", () => Input.GetButtonDown("ResetTarget"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
         Isready = false;
@@ -666,7 +667,7 @@ public class Player : NetworkBehaviour
         }
 
         localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
-        localPlayer.GetComponent<UIManager>().teamCanvas.SetActive(false); //just making sure and useful for recon
+        localPlayer.GetComponent<UIManager>().teamCanvas.SetActive(false); //just making sure and useful for reco
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
 
         GameManager.instance.isGameStarted = true;
@@ -926,42 +927,49 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdMoveTo(Vector3[] path)
     {
-        // Debug.LogError("CheckPath" + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
         if (GameManager.instance.PlayingPlaceable.Player == this && path.Length > 1)// updating only if it's his turn to play, other checkings are done in GameManager
         {
-            //Move  placeable
-            Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
-            Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
-                GameManager.instance.playingPlaceable.GetPosition().z] = null;
-            Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
-                (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
-
-            GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-            //Trigger effect the ones after the others, does not interrupt path
-            foreach (Vector3 current in path)
+            if (Grid.instance.CheckPath(path, GameManager.instance.PlayingPlaceable))
             {
-                foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
+                //Move placeable on server
+                Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
+
+                Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
+                    GameManager.instance.playingPlaceable.GetPosition().z] = null;
+
+                Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
+                    (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+
+                GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
+                //Trigger effect the ones after the others, does not interrupt path
+                foreach (Vector3 current in path)
                 {
+                    foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
+                    {
 
-                    //makes the deep copy, send it to effect manager and zoo
-                    Effect effectToConsider = effect.Clone();
-                    effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
-                    //Double dispatch
-                    GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
+                        //makes the deep copy, send it to effect manager and zoo
+                        Effect effectToConsider = effect.Clone();
+                        effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
+                        //Double dispatch
+                        GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
 
 
+                    }
                 }
+                GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+                RpcMoveTo(path);
             }
-            GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
-            RpcMoveTo(path);
-
-
-
+            else
+            {
+                Debug.LogError("Path is invalide");
+            }
         }
     }
+
     [ClientRpc]
     public void RpcMoveTo(Vector3[] path)
     {
+        //activate effects on path, does not interrupt
         foreach (Vector3 current in path)
         {
             foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
@@ -973,13 +981,13 @@ public class Player : NetworkBehaviour
                 GameManager.instance.PlayingPlaceable.DispatchEffect(effectToConsider);
             }
         }
-        //List<Vector3> bezierPath = new List<Vector3>(realPath);
+
         GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
         List<Vector3> bezierPath = new List<Vector3>(path);
-
-        Debug.Log("CheckPath(): " + Grid.instance.CheckPath(path, GameManager.instance.playingPlaceable));
+        
         Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
              GameManager.instance.playingPlaceable.GetPosition().z] = null;
+
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
@@ -991,19 +999,7 @@ public class Player : NetworkBehaviour
         }
         GameManager.instance.playingPlaceable.MoveCoroutine = StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
         GameManager.instance.MoveLogic(bezierPath);
-
-
     }
-
-
-    /*[ClientRpc]
-    public void RpcSetCamera(int mustPlay)
-    {
-        Placeable potential = GameManager.instance.FindLocalObject(mustPlay).GetComponent<Placeable>();
-
-        this.cameraScript.target = potential.gameObject.transform;
-
-    }*/
 
 
     public override void OnStartLocalPlayer()
@@ -1285,7 +1281,7 @@ public class Player : NetworkBehaviour
             placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
         }
         placeable.isMoving = true;
-        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
 
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];
@@ -1577,5 +1573,4 @@ public class Player : NetworkBehaviour
             GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
         }
     }
-    
 }

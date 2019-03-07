@@ -92,7 +92,7 @@ public class TransmitterNoThread : MonoBehaviour
                     LivingPlaceable[] livings = FindObjectsOfType<LivingPlaceable>();
                     foreach (LivingPlaceable living in livings)
                     {
-                        living.Save();
+                        living.Save("Living.json");
                         SendFile(pathNewLiving, stream, stringLiving);
 
                     }

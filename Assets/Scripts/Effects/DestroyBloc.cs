@@ -38,6 +38,6 @@ public class DestroyBloc : EffectOnPlaceableOnly
              new DestroyBlockRelative(Target, new Vector3Int(0, -i-1, 0)).Use();
         }
 
-        Grid.instance.ConnexeFall((int)pos.x, (int)pos.y, (int)pos.z);
+        Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
     }
 }
