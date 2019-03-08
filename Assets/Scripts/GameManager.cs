@@ -718,7 +718,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         List<float> biases = new List<float>();
         for (int i = 0; i < Player1.Characters.Count * 2; i++)
         {
-            biases.Add(Random.value/100);
+            biases.Add(Random.value/1000);
             Debug.Log(biases[i]);
         }
         List<float> biasesJ1 = new List<float>();
