@@ -38,29 +38,24 @@ public class Debugger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (characterDisplays.Count == 0 && GameManager.instance != null && GameManager.instance.isGameStarted)
-        {
-            
-            foreach (CharacterDisplay chara in GameManager.instance.player1.GetComponentsInChildren<CharacterDisplay>())
-            {
-                characterDisplays.Add(chara);
-            }
-
-            foreach (CharacterDisplay chara in GameManager.instance.player2.GetComponentsInChildren<CharacterDisplay>())
-            {
-                characterDisplays.Add(chara);
-            }
-            Debug.Log("Loaded " + characterDisplays.Count + "Characters");
-        }
-
         // Press B to activate/deactive display
         if (Input.GetKeyDown("b"))
         {
             activateDisplay = !activateDisplay;
             canvas.gameObject.SetActive(activateDisplay);
         }
-        if (activateDisplay)
+        if (activateDisplay && GameManager.instance != null)
         {
+            if (GameManager.instance.isGameStarted)
+            {
+                characterDisplays.Clear();
+                foreach (CharacterDisplay chara in GameManager.instance.GetLocalPlayer().GetComponentsInChildren<CharacterDisplay>())
+                {
+                    characterDisplays.Add(chara);
+                }
+                Debug.Log("Loaded " + characterDisplays.Count + "Characters");
+            }
+
             if (GameManager.instance.Hovered != null)
             {
                 DisplayInfo(GameManager.instance.Hovered);
