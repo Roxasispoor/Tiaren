@@ -378,8 +378,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             yield return null;
         }
-
-
+        if (isServer)
+        {
+            Player1.RpcSetPlayer1();
+            Player2.RpcSetPlayer2();
+        }
         GameObject grid = new GameObject("GridFolder");
         grid.AddComponent<NetworkIdentity>();
         string pathToMap = Path.Combine(Application.streamingAssetsPath, mapToCharge);
@@ -412,7 +415,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             SoundHandler.Instance.StartFightMusic();
         }
-
     }
 
     /// <summary>

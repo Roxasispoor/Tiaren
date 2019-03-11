@@ -316,19 +316,24 @@ public class Player : NetworkBehaviour
             }
 
         }
-        if (isClient)
-        {
-            if (GameManager.instance.player1 == null) //Initialize on client and ask server if this was possible
-            {
-                GameManager.instance.player1 = gameObject;
-            }
-            else
-            {
-                GameManager.instance.player2 = gameObject;
-            }
-        }
-        //Debug.Log("STARTCLIENT!");
+    }
 
+    /// <summary>
+    /// Called by the server to set this player as player 1.
+    /// </summary>
+    [ClientRpc]
+    public void RpcSetPlayer1()
+    {
+        GameManager.instance.player1 = gameObject;
+    }
+
+    /// <summary>
+    /// Called by the server to set this player as player 2.
+    /// </summary>
+    [ClientRpc]
+    public void RpcSetPlayer2()
+    {
+        GameManager.instance.player2 = gameObject;
     }
 
     public void SendSpawnToCamera()
