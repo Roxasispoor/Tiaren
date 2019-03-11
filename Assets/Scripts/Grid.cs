@@ -598,7 +598,8 @@ public class Grid : MonoBehaviour
                 bloc.transform.position = desiredPosition; //shifting model
             }
             if(!bloc.IsLiving()
-                && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null)
+                && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null
+                && !GetPlaceableFromVector(desiredPosition + Vector3Int.down).IsLiving())
             {
                 ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
             }
@@ -674,7 +675,7 @@ public class Grid : MonoBehaviour
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
         {
             EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
-            gridMatrix[x, y - ydrop, z].Destroy();
+            gridMatrix[x, y, z].Destroy(); 
             gridMatrix[x, y, z] = null;
         }
         else if (gridMatrix[x, y, z].IsLiving())

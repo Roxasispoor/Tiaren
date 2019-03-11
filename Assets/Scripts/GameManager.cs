@@ -673,7 +673,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
 
     }
-    public void ResetAllBatches()
+    public void  ResetAllBatches()
     {
 
         if (Hovered != null)
@@ -683,6 +683,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         Resources.UnloadUnusedAssets();
         GameManager.instance.InitialiseBatchFolder();
     }
+
     public ObjectOnBloc[] GetObjectsOnBlockUnder(Vector3Int pos)
     {
         return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z] != null ? Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z].transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>() : new ObjectOnBloc[0];
@@ -700,10 +701,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
             playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable,
                 new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
-
         }
-
     }
+
     public void OnEndAnimationEffectEnd()
     {
 
