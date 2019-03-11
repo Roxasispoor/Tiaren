@@ -136,6 +136,7 @@ public class Push : EffectOnPlaceable
         }
         if(path.Count>0)
         {
+            Vector3 pos = Target.transform.position;
             Grid.instance.MovePlaceable(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z), GameManager.instance.isServer);
             GameManager.instance.RemoveBlockFromBatch((StandardCube)Target);
             if (GameManager.instance.isClient)
@@ -146,7 +147,6 @@ public class Push : EffectOnPlaceable
                 GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
                 GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
             }
-            Vector3 pos = Target.transform.position;
             Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
         }
     }
