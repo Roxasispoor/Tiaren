@@ -642,6 +642,12 @@ public class Grid : MonoBehaviour
     /// <param name="ydrop"></param>
     public void HandleCrush(int x, int y, int z, int ydrop)
     {
+        if (gridMatrix[x, y, z].IsLiving())
+        {
+            LivingPlaceable Character = (LivingPlaceable)gridMatrix[x, y, z];
+            EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y - ydrop, z], Math.Max(ydrop - Character.Jump, 0) * falldamage));
+        }
+
         if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
             MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
@@ -677,11 +683,6 @@ public class Grid : MonoBehaviour
             EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
             gridMatrix[x, y, z].Destroy(); 
             gridMatrix[x, y, z] = null;
-        }
-        else if (gridMatrix[x, y, z].IsLiving())
-        {
-            LivingPlaceable Character = (LivingPlaceable)gridMatrix[x, y, z];
-            EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y-ydrop, z], Math.Max(ydrop - Character.Jump, 0)*falldamage));
         }
     }
     /// <summary>

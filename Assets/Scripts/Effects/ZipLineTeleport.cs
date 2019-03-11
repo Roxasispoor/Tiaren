@@ -19,26 +19,27 @@ public class ZipLineTeleport : EffectOnObjectBloc
     }
     public override void Use()
     {
-        Vector3Int zip = ((ZipLine)Target).linkedTo.GetPosition();
-       // Debug.DrawRay(Target.GetPosition() + new Vector3(0, 1.5f, 0), zip - Target.GetPosition(),Color.green,10f);
-        if (zip.y<Target.GetPosition().y && Grid.instance.CheckNull(zip + new Vector3Int(0,1,0))
-            && !Physics.Raycast(Target.GetPosition()+new Vector3(0,1.5f,0),  zip- Target.GetPosition(),
-            (Target.GetPosition() - zip).magnitude,LayerMask.GetMask("Placeable"))
-            )
+        ZipLine arrival = ((ZipLine)Target).linkedTo;
+        ZipLine start = (ZipLine)Target;
+        Vector3 direction = arrival.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position - start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position;
+       // Debug.DrawRay(Target.GetPosition() + new Vector3(0, 1.5f, 0), arrival - Target.GetPosition(),Color.green,10f);
+        if (arrival.GetPosition().y<Target.GetPosition().y && Grid.instance.CheckNull(arrival.GetPosition() + new Vector3Int(0,1,0))
+            && !Physics.Raycast(start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position, direction,
+            (direction).magnitude,LayerMask.GetMask("Placeable")))
         {
-            Grid.instance.MovePlaceable(Launcher, zip + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
+            Grid.instance.MovePlaceable(Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
             
             if (GameManager.instance.isClient)
             {
 
-                List<Vector3> path = new List<Vector3>() { Launcher.GetPosition() + Vector3Int.down, zip };// + new Vector3Int(0, 1, 0) };
+                List<Vector3> path = new List<Vector3>() { Launcher.GetPosition() + Vector3Int.down, arrival.GetPosition() };// + new Vector3Int(0, 1, 0) };
                 GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Launcher, 4f, true);
                
             }
             if(Launcher.Player.isLocalPlayer)
             {
                 GameManager.instance.playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
-                   (LivingPlaceable)Launcher, zip + new Vector3Int(0, 1, 0));
+                   (LivingPlaceable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0));
             }
 
         }
