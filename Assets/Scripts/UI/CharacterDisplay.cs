@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
 
     private LivingPlaceable character;
-    private bool isHovered = false;
+    public bool isHovered = false;
 
     public LivingPlaceable Character
     {

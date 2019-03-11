@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 /// <summary>
 /// Represents something able to fill a bloc of the grid
@@ -317,7 +316,7 @@ public abstract class Placeable : NetIdeable
     {
         if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0))
             {
 
                 if (!this.IsLiving() && ((StandardCube)this).isSpawnPoint == true // AMELIORATION: Maybe could be remove
@@ -382,7 +381,7 @@ public abstract class Placeable : NetIdeable
         else if (GameManager.instance.State == States.Move)
         {
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0) && this.walkable)
+            if (Input.GetMouseButtonUp(0) && this.walkable)
             {
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
@@ -396,7 +395,7 @@ public abstract class Placeable : NetIdeable
         }
         else if (GameManager.instance.State == States.UseSkill)
         {
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0))
             {
                 Skill skill = GameManager.instance.activeSkill;
                 if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
