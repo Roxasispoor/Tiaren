@@ -63,9 +63,6 @@ public class StandardCube : Placeable
         this.explored = false;
         this.grounded = false;
         this.onWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
     }
 
@@ -78,10 +75,6 @@ public class StandardCube : Placeable
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Effect effect in this.OnDestroyEffects)
-            {
-                EffectManager.instance.DirectAttack(effect);
-            }
             foreach (Transform obj in transform.Find("Inventory"))
             {
                 obj.GetComponent<ObjectOnBloc>().Destroy();

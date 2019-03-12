@@ -31,7 +31,7 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            if (effect.TriggerOnApply)
+            if (effect.activationType == ActivationType.INSTANT)
             {
                 UseEffect(effect);
             }
@@ -48,22 +48,27 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            if(!effect.TriggerOnce || effect.TriggerOnce && effect.TurnActiveEffect==1)
+            if(!effect.TriggerOnce || effect.TriggerOnce && effect.turnActiveEffect==1)
             {
                 UseEffect(effect);
             }
             else
-            { effect.TurnActiveEffect--;
+            { effect.turnActiveEffect--;
             }
          
         }
         else//deletes the DOT
         {
-            effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(Effect));
+            //effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(Effect));
+            effect.GetTarget().AttachedEffects.Remove(effect);
         }
     }
+
+    // TODO: rework this function to take more precise element as condition (ex: only POISON)
     public bool CalculateEffectBlocked(Effect effect)
     {
+        return false;
+        /*
         NetIdeable target = effect.GetTarget();
         bool isblocked = false;
         foreach (Effect eff in target.AttachedEffects)
@@ -80,22 +85,27 @@ public class EffectManager : MonoBehaviour
             }
 
         }
-        effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(BlockEffects) && ((BlockEffects)x).numberToBlock <= 0);
-        return isblocked;
+        //effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(BlockEffects) && ((BlockEffects)x).numberToBlock <= 0);
+        return isblocked;*/
     }
+
+
     public void AttachEffect(Effect effect)
     {
 
-        if (effect.TurnActiveEffect > 0)
+        if (effect.turnActiveEffect > 0)
         {
             effect.GetTarget().AttachedEffects.Add(effect);
+        } else
+        {
+            Debug.LogError("Try to attach an effect with less than 1 turn activation");
         }
     }
     private void UseEffect(Effect effect)
     {
         effect.Use();
-        effect.TurnActiveEffect--;
-        if (effect.TurnActiveEffect <= 0)
+        effect.turnActiveEffect--;
+        if (effect.turnActiveEffect <= 0)
         {
             effect.GetTarget().AttachedEffects.Remove(effect);
         }

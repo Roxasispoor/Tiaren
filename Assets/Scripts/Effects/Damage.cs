@@ -16,7 +16,7 @@ public class Damage : EffectOnLiving
     {
         damageValue = value;
     }
-    public Damage(float value, int numberOfturn, bool triggerAtEnd = false, bool hitOnDirectAttack = true) : base(numberOfturn, triggerAtEnd, hitOnDirectAttack)
+    public Damage(float value, int numberOfturn, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfturn, triggerAtEnd, activationType)
     {
         damageValue = value;
     }

@@ -9,24 +9,37 @@ using UnityEngine;
 public abstract class Effect
 {
     public int netIdLauncher = -1;
-    [SerializeField]
 
+    [SerializeField]
     // for animation
     protected Animator animLauncher;
 
-    private Placeable launcher;
-    [SerializeField]
-    private int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
     /// <summary>
-    /// Should the effect trigger only once at the when its countdown is finished.
+    ///  The creator of the effect.
+    /// </summary>
+    private Placeable launcher;
+
+    /// <summary>
+    /// The number of turn left for the effect.
+    /// </summary>
+    [SerializeField]
+    public int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+
+    /// <summary>
+    /// Should the effect trigger only once when its countdown is finished.
     /// </summary>
     [SerializeField]
     protected bool triggerOnce = false;
+
     /// <summary>
-    /// Should the effect trigger when attached to the target.
+    /// When the effect should trigger.
     /// </summary>
     [SerializeField]
-    protected bool triggerOnApply = true;
+    public ActivationType activationType;
+
+    /// <summary>
+    ///  The creator of the effect.
+    /// </summary>
     public virtual Placeable Launcher
     {
         get
@@ -43,26 +56,9 @@ public abstract class Effect
             }
         }
     }
-    public virtual void AttachToTarget()
-    {
-
-    }
-
-    public int TurnActiveEffect
-    {
-        get
-        {
-            return turnActiveEffect;
-        }
-
-        set
-        {
-            turnActiveEffect = value;
-        }
-    }
 
     /// <summary>
-    /// Should the effect trigger only once at the when its countdown is finished.
+    /// Should the effect trigger only once when its countdown is finished.
     /// </summary>
     public bool TriggerOnce
     {
@@ -77,39 +73,23 @@ public abstract class Effect
         }
     }
 
-    /// <summary>
-    /// Should the effect trigger when attached to the target.
-    /// </summary>
-    public bool TriggerOnApply
-    {
-        get
-        {
-            return triggerOnApply;
-        }
-
-        set
-        {
-            triggerOnApply = value;
-        }
-    }
-
     protected Effect()
     {
         
     }
     protected Effect(Effect other)
     {
-        TurnActiveEffect = other.TurnActiveEffect;
+        turnActiveEffect = other.turnActiveEffect;
         Launcher = other.Launcher;
-        turnActiveEffect = other.TurnActiveEffect;
+        turnActiveEffect = other.turnActiveEffect;
         TriggerOnce = other.TriggerOnce;
-        TriggerOnApply = other.TriggerOnApply;
+        activationType = other.activationType;
     }
-    protected Effect(int numberOfTurns, bool triggerAtEnd = false, bool triggerOnApply = true)
+    protected Effect(int numberOfTurns, bool triggerOnce = false, ActivationType activationType = ActivationType.INSTANT)
     {
-        TurnActiveEffect = numberOfTurns;
-        TriggerOnce = triggerAtEnd;
-        TriggerOnApply = triggerOnApply;
+        this.turnActiveEffect = numberOfTurns;
+        this.TriggerOnce = triggerOnce;
+        this.activationType = activationType;
     }
     public abstract Effect Clone();
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);

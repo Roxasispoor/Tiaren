@@ -822,11 +822,7 @@ public class LivingPlaceable : Placeable
             this.TraversableChar = TraversableType.ALLIESTHROUGH;
             this.TraversableBullet = TraversableType.NOTHROUGH;
             this.GravityType = GravityType.SIMPLE_GRAVITY;
-
             this.crushable = CrushType.CRUSHDAMAGE;
-            this.OnDestroyEffects = new List<Effect>();
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
             this.MaxHP = 100;
             this.CurrentHP = 100;
             this.MaxPM = 5;
@@ -853,9 +849,6 @@ public class LivingPlaceable : Placeable
             targetArea = new List<Placeable>();
 
             targetableUnits = new List<LivingPlaceable>();
-            this.OnDestroyEffects = new List<Effect>();
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
             this.AttachedEffects = new List<Effect>();
 
             List<Effect> ListEffects = new List<Effect>();
@@ -874,7 +867,7 @@ public class LivingPlaceable : Placeable
             ListEffects4.Add(new DamageCalculated(40, DamageCalculated.DamageScale.STR));
             ListEffects5.Add(new Damage(10, 3));
             ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
-            ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
+            ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
 
             Skill skill1 = new Skill(1, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);
@@ -961,19 +954,10 @@ public class LivingPlaceable : Placeable
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
         this.crushable = CrushType.CRUSHDAMAGE;
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
-
         targetableUnits = new List<LivingPlaceable>();
-        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-
         this.Skills = new List<Skill>();
         this.IsDead = false;
         this.CounterDeaths = 0;
@@ -1043,10 +1027,6 @@ public class LivingPlaceable : Placeable
         CurrentHP = 0;
         TurnsRemaingingCemetery = (int) DeathLength;
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        foreach (Effect effect in this.OnDestroyEffects)
-        {
-            EffectManager.instance.DirectAttack(effect);
-        }
         foreach (Transform obj in transform.Find("Inventory"))
         {
             obj.GetComponent<ObjectOnBloc>().Destroy();

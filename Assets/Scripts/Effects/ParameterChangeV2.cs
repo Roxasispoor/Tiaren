@@ -37,7 +37,7 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
 
     //Used like this: SetPropertyFromValue(value, o => o.Property1);
     public ParameterChangeV2(TProperty value, int numberMethod, int numberOfturns=1, bool triggerAtEnd = false,
-        bool hitOnDirectAttack = true):base(numberOfturns,triggerAtEnd,hitOnDirectAttack)
+        ActivationType activationType = ActivationType.INSTANT) : base(numberOfturns, triggerAtEnd, activationType)
     {
         this.value = value;
         this.numberMethod = numberMethod;
