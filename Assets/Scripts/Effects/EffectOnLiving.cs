@@ -16,7 +16,7 @@ public abstract class EffectOnLiving : Effect
     protected EffectOnLiving()
     {
     }
-    protected EffectOnLiving(int numberOfTurn, bool triggerAtEnd = false, bool hitOnDirectAttack = true) : base(numberOfTurn, triggerAtEnd, hitOnDirectAttack)
+    protected EffectOnLiving(int numberOfTurn, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfTurn, triggerAtEnd, activationType)
     {
     }
     protected EffectOnLiving(LivingPlaceable target, Placeable launcher):base()

@@ -867,7 +867,7 @@ public class LivingPlaceable : Placeable
             ListEffects4.Add(new DamageCalculated(40, DamageCalculated.DamageScale.STR));
             ListEffects5.Add(new Damage(10, 3));
             ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
-            ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, false));
+            ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
 
             Skill skill1 = new Skill(1, 1, ListEffects, SkillType.BLOCK, "Basic_push", 0, 2, SkillEffect.MOVE, SkillArea.CROSS);

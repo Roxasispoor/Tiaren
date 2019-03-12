@@ -44,7 +44,7 @@ public class MoveEffect : EffectOnLiving {
         this.Direction = direction;
         this.UseBezier = useBezier;
     }
-    public MoveEffect(Vector3Int direction, int numberOfturn, bool useBezier,  bool triggerAtEnd = false, bool hitOnDirectAttack = true) : base(numberOfturn, triggerAtEnd, hitOnDirectAttack)
+    public MoveEffect(Vector3Int direction, int numberOfturn, bool useBezier,  bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfturn, triggerAtEnd, activationType)
     {
         this.Direction = direction;
         this.UseBezier = useBezier;
