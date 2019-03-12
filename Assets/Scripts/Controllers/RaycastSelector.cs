@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RaycastSelector : MonoBehaviour
 {
@@ -48,34 +49,26 @@ public class RaycastSelector : MonoBehaviour
 
             RaycastHit hit;
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 100000, layerMask))
+            if (Physics.Raycast(ray, out hit, 100000, layerMask) && !EventSystem.current.IsPointerOverGameObject())
             {
                 if (hit.transform.GetComponent<Placeable>() != null)
                 {
-                    hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
-
                     if (GameManager.instance.Hovered != null)
                     {
-                        if (area == null)
-                            GameManager.instance.Hovered.UnHighlight();
-                        else
+                        if (area != null)
                         {
                             foreach (Placeable block in area)
                                 block.UnHighlight();
                         }
-
                     }
+
+                    hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
 
                     GameManager.instance.Hovered = hit.transform.GetComponent<Placeable>();
 
                     if (effectarea==0)
                     {
                         area = null;
-   
-                        if (GameManager.instance.Hovered != null)
-                        {
-                            GameManager.instance.Hovered.Highlight();
-                        }
                     }
                     else
                     {
