@@ -20,6 +20,12 @@ public class StandardCube : Placeable
     [SerializeField]
     public bool isSpawnPoint;
 
+
+    /// <summary>
+    /// Size of the child quads.
+    /// </summary>
+    private const float sizeQuad = 1.02f;
+
     public List<Effect> OnWalkEffects
     {
         get
@@ -49,15 +55,15 @@ public class StandardCube : Placeable
     protected override void Awake()
     {
         base.Awake();
-        this.Walkable = true;
+        this.walkable = true;
         
-        this.Movable = true;
+        this.movable = true;
         this.Destroyable = true;
 
-        this.TraversableChar = TraversableType.NOTHROUGH;
-        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.traversableType = TraversableType.NOTHROUGH;
+        this.traversableBullet = TraversableType.NOTHROUGH;
 
-        this.GravityType = GravityType.RELATED_GRAVITY;
+        this.gravityType = GravityType.RELATED_GRAVITY;
        
         this.crushable = CrushType.CRUSHSTAY;
         this.explored = false;
@@ -86,6 +92,68 @@ public class StandardCube : Placeable
             gameObject.SetActive(false);
             this.UnHighlight();
             Destroy(this.gameObject);
+        }
+
+    }
+
+    public override void Highlight()
+    {
+        if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
+        {
+            GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
+            GameObject quadRight = transform.Find("Quads").Find("QuadRight").gameObject;
+            GameObject quadLeft = transform.Find("Quads").Find("QuadLeft").gameObject;
+            GameObject quadFront = transform.Find("Quads").Find("QuadFront").gameObject;
+            GameObject quadBack = transform.Find("Quads").Find("QuadBack").gameObject;
+
+            quadUp.SetActive(true);
+
+            quadRight.SetActive(true);
+            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeQuad, 1);
+            quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0, quadRight.transform.localPosition.z);
+
+            quadLeft.SetActive(true);
+            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeQuad, 1);
+            quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0, quadLeft.transform.localPosition.z);
+
+            quadFront.SetActive(true);
+            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeQuad, 1);
+            quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0, quadFront.transform.localPosition.z);
+
+            quadBack.SetActive(true);
+            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeQuad, 1);
+            quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
+
+        }
+        foreach (Transform fils in transform.Find("Quads"))
+        {
+
+            fils.gameObject.SetActive(true);
+            fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
+        }
+    }
+
+    public override void UnHighlight()
+    {
+
+        //Put back the default material
+        foreach (Transform fils in transform.Find("Quads"))
+        {
+            fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
+        }
+        //If we are in move mode doesn't belong to path we desactivate it
+        if (GameManager.instance.State != States.Move || GameManager.instance.playingPlaceable != null && GameManager.instance.playingPlaceable.AreaOfMouvement != null &&
+            !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
+
+        {
+
+
+            foreach (Transform fils in transform.Find("Quads"))
+            {
+
+                fils.gameObject.SetActive(false);
+
+            }
         }
 
     }

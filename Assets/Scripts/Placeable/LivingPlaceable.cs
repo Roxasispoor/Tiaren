@@ -817,11 +817,11 @@ public class LivingPlaceable : Placeable
 
             shouldBatch = false;
             this.className = "default";
-            this.Walkable = false;
-            this.Movable = true;
-            this.TraversableChar = TraversableType.ALLIESTHROUGH;
-            this.TraversableBullet = TraversableType.NOTHROUGH;
-            this.GravityType = GravityType.SIMPLE_GRAVITY;
+            this.walkable = false;
+            this.movable = true;
+            this.traversableType = TraversableType.ALLIESTHROUGH;
+            this.traversableBullet = TraversableType.NOTHROUGH;
+            this.gravityType = GravityType.SIMPLE_GRAVITY;
             this.crushable = CrushType.CRUSHDAMAGE;
             this.MaxHP = 100;
             this.CurrentHP = 100;
@@ -948,11 +948,11 @@ public class LivingPlaceable : Placeable
         base.Init();
         shouldBatch = false;
         this.className = "default";
-        this.Walkable = false;
-        this.Movable = true;
-        this.TraversableChar = TraversableType.ALLIESTHROUGH;
-        this.TraversableBullet = TraversableType.NOTHROUGH;
-        this.GravityType = GravityType.SIMPLE_GRAVITY;
+        this.walkable = false;
+        this.movable = true;
+        this.traversableType = TraversableType.ALLIESTHROUGH;
+        this.traversableBullet = TraversableType.NOTHROUGH;
+        this.gravityType = GravityType.SIMPLE_GRAVITY;
         this.crushable = CrushType.CRUSHDAMAGE;
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
@@ -1038,9 +1038,9 @@ public class LivingPlaceable : Placeable
         }
         if (GameManager.instance.playingPlaceable == this)
         {
-            if (MoveCoroutine != null)
+            if (moveCoroutine != null)
             {
-                StopCoroutine(MoveCoroutine);
+                StopCoroutine(moveCoroutine);
             }
             GameManager.instance.EndOFTurn();
         }

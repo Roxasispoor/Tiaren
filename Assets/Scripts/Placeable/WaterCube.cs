@@ -7,7 +7,7 @@ public class WaterCube : StandardCube {
     {
         base.Awake();
         this.movable = false;
-        this.Walkable = false;
+        this.walkable = false;
 
     }
     private void Start()
