@@ -822,11 +822,7 @@ public class LivingPlaceable : Placeable
             this.TraversableChar = TraversableType.ALLIESTHROUGH;
             this.TraversableBullet = TraversableType.NOTHROUGH;
             this.GravityType = GravityType.SIMPLE_GRAVITY;
-
             this.crushable = CrushType.CRUSHDAMAGE;
-            this.OnDestroyEffects = new List<Effect>();
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
             this.MaxHP = 100;
             this.CurrentHP = 100;
             this.MaxPM = 5;
@@ -853,9 +849,6 @@ public class LivingPlaceable : Placeable
             targetArea = new List<Placeable>();
 
             targetableUnits = new List<LivingPlaceable>();
-            this.OnDestroyEffects = new List<Effect>();
-            this.OnStartTurn = new List<Effect>();
-            this.OnEndTurn = new List<Effect>();
             this.AttachedEffects = new List<Effect>();
 
             List<Effect> ListEffects = new List<Effect>();
@@ -961,19 +954,10 @@ public class LivingPlaceable : Placeable
         this.TraversableBullet = TraversableType.NOTHROUGH;
         this.GravityType = GravityType.SIMPLE_GRAVITY;
         this.crushable = CrushType.CRUSHDAMAGE;
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
-
         targetableUnits = new List<LivingPlaceable>();
-        //   this.OnWalkEffectsOnWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
-
         this.Skills = new List<Skill>();
         this.IsDead = false;
         this.CounterDeaths = 0;
@@ -1043,10 +1027,6 @@ public class LivingPlaceable : Placeable
         CurrentHP = 0;
         TurnsRemaingingCemetery = (int) DeathLength;
         Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-        foreach (Effect effect in this.OnDestroyEffects)
-        {
-            EffectManager.instance.DirectAttack(effect);
-        }
         foreach (Transform obj in transform.Find("Inventory"))
         {
             obj.GetComponent<ObjectOnBloc>().Destroy();

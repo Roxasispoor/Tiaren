@@ -9,24 +9,37 @@ using UnityEngine;
 public abstract class Effect
 {
     public int netIdLauncher = -1;
-    [SerializeField]
 
+    [SerializeField]
     // for animation
     protected Animator animLauncher;
 
+    /// <summary>
+    ///  The creator of the effect.
+    /// </summary>
     private Placeable launcher;
+
+    /// <summary>
+    /// The number of turn left for the effect.
+    /// </summary>
     [SerializeField]
-    private int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+    public int turnActiveEffect = 1; //-1 = unactive 0=stop. we use int.MaxValue/2 when it's independent
+
     /// <summary>
     /// Should the effect trigger only once at the when its countdown is finished.
     /// </summary>
     [SerializeField]
     protected bool triggerOnce = false;
+
     /// <summary>
     /// Should the effect trigger when attached to the target.
     /// </summary>
     [SerializeField]
     protected bool triggerOnApply = true;
+
+    /// <summary>
+    ///  The creator of the effect.
+    /// </summary>
     public virtual Placeable Launcher
     {
         get
@@ -43,23 +56,11 @@ public abstract class Effect
             }
         }
     }
+    /*
     public virtual void AttachToTarget()
     {
 
-    }
-
-    public int TurnActiveEffect
-    {
-        get
-        {
-            return turnActiveEffect;
-        }
-
-        set
-        {
-            turnActiveEffect = value;
-        }
-    }
+    }*/
 
     /// <summary>
     /// Should the effect trigger only once at the when its countdown is finished.
@@ -99,15 +100,15 @@ public abstract class Effect
     }
     protected Effect(Effect other)
     {
-        TurnActiveEffect = other.TurnActiveEffect;
+        turnActiveEffect = other.turnActiveEffect;
         Launcher = other.Launcher;
-        turnActiveEffect = other.TurnActiveEffect;
+        turnActiveEffect = other.turnActiveEffect;
         TriggerOnce = other.TriggerOnce;
         TriggerOnApply = other.TriggerOnApply;
     }
     protected Effect(int numberOfTurns, bool triggerAtEnd = false, bool triggerOnApply = true)
     {
-        TurnActiveEffect = numberOfTurns;
+        turnActiveEffect = numberOfTurns;
         TriggerOnce = triggerAtEnd;
         TriggerOnApply = triggerOnApply;
     }

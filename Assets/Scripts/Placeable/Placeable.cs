@@ -60,18 +60,6 @@ public abstract class Placeable : NetIdeable
     /// </summary>
     public bool grounded;
     /// <summary>
-    /// Effect which proc when the Placeable is destroyed.
-    /// </summary>
-    protected List<Effect> onDestroyEffects;
-    /// <summary>
-    /// Effect which proc at the beginning of the turn.
-    /// </summary>
-    protected List<Effect> onStartTurn;
-    /// <summary>
-    /// Effect which proc at the end of the turn.
-    /// </summary>
-    protected List<Effect> onEndTurn;
-    /// <summary>
     /// Current coroutine used for the movement.
     /// </summary>
     private Coroutine moveCoroutine;
@@ -108,45 +96,6 @@ public abstract class Placeable : NetIdeable
         set
         {
             movable = value;
-        }
-    }
-
-    public List<Effect> OnStartTurn
-    {
-        get
-        {
-            return onStartTurn;
-        }
-
-        set
-        {
-            onStartTurn = value;
-        }
-    }
-
-    public List<Effect> OnEndTurn
-    {
-        get
-        {
-            return onEndTurn;
-        }
-
-        set
-        {
-            onEndTurn = value;
-        }
-    }
-
-    public List<Effect> OnDestroyEffects
-    {
-        get
-        {
-            return onDestroyEffects;
-        }
-
-        set
-        {
-            onDestroyEffects = value;
         }
     }
 

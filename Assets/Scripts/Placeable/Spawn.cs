@@ -20,9 +20,6 @@ public class Spawn : StandardCube {
         this.explored = false;
         this.grounded = false;
         this.OnWalkEffects = new List<Effect>();
-        this.OnDestroyEffects = new List<Effect>();
-        this.OnStartTurn = new List<Effect>();
-        this.OnEndTurn = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
     }
  

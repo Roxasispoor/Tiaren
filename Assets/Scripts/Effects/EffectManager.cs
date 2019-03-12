@@ -48,12 +48,12 @@ public class EffectManager : MonoBehaviour
         bool isBlocked = CalculateEffectBlocked(effect);
         if (!isBlocked)
         {
-            if(!effect.TriggerOnce || effect.TriggerOnce && effect.TurnActiveEffect==1)
+            if(!effect.TriggerOnce || effect.TriggerOnce && effect.turnActiveEffect==1)
             {
                 UseEffect(effect);
             }
             else
-            { effect.TurnActiveEffect--;
+            { effect.turnActiveEffect--;
             }
          
         }
@@ -86,7 +86,7 @@ public class EffectManager : MonoBehaviour
     public void AttachEffect(Effect effect)
     {
 
-        if (effect.TurnActiveEffect > 0)
+        if (effect.turnActiveEffect > 0)
         {
             effect.GetTarget().AttachedEffects.Add(effect);
         }
@@ -94,8 +94,8 @@ public class EffectManager : MonoBehaviour
     private void UseEffect(Effect effect)
     {
         effect.Use();
-        effect.TurnActiveEffect--;
-        if (effect.TurnActiveEffect <= 0)
+        effect.turnActiveEffect--;
+        if (effect.turnActiveEffect <= 0)
         {
             effect.GetTarget().AttachedEffects.Remove(effect);
         }
