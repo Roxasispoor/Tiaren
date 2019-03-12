@@ -888,36 +888,20 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
-
+            List<LivingPlaceable> targetableunits = new List<LivingPlaceable>();
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
+                targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
                 targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.GetPosition());
+            }
+            else if (skill.SkillEffect == SkillEffect.SPINNING)
+            {
+                targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
+                targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
             }
 
             playingPlaceable.TargetableUnits = targetableunits;
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
-        }
-        else if (skill.SkillType == SkillType.SELF)
-        {
-            if (skill.SkillArea == SkillArea.SURROUNDINGLIVING)
-            {
-                List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
-                if (skill.SkillEffect == SkillEffect.SPINNING)
-                {
-                    targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
-                }
-
-                playingPlaceable.TargetableUnits = targetableunits;
-                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
-            }
-            else
-            {
-
-                playingPlaceable.TargetArea = new List<Placeable>(){
-                    Grid.instance.GetPlaceableFromVector(playingPlaceable.GetPosition()-new Vector3Int(0,1,0))};
-                GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
-            }
         }
         else
         {

@@ -30,11 +30,7 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private Attribute paMax;
     [SerializeField]
-    private Attribute force;
-    [SerializeField]
     private Attribute speed;
-    [SerializeField]
-    private Attribute dexterity;
     [SerializeField]
     private Attribute speedStack;
     [SerializeField]
@@ -43,8 +39,6 @@ public class LivingPlaceable : Placeable
     private Attribute def;
     [SerializeField]
     private Attribute mdef;
-    [SerializeField]
-    private Attribute mstr;
     [SerializeField]
     private Attribute deathLength;
     [SerializeField]
@@ -149,20 +143,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-
-    public float Force
-    {
-        get
-        {
-            return force.Value;
-        }
-
-        set
-        {
-            force.BaseValue = value;
-        }
-    }
-
     public float Speed
     {
         get
@@ -173,19 +153,6 @@ public class LivingPlaceable : Placeable
         set
         {
             speed.BaseValue = value;
-        }
-    }
-
-    public float Dexterity
-    {
-        get
-        {
-            return dexterity.Value;
-        }
-
-        set
-        {
-            dexterity.BaseValue = value;
         }
     }
 
@@ -387,19 +354,6 @@ public class LivingPlaceable : Placeable
         }
     }
 
-    public float Mstr
-    {
-        get
-        {
-            return mstr.Value;
-        }
-
-        set
-        {
-            mstr.BaseValue = value;
-        }
-    }
-
     public float Mdef
     {
         get
@@ -494,17 +448,6 @@ public class LivingPlaceable : Placeable
             paMax.FlatModif = value;
         }
     }
-    public float ForceFlat
-    {
-        get
-        {
-            return force.FlatModif;
-        }
-        set
-        {
-            force.FlatModif = value;
-        }
-    }
     public float SpeedFlat
     {
         get
@@ -514,17 +457,6 @@ public class LivingPlaceable : Placeable
         set
         {
             speed.FlatModif = value;
-        }
-    }
-    public float DexterityFlat
-    {
-        get
-        {
-            return dexterity.FlatModif;
-        }
-        set
-        {
-            dexterity.FlatModif = value;
         }
     }
     public float SpeedStackFlat
@@ -569,17 +501,6 @@ public class LivingPlaceable : Placeable
         set
         {
             mdef.FlatModif = value;
-        }
-    }
-    public float MStrFlat
-    {
-        get
-        {
-            return mstr.FlatModif;
-        }
-        set
-        {
-            mstr.FlatModif = value;
         }
     }
     public float DeathLengthFlat
@@ -660,17 +581,6 @@ public class LivingPlaceable : Placeable
             paMax.PercentModif = value;
         }
     }
-    public float ForcePercent
-    {
-        get
-        {
-            return force.PercentModif;
-        }
-        set
-        {
-            force.PercentModif = value;
-        }
-    }
     public float SpeedPercent
     {
         get
@@ -680,17 +590,6 @@ public class LivingPlaceable : Placeable
         set
         {
             speed.PercentModif = value;
-        }
-    }
-    public float DexterityPercent
-    {
-        get
-        {
-            return dexterity.PercentModif;
-        }
-        set
-        {
-            dexterity.PercentModif = value;
         }
     }
     public float SpeedStackPercent
@@ -735,17 +634,6 @@ public class LivingPlaceable : Placeable
         set
         {
             mdef.PercentModif = value;
-        }
-    }
-    public float MStrPercent
-    {
-        get
-        {
-            return mstr.PercentModif;
-        }
-        set
-        {
-            mstr.PercentModif = value;
         }
     }
     public float DeathLengthPercent
@@ -830,13 +718,10 @@ public class LivingPlaceable : Placeable
             this.PaMax = 1;
             this.CurrentPA = 1;
             this.Jump = 1;
-            this.Force = 100;
             this.Speed = 100;
             this.Def = 100;
             this.Mdef = 100;
-            this.Mstr = 100;
             this.SpeedStack = 1 / Speed;
-            this.Dexterity = 100;
             this.Skills = new List<Skill>();
             this.IsDead = false;
             this.CounterDeaths = 0;
@@ -861,6 +746,9 @@ public class LivingPlaceable : Placeable
 
             //Knight
             /*
+            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
+
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -876,7 +764,7 @@ public class LivingPlaceable : Placeable
             Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill5 = new Skill(1, 2, ListEffects5, SkillType.LIVING, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill6 = new Skill(1, 3, ListEffects6, SkillType.LIVING, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.SELF, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+            Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -887,7 +775,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill7);
             */
             //Ranger
-            /*
+
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -904,7 +792,7 @@ public class LivingPlaceable : Placeable
             Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Range_buff", 1, 5);
+            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Zipline", 1, 5);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -913,10 +801,9 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
-            */
-
+            
             //Mage
-
+            /*
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -930,9 +817,9 @@ public class LivingPlaceable : Placeable
             Skill skill2 = new Skill(1, 1, ListEffects2, SkillType.BLOCK, "Basic_creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
             Skill skill3 = new Skill(1, 1, ListEffects3, SkillType.BLOCK, "Basic_destruction", 0, 3, SkillEffect.DESTROY);
             Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.AREA, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
-            Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.AREA, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.AREA, "ExplosiveFireball", 2, 6, SkillEffect.NONE, SkillArea.MIXEDAREA, 1);
+            Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.BLOCK, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
+            Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.BLOCK, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
+            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.AREA, "ExplosiveFireball", 2, 6, SkillEffect.DESTROY, SkillArea.MIXEDAREA, 1);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -941,6 +828,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
+            */
         }
     }
     public void InitNoClass()
@@ -1057,22 +945,16 @@ public class LivingPlaceable : Placeable
         MaxPMFlat = 0;
         DeathLengthFlat = 0;
         DefFlat = 0;
-        DexterityFlat = 0;
-        ForceFlat = 0;
         JumpFlat = 0;
         MDefFlat = 0;
-        MStrFlat = 0;
         SpeedFlat = 0;
         SpeedStackFlat = 0;
         
         DefPercent = 0;
-        DexterityPercent = 0;
-        ForcePercent = 0;
         MaxHPPercent = 0;
         MaxPAPercent = 0;
         MaxPMPercent = 0;
         MDefPercent = 0;
-        MStrPercent = 0;
         SpeedPercent = 0;
         SpeedStackPercent = 0;
     }
