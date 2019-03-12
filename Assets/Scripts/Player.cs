@@ -854,7 +854,7 @@ public class Player : NetworkBehaviour
             {
                 vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.GetPosition());
             }
-            else if (skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
+            else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
             {
                 vect = Grid.instance.TopBlockPattern(vect);
             }
@@ -888,17 +888,21 @@ public class Player : NetworkBehaviour
         }
         else if (skill.SkillType == SkillType.LIVING)
         {
-            List<LivingPlaceable> targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
-
+            List<LivingPlaceable> targetableunits = new List<LivingPlaceable>();
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
             {
+                targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
                 targetableunits = Grid.instance.SwordRangePattern(targetableunits, playingPlaceable.GetPosition());
+            }
+            else if (skill.SkillEffect == SkillEffect.SPINNING)
+            {
+                targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
+                targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
             }
 
             playingPlaceable.TargetableUnits = targetableunits;
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
         }
-
         else
         {
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Everything");

@@ -18,14 +18,11 @@ public class Stats
     public Attribute currentPM;
     public Attribute currentPA;
     public Attribute paMax;
-    public Attribute force;
     public Attribute speed;
-    public Attribute dexterity;
     public Attribute speedStack;
     public Attribute jump;
     public Attribute def;
     public Attribute mdef;
-    public Attribute mstr;
     public Attribute deathLength;
     //public List<Skill> skills;
     public bool isDead;
