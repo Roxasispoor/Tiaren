@@ -326,12 +326,7 @@ public class Grid : MonoBehaviour
         while (toCheck.Count > 0)
         {
             n_iteration++;
-
-            if (n_iteration % 1000 == 0)
-            {
-                Debug.Log("CanGo: iteration " + n_iteration);
-            }
-
+            
             NodePath current = toCheck.Dequeue();
             if (current.x - 1 >= 0)
             {
@@ -920,7 +915,7 @@ public class Grid : MonoBehaviour
     public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange)
     {
         int remainingrangeYZ; //remaining range
-        int dirx; //x direction (0,-1,1)
+        int dirx; //x direction : 0 / -1 / 1
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
@@ -1103,7 +1098,7 @@ public class Grid : MonoBehaviour
     /// <param name="diry">x direction</param>
     /// <param name="dirz">x direction</param>
     /// <param name="Playerposition"></param>
-    /// <returns>If there is an obsacle or not</returns>
+    /// <returns>True if ther is a colision</returns>
     public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
     {
         Vector3 playerside;
@@ -1130,7 +1125,7 @@ public class Grid : MonoBehaviour
             //One axis = straight line, i only check for any obstacle on that line
             case 1:
                 //facing the block
-                playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.4f, Playerposition.z + dirz * 0.5f);
+                playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.5f, Playerposition.z + dirz * 0.5f);
                 //facing the player
                 blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y - diry * 0.5f, Playerposition.z + z - dirz * 0.5f);
 
@@ -1157,7 +1152,7 @@ public class Grid : MonoBehaviour
                         if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                         {
                             //setting player interest point and shooting
-                            playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1166,7 +1161,7 @@ public class Grid : MonoBehaviour
                         if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y+diry, (int)Playerposition.z].IsLiving())
                         {
                             //setting player interest point and shooting
-                            playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1179,14 +1174,14 @@ public class Grid : MonoBehaviour
                         blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
                         if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                         {
-                            playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
                         }
                         if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                         {
-                            playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                            playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1202,14 +1197,14 @@ public class Grid : MonoBehaviour
                     blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
                     if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                     {
-                        playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                        playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
                         if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                             return false;
                     }
                     if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y+diry, (int)Playerposition.z].IsLiving())
                     {
-                        playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                        playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
                         if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                             return false;
@@ -1230,7 +1225,7 @@ public class Grid : MonoBehaviour
                 if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                 {
                     //setting player interest point and shooting
-                    playerside = new Vector3(Playerposition.x + dirx * 0.4f, Playerposition.y, Playerposition.z);
+                    playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
                     if (!Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
@@ -1239,7 +1234,7 @@ public class Grid : MonoBehaviour
                 //same
                 if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                 {
-                    playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.4f);
+                    playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
                     if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
@@ -1248,7 +1243,7 @@ public class Grid : MonoBehaviour
                 //same
                 if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z].IsLiving())
                 {
-                    playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.4f, Playerposition.z);
+                    playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
                     if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
                         || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))

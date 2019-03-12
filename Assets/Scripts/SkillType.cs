@@ -1,10 +1,6 @@
 ﻿public enum SkillType
 {
     /// <summary>
-    /// skill used by a character on himself
-    /// </summary>
-    SELF,
-    /// <summary>
     /// skill targeting a living (character)
     /// </summary>
     LIVING,
@@ -25,7 +21,7 @@
     /// </summary>
     AREA,
     /// <summary>
-    /// skill used by a character on a preloaded skill
+    /// skill used by a character on a preloaded target
     /// </summary>
     ALREADYTARGETED
 
