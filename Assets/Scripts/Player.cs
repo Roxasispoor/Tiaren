@@ -513,14 +513,14 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcEndSwapSpawn(Vector3[] positions, int[] ids)
     {
-        if (GameManager.instance.player2.GetComponent<Player>() != this)
+        if (GameManager.instance.player2.GetComponent<Player>() != this && !this.isLocalPlayer)
         {
             foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
             {
                 c.SetActive(false);
             }
         }
-        if (GameManager.instance.player1.GetComponent<Player>() != this)
+        if (GameManager.instance.player1.GetComponent<Player>() != this && !this.isLocalPlayer)
         {
             foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
             {

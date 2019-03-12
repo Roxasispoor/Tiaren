@@ -175,6 +175,15 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public void EndSpawn()
+    {
+        ClearZone(spawnZone.gameObject);
+        spawnCanvas.gameObject.transform.Find("ReadyText").gameObject.SetActive(true);
+        spawnCanvas.gameObject.transform.Find("ReadyButton").gameObject.SetActive(false);
+        GameManager.instance.CharacterToSpawn = null;
+        
+    }
+
     public int UpdateAbilities(LivingPlaceable character, Vector3Int position)
     {
         bool anySpecial = false;

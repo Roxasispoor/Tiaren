@@ -265,66 +265,67 @@ public abstract class Placeable : NetIdeable
     {
         if (GameManager.instance.State == States.Spawn) // AMELIORATION: This part should be in LivingPlaceable and not here
         {
-            if (Input.GetMouseButtonUp(0))
-            {
-
-                if (!this.IsLiving() && ((StandardCube)this).isSpawnPoint == true // AMELIORATION: Maybe could be remove
-                                              // Check if it is a spawn point for that player
-                        && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains(GetPosition() + Vector3Int.up)
-                        && GameManager.instance.CharacterToSpawn != null)
+            if (GameManager.instance.GetLocalPlayer().Isready != true) {
+                if (Input.GetMouseButtonUp(0))
                 {
-                    Debug.Log("You have authority to ask to spawn");
 
-                    if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                    if (!this.IsLiving() && ((StandardCube)this).isSpawnPoint == true // AMELIORATION: Maybe could be remove
+                                                                                      // Check if it is a spawn point for that player
+                            && Grid.instance.GetSpawnPlayer(GameManager.instance.GetLocalPlayer()).Contains(GetPosition() + Vector3Int.up)
+                            && GameManager.instance.CharacterToSpawn != null)
                     {
-                        Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
-                        Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
-                        GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
-                    }
-                    else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving()
-                        && Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].player == GameManager.instance.GetLocalPlayer())
-                    {
-                        Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
-                        Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
-                        Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
-                        temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z);
-                        GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
-                    }
-                    GameManager.instance.CharacterToSpawn = null;
-                }
-                else if (player == GameManager.instance.GetLocalPlayer())
-                {
-                    if (!GameManager.instance.CharacterToSpawn)
-                    {
-                        GameManager.instance.CharacterToSpawn = (LivingPlaceable)this;
-                    }
-                    else
-                    {
-                        /*
-                        //Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y - 1, this.GetPosition().z];
-                        Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
-                        Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
-                        temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z);
-                        GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
-                        */
+                        Debug.Log("You have authority to ask to spawn");
 
-                        Vector3Int temp = GetPosition();
-                        Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
-                            GameManager.instance.CharacterToSpawn.GetPosition().z] = this;
-                        this.transform.position = GameManager.instance.CharacterToSpawn.transform.position;
-                        Grid.instance.GridMatrix[temp.x, temp.y, temp.z] = GameManager.instance.CharacterToSpawn;
-                        GameManager.instance.CharacterToSpawn.transform.position = temp;
-
-
+                        if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] == null)
+                        {
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = null;
+                            GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                        }
+                        else if (Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].IsLiving()
+                            && Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z].player == GameManager.instance.GetLocalPlayer())
+                        {
+                            Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z];
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z);
+                            GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                        }
                         GameManager.instance.CharacterToSpawn = null;
                     }
-                }
+                    else if (player == GameManager.instance.GetLocalPlayer())
+                    {
+                        if (!GameManager.instance.CharacterToSpawn)
+                        {
+                            GameManager.instance.CharacterToSpawn = (LivingPlaceable)this;
+                        }
+                        else
+                        {
+                            /*
+                            //Placeable temp = Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y - 1, this.GetPosition().z];
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = temp;
+                            Grid.instance.GridMatrix[this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z] = GameManager.instance.CharacterToSpawn;
+                            temp.transform.position = new Vector3(GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z);
+                            GameManager.instance.CharacterToSpawn.transform.position = new Vector3(this.GetPosition().x, this.GetPosition().y + 1, this.GetPosition().z);
+                            */
 
+                            Vector3Int temp = GetPosition();
+                            Grid.instance.GridMatrix[GameManager.instance.CharacterToSpawn.GetPosition().x, GameManager.instance.CharacterToSpawn.GetPosition().y,
+                                GameManager.instance.CharacterToSpawn.GetPosition().z] = this;
+                            this.transform.position = GameManager.instance.CharacterToSpawn.transform.position;
+                            Grid.instance.GridMatrix[temp.x, temp.y, temp.z] = GameManager.instance.CharacterToSpawn;
+                            GameManager.instance.CharacterToSpawn.transform.position = temp;
+
+
+                            GameManager.instance.CharacterToSpawn = null;
+                        }
+                    }
+                }
             }
         }
         else if (GameManager.instance.State == States.Move)

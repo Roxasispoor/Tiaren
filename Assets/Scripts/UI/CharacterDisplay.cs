@@ -23,7 +23,7 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GameManager.instance.playingPlaceable.player.cameraScript.SetTarget(Character.gameObject.transform);
+        GameManager.instance.GetLocalPlayer().cameraScript.SetTarget(Character.gameObject.transform);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
