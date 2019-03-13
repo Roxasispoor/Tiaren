@@ -26,6 +26,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
         return new DestroyBloc(this);
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     // Use this for initialization
     override
     public void Use()

@@ -62,6 +62,11 @@ public class MoveEffect : EffectOnLiving {
         this.Launcher = livingPlaceable ;
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     /// <summary>
     /// create a damage object
     /// </summary>
@@ -83,7 +88,7 @@ public class MoveEffect : EffectOnLiving {
     override
         public void Use()
     {
-        if(Target.Movable && Grid.instance.CheckNull(Target.GetPosition() + direction))
+        if(Target.movable && Grid.instance.CheckNull(Target.GetPosition() + direction))
         {
             Grid.instance.MovePlaceable(Target, Target.GetPosition() + direction, !UseBezier);
             Debug.Log("Has been logically moved");

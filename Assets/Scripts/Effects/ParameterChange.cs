@@ -27,6 +27,11 @@ public class ParameterChange<T> : EffectOnPlaceable
         this.paramNewValue = other.paramNewValue;
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     override
         public void Use()
     {

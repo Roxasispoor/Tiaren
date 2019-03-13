@@ -54,6 +54,11 @@ public class Damage : EffectOnLiving
         }
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override Effect Clone()
     {
         return new Damage(this);

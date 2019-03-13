@@ -17,6 +17,11 @@ public class PickObjectOnBlockEffect : EffectOnObjectBloc
         return new PickObjectOnBlockEffect(this);
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override void Use()
     {
        if(Target.isPickable)

@@ -384,8 +384,8 @@ public class Player : NetworkBehaviour
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
             spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
-            spawnpoint.Movable = false;
-            spawnpoint.GravityType = GravityType.NULL_GRAVITY;
+            spawnpoint.movable = false;
+            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
             if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -402,8 +402,8 @@ public class Player : NetworkBehaviour
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
             spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
-            spawnpoint.Movable = false;
-            spawnpoint.GravityType = GravityType.NULL_GRAVITY;
+            spawnpoint.movable = false;
+            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
             if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
             {
                 GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -446,8 +446,8 @@ public class Player : NetworkBehaviour
                 spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer1[i] + Vector3.down);
                 spawnpoint.isSpawnPoint = true;
                 spawnpoint.Destroyable = false;
-                spawnpoint.Movable = false;
-                spawnpoint.GravityType = GravityType.NULL_GRAVITY;
+                spawnpoint.movable = false;
+                spawnpoint.gravityType = GravityType.NULL_GRAVITY;
                 if (i < GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player1, Grid.instance.SpawnPlayer1[i], GameManager.instance.player1.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -458,8 +458,8 @@ public class Player : NetworkBehaviour
                 spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer2[i] + Vector3.down);
                 spawnpoint.isSpawnPoint = true;
                 spawnpoint.Destroyable = false;
-                spawnpoint.Movable = false;
-                spawnpoint.GravityType = GravityType.NULL_GRAVITY;
+                spawnpoint.movable = false;
+                spawnpoint.gravityType = GravityType.NULL_GRAVITY;
                 if (i < GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters.Count)
                 {
                     GameManager.instance.CreateCharacter(GameManager.instance.player2, Grid.instance.SpawnPlayer2[i], GameManager.instance.player2.GetComponent<UIManager>().CurrentCharacters[i]);
@@ -983,13 +983,13 @@ public class Player : NetworkBehaviour
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
 
-        if (GameManager.instance.playingPlaceable.MoveCoroutine != null)
+        if (GameManager.instance.playingPlaceable.moveCoroutine != null)
         {
-            GameManager.instance.playingPlaceable.StopCoroutine(GameManager.instance.playingPlaceable.MoveCoroutine);
-            GameManager.instance.playingPlaceable.MoveCoroutine = null;
+            GameManager.instance.playingPlaceable.StopCoroutine(GameManager.instance.playingPlaceable.moveCoroutine);
+            GameManager.instance.playingPlaceable.moveCoroutine = null;
 
         }
-        GameManager.instance.playingPlaceable.MoveCoroutine = StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        GameManager.instance.playingPlaceable.moveCoroutine = StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
         GameManager.instance.MoveLogic(bezierPath);
     }
 
@@ -1112,18 +1112,18 @@ public class Player : NetworkBehaviour
     {
         if (path.Count > 1)
         {
-            if (placeable.MoveCoroutine != null)
+            if (placeable.moveCoroutine != null)
             {
-                placeable.StopCoroutine(placeable.MoveCoroutine);
-                placeable.MoveCoroutine = null;
+                placeable.StopCoroutine(placeable.moveCoroutine);
+                placeable.moveCoroutine = null;
 
             }
             if (placeable.IsLiving())
             {
-                placeable.MoveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed));
+                placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed));
             } else
             {
-                placeable.MoveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed, justLerp));
+                placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed, justLerp));
             }
             
         }

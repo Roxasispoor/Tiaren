@@ -6,15 +6,15 @@ public class Spawn : StandardCube {
     new void Awake()
     {
         base.Awake();
-        this.Walkable = true;
+        this.walkable = true;
 
-        this.Movable = false;
+        this.movable = false;
         this.Destroyable = false;
 
-        this.TraversableChar = TraversableType.NOTHROUGH;
-        this.TraversableBullet = TraversableType.NOTHROUGH;
+        this.traversableType = TraversableType.NOTHROUGH;
+        this.traversableBullet = TraversableType.NOTHROUGH;
 
-        this.GravityType = GravityType.NULL_GRAVITY;
+        this.gravityType = GravityType.NULL_GRAVITY;
 
         this.crushable = CrushType.CRUSHDESTROYBLOC;
         this.explored = false;

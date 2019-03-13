@@ -17,6 +17,12 @@ public class ZipLineTeleport : EffectOnObjectBloc
     {
         return new ZipLineTeleport(this);
     }
+
+    public override void preview()
+    {
+        Debug.Log("No preview for ZipLineTeleport");
+    }
+
     public override void Use()
     {
         ZipLine arrival = ((ZipLine)Target).linkedTo;

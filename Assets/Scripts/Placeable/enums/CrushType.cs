@@ -1,15 +1,15 @@
 ﻿public enum CrushType
 {
     /// <summary>
-    /// destroys bloc that falls above when crushed
+    /// NOT IMPLEMENTED - destroys bloc that falls above when crushed
     /// </summary>
     CRUSHDESTROYBLOC,
     /// <summary>
-    /// is destroyed when crushed
+    /// NOT IMPLEMENTED - is destroyed when crushed
     /// </summary>
     CRUSHDEATH,
     /// <summary>
-    /// floats to the edge when crushed
+    /// NOT IMPLEMENTED - floats to the edge when crushed
     /// </summary>
     CRUSHLIFT,
     /// <summary>
@@ -17,7 +17,7 @@
     /// </summary>
     CRUSHSTAY,
     /// <summary>
-    /// Take damage when crushed
+    /// Take damage when crushed and destroy the block falling
     /// </summary>
     CRUSHDAMAGE
 }

@@ -238,7 +238,7 @@ public class Grid : MonoBehaviour
 
             if (GridMatrix[x, y - i, z] != null)
             {
-                if (GridMatrix[x, y - i, z].Walkable)
+                if (GridMatrix[x, y - i, z].walkable)
                 {
                     return y - i;
                 }
@@ -265,7 +265,7 @@ public class Grid : MonoBehaviour
             }
             if (GridMatrix[x, y + i, z] != null && GridMatrix[x, y + i + 1, z] == null)
             {
-                if (GridMatrix[x, y + i, z].Walkable)
+                if (GridMatrix[x, y + i, z].walkable)
                 {
                     returnList.Add(y + i);
                 }
@@ -588,7 +588,7 @@ public class Grid : MonoBehaviour
                         anim.SetTrigger("idle");
                     }
                     bloc.isMoving = false;
-                    StopCoroutine(bloc.MoveCoroutine);
+                    StopCoroutine(bloc.moveCoroutine);
                 }
                 bloc.transform.position = desiredPosition; //shifting model
             }
@@ -647,32 +647,6 @@ public class Grid : MonoBehaviour
         {
             MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
-        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDESTROYBLOC && !GridMatrix[x,y,z].IsLiving())// destroy bloc, trigger effects
-        {
-            gridMatrix[x, y, z].Destroy();
-            gridMatrix[x, y, z] = null;
-
-        }
-        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHLIFT)// copying and destroying
-        {
-            int ymontee = y;
-            while (ymontee < sizeY && gridMatrix[x, ymontee, z] != null) // checking is not necessary in y though
-            {
-                ymontee++;
-            }
-            gridMatrix[x, ymontee, z] = gridMatrix[x, y - ydrop, z];
-            //gridMatrix[x, ymontee, z].Position.Set(x, ymontee, z);
-            gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
-            //gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
-            gridMatrix[x, y, z] = null;
-        }
-        else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDEATH)
-        {
-            gridMatrix[x, y - ydrop, z].Destroy();
-            gridMatrix[x, y - ydrop, z] = gridMatrix[x, y, z].Cloner();
-            // gridMatrix[x, y - ydrop, z].Position.Set(x, y - ydrop, z);
-            gridMatrix[x, y, z] = null;
-        }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
         {
             EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
@@ -680,6 +654,7 @@ public class Grid : MonoBehaviour
             gridMatrix[x, y, z] = null;
         }
     }
+
     /// <summary>
     /// Handle gravity : for object of type SIMPLE_GRAVITY. if nothing below => fall 
     /// for other objects, if not link to the ground, they fall
@@ -1412,7 +1387,7 @@ public class Grid : MonoBehaviour
         List<Vector3Int> targetableblock = new List<Vector3Int>(Blocklist);
         foreach (Vector3Int Pos in Blocklist)
         {
-            if (!gridMatrix[Pos.x, Pos.y, Pos.z].Movable)
+            if (!gridMatrix[Pos.x, Pos.y, Pos.z].movable)
                 targetableblock.Remove(Pos);
             else
             {
