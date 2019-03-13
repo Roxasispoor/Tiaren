@@ -26,6 +26,11 @@ public class CreateBlock : EffectOnPlaceableOnly {
         this.face = other.face;
         this.height = other.height;
     }
+    
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
 
     public CreateBlock(GameObject prefab, Vector3Int face,int height=0):base()
     {

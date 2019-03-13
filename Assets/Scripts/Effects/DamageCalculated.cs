@@ -19,14 +19,14 @@ public class DamageCalculated : EffectOnLiving {
     public DamageCalculated(float value,DamageScale scaleOn,float sinFactor=0.3f)
     {
         Power = value;
-        ScaleOn = scaleOn;
+        scaleOn = scaleOn;
         SinFactor = sinFactor;
     }
 
     public DamageCalculated(DamageCalculated other) : base(other)
     {
         this.Power = other.Power;
-        ScaleOn = other.ScaleOn;
+        scaleOn = other.scaleOn;
         SinFactor = other.sinFactor;
     }
 
@@ -41,19 +41,6 @@ public class DamageCalculated : EffectOnLiving {
         set
         {
             power = value;
-        }
-    }
-
-    private DamageScale ScaleOn
-    {
-        get
-        {
-            return scaleOn;
-        }
-
-        set
-        {
-            scaleOn = value;
         }
     }
 
@@ -75,18 +62,24 @@ public class DamageCalculated : EffectOnLiving {
         return new DamageCalculated(this);
     }
 
+
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public float CalculateDamage()
     {
         float totalDmg = 0;
-        if (ScaleOn == DamageScale.STR)
+        if (scaleOn == DamageScale.STR)
         {
             totalDmg = power / Target.Def;
         }
-        else if (ScaleOn == DamageScale.DEXT)
+        else if (scaleOn == DamageScale.DEXT)
         {
             totalDmg = power / Target.Def;
         }
-        else if (ScaleOn == DamageScale.MAG)
+        else if (scaleOn == DamageScale.MAG)
         {
             totalDmg = power / Target.Mdef;
         }

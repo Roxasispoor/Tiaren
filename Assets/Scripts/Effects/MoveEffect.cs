@@ -62,6 +62,11 @@ public class MoveEffect : EffectOnLiving {
         this.Launcher = livingPlaceable ;
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     /// <summary>
     /// create a damage object
     /// </summary>

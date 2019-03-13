@@ -29,6 +29,11 @@ public class BlockEffects : EffectOnPlaceable
         
     }
 
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public List<Effect> ListEffectsToBlock
     {
         get

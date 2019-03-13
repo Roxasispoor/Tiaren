@@ -61,6 +61,12 @@ public class Push : EffectOnPlaceable
         this.nbCases = nbCases;
         this.damage = damage;
     }
+
+    public override void preview()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override Effect Clone()
     {
         return new Push(this);
