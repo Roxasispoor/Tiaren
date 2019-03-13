@@ -55,6 +55,7 @@ public class LivingPlaceable : Placeable
 
     private List<Placeable> targetArea;
     private List<LivingPlaceable> targetableUnits;
+
     public Canvas flyingInfo;
     public Sprite characterSprite;
 
@@ -775,7 +776,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill7);
             */
             //Ranger
-
+            /*
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -792,7 +793,7 @@ public class LivingPlaceable : Placeable
             Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Zipline", 1, 5);
+            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Zipline", 1, 5, SkillEffect.NONE, SkillArea.TOPBLOCK);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -801,9 +802,9 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
-            
+            */
             //Mage
-            /*
+            
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -828,7 +829,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
-            */
+            
         }
     }
     public void InitNoClass()
@@ -884,6 +885,17 @@ public class LivingPlaceable : Placeable
         }
     }
 
+    public void DamagePreview(int damage)
+    {
+        float realValue = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
+        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = realValue - damage / MaxHP;
+        Player.gameObject.GetComponent<UIManager>().Preview(damage, this);
+    }
+
+    public void ResetPreview()
+    {
+        flyingInfo.transform.Find("HPPreview").gameObject.GetComponent<Image>().fillAmount = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
+    }
 
     /// <summary>
     /// To call at the beginning of the turn of the character

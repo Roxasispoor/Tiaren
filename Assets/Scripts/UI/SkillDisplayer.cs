@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SkillDisplayer : MonoBehaviour {
 
-    public Text skillName;
-    public Text description;
+    public TMP_Text skillName;
+    public TMP_Text description;
     public Image image;
-    public Text cooldown;
-    public Text cost;
-    public Text power;
+    public TMP_Text cooldown;
+    public TMP_Text cost;
+    public TMP_Text power;
 
     public void Activate(Skill skill)
     {

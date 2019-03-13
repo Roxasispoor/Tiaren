@@ -145,6 +145,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void Preview(int damage, LivingPlaceable target)
+    {
+        CharacterDisplay[] characters = timelineZone.transform.GetComponentsInChildren<CharacterDisplay>();
+        foreach(CharacterDisplay character in characters)
+        {
+            if (character.Character == target)
+            {
+                character.PreviewEffect(damage);
+            }
+        }
+    }
+
     public void SpawnUI()
     {
         teamCanvas.SetActive(false);

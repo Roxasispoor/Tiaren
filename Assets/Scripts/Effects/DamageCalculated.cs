@@ -80,15 +80,15 @@ public class DamageCalculated : EffectOnLiving {
         float totalDmg = 0;
         if (ScaleOn == DamageScale.STR)
         {
-            totalDmg = power / Target.Def;
+            totalDmg = power * power / Target.Def;
         }
         else if (ScaleOn == DamageScale.DEXT)
         {
-            totalDmg = power / Target.Def;
+            totalDmg = power * power / Target.Def;
         }
         else if (ScaleOn == DamageScale.MAG)
         {
-            totalDmg = power / Target.Mdef;
+            totalDmg = power * power / Target.Mdef;
         }
         if (Launcher.GetPosition().y > Target.GetPosition().y)
         {

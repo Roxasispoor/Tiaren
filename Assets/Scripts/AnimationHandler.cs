@@ -23,19 +23,20 @@ public class AnimationHandler : MonoBehaviour
                 DontDestroyOnLoad(m_Instance.gameObject);
                 m_Instance.AnimDictionary = new Dictionary<string, string>() {
 
-                    {"Basic_attack", "WaitAndBasicAttack" },
-                    {"Basic_destruction", "WaitAndDestroyBlock" },
-                    {"Basic_push", "WaitAndPushBlock" },
-                    {"Basic_creation", "WaitAndSummonBlock" },
+                    {"Sword attack", "WaitAndBasicAttack" },
+                    {"Destruction", "WaitAndDestroyBlock" },
+                    {"Push", "WaitAndPushBlock" },
+                    {"Create", "WaitAndSummonBlock" },
                     {"Fissure","WaitAndDestroyBlock"},
                     {"Wall","WaitAndSummonBlock" },
                     {"Bleeding","WaitAndBleed"},
-                    {"debuffPm","WaitAndLowKick" },
-                    {"HigherGround","WaitAndSummonBlock"},
-                    {"Piercing_arrow","WaitAndArrowAttack" },
+                    {"Break a leg","WaitAndLowKick" },
+                    {"Higher Ground","WaitAndSummonBlock"},
+                    {"Piercing shot","WaitAndArrowAttack" },
                     {"Zipline","WaitAndBuff" },
                     {"Spinning","WaitAndSpin" },
-                    {"ExplosiveFireball","WaitAndLaunchFireball" },
+                    {"Explosive fireball","WaitAndLaunchFireball" },
+                    {"Staff Shot","WaitAndLaunchFireball" },
 
                 };
             }

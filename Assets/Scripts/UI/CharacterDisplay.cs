@@ -7,6 +7,7 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     private LivingPlaceable character;
     public bool isHovered = false;
+    private StatDisplayer displayer;
 
     public LivingPlaceable Character
     {
@@ -21,6 +22,11 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
 
+    private void Awake()
+    {
+        displayer = gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         GameManager.instance.GetLocalPlayer().cameraScript.SetTarget(Character.gameObject.transform);
@@ -28,17 +34,22 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(Character);
+        displayer.Activate(Character);
         isHovered = true;
         character.Highlight();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
+        displayer.Deactivate();
         isHovered = false;
         character.UnHighlight();
-        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
+        displayer.Activate(GameManager.instance.PlayingPlaceable);
+    }
+
+    public void PreviewEffect(int damage)
+    {
+        displayer.Preview(Character, damage);
     }
 
     public void Update()
@@ -48,4 +59,5 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
             character.OnMouseOverWithLayer();
         }
     }
+    
 }

@@ -327,7 +327,7 @@ public class GameManager : NetworkBehaviour
         {
             networkManager.spawnPrefabs[i].GetComponent<Placeable>().serializeNumber = i + 1; // kind of value shared by all prefab, doesn't need to be static
         }
-
+        
 
         //init Posissible characters
         string path = Path.Combine(Application.streamingAssetsPath , "Teams.json");

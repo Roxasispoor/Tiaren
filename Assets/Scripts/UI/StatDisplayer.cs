@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StatDisplayer : MonoBehaviour {
 
-    public Text className;
-    public Text player;
-    public Text hp;
-    public Text pa;
-    public Text mov;
-    public Text speed;
-    public Text def;
-    public Text mDef;
+    public TMP_Text className;
+    public TMP_Text player;
+    public TMP_Text hp;
+    public TMP_Text pa;
+    public TMP_Text mov;
+    public TMP_Text speed;
+    public TMP_Text def;
+    public TMP_Text mDef;
     public Image sprite;
     public Image Filter;
 
@@ -34,5 +35,11 @@ public class StatDisplayer : MonoBehaviour {
     public void Deactivate()
     {
         gameObject.SetActive(false);
+    }
+
+    public void Preview(LivingPlaceable character, int damage)
+    {
+        Activate(character);
+        hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage;
     }
 }

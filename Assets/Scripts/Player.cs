@@ -899,6 +899,10 @@ public class Player : NetworkBehaviour
                 targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
                 targetableunits = Grid.instance.SpinningPattern(targetableunits, playingPlaceable.GetPosition());
             }
+            else
+            {
+                targetableunits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, false);
+            }
 
             playingPlaceable.TargetableUnits = targetableunits;
             GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("LivingPlaceable");
