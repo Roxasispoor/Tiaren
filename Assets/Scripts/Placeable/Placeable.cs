@@ -218,12 +218,12 @@ public abstract class Placeable : NetIdeable
             // Debug.Log(EventSystem.current.IsPointerOverGameObject());
             if (Input.GetMouseButtonUp(0) && this.walkable)
             {
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner)
+                if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer && !GameManager.instance.PlayingPlaceable.Player.GetComponent<Player>().isWinner)
                 {
                     Debug.Log("You have authority to ask for a deplacment move");
                     //Vector3 destination = this.GetPosition();
                     Vector3[] path = GameManager.instance.GetPathFromClicked(this);//Check and move on server
-                    GameManager.instance.playingPlaceable.Player.CmdMoveTo(path);
+                    GameManager.instance.PlayingPlaceable.Player.CmdMoveTo(path);
                     // GameManager.instance.CheckIfAccessible(this);
                 }
             }
@@ -233,7 +233,7 @@ public abstract class Placeable : NetIdeable
             if (Input.GetMouseButtonUp(0))
             {
                 Skill skill = GameManager.instance.activeSkill;
-                if (GameManager.instance.playingPlaceable.Player.isLocalPlayer && !GameManager.instance.playingPlaceable.Player.GetComponent<Player>().isWinner
+                if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer && !GameManager.instance.PlayingPlaceable.Player.GetComponent<Player>().isWinner
                     && skill != null && (GameManager.instance.PlayingPlaceable.TargetArea.Contains(this) ||
                     IsLiving() && GameManager.instance.PlayingPlaceable.TargetableUnits.Contains((LivingPlaceable)this))
 
@@ -244,14 +244,14 @@ public abstract class Placeable : NetIdeable
                 {
 
                     Debug.Log("You have authority to ask to act on " + netId + " On position" + GetPosition() + "Time : " + Time.time);
-                    List<Placeable> area = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
+                    List<Placeable> area = GameManager.instance.PlayingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area;
                     if (area == null && skill.SkillArea != SkillArea.SURROUNDINGLIVING)
                     {
-                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, new int[0], 0);
+                        GameManager.instance.PlayingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, skill), netId, new int[0], 0);
                     }
                     else if (skill.SkillArea == SkillArea.SURROUNDINGLIVING || skill.SkillArea == SkillArea.MIXEDAREA)
                     {
-                        List<LivingPlaceable> Playerlist = GameManager.instance.playingPlaceable.TargetableUnits;
+                        List<LivingPlaceable> Playerlist = GameManager.instance.PlayingPlaceable.TargetableUnits;
                         int j = 0;
                         int[] netidlist;
 
@@ -273,8 +273,8 @@ public abstract class Placeable : NetIdeable
                             netidlist[i] = Playerlist[i - j].netId;
                         }
 
-                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
-                            GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
+                        GameManager.instance.PlayingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, skill), netId, netidlist,
+                            GameManager.instance.PlayingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
                     else
                     {
@@ -283,10 +283,10 @@ public abstract class Placeable : NetIdeable
                         {
                             netidlist[i] = area[i].netId;
                         }
-                        GameManager.instance.playingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.playingPlaceable, skill), netId, netidlist,
-                            GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
+                        GameManager.instance.PlayingPlaceable.player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, skill), netId, netidlist,
+                            GameManager.instance.PlayingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
-                    //GameManager.instance.activeSkill.Use(GameManager.instance.playingPlaceable, new List<Placeable>(){this});
+                    //GameManager.instance.activeSkill.Use(GameManager.instance.PlayingPlaceable, new List<Placeable>(){this});
                 }
             }
 

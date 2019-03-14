@@ -226,18 +226,18 @@ public class CameraScript : MonoBehaviour
 
     public void BackToMovement()
     {
-        if (GameManager.instance.playingPlaceable.Player == player && player.isLocalPlayer)
+        if (GameManager.instance.PlayingPlaceable.Player == player && player.isLocalPlayer)
         {
             GameManager.instance.PlayingPlaceable.ResetTargets();
             GameManager.instance.PlayingPlaceable.ResetAreaOfMovement();
-            RaycastSelector rayselect = GameManager.instance.playingPlaceable.player.GetComponentInChildren<RaycastSelector>();
+            RaycastSelector rayselect = GameManager.instance.PlayingPlaceable.player.GetComponentInChildren<RaycastSelector>();
             rayselect.EffectArea = 0;
             rayselect.Pattern = SkillArea.NONE;
             GameManager.instance.State = States.Move;
             GameManager.instance.activeSkill = null;
-            GameManager.instance.playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.playingPlaceable.GetPosition(), GameManager.instance.playingPlaceable.CurrentPM,
-            GameManager.instance.playingPlaceable.Jump, GameManager.instance.playingPlaceable.Player);
-            GameManager.instance.playingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
+            GameManager.instance.PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.PlayingPlaceable.GetPosition(), GameManager.instance.PlayingPlaceable.CurrentPM,
+            GameManager.instance.PlayingPlaceable.Jump, GameManager.instance.PlayingPlaceable.Player);
+            GameManager.instance.PlayingPlaceable.ChangeMaterialAreaOfMovement(GameManager.instance.pathFindingMaterial);
         }
     }
 

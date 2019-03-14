@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -117,10 +118,10 @@ public class UIManager : MonoBehaviour
         {
             if (GameManager.instance.PlayingPlaceable.Player == gameObject.GetComponent<Player>())
             {
-                hpDisplay.transform.Find("HeartDisplay").transform.Find("HpDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentHP.ToString();
+                hpDisplay.transform.Find("HeartDisplay").transform.Find("HpDisplay").GetComponent<TMP_Text>().text = GameManager.instance.PlayingPlaceable.CurrentHP.ToString();
                 hpDisplay.transform.Find("Bar").GetComponent<Image>().fillAmount = GameManager.instance.PlayingPlaceable.CurrentHP / GameManager.instance.PlayingPlaceable.MaxHP;
-                movDisplay.transform.Find("MovDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentPM.ToString();
-                paDisplay.transform.Find("PaDisplay").GetComponent<Text>().text = GameManager.instance.PlayingPlaceable.CurrentPA.ToString();
+                movDisplay.transform.Find("MovDisplay").GetComponent<TMP_Text>().text = GameManager.instance.PlayingPlaceable.CurrentPM.ToString();
+                paDisplay.transform.Find("PaDisplay").GetComponent<TMP_Text>().text = GameManager.instance.PlayingPlaceable.CurrentPA.ToString();
             }
             GameObject zoneToUpdate = gameObject.transform.Find("InGameCanvas").Find("Timeline").gameObject;
             Slider[] sliders = zoneToUpdate.GetComponentsInChildren<Slider>();
@@ -287,12 +288,12 @@ public class UIManager : MonoBehaviour
 
     public void ChangeTurn()
     {
-        if (GameManager.instance.playingPlaceable.Player.gameObject == gameObject)
+        if (GameManager.instance.PlayingPlaceable.Player.gameObject == gameObject)
         {
             skillZone.gameObject.SetActive(true);
             ClearZone(skillZone.gameObject);
             ClearZone(specialSkillZone.gameObject);
-            UpdateAbilities(GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
+            UpdateAbilities(GameManager.instance.PlayingPlaceable, GameManager.instance.PlayingPlaceable.GetPosition());//WARNING can be messed up with animation and fast change of turn
             
             ClearZone(timelineZone.gameObject);
             UpdateTimeline();
@@ -308,7 +309,7 @@ public class UIManager : MonoBehaviour
                     .GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
             }
         }
-        else if (GameManager.instance.playingPlaceable.Player.gameObject != gameObject)
+        else if (GameManager.instance.PlayingPlaceable.Player.gameObject != gameObject)
         {
             ClearZone(skillZone.gameObject);
             ClearZone(specialSkillZone.gameObject);

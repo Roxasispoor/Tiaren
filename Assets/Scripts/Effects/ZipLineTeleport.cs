@@ -39,12 +39,12 @@ public class ZipLineTeleport : EffectOnObjectBloc
             {
 
                 List<Vector3> path = new List<Vector3>() { Launcher.GetPosition() + Vector3Int.down, arrival.GetPosition() };// + new Vector3Int(0, 1, 0) };
-                GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Launcher, 4f, true);
+                GameManager.instance.PlayingPlaceable.Player.StartMoveAlongBezier(path, Launcher, 4f, true);
                
             }
             if(Launcher.Player.isLocalPlayer)
             {
-                GameManager.instance.playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
+                GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
                    (LivingPlaceable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0));
             }
 

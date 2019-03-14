@@ -142,8 +142,8 @@ public class StandardCube : Placeable
             fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
         }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.State != States.Move || GameManager.instance.playingPlaceable != null && GameManager.instance.playingPlaceable.AreaOfMouvement != null &&
-            !GameManager.instance.playingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
+        if (GameManager.instance.State != States.Move || GameManager.instance.PlayingPlaceable != null && GameManager.instance.PlayingPlaceable.AreaOfMouvement != null &&
+            !GameManager.instance.PlayingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
 
         {
 

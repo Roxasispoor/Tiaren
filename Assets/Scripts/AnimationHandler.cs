@@ -163,7 +163,7 @@ public class AnimationHandler : MonoBehaviour
     {
         yield return null;
         SoundHandler.Instance.PlayFireballSound();
-        GameObject tmp = Instantiate((GameObject)Resources.Load("FX/Fireball"),GameManager.instance.playingPlaceable.GetPosition(),Quaternion.identity);
+        GameObject tmp = Instantiate((GameObject)Resources.Load("FX/Fireball"),GameManager.instance.PlayingPlaceable.GetPosition(),Quaternion.identity);
         tmp.GetComponent<Fireball>().Init(positionTargets[0]+new Vector3(0,1,0));
         //tmp.Init(placeableTargets[0].GetPosition());
     }

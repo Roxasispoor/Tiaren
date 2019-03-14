@@ -35,6 +35,11 @@ public class RaycastSelector : MonoBehaviour
         effectarea = 0;
     }
 
+    private void OnEnable()
+    {
+        GameManager.instance.RaycastSelector = this;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -44,7 +49,7 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.playingPlaceable != null || GameManager.instance.State == States.Spawn )
+        if (GameManager.instance.PlayingPlaceable != null || GameManager.instance.State == States.Spawn )
         {
 
             RaycastHit hit;

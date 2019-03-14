@@ -136,14 +136,21 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public Player winner;
     /// <summary>
-    /// The character currently
+    /// The character currently playing
     /// </summary>
-    public LivingPlaceable playingPlaceable;
+    private LivingPlaceable playingPlaceable;
     /// <summary>
     /// Characters you can create
     /// </summary>
     private List<SpriteAndName> possibleCharacters = new List<SpriteAndName>(); // list of all the characters in the game
-
+    /// <summary>
+    /// Local Player
+    /// </summary>
+    private Player localPlayer;
+    /// <summary>
+    /// The raycast selector of the local player
+    /// </summary>
+    private RaycastSelector raycastSelector;
     /// <summary>
     /// Display number of the current turn
     /// </summary>
@@ -288,14 +295,26 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public RaycastSelector RaycastSelector
+    {
+        get
+        {
+            return raycastSelector;
+        }
+
+        set
+        {
+            raycastSelector = value;
+        }
+    }
+
     /// <summary>
     /// Return the player who has authority
     /// </summary>
     /// <returns></returns>
     public Player GetLocalPlayer()
     {
-        Player toreturn = player1.GetComponent<Player>().hasAuthority ? player1.GetComponent<Player>() : player2.GetComponent<Player>();
-        return toreturn;
+        return localPlayer;
     }
 
     private void Awake()
@@ -320,7 +339,6 @@ public class GameManager : NetworkBehaviour
         idPlaceable = new Dictionary<int, NetIdeable>();
         TurnOrder = new List<StackAndPlaceable>();
         batchFolder = new GameObject("Batch Folder");
-
         //Initialize la valeur statique de chaque placeable, devrait rester identique entre deux versions du jeu, et ne pas poser problème si les new prefabs sont bien rajoutés a la fin
         networkManager = (NetworkManager)FindObjectOfType(typeof(NetworkManager));
         for (int i = 0; i < networkManager.spawnPrefabs.Count; i++)
@@ -382,6 +400,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             Player1.RpcSetPlayer1();
             Player2.RpcSetPlayer2();
+        }
+        if (isClient)
+        {
+            GameManager.instance.localPlayer = player1.GetComponent<Player>().hasAuthority ? player1.GetComponent<Player>() : player2.GetComponent<Player>();
         }
         GameObject grid = new GameObject("GridFolder");
         grid.AddComponent<NetworkIdentity>();
@@ -693,15 +715,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
     public void MoveLogic(List<Vector3> bezierPath)
     {
-        if (playingPlaceable.Player.isLocalPlayer)
+        if (PlayingPlaceable.Player.isLocalPlayer)
         {
-            playingPlaceable.ResetAreaOfMovement();
+            PlayingPlaceable.ResetAreaOfMovement();
             Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
             Debug.Log("Dernière pos character : " + lastPositionCharac);
-            playingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), playingPlaceable.CurrentPM,
-               playingPlaceable.Jump, playingPlaceable.Player);
-            playingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
-            playingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(playingPlaceable,
+            PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), PlayingPlaceable.CurrentPM,
+               PlayingPlaceable.Jump, PlayingPlaceable.Player);
+            PlayingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(PlayingPlaceable,
                 new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
         }
     }
@@ -709,9 +731,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     public void OnEndAnimationEffectEnd()
     {
 
-        if (playingPlaceable.Player.isLocalPlayer)
+        if (PlayingPlaceable.Player.isLocalPlayer)
         {
-            MoveLogic(new List<Vector3>() { playingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
+            MoveLogic(new List<Vector3>() { PlayingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
             GameManager.instance.State = States.Move;
         }
     }
@@ -829,32 +851,32 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
-        playingPlaceable.SpeedStack += 1 / playingPlaceable.Speed;
+        PlayingPlaceable.SpeedStack += 1 / PlayingPlaceable.Speed;
 
-        for (int i = playingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
+        for (int i = PlayingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
         {
-            EffectManager.instance.StartTurnUseEffect(playingPlaceable.AttachedEffects[i]);
+            EffectManager.instance.StartTurnUseEffect(PlayingPlaceable.AttachedEffects[i]);
             // some code
             // safePendingList.RemoveAt(i);
         }
 
-        if (playingPlaceable.IsDead && playingPlaceable.TurnsRemaingingCemetery > 0)
+        if (PlayingPlaceable.IsDead && PlayingPlaceable.TurnsRemaingingCemetery > 0)
         {
-            playingPlaceable.TurnsRemaingingCemetery--;
+            PlayingPlaceable.TurnsRemaingingCemetery--;
             EndOFTurn();
         }
         else
         {
 
-            if (playingPlaceable.IsDead)
+            if (PlayingPlaceable.IsDead)
             {
-                playingPlaceable.IsDead = false;
-                playingPlaceable.Player.Respawn(playingPlaceable);
+                PlayingPlaceable.IsDead = false;
+                PlayingPlaceable.Player.Respawn(PlayingPlaceable);
             }
 
             //initialise UI
             // reducing cooldown of skill by 1
-            foreach (Skill sk in playingPlaceable.Skills)
+            foreach (Skill sk in PlayingPlaceable.Skills)
             {
                 if (sk.TourCooldownLeft > 0)
                 {
@@ -867,11 +889,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             
             SetCamera();
 
-            playingPlaceable.CurrentPM = playingPlaceable.MaxPM;
-            playingPlaceable.CurrentPA = playingPlaceable.PaMax;
+            PlayingPlaceable.CurrentPM = PlayingPlaceable.MaxPM;
+            PlayingPlaceable.CurrentPA = PlayingPlaceable.PaMax;
             Debug.Log(PlayingPlaceable.CurrentPA);
-            playingPlaceable.Player.clock.IsFinished = false;
-            playingPlaceable.Player.cameraScript.BackToMovement();
+            PlayingPlaceable.Player.clock.IsFinished = false;
+            PlayingPlaceable.Player.cameraScript.BackToMovement();
             player1.GetComponent<Timer>().StartTimer(timerLength);
             player2.GetComponent<Timer>().StartTimer(timerLength);
         }
@@ -881,12 +903,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if (isClient)
         {
-            if (playingPlaceable.Player.isLocalPlayer)
+            if (PlayingPlaceable.Player.isLocalPlayer)
             {
                 PlayingPlaceable.Player.cameraScript.SetTarget(PlayingPlaceable.transform);
                 PlayingPlaceable.Player.cameraScript.Freecam = 0;
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(playingPlaceable.GetComponent<Placeable>().gameObject.transform);
-                //GetOtherPlayer(playingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
+                //GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.SetTarget(PlayingPlaceable.GetComponent<Placeable>().gameObject.transform);
+                //GetOtherPlayer(PlayingPlaceable.Player.gameObject).GetComponent<Player>().cameraScript.Freecam = 1;
             }
             else
             {
@@ -901,17 +923,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         if (winner == null)
         {
             //cleaning and checks and synchro with banana dancing if needed
-            Debug.Log("tour suivaaaaaaaaant Area of movement=" + playingPlaceable.AreaOfMouvement.Count);
-            if (playingPlaceable.Player.isLocalPlayer)
+            Debug.Log("tour suivaaaaaaaaant Area of movement=" + PlayingPlaceable.AreaOfMouvement.Count);
+            if (PlayingPlaceable.Player.isLocalPlayer)
             {
-                playingPlaceable.ResetTargets();
-                playingPlaceable.ResetAreaOfMovement();
-                playingPlaceable.ResetHighlightSkill();
-                RaycastSelector rayselect = playingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
+                PlayingPlaceable.ResetTargets();
+                PlayingPlaceable.ResetAreaOfMovement();
+                PlayingPlaceable.ResetHighlightSkill();
+                RaycastSelector rayselect = PlayingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
                 rayselect.EffectArea = 0;
                 rayselect.Pattern = SkillArea.NONE;
-                playingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
-                //playingPlaceable.Player.cameraScript.Freecam = 1;
+                PlayingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
+                //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
             BeginningOfTurn();
@@ -922,7 +944,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     //Make a copy from model skill in skills, and fill with additional info (caster, targets)
     public void UseSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
     {
-        Skill skill = playingPlaceable.Skills[skillID];
+        Skill skill = PlayingPlaceable.Skills[skillID];
         if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
         {
             caster.CurrentPA = caster.CurrentPA - skill.Cost > 0 ? caster.CurrentPA - skill.Cost : 0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
@@ -942,7 +964,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
 
         NodePath destination = new NodePath(arrival.GetPosition().x, arrival.GetPosition().y, arrival.GetPosition().z, 0, null);
-        NodePath inListDestination = playingPlaceable.AreaOfMouvement.Find(destination.Equals);
+        NodePath inListDestination = PlayingPlaceable.AreaOfMouvement.Find(destination.Equals);
         if (inListDestination != null)
         {
             Vector3[] realPath = inListDestination.GetFullPath();

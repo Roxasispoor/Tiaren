@@ -140,7 +140,7 @@ public abstract class EffectV2<L,T> where T : NetIdeable where L : NetIdeable
 
     public void GetLauncherAnimation()
     {
-        animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
+        animLauncher = GameManager.instance.PlayingPlaceable.gameObject.GetComponent<Animator>();
     }
 
     public float GetTimeOfLauncherAnimation()

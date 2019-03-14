@@ -561,7 +561,7 @@ public class Player : NetworkBehaviour
                 CmdRespawn(transmit, character.netId);
             }
         }
-        GameManager.instance.playingPlaceable.CurrentHP = GameManager.instance.playingPlaceable.MaxHP;
+        GameManager.instance.PlayingPlaceable.CurrentHP = GameManager.instance.PlayingPlaceable.MaxHP;
     }
 
     [Command]
@@ -690,7 +690,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            GameManager.instance.playingPlaceable = (LivingPlaceable)GameManager.instance.idPlaceable[netId];
+            GameManager.instance.PlayingPlaceable = (LivingPlaceable)GameManager.instance.idPlaceable[netId];
             cameraScript.BackToMovement();
         }
     }
@@ -701,9 +701,9 @@ public class Player : NetworkBehaviour
     public void CmdReconnectMe()
     {
         Reforge();
-        if (GameManager.instance.playingPlaceable)
+        if (GameManager.instance.PlayingPlaceable)
         {
-            RpcGivePlayingPlaceable(GameManager.instance.playingPlaceable.netId);
+            RpcGivePlayingPlaceable(GameManager.instance.PlayingPlaceable.netId);
         }
         RpcEndReco();
         //Reforge server links
@@ -724,7 +724,7 @@ public class Player : NetworkBehaviour
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+            if (clock.IsFinished && GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
             {
                 RpcEndTurn(); //permet une resynchronisation au rythme server
                 GameManager.instance.EndOFTurn();
@@ -736,7 +736,7 @@ public class Player : NetworkBehaviour
     public void RpcEndTurn()
     {
         Debug.Log("Oui chef, mon tour est fini!");
-        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        if (GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
         {
             GameManager.instance.EndOFTurn();
         }
@@ -753,7 +753,7 @@ public class Player : NetworkBehaviour
     [Command]
     private void CmdEndTurn()
     {
-        if (GameManager.instance.playingPlaceable && GameManager.instance.playingPlaceable.Player == this)
+        if (GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
         {
             GameManager.instance.EndOFTurn();
             RpcEndTurn();
@@ -819,7 +819,7 @@ public class Player : NetworkBehaviour
             return -1;
         }
     }
-
+    /*
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
         
@@ -843,7 +843,7 @@ public class Player : NetworkBehaviour
         RaycastSelector rayselector = GetComponentInChildren<RaycastSelector>();
         rayselector.Pattern = SkillArea.NONE;
         rayselector.EffectArea = 0;
-        GameManager.instance.playingPlaceable.ResetHighlightSkill();
+        playingPlaceable.ResetHighlightSkill();
         playingPlaceable.ResetAreaOfMovement();
         playingPlaceable.ResetTargets();
         if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
@@ -914,7 +914,7 @@ public class Player : NetworkBehaviour
         }
 
     }
-
+    */
 
     [Command]
     public void CmdMoveTo(Vector3[] path)
@@ -924,15 +924,15 @@ public class Player : NetworkBehaviour
             if (Grid.instance.CheckPath(path, GameManager.instance.PlayingPlaceable))
             {
                 //Move placeable on server
-                Debug.LogError("Start" + GameManager.instance.playingPlaceable.GetPosition());
+                Debug.LogError("Start" + GameManager.instance.PlayingPlaceable.GetPosition());
 
-                Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
-                    GameManager.instance.playingPlaceable.GetPosition().z] = null;
+                Grid.instance.GridMatrix[GameManager.instance.PlayingPlaceable.GetPosition().x, GameManager.instance.PlayingPlaceable.GetPosition().y,
+                    GameManager.instance.PlayingPlaceable.GetPosition().z] = null;
 
                 Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
-                    (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+                    (int)path[path.Length - 1].z] = GameManager.instance.PlayingPlaceable;
 
-                GameManager.instance.playingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
+                GameManager.instance.PlayingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
                 //Trigger effect the ones after the others, does not interrupt path
                 foreach (Vector3 current in path)
                 {
@@ -948,7 +948,7 @@ public class Player : NetworkBehaviour
 
                     }
                 }
-                GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+                GameManager.instance.PlayingPlaceable.CurrentPM -= path.Length - 1;
                 RpcMoveTo(path);
             }
             else
@@ -974,22 +974,22 @@ public class Player : NetworkBehaviour
             }
         }
 
-        GameManager.instance.playingPlaceable.CurrentPM -= path.Length - 1;
+        GameManager.instance.PlayingPlaceable.CurrentPM -= path.Length - 1;
         List<Vector3> bezierPath = new List<Vector3>(path);
         
-        Grid.instance.GridMatrix[GameManager.instance.playingPlaceable.GetPosition().x, GameManager.instance.playingPlaceable.GetPosition().y,
-             GameManager.instance.playingPlaceable.GetPosition().z] = null;
+        Grid.instance.GridMatrix[GameManager.instance.PlayingPlaceable.GetPosition().x, GameManager.instance.PlayingPlaceable.GetPosition().y,
+             GameManager.instance.PlayingPlaceable.GetPosition().z] = null;
 
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
-            (int)path[path.Length - 1].z] = GameManager.instance.playingPlaceable;
+            (int)path[path.Length - 1].z] = GameManager.instance.PlayingPlaceable;
 
-        if (GameManager.instance.playingPlaceable.moveCoroutine != null)
+        if (GameManager.instance.PlayingPlaceable.moveCoroutine != null)
         {
-            GameManager.instance.playingPlaceable.StopCoroutine(GameManager.instance.playingPlaceable.moveCoroutine);
-            GameManager.instance.playingPlaceable.moveCoroutine = null;
+            GameManager.instance.PlayingPlaceable.StopCoroutine(GameManager.instance.PlayingPlaceable.moveCoroutine);
+            GameManager.instance.PlayingPlaceable.moveCoroutine = null;
 
         }
-        GameManager.instance.playingPlaceable.moveCoroutine = StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.playingPlaceable, GameManager.instance.playingPlaceable.AnimationSpeed));
+        GameManager.instance.PlayingPlaceable.moveCoroutine = StartCoroutine(Player.MoveAlongBezier(bezierPath, GameManager.instance.PlayingPlaceable, GameManager.instance.PlayingPlaceable.AnimationSpeed));
         GameManager.instance.MoveLogic(bezierPath);
     }
 
@@ -1255,7 +1255,7 @@ public class Player : NetworkBehaviour
         }
         SoundHandler.Instance.StopWalkSound();
         placeable.isMoving = false;
-        //GameManager.instance.playingPlaceable.destination = new Vector3Int();
+        //GameManager.instance.PlayingPlaceable.destination = new Vector3Int();
 
         Debug.Log("End" + placeable.GetPosition());
         //Debug.Log("End transform" + placeable.transform);
@@ -1348,7 +1348,7 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
     {
-        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
         {
             if (skill.SkillType == SkillType.ALREADYTARGETED)
@@ -1360,7 +1360,7 @@ public class Player : NetworkBehaviour
             {
                 if (netidArea.Length == 0)
                 {
-                    skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget) });
+                    skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget) });
                 }
                 else
                 {
@@ -1369,15 +1369,15 @@ public class Player : NetworkBehaviour
                     {
                         targets.Add(GameManager.instance.FindLocalObject(id));
                     }
-                    skill.Use(GameManager.instance.playingPlaceable, targets);
+                    skill.Use(GameManager.instance.PlayingPlaceable, targets);
                 }
                 RpcUseSkill(numSkill, netidTarget, netidArea);
 
                 /*            
                            NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
-                           if (this == GameManager.instance.playingPlaceable.Player) //First check targets
+                           if (this == GameManager.instance.PlayingPlaceable.Player) //First check targets
                            {
-                               Vector3Int Playerpos = GameManager.instance.playingPlaceable.GetPosition();
+                               Vector3Int Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
                                Vector3Int Pos = target.GetPosition();
                                Vector3Int VectDist = Pos - Playerpos;
                                //prends en compte la hauteur
@@ -1390,7 +1390,7 @@ public class Player : NetworkBehaviour
                                {
                                    if (skill.SkillArea == SkillArea.THROUGHBLOCKS || !Grid.instance.RayCastBlock(VectDist.x, VectDist.y, VectDist.z,
                                        VectDist.x == 0 ? 0 : VectDist.x / Math.Abs(VectDist.x), VectDist.y == 0 ? 0 : VectDist.y / Math.Abs(VectDist.y),
-                                       VectDist.z == 0 ? 0 : VectDist.z / Math.Abs(VectDist.z), GameManager.instance.playingPlaceable.GetPosition()))
+                                       VectDist.z == 0 ? 0 : VectDist.z / Math.Abs(VectDist.z), GameManager.instance.PlayingPlaceable.GetPosition()))
                                    {
                                        if (skill.SkillArea == SkillArea.CROSS) //Ligne droites
                                        {
@@ -1423,7 +1423,7 @@ public class Player : NetworkBehaviour
                                {
                                    if (netidArea.Length == 0)
                                    {
-                                       skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+                                       skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target });
                                        RpcUseSkill(numSkill, netidTarget, new int[0]);
                                    }
                                    else
@@ -1477,7 +1477,7 @@ public class Player : NetworkBehaviour
                                                idlist.Add(GameManager.instance.FindLocalObject(blockid));
                                            }
                                        }
-                                       skill.Use(GameManager.instance.playingPlaceable, idlist);
+                                       skill.Use(GameManager.instance.PlayingPlaceable, idlist);
                                        RpcUseSkill(numSkill, netidTarget, netidArea);
                                    }
                                }
@@ -1496,7 +1496,7 @@ public class Player : NetworkBehaviour
     /// <param name="state"></param>
     public void OnUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
     {
-        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
         {
             CmdUseSkill(numSkill, netidTarget, netidArea, state);
@@ -1517,7 +1517,7 @@ public class Player : NetworkBehaviour
             foreach (Effect eff in skill.effects)
             {
                 Effect effectToConsider = eff.Clone();
-                effectToConsider.Launcher = GameManager.instance.playingPlaceable;
+                effectToConsider.Launcher = GameManager.instance.PlayingPlaceable;
                 effectToConsider.Use();
             }
         }
@@ -1526,21 +1526,21 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget, int[] netidArea)
     {
-        Skill skill = NumberToSkill(GameManager.instance.playingPlaceable, numSkill);
+        Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
         {
             skill.UseTargeted(skill);
-            GameManager.instance.playingPlaceable.ResetTargets();
+            GameManager.instance.PlayingPlaceable.ResetTargets();
         }
         else
         {
             NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
-            GameManager.instance.playingPlaceable.ResetTargets();
+            GameManager.instance.PlayingPlaceable.ResetTargets();
 
             if (netidArea.Length == 0)
             {
-                skill.Use(GameManager.instance.playingPlaceable, new List<NetIdeable>() { target });
+                skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target });
             }
             else
             {
@@ -1550,7 +1550,7 @@ public class Player : NetworkBehaviour
                     idlist.Add(GameManager.instance.FindLocalObject(blockid));
                 }
 
-                skill.Use(GameManager.instance.playingPlaceable, idlist);
+                skill.Use(GameManager.instance.PlayingPlaceable, idlist);
             }
 
             if (GetComponentInChildren<RaycastSelector>() != null)
@@ -1560,9 +1560,9 @@ public class Player : NetworkBehaviour
                 rayselect.Pattern = SkillArea.NONE;
             }
         }
-        if (GameManager.instance.playingPlaceable.Player.isLocalPlayer)
+        if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
-            GameManager.instance.playingPlaceable.Player.cameraScript.BackToMovement();
+            GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();
         }
     }
 }

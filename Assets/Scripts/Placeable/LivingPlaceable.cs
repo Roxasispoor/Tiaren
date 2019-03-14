@@ -935,7 +935,7 @@ public class LivingPlaceable : Placeable
             ResetStats();
             AttachedEffects.Clear();
         }
-        if (GameManager.instance.playingPlaceable == this)
+        if (GameManager.instance.PlayingPlaceable == this)
         {
             if (moveCoroutine != null)
             {
@@ -1202,6 +1202,7 @@ public class LivingPlaceable : Placeable
                 newSkill = JsonUtility.FromJson<Skill>(line);
                 newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
+                newSkill.InitPattern();
                 isNewSkill = false;
 
             }

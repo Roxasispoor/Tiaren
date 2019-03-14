@@ -151,7 +151,7 @@ public class Push : EffectOnPlaceable
                 path.Insert(0, Target.GetPosition());
                 // trigger visual effect and physics consequences
                 GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
-                GameManager.instance.playingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
+                GameManager.instance.PlayingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
             }
             Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
         }
