@@ -49,7 +49,7 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         this.expression = other.expression;
     }
 
-    public override void preview()
+    public override void preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }

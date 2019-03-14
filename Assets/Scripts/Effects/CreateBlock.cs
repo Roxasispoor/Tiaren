@@ -27,7 +27,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
         this.height = other.height;
     }
     
-    public override void preview()
+    public override void preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }

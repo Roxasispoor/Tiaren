@@ -19,8 +19,8 @@ public class DamageCalculated : EffectOnLiving {
     public DamageCalculated(float value,DamageScale scaleOn,float sinFactor=0.3f)
     {
         Power = value;
-        scaleOn = scaleOn;
-        SinFactor = sinFactor;
+        this.scaleOn = scaleOn;
+        this.SinFactor = sinFactor;
     }
 
     public DamageCalculated(DamageCalculated other) : base(other)
@@ -63,19 +63,21 @@ public class DamageCalculated : EffectOnLiving {
     }
 
 
-    public override void preview()
+    public override void preview(Placeable target)
     {
-        throw new System.NotImplementedException();
+        int damage = CalculateDamage();
+        GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damage, (LivingPlaceable) target);
     }
 
-    public float CalculateDamage()
+    /// <summary>
+    /// Calculates the damage to deal before calling damage to deal it
+    /// </summary>
+    /// <param name="preview">True for preview mode</param>
+    /// <returns></returns>
+    public int CalculateDamage()
     {
         float totalDmg = 0;
-        if (scaleOn == DamageScale.STR)
-        {
-            totalDmg = power * power / Target.Def;
-        }
-        else if (scaleOn == DamageScale.DEXT)
+        if (scaleOn == DamageScale.STR || scaleOn == DamageScale.DEXT)
         {
             totalDmg = power * power / Target.Def;
         }

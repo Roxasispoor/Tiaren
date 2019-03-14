@@ -889,7 +889,6 @@ public class LivingPlaceable : Placeable
     {
         float realValue = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
         flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = realValue - damage / MaxHP;
-        Player.gameObject.GetComponent<UIManager>().Preview(damage, this);
     }
 
     public void ResetPreview()

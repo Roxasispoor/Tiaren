@@ -29,7 +29,7 @@ public class BlockEffects : EffectOnPlaceable
         
     }
 
-    public override void preview()
+    public override void preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }

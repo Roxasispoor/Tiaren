@@ -62,17 +62,18 @@ public class MoveEffect : EffectOnLiving {
         this.Launcher = livingPlaceable ;
     }
 
-    public override void preview()
+    public override void preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
 
     /// <summary>
-    /// create a damage object
+    /// Move the object
     /// </summary>
-    /// <param name="target">target of the action</param>
-    /// <param name="launcher">launcher of the action</param>
-    /// <param name="damageValue">quanitity of damage given</param>
+    /// <param name="target"></param>
+    /// <param name="launcher"></param>
+    /// <param name="direction"></param>
+    /// <param name="useBezier"></param>
     public MoveEffect(LivingPlaceable target, Placeable launcher, Vector3Int direction,bool useBezier) : base(target, launcher)
     {
         this.Direction = direction;

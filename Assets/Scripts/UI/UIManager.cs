@@ -148,6 +148,7 @@ public class UIManager : MonoBehaviour
     public void Preview(int damage, LivingPlaceable target)
     {
         CharacterDisplay[] characters = timelineZone.transform.GetComponentsInChildren<CharacterDisplay>();
+        target.DamagePreview(damage);
         foreach(CharacterDisplay character in characters)
         {
             if (character.Character == target)

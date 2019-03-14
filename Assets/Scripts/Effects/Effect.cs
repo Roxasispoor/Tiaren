@@ -95,8 +95,10 @@ public abstract class Effect
     public abstract void TargetAndInvokeEffectManager(LivingPlaceable placeable);
     public abstract void TargetAndInvokeEffectManager(Placeable placeable);
     public abstract void TargetAndInvokeEffectManager(ObjectOnBloc placeable);
-
-    public abstract void preview();
+    /// <summary>
+    /// Preview for the effect
+    /// </summary>
+    public abstract void preview(Placeable target);
     public abstract NetIdeable GetTarget();
     // Use this for initialization
     public abstract void Use();
