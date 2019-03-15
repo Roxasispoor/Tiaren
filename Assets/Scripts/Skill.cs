@@ -255,7 +255,7 @@ public class Skill
         playingPlaceable.ResetTargets();
         List<Vector3Int> vect = new List<Vector3Int>();
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
-        if (skillType == SkillType.BLOCK)
+        if (skillType == SkillType.BLOCK || skillType == SkillType.AREA)
         {
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
             List<Placeable> placeables = new List<Placeable>();

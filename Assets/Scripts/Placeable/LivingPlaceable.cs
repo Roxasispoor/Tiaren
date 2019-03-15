@@ -94,6 +94,7 @@ public class LivingPlaceable : Placeable
         {
             currentHP.BaseValue = value;
             flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = value / MaxHP;
+            flyingInfo.transform.Find("HPPreview").gameObject.GetComponent<Image>().fillAmount = value / MaxHP;
         }
     }
 
@@ -879,7 +880,7 @@ public class LivingPlaceable : Placeable
 
     private void Update()
     {
-        if (GameManager.instance.isClient)
+        if (GameManager.instance.isClient && Player == GameManager.instance.GetLocalPlayer())
         {
             flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
         }

@@ -640,7 +640,11 @@ public class Grid : MonoBehaviour
         if (gridMatrix[x, y, z].IsLiving())
         {
             LivingPlaceable Character = (LivingPlaceable)gridMatrix[x, y, z];
-            EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y - ydrop, z], Math.Max(ydrop - Character.Jump, 0) * falldamage));
+            int damage = Math.Max(ydrop - Character.Jump, 0) * falldamage;
+            if (damage > 0)
+            {
+                EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y - ydrop, z], Math.Max(ydrop - Character.Jump, 0) * falldamage));
+            }
         }
 
         if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying

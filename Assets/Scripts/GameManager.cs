@@ -418,7 +418,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player2.gameObject.name = "player2";
 
         Player localPlayer = GetLocalPlayer();
-        localPlayer.color = localPlayerColor;
+         localPlayer.color = localPlayerColor;
 
         Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
         otherPlayer.color = ennemyPlayerColor;

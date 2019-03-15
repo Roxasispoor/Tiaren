@@ -8,19 +8,19 @@ public class Pull : Push
     {
     }
 
-    public Pull(int nbCases, float damage) : base(nbCases, damage)
+    public Pull(int nbCases, int damage) : base(nbCases, damage)
     {
     }
 
-    public Pull(int nbCases, float damage, bool doesHeightCount) : base(nbCases, damage, doesHeightCount)
+    public Pull(int nbCases, int damage, bool doesHeightCount) : base(nbCases, damage, doesHeightCount)
     {
     }
 
-    public Pull(int nbCases, float damage, Vector3 direction) : base(nbCases, damage, direction)
+    public Pull(int nbCases, int damage, Vector3 direction) : base(nbCases, damage, direction)
     {
     }
 
-    public Pull(Placeable target, Placeable launcher, int nbCases, float damage) : base(target, launcher, nbCases, damage)
+    public Pull(Placeable target, Placeable launcher, int nbCases, int damage) : base(target, launcher, nbCases, damage)
     {
     }
     public override void GetDirection()

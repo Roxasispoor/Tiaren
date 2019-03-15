@@ -101,7 +101,7 @@ public class DamageCalculated : EffectOnLiving {
         
         if(Launcher.IsLiving())
         {
-            float totalDmg = CalculateDamage();
+            int totalDmg = CalculateDamage();
             EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
         }
         else

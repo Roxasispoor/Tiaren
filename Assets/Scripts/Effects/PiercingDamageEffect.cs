@@ -39,16 +39,16 @@ public class PiercingDamageEffect : DamageCalculated
             {
                if(hit.collider.gameObject.GetComponent<LivingPlaceable>()!=null)
                 {
-                    float effectivedmg;
+                    int effectivedmg;
                     if(hit.collider.gameObject.GetComponent<LivingPlaceable>()==Target)
                     {
-                        effectivedmg = totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0;
+                        effectivedmg = (int) (totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
                         EffectManager.instance.DirectAttack(new Damage(Target, Launcher, effectivedmg));
                         break;
                     }
                     else
                     {
-                        effectivedmg = totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0;
+                        effectivedmg = (int) (totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
                         EffectManager.instance.DirectAttack(new Damage(hit.collider.gameObject.GetComponent<LivingPlaceable>(), Launcher, effectivedmg));
                         totalThrough++;
 

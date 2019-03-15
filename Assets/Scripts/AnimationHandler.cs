@@ -34,7 +34,7 @@ public class AnimationHandler : MonoBehaviour
                     {"Higher Ground","WaitAndSummonBlock"},
                     {"Piercing shot","WaitAndArrowAttack" },
                     {"Zipline","WaitAndBuff" },
-                    {"Spinning","WaitAndSpin" },
+                    {"Spinning attack","WaitAndSpin" },
                     {"Explosive fireball","WaitAndLaunchFireball" },
                     {"Staff Shot","WaitAndLaunchFireball" },
 

@@ -10,7 +10,7 @@ using UnityEngine;
 public class Push : EffectOnPlaceable
 {
     [SerializeField]
-    private float damage;
+    private int damage;
     [SerializeField]
     private float nbCases;
     [SerializeField]
@@ -31,7 +31,7 @@ public class Push : EffectOnPlaceable
         this.isDirectionFromPosition = other.isDirectionFromPosition;
         this.doesHeightCount = other.doesHeightCount;
     }
-    public Push( int nbCases, float damage,bool doesHeightCount) : this(nbCases, damage)
+    public Push( int nbCases, int damage,bool doesHeightCount) : this(nbCases, damage)
     {
         this.doesHeightCount =doesHeightCount;
         isDirectionFromPosition = true;
@@ -42,21 +42,21 @@ public class Push : EffectOnPlaceable
     /// </summary>
     /// <param name="target">target of blow</param>
     /// <param name="launcher">launcher of blow</param>
-    public Push(Placeable target, Placeable launcher, int nbCases,float damage) : base(target, launcher)
+    public Push(Placeable target, Placeable launcher, int nbCases,int damage) : base(target, launcher)
     {
         this.nbCases = nbCases;
         this.damage = damage;
         isDirectionFromPosition = true;
       }
 
-    public Push(int nbCases, float damage,Vector3 direction) :this(nbCases,damage)
+    public Push(int nbCases, int damage,Vector3 direction) :this(nbCases,damage)
     {
 
         this.direction = direction;
         isDirectionFromPosition = false;
         doesHeightCount = true;
     }
-    public Push( int nbCases, float damage)
+    public Push( int nbCases, int damage)
     {
         this.nbCases = nbCases;
         this.damage = damage;
