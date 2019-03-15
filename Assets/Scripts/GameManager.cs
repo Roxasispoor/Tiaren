@@ -618,6 +618,145 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
+    public void ClickOnPlaceable(Placeable placeable)
+    {
+
+        switch (State)
+        {
+            case States.Spawn:
+
+                if (GetLocalPlayer().Isready == true)
+                {
+                    return;
+                }
+
+                if (!placeable.IsLiving() // If the placeable is a cube                   
+                    && Grid.instance.GetSpawnPlayer(GetLocalPlayer()).Contains(placeable.GetPosition() + Vector3Int.up)) // If it is an ally spawnpoint
+                {
+
+                    Vector3Int position = placeable.GetPosition();
+                    Placeable placeableAbove = Grid.instance.GetPlaceableFromVector(position + Vector3Int.up);
+
+
+                    if (placeableAbove != null // something above
+                        && placeableAbove.IsLiving() // If a living is above
+                        && placeableAbove.player == GetLocalPlayer()) // If it is from the our team
+                    {
+                        if (!CharacterToSpawn)
+                        {
+                            CharacterToSpawn = (LivingPlaceable)placeableAbove;
+                        }
+                        else
+                        {
+                            Grid.instance.SwitchPlaceable(CharacterToSpawn, (LivingPlaceable)placeableAbove);
+                            CharacterToSpawn = null;
+                        }
+                    }
+                    else if (placeableAbove == null // If nothing above
+                        && CharacterToSpawn != null)
+                    {
+
+                        Grid.instance.MovePlaceable(CharacterToSpawn, position + Vector3Int.up);
+                        CharacterToSpawn = null;
+
+                    }
+                    else
+                    {
+                        Debug.Log("WHYYYY ? :(");
+                    }
+
+                }
+                else if (placeable.player == GetLocalPlayer() && placeable.IsLiving())
+                {
+                    if (!CharacterToSpawn)
+                    {
+                        CharacterToSpawn = (LivingPlaceable)placeable;
+                    }
+                    else
+                    {
+                        Grid.instance.SwitchPlaceable(placeable, CharacterToSpawn);
+
+                        CharacterToSpawn = null;
+                    }
+                }
+
+                break;
+
+            case States.Move:
+                if (placeable.walkable && playingPlaceable.player.isLocalPlayer)
+                {
+                    Vector3[] path = GetPathFromClicked(placeable);//Check and move on server
+                    playingPlaceable.Player.CmdMoveTo(path);
+                }
+                break;
+
+            case States.UseSkill:
+                if (activeSkill == null)
+                {
+                    throw new System.NullReferenceException("States is UseSkill but no active skill");
+                }
+
+                if (playingPlaceable.Player.isLocalPlayer // If it is the player turn
+                    && (playingPlaceable.TargetArea.Contains(placeable)  // If is a targetable cube
+                    || placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
+                {
+
+                    List<Placeable> area = playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area; // TODO: use the future cached variable
+
+
+                    if (area == null && activeSkill.SkillArea != SkillArea.SURROUNDINGLIVING)
+                    {
+
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, new int[0], 0);
+
+                    }
+                    else if (activeSkill.SkillArea == SkillArea.SURROUNDINGLIVING || activeSkill.SkillArea == SkillArea.MIXEDAREA)
+                    {
+
+                        List<LivingPlaceable> Playerlist = playingPlaceable.TargetableUnits;
+                        int j = 0;
+                        int[] netidlist;
+
+                        if (activeSkill.SkillArea == SkillArea.MIXEDAREA)
+                        {
+                            netidlist = new int[Playerlist.Count + area.Count];
+                            for (j = 0; j < area.Count; j++)
+                            {
+                                netidlist[j] = area[j].netId;
+                            }
+                        }
+                        else
+                        {
+                            netidlist = new int[Playerlist.Count];
+                        }
+
+                        for (int i = j; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = Playerlist[i - j].netId;
+                        }
+
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, netidlist,
+                            playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
+                    }
+                    else
+                    {
+                        int[] netidlist = new int[area.Count];
+                        for (int i = 0; i < netidlist.Length; i++)
+                        {
+                            netidlist[i] = area[i].netId;
+                        }
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, netidlist,
+                            playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
+                    }
+                }
+                break;
+
+            default:
+                throw new System.NotImplementedException("State not recognize : " + state.ToString());
+
+        }
+    }
+
     /// <summary>
     /// Removes block From Batch
     /// </summary>

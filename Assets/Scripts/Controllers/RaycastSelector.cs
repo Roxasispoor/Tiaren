@@ -67,7 +67,11 @@ public class RaycastSelector : MonoBehaviour
                         }
                     }
 
-                    hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
+                    //hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        GameManager.instance.ClickOnPlaceable(hit.transform.GetComponent<Placeable>());
+                    }
 
                     GameManager.instance.Hovered = hit.transform.GetComponent<Placeable>();
 
