@@ -259,14 +259,19 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (state == States.Spawn)
+            if (state == States.Spawn) // Previous state : SPAWN
             {
                 EndSpawn();
-            } else if (state == States.UseSkill && value != state)
+            } else if (state == States.UseSkill && value != state) // Previous state UseSkill and next != UseSkill
             {
                 if (SkillInfo.currentSkill)
                     SkillInfo.currentSkill.SetHighlight(false);
                 SkillInfo.currentSkill = null;
+            }
+
+            if (value == States.Move)
+            {
+
             }
             state = value;
         }
@@ -838,10 +843,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void  ResetAllBatches()
     {
-
         if (Hovered != null)
         {
-            Hovered.UnHighlight();
+            Hovered = null;
         }
         Resources.UnloadUnusedAssets();
         GameManager.instance.InitialiseBatchFolder();
@@ -861,7 +865,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Debug.Log("Dernière pos character : " + lastPositionCharac);
             PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), PlayingPlaceable.CurrentPM,
                PlayingPlaceable.Jump, PlayingPlaceable.Player);
-            PlayingPlaceable.ChangeMaterialAreaOfMovement(pathFindingMaterial);
+            PlayingPlaceable.HighlightAreaOfMovement();
             PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(PlayingPlaceable,
                 new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
         }

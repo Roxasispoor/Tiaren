@@ -1023,43 +1023,22 @@ public class LivingPlaceable : Placeable
         previousColor = Color.red;
         isTarget = true;
     }
-    public void ChangeMaterialAreaOfMovement(Material pathfinding)
+    public void HighlightAreaOfMovement()
     {
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
         Debug.Log("area of movement " + areaOfMouvement.Count);
         foreach (NodePath node in AreaOfMouvement)
         {
-
-            GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
-            GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
-            GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
-            GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
-            GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
-
-
-            quadUp.SetActive(true);
-
-            quadRight.SetActive(true);
-            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, heightSize + 0.01f, 1);
-            quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadRight.transform.localPosition.z);
-
-            quadLeft.SetActive(true);
-            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, heightSize + 0.01f, 1);
-            quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadLeft.transform.localPosition.z);
-
-            quadFront.SetActive(true);
-            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, heightSize + 0.01f, 1);
-            quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadFront.transform.localPosition.z);
-
-            quadBack.SetActive(true);
-            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, heightSize + 0.01f, 1);
-            quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quadBack.transform.localPosition.z);
-
-
-            // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-            // Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial = Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material;
-            //Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().material = pathfinding;
+            StandardCube cube = Grid.instance.GetPlaceableFromVector(node.GetVector3()) as StandardCube;
+            if (cube)
+            {
+                cube.HighlightForMovement();
+            }
+            else
+            {
+                throw new System.ArgumentException("An element which was not standardCube in AreaOfMouvement");
+            }
         }
     }
 
