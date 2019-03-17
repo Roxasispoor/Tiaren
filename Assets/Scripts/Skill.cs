@@ -504,7 +504,7 @@ public class Skill
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable placeable in vect)
         {
-            if (!placeable.movable)
+            if (!placeable.movable || placeable.GetPosition().y != position.y)
                 targetableblock.Remove(placeable);
             else
             {
@@ -515,12 +515,16 @@ public class Skill
                         Grid.instance.GridMatrix[placeable.GetPosition().x + direction, placeable.GetPosition().y, placeable.GetPosition().z] != null)
                         targetableblock.Remove(placeable);
                 }
-                else
+                else if (Math.Abs((int)position.x - placeable.GetPosition().x) - Math.Abs((int)position.z - placeable.GetPosition().z) < 0)
                 {
                     int direction = (placeable.GetPosition().z - (int)position.z) / Math.Abs((int)position.z - placeable.GetPosition().z);
                     if (placeable.GetPosition().z + direction < 0 || placeable.GetPosition().z + direction >= Grid.instance.sizeZ ||
                         Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z + direction] != null)
                         targetableblock.Remove(placeable);
+                }
+                else
+                {
+                    targetableblock.Remove(placeable);
                 }
             }
 

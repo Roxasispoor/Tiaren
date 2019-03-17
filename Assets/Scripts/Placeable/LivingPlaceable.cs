@@ -880,7 +880,7 @@ public class LivingPlaceable : Placeable
 
     private void Update()
     {
-        if (GameManager.instance.isClient && Player == GameManager.instance.GetLocalPlayer())
+        if (GameManager.instance.isClient)
         {
             flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
         }

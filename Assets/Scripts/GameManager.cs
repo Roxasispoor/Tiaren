@@ -416,18 +416,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseBatchFolder();
         player1.gameObject.name = "player1";
         player2.gameObject.name = "player2";
+        if (isClient)
+        {
+            localPlayer.color = localPlayerColor;
 
-        Player localPlayer = GetLocalPlayer();
-         localPlayer.color = localPlayerColor;
+            Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
+            otherPlayer.color = ennemyPlayerColor;
 
-        Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
-        otherPlayer.color = ennemyPlayerColor;
-
-        localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
-        localPlayer.SendSpawnToCamera();
-        otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
-        otherPlayer.SendSpawnToCamera();
-
+            localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+            localPlayer.SendSpawnToCamera();
+            otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
+            otherPlayer.SendSpawnToCamera();
+        }
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
         NetworkManagerHUD hud = FindObjectOfType<NetworkManagerHUD>();

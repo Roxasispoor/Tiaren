@@ -84,7 +84,12 @@ MonoBehaviour:
   shouldBatch: 1
   isMoving: 0
   destination: {x: 0, y: 0, z: 0}
+  walkable: 0
+  movable: 0
+  traversableType: 0
+  traversableBullet: 0
   baseMaterial: {fileID: 0}
+  gravityType: 0
   explored: 0
   grounded: 0
   player: {fileID: 0}
@@ -542,7 +547,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.75}
+  m_AnchoredPosition: {x: 0, y: 0.7}
   m_SizeDelta: {x: 763, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3217190440809706523
