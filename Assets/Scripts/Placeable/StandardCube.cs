@@ -257,6 +257,10 @@ public class StandardCube : Placeable
     {
         isInAreaOfMovement = false;
         ResetQuads();
+        foreach (GameObject quad in quads)
+        {
+            quad.SetActive(false);
+        }
     }
 
     /// <summary>

@@ -297,6 +297,36 @@ public class LivingPlaceable : Placeable
 
         set
         {
+            if (areaOfMouvement != null)
+            {
+                foreach (NodePath node in areaOfMouvement)
+                {
+                    StandardCube cube = Grid.instance.GetPlaceableFromVector(node.GetVector3()) as StandardCube;
+                    if (cube)
+                    {
+                        cube.UnhighlightForMovement();
+                    }
+                    else
+                    {
+                        throw new System.ArgumentException("An element which was not standardCube in AreaOfMouvement");
+                    }
+                }
+            }
+            if (value != null)
+            {
+            foreach (NodePath node in value)
+            {
+                StandardCube cube = Grid.instance.GetPlaceableFromVector(node.GetVector3()) as StandardCube;
+                if (cube)
+                {
+                    cube.HighlightForMovement();
+                }
+                else
+                {
+                    throw new System.ArgumentException("An element which was not standardCube in AreaOfMouvement");
+                }
+            }
+            }
             areaOfMouvement = value;
         }
     }
@@ -1028,45 +1058,11 @@ public class LivingPlaceable : Placeable
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Placeable");
         float heightSize = 0.2f;
         Debug.Log("area of movement " + areaOfMouvement.Count);
-        foreach (NodePath node in AreaOfMouvement)
-        {
-            StandardCube cube = Grid.instance.GetPlaceableFromVector(node.GetVector3()) as StandardCube;
-            if (cube)
-            {
-                cube.HighlightForMovement();
-            }
-            else
-            {
-                throw new System.ArgumentException("An element which was not standardCube in AreaOfMouvement");
-            }
-        }
     }
 
     public void ResetAreaOfMovement()
     {
-        foreach (NodePath node in AreaOfMouvement)
-        {
-            if (Grid.instance.GridMatrix[node.x, node.y, node.z] != null && Grid.instance.GridMatrix[node.x, node.y, node.z].oldMaterial == null) //if we haven't seen this one before
-            {
-                GameObject quadUp = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadUp").gameObject;
-                GameObject quadRight = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadRight").gameObject;
-                GameObject quadLeft = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadLeft").gameObject;
-                GameObject quadFront = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadFront").gameObject;
-                GameObject quadBack = Grid.instance.GridMatrix[node.x, node.y, node.z].transform.Find("Quads").Find("QuadBack").gameObject;
-
-                quadUp.SetActive(false);
-                quadRight.SetActive(false);
-                quadLeft.SetActive(false);
-
-                quadFront.SetActive(false);
-
-                quadBack.SetActive(false);
-
-
-            }
-
-        }
-        AreaOfMouvement.Clear();
+        AreaOfMouvement = new List<NodePath>();
     }
 
     public void ResetHighlightSkill()
