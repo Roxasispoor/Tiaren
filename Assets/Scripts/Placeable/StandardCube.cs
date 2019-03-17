@@ -20,6 +20,12 @@ public class StandardCube : Placeable
     [SerializeField]
     public bool isSpawnPoint;
 
+    private bool isInAreaOfMovement = false;
+
+    /// <summary>
+    /// An array of all the quad of the cube (up; down; left; right; front; back)
+    /// </summary>
+    private GameObject[] quads;
 
     /// <summary>
     /// Size of the child quads.
@@ -52,6 +58,57 @@ public class StandardCube : Placeable
         }
     }
 
+
+
+    private GameObject QuadUp
+    {
+        get
+        {
+            return quads[0];
+        }
+    }
+
+    private GameObject QuadDown
+    {
+        get
+        {
+            return quads[1];
+        }
+    }
+
+    private GameObject QuadLeft
+    {
+        get
+        {
+            return quads[2];
+        }
+    }
+
+    private GameObject QuadRight
+    {
+        get
+        {
+            return quads[3];
+        }
+    }
+    
+
+    private GameObject QuadFront
+    {
+        get
+        {
+            return quads[4];
+        }
+    }
+
+    private GameObject QuadBack
+    {
+        get
+        {
+            return quads[5];
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -70,6 +127,15 @@ public class StandardCube : Placeable
         this.grounded = false;
         this.onWalkEffects = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
+
+        quads = new GameObject[6];
+
+        quads[0] = transform.Find("Quads").Find("QuadUp").gameObject;
+        quads[1] = transform.Find("Quads").Find("QuadDown").gameObject;
+        quads[2] = transform.Find("Quads").Find("QuadLeft").gameObject;
+        quads[3] = transform.Find("Quads").Find("QuadRight").gameObject;
+        quads[4] = transform.Find("Quads").Find("QuadFront").gameObject;
+        quads[5] = transform.Find("Quads").Find("QuadBack").gameObject;
     }
 
     /// <summary>
@@ -96,66 +162,101 @@ public class StandardCube : Placeable
 
     }
 
+    /// <summary>
+    /// Reset the quads of the cube to their default value.
+    /// </summary>
+    private void ResetQuads()
+    {
+        for (int i = 0; i < quads.Length; i++)
+        {
+            quads[i].transform.localScale = new Vector3(quads[i].transform.localScale.x, sizeQuad, 1);
+            if (i == 0)  // Only for the top one
+            {
+                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, sizeQuad/2, quads[i].transform.localPosition.z);
+            } else if (i == 1)  // Only for the down one
+            {
+                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, -sizeQuad/2, quads[i].transform.localPosition.z);
+            } else // For the others
+            {
+                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, 0, quads[i].transform.localPosition.z);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set the scale and the position of the quads to look like a tile (used for mov for example).
+    /// </summary>
+    private void SetQuadsAsTile()
+    {
+        float heightSize = 0.2f;
+
+        QuadUp.transform.localScale = new Vector3(QuadUp.transform.localScale.x, sizeQuad, 1);
+        QuadUp.transform.localPosition = new Vector3(QuadUp.transform.localPosition.x, sizeQuad / 2, QuadUp.transform.localPosition.z);
+        QuadUp.SetActive(true);
+
+        QuadDown.transform.localScale = new Vector3(QuadDown.transform.localScale.x, sizeQuad, 1);
+        QuadDown.transform.localPosition = new Vector3(QuadDown.transform.localPosition.x, 0.5f - heightSize + 0.01f, QuadDown.transform.localPosition.z);
+        QuadDown.SetActive(true);
+
+        for (int i = 2; i < quads.Length; i++) // For the rest of the quads
+        {
+            quads[i].transform.localScale = new Vector3(quads[i].transform.localScale.x, heightSize + 0.01f, 1); 
+            quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quads[i].transform.localPosition.z);
+        }
+    }
+
+    /// <summary>
+    /// Highlight when the element is Hovered.
+    /// </summary>
     public override void Highlight()
     {
-        if (GameManager.instance.activeSkill != null && GameManager.instance.activeSkill.SkillType == SkillType.BLOCK)
+        if (QuadUp.activeInHierarchy && QuadUp.GetComponent<MeshRenderer>().material == GameManager.instance.highlightingMaterial)
         {
-            GameObject quadUp = transform.Find("Quads").Find("QuadUp").gameObject;
-            GameObject quadRight = transform.Find("Quads").Find("QuadRight").gameObject;
-            GameObject quadLeft = transform.Find("Quads").Find("QuadLeft").gameObject;
-            GameObject quadFront = transform.Find("Quads").Find("QuadFront").gameObject;
-            GameObject quadBack = transform.Find("Quads").Find("QuadBack").gameObject;
-
-            quadUp.SetActive(true);
-
-            quadRight.SetActive(true);
-            quadRight.transform.localScale = new Vector3(quadRight.transform.localScale.x, sizeQuad, 1);
-            quadRight.transform.localPosition = new Vector3(quadRight.transform.localPosition.x, 0, quadRight.transform.localPosition.z);
-
-            quadLeft.SetActive(true);
-            quadLeft.transform.localScale = new Vector3(quadLeft.transform.localScale.x, sizeQuad, 1);
-            quadLeft.transform.localPosition = new Vector3(quadLeft.transform.localPosition.x, 0, quadLeft.transform.localPosition.z);
-
-            quadFront.SetActive(true);
-            quadFront.transform.localScale = new Vector3(quadFront.transform.localScale.x, sizeQuad, 1);
-            quadFront.transform.localPosition = new Vector3(quadFront.transform.localPosition.x, 0, quadFront.transform.localPosition.z);
-
-            quadBack.SetActive(true);
-            quadBack.transform.localScale = new Vector3(quadBack.transform.localScale.x, sizeQuad, 1);
-            quadBack.transform.localPosition = new Vector3(quadBack.transform.localPosition.x, 0, quadBack.transform.localPosition.z);
-
+            return;
         }
-        foreach (Transform fils in transform.Find("Quads"))
-        {
 
-            fils.gameObject.SetActive(true);
-            fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
+        foreach (GameObject quad in quads)
+        {
+            quad.SetActive(true);
+            quad.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
         }
     }
 
     public override void UnHighlight()
     {
-
-        //Put back the default material
-        foreach (Transform fils in transform.Find("Quads"))
-        {
-            fils.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
-        }
         //If we are in move mode doesn't belong to path we desactivate it
-        if (GameManager.instance.State != States.Move || GameManager.instance.PlayingPlaceable != null && GameManager.instance.PlayingPlaceable.AreaOfMouvement != null &&
-            !GameManager.instance.PlayingPlaceable.AreaOfMouvement.Exists(new NodePath(GetPosition().x, GetPosition().y, GetPosition().z, 0, null).Equals))
+        if (!isInAreaOfMovement)
 
         {
-
-
-            foreach (Transform fils in transform.Find("Quads"))
+            foreach (GameObject quad in quads)
             {
-
-                fils.gameObject.SetActive(false);
-
+                quad.SetActive(false);
+            }
+        } else
+        {
+            foreach (GameObject quad in quads)
+            {
+                quad.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
             }
         }
 
+    }
+
+    public void HighlightForMovement()
+    {
+        isInAreaOfMovement = true;
+        SetQuadsAsTile();
+        foreach (GameObject quad in quads)
+        {
+            quad.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
+            quad.SetActive(true);
+        }
+    }
+
+    public void UnhighlightForMovement()
+    {
+        isInAreaOfMovement = false;
+        ResetQuads();
     }
 
     /// <summary>
