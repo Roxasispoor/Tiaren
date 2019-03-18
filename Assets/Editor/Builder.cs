@@ -21,7 +21,7 @@ public class Builder
         PlayerSettings.defaultScreenHeight = 768;
         PlayerSettings.defaultScreenWidth = 1024;
         PlayerSettings.runInBackground = true;
-        PlayerSettings.displayResolutionDialog = ResolutionDialogSetting.Disabled;
+        //PlayerSettings.displayResolutionDialog = ResolutionDialogSetting.Disabled;
         PlayerSettings.resizableWindow = true;
         BuildPipeline.BuildPlayer(levels, path + "/BuiltGame.exe", BuildTarget.StandaloneWindows, BuildOptions.Development);
 
