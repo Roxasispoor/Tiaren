@@ -386,22 +386,11 @@ MonoBehaviour:
   player2Username: 
   localPlayerColor: {r: 0, g: 0, b: 1, a: 1}
   ennemyPlayerColor: {r: 1, g: 0, b: 0, a: 1}
-  activeSkill:
-    skillName: 
-    cost: 0
-    tourCooldownLeft: 0
-    cooldown: 0
-    maxRange: 0
-    minRange: 0
-    effectarea: 0
-    description: 
-    skillType: 0
-    skillarea: 0
-    skilleffect: 0
   isGameStarted: 0
   transmitter: {fileID: 0}
   winner: {fileID: 0}
-  playingPlaceable: {fileID: 0}
+  prefabTransparentCube: {fileID: 1032257904305354, guid: a9723f502c08e5a45b082c6f9eb21f11,
+    type: 3}
 --- !u!4 &823285885
 Transform:
   m_ObjectHideFlags: 0

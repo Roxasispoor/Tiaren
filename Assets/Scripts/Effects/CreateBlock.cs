@@ -10,6 +10,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
     public Vector3Int face;
     [SerializeField]
     public int height=0;
+    private GameObject previewedCube;
 
     public CreateBlock()
     {
@@ -29,7 +30,14 @@ public class CreateBlock : EffectOnPlaceableOnly {
     
     public override void Preview(Placeable target)
     {
-        throw new System.NotImplementedException();
+        previewedCube = FactoryTransparentCube.Instance.getCube();
+        previewedCube.transform.position = target.GetPosition() + face;
+        //Grid.instance.InstantiateCube(prefab, Target.GetPosition() + face);
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        FactoryTransparentCube.Instance.putBack(previewedCube);
     }
 
     public CreateBlock(GameObject prefab, Vector3Int face,int height=0):base()
@@ -64,10 +72,5 @@ public class CreateBlock : EffectOnPlaceableOnly {
         {
            new CreateBlockRelativeEffect(Target,prefab, new Vector3Int(0, 1, 0),new Vector3Int(0,1+i,0)).Use();
         }
-    }
-
-    public override void ResetPreview(Placeable target)
-    {
-        throw new System.NotImplementedException();
     }
 }
