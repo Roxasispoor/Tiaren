@@ -62,7 +62,7 @@ public class MoveEffect : EffectOnLiving {
         this.Launcher = livingPlaceable ;
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -107,5 +107,10 @@ public class MoveEffect : EffectOnLiving {
        
 
 
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new System.NotImplementedException();
     }
 }

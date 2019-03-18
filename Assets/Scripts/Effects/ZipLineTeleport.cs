@@ -18,9 +18,14 @@ public class ZipLineTeleport : EffectOnObjectBloc
         return new ZipLineTeleport(this);
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         Debug.Log("No preview for ZipLineTeleport");
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new System.NotImplementedException();
     }
 
     public override void Use()

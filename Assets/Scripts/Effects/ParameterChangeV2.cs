@@ -49,7 +49,7 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         this.expression = other.expression;
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -74,5 +74,10 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
                 throw new ArgumentException("MemberInfo must be of type FieldInfo or PropertyInfo", "member");
         }
         
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new NotImplementedException();
     }
 }

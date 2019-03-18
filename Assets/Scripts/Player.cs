@@ -1503,7 +1503,7 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            GameManager.instance.activeSkill = null;
+            GameManager.instance.ActiveSkill = null;
             GameManager.instance.State = States.Move;
             FloatingTextController.CreateFloatingText("Not enought PA", GameManager.instance.PlayingPlaceable.transform);
             cameraScript.BackToMovement();

@@ -29,7 +29,7 @@ public class BlockEffects : EffectOnPlaceable
         
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -80,6 +80,11 @@ public class BlockEffects : EffectOnPlaceable
     }
 
     public override Effect Clone()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void ResetPreview(Placeable target)
     {
         throw new System.NotImplementedException();
     }

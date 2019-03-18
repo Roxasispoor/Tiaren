@@ -224,7 +224,7 @@ public class Skill
     public void Activate()
     {
         GameManager.instance.State = States.UseSkill;
-        GameManager.instance.activeSkill = this;
+        GameManager.instance.ActiveSkill = this;
 
         if (SkillType == SkillType.ALREADYTARGETED)
         {
@@ -397,7 +397,7 @@ public class Skill
             }
         }
 
-        GameManager.instance.activeSkill = null;
+        GameManager.instance.ActiveSkill = null;
         return true;
     }
 

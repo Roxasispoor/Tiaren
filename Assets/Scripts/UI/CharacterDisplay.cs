@@ -52,6 +52,11 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         displayer.Preview(Character, damage);
     }
 
+    public void ResetPreview()
+    {
+        displayer.Activate(GameManager.instance.PlayingPlaceable);
+    }
+
     public void Update()
     {
         if (isHovered)

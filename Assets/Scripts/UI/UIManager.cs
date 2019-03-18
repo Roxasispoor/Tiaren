@@ -159,6 +159,19 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ResetPreview(LivingPlaceable target)
+    {
+        CharacterDisplay[] characters = timelineZone.transform.GetComponentsInChildren<CharacterDisplay>();
+        target.ResetPreview();
+        foreach (CharacterDisplay character in characters)
+        {
+            if (character.Character == target)
+            {
+                character.ResetPreview();
+            }
+        }
+    }
+
     public void SpawnUI()
     {
         teamCanvas.SetActive(false);

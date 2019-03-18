@@ -924,7 +924,7 @@ public class LivingPlaceable : Placeable
 
     public void ResetPreview()
     {
-        flyingInfo.transform.Find("HPPreview").gameObject.GetComponent<Image>().fillAmount = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
+        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = flyingInfo.transform.Find("HPPreview").gameObject.GetComponent<Image>().fillAmount;
     }
 
     /// <summary>

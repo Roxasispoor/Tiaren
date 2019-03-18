@@ -234,7 +234,7 @@ public class CameraScript : MonoBehaviour
             rayselect.EffectArea = 0;
             rayselect.Pattern = SkillArea.NONE;
             GameManager.instance.State = States.Move;
-            GameManager.instance.activeSkill = null;
+            GameManager.instance.ActiveSkill = null;
             GameManager.instance.PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.PlayingPlaceable.GetPosition(), GameManager.instance.PlayingPlaceable.CurrentPM,
             GameManager.instance.PlayingPlaceable.Jump, GameManager.instance.PlayingPlaceable.Player);
             GameManager.instance.PlayingPlaceable.HighlightAreaOfMovement();

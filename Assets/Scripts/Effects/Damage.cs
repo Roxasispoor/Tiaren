@@ -54,7 +54,7 @@ public class Damage : EffectOnLiving
         }
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -75,5 +75,10 @@ public class Damage : EffectOnLiving
             Target.Destroy();
             Target.gameObject.SetActive(false);
         }
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new System.NotImplementedException();
     }
 }

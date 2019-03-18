@@ -49,46 +49,44 @@ public class RaycastSelector : MonoBehaviour
             //Debug.Log(state);
         }
 
-        if (GameManager.instance.PlayingPlaceable != null || GameManager.instance.State == States.Spawn )
+        if (GameManager .instance.isGameStarted || GameManager.instance.State == States.Spawn )
         {
 
             RaycastHit hit;
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100000, layerMask) && !EventSystem.current.IsPointerOverGameObject())
             {
-                if (hit.transform.GetComponent<Placeable>() != null)
+                if (hit.transform.GetComponent<Placeable>() != null && hit.transform.GetComponent<Placeable>() != GameManager.instance.Hovered)
                 {
                     if (GameManager.instance.Hovered != null)
                     {
                         if (area != null)
                         {
                             foreach (Placeable block in area)
+                            {
                                 block.UnHighlight();
+                            }
                         }
                     }
 
-                    //hit.transform.GetComponent<Placeable>().OnMouseOverWithLayer();
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        GameManager.instance.ClickOnPlaceable(hit.transform.GetComponent<Placeable>());
-                    }
-
                     GameManager.instance.Hovered = hit.transform.GetComponent<Placeable>();
-
-                    if (effectarea==0)
-                    {
-                        area = null;
-                    }
-                    else
+                    
+                    if (GameManager.instance.State == States.UseSkill)
                     {
                         if (pattern == SkillArea.MIXEDAREA)
+                        {
                             topblock = false;
+                        }
                         else topblock = true;
 
                         if (pattern == SkillArea.NONE || pattern == SkillArea.MIXEDAREA)
+                        {
                             area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock);
+                        }
                         else
+                        {
                             area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock, state, pattern);
+                        }
 
                         if (pattern == SkillArea.MIXEDAREA)
                         {
@@ -105,9 +103,17 @@ public class RaycastSelector : MonoBehaviour
                         else foreach (Placeable block in area) block.Highlight();
                     }
                 }
-            } else
+                if (Input.GetMouseButtonUp(0))
+                {
+                    GameManager.instance.ClickOnPlaceable(hit.transform.GetComponent<Placeable>());
+                }
+            }
+            else
             {
-                GameManager.instance.Hovered = null;
+                if (GameManager.instance.Hovered != null)
+                {
+                    GameManager.instance.Hovered = null;
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
         this.height = other.height;
     }
     
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -65,5 +65,9 @@ public class CreateBlock : EffectOnPlaceableOnly {
            new CreateBlockRelativeEffect(Target,prefab, new Vector3Int(0, 1, 0),new Vector3Int(0,1+i,0)).Use();
         }
     }
-    
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new System.NotImplementedException();
+    }
 }

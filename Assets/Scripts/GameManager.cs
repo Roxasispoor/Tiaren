@@ -105,7 +105,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// Skill currently selected
     /// </summary>
-    public Skill activeSkill;
+    private Skill activeSkill;
     /// <summary>
     /// The states of the game
     /// </summary>
@@ -288,14 +288,28 @@ public class GameManager : NetworkBehaviour
         {
             if (hovered != null)
             {
+
+                if (State == States.UseSkill)
+                {
+                    foreach (Effect effect in ActiveSkill.effects)
+                    {
+                        effect.ResetPreview(hovered);
+                    }
+                }
                 hovered.UnHighlight();
             }
 
             if (value != null)
             {
                 value.Highlight();
+                if (State == States.UseSkill)
+                {
+                    foreach (Effect effect in ActiveSkill.effects)
+                    {
+                        effect.Preview(value);
+                    }
+                }
             }
-
             hovered = value;
         }
     }
@@ -310,6 +324,26 @@ public class GameManager : NetworkBehaviour
         set
         {
             raycastSelector = value;
+        }
+    }
+
+    public Skill ActiveSkill
+    {
+        get
+        {
+            return activeSkill;
+        }
+
+        set
+        {
+            if (hovered != null)
+            {
+                foreach (Effect effect in activeSkill.effects)
+                {
+                    effect.ResetPreview(Hovered);
+                }
+            }
+            activeSkill = value;
         }
     }
 
@@ -696,7 +730,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 break;
 
             case States.UseSkill:
-                if (activeSkill == null)
+                if (ActiveSkill == null)
                 {
                     throw new System.NullReferenceException("States is UseSkill but no active skill");
                 }
@@ -709,20 +743,20 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     List<Placeable> area = playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area; // TODO: use the future cached variable
 
 
-                    if (area == null && activeSkill.SkillArea != SkillArea.SURROUNDINGLIVING)
+                    if (area == null && ActiveSkill.SkillArea != SkillArea.SURROUNDINGLIVING)
                     {
 
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, new int[0], 0);
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, new int[0], 0);
 
                     }
-                    else if (activeSkill.SkillArea == SkillArea.SURROUNDINGLIVING || activeSkill.SkillArea == SkillArea.MIXEDAREA)
+                    else if (ActiveSkill.SkillArea == SkillArea.SURROUNDINGLIVING || ActiveSkill.SkillArea == SkillArea.MIXEDAREA)
                     {
 
                         List<LivingPlaceable> Playerlist = playingPlaceable.TargetableUnits;
                         int j = 0;
                         int[] netidlist;
 
-                        if (activeSkill.SkillArea == SkillArea.MIXEDAREA)
+                        if (ActiveSkill.SkillArea == SkillArea.MIXEDAREA)
                         {
                             netidlist = new int[Playerlist.Count + area.Count];
                             for (j = 0; j < area.Count; j++)
@@ -740,7 +774,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                             netidlist[i] = Playerlist[i - j].netId;
                         }
 
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, netidlist,
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
                             playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
                     else
@@ -750,7 +784,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                         {
                             netidlist[i] = area[i].netId;
                         }
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, activeSkill), placeable.netId, netidlist,
+                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
                             playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
                     }
                 }

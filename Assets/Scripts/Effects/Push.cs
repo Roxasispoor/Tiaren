@@ -62,7 +62,7 @@ public class Push : EffectOnPlaceable
         this.damage = damage;
     }
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -208,4 +208,8 @@ public class Push : EffectOnPlaceable
         return positions;
     }
 
+    public override void ResetPreview(Placeable target)
+    {
+        throw new NotImplementedException();
+    }
 }

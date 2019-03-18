@@ -24,9 +24,14 @@ public class FlagVictoryEffect : EffectOnLiving {
     }
 
 
-    public override void preview(Placeable target)
+    public override void Preview(Placeable target)
     {
         //throw new System.NotImplementedException();
         Debug.Log("No preview for FlagVictoryEffect");
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        throw new System.NotImplementedException();
     }
 }

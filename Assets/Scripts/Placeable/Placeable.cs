@@ -232,7 +232,7 @@ public abstract class Placeable : NetIdeable
         {
             if (Input.GetMouseButtonUp(0))
             {
-                Skill skill = GameManager.instance.activeSkill;
+                Skill skill = GameManager.instance.ActiveSkill;
                 if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer && !GameManager.instance.PlayingPlaceable.Player.GetComponent<Player>().isWinner
                     && skill != null && (GameManager.instance.PlayingPlaceable.TargetArea.Contains(this) ||
                     IsLiving() && GameManager.instance.PlayingPlaceable.TargetableUnits.Contains((LivingPlaceable)this))
