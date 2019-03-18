@@ -360,6 +360,39 @@ public class LivingPlaceable : Placeable
         }
     }
 
+    public List<Placeable> TargetArea
+    {
+        get
+        {
+            return targetArea;
+        }
+
+        set
+        {
+            if (targetArea != null)
+            {
+                foreach (Placeable placeable in targetArea)
+                {
+                    if (!placeable.IsLiving())
+                        ((StandardCube)placeable).UnhighlightForSkill();
+                }
+            }
+            
+            if (value != null)
+            {
+                foreach (Placeable placeable in value)
+                {
+                    if (!placeable.IsLiving())
+                    {
+                        ((StandardCube)placeable).HighlightForSkill();
+                    }
+                        
+                }
+            }
+            targetArea = value;
+        }
+    }
+
     public float DeathLength
     {
         get
@@ -370,19 +403,6 @@ public class LivingPlaceable : Placeable
         set
         {
             deathLength.BaseValue = value;
-        }
-    }
-
-    public List<Placeable> TargetArea
-    {
-        get
-        {
-            return targetArea;
-        }
-
-        set
-        {
-            targetArea = value;
         }
     }
 
@@ -1092,25 +1112,7 @@ public class LivingPlaceable : Placeable
     /// </summary>
     public void ResetTargets()
     {
-        foreach (Placeable plac in targetArea)
-        {
-            //TODO : make this part in the standard cube
-            if (Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial != null)//if we haven't already reset this one
-            {
-
-                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].GetComponent<MeshRenderer>().material =
-                    Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial;
-                Grid.instance.GridMatrix[plac.GetPosition().x, plac.GetPosition().y, plac.GetPosition().z].oldMaterial = null;
-            }
-        }
-        if (targetArea.Count > 0)
-        {
-            if (!IsLiving()) {
-                GameManager.instance.RefreshBatch((StandardCube)targetArea[0]);
-            }
-        }
-        targetArea.Clear();
-
+        TargetArea = null;
         GameManager.instance.ResetAllBatches();
         TargetableUnits = null;
 

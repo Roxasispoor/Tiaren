@@ -740,7 +740,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     || placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
                 {
 
-                    List<Placeable> area = playingPlaceable.player.GetComponentInChildren<RaycastSelector>().Area; // TODO: use the future cached variable
+                    List<Placeable> area = raycastSelector.Area;
 
 
                     if (area == null && ActiveSkill.SkillArea != SkillArea.SURROUNDINGLIVING)

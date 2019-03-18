@@ -21,6 +21,7 @@ public class StandardCube : Placeable
     public bool isSpawnPoint;
 
     private bool isInAreaOfMovement = false;
+    private bool isTarget = false;
 
     /// <summary>
     /// An array of all the quad of the cube (up; down; left; right; front; back)
@@ -222,26 +223,39 @@ public class StandardCube : Placeable
         }
     }
 
+    /// <summary>
+    /// Unhighlight when the element is unhovered.
+    /// </summary>
     public override void UnHighlight()
     {
         //If we are in move mode doesn't belong to path we desactivate it
-        if (!isInAreaOfMovement)
+        if (isInAreaOfMovement)
 
-        {
-            foreach (GameObject quad in quads)
-            {
-                quad.SetActive(false);
-            }
-        } else
         {
             foreach (GameObject quad in quads)
             {
                 quad.GetComponent<MeshRenderer>().material = GameManager.instance.pathFindingMaterial;
             }
+        } else if (isTarget)
+        {
+            foreach (GameObject quad in quads)
+            {
+                quad.GetComponent<MeshRenderer>().material = GameManager.instance.targetMaterial;
+            }
+        }
+        else
+        {
+            foreach (GameObject quad in quads)
+            {
+                quad.SetActive(false);
+            }
         }
 
     }
 
+    /// <summary>
+    /// Set the quads as a tile, apply the pathfinding material to them and acivate them.
+    /// </summary>
     public void HighlightForMovement()
     {
         isInAreaOfMovement = true;
@@ -253,9 +267,63 @@ public class StandardCube : Placeable
         }
     }
 
+    /// <summary>
+    /// Reset the quads and deactivate them.
+    /// </summary>
     public void UnhighlightForMovement()
     {
         isInAreaOfMovement = false;
+        ResetQuads();
+        foreach (GameObject quad in quads)
+        {
+            quad.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Apply the target material to all the quads and activate them.
+    /// </summary>
+    public void HighlightForSkill()
+    {
+        isTarget = true;
+        foreach (GameObject quad in quads)
+        {
+            quad.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.targetMaterial;
+            quad.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Apply the target material to all the quads and activate some of them.
+    /// </summary>
+    /// <param name="up">Activate quad up</param>
+    /// <param name="down">Activate quad down</param>
+    /// <param name="left">Activate quad left</param>
+    /// <param name="right">Activate quad right</param>
+    /// <param name="front">Activate quad front</param>
+    /// <param name="back">Activate quad back</param>
+    public void HighlightForSkill(bool up, bool down, bool left, bool right, bool front, bool back)
+    {
+        isTarget = true;
+        QuadUp.SetActive(up);
+        QuadDown.SetActive(down);
+        QuadLeft.SetActive(left);
+        QuadRight.SetActive(right);
+        QuadFront.SetActive(front);
+        QuadBack.SetActive(back);
+        foreach (GameObject quad in quads)
+        {
+            quad.gameObject.GetComponent<MeshRenderer>().material = GameManager.instance.targetMaterial;
+        }
+    }
+
+    /// <summary>
+    /// Reset the quads and deactivate them (+ deactivate the isTarget bool)
+    /// </summary>
+    // TODO : May be possible to merge some highlight target
+    public void UnhighlightForSkill()
+    {
+        isTarget = false;
         ResetQuads();
         foreach (GameObject quad in quads)
         {

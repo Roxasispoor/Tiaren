@@ -264,9 +264,9 @@ public class Skill
                 placeables.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
             }
             placeables = pattern(playingPlaceable.GetPosition(), placeables);
-
             playingPlaceable.TargetArea = placeables;
-            playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
+            //playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
+            GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("Placeable");
             GameManager.instance.RaycastSelector.EffectArea = EffectArea;
             if (SkillArea == SkillArea.LINE || SkillArea == SkillArea.MIXEDAREA)
