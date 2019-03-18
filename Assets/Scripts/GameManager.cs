@@ -736,8 +736,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 }
 
                 if (playingPlaceable.Player.isLocalPlayer // If it is the player turn
-                    && (playingPlaceable.TargetArea.Contains(placeable)  // If is a targetable cube
-                    || placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
+                    && (playingPlaceable.TargetArea != null && playingPlaceable.TargetArea.Contains(placeable))  // If is a targetable cube
+                    || (placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
                 {
 
                     List<Placeable> area = raycastSelector.Area;
