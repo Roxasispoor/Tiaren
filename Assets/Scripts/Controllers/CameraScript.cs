@@ -238,6 +238,7 @@ public class CameraScript : MonoBehaviour
             GameManager.instance.PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.PlayingPlaceable.GetPosition(), GameManager.instance.PlayingPlaceable.CurrentPM,
             GameManager.instance.PlayingPlaceable.Jump, GameManager.instance.PlayingPlaceable.Player);
             GameManager.instance.PlayingPlaceable.HighlightAreaOfMovement();
+
         }
     }
 
