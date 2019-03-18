@@ -1090,23 +1090,6 @@ public class LivingPlaceable : Placeable
         TargetableUnits = new List<LivingPlaceable>();
     }
 
-    public void ChangeMaterialAreaOfTarget(Material materialTarget)
-    {
-        foreach (Placeable placeable in TargetArea)
-        {
-            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null && !placeable.IsLiving()) //if we haven't seen this one before
-            {
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-
-                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
-                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
-
-            }
-        }
-        GameManager.instance.ResetAllBatches();
-    }
-
     /// <summary>
     /// Reset the targets, both cube and livingPlaceable
     /// </summary>
