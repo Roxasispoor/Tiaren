@@ -1101,6 +1101,16 @@ public class LivingPlaceable : Placeable
 
     }
 
+    /// <summary>
+    /// Check if the okaceable is a target of that Character
+    /// </summary>
+    /// <param name="placeable"></param>
+    /// <returns></returns>
+    public bool IsPlaceableInTarget(Placeable placeable)
+    {
+        return placeable.IsLiving() && targetableUnits.Contains((LivingPlaceable)placeable) || targetArea != null && targetArea.Contains(placeable);
+    }
+
     public void Save(string path)
     {
         //No joke keep it , it changes playerpossessser

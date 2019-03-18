@@ -306,7 +306,7 @@ public class GameManager : NetworkBehaviour
             if (value != null)
             {
                 value.Highlight();
-                if (State == States.UseSkill)
+                if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
                     foreach (Effect effect in ActiveSkill.effects)
                     {
