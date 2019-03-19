@@ -31,19 +31,20 @@ public class PiercingDamageEffect : DamageCalculated
         targets.Clear();
         damages.Clear();
         int effectivedmg;
-        float totalDmg = CalculateDamage();
+        float totalDmg;
         RaycastHit[] hits = Physics.RaycastAll(Launcher.GetPosition(), Target.GetPosition() - Launcher.GetPosition(),
             (Target.GetPosition() - Launcher.GetPosition()).magnitude);
         int totalThrough = 0;
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.gameObject.GetComponent<LivingPlaceable>() == null )
+            LivingPlaceable placeable = hit.collider.gameObject.GetComponent<LivingPlaceable>();
+            if (placeable == null )
             {
                 totalThrough++;
             }
-            else if (hit.collider.gameObject.GetComponent<LivingPlaceable>() != Target)
+            else if (placeable != Target)
             {
-                
+                totalDmg = CalculateDamage(placeable);
                 effectivedmg = (int)(totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
                 targets.Add(hit.collider.gameObject.GetComponent<LivingPlaceable>());
                 damages.Add(effectivedmg);
@@ -51,6 +52,7 @@ public class PiercingDamageEffect : DamageCalculated
             }
             else
             {
+                totalDmg = CalculateDamage(placeable);
                 effectivedmg = (int)(totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
                 targets.Add(hit.collider.gameObject.GetComponent<LivingPlaceable>());
                 damages.Add(effectivedmg);
@@ -68,6 +70,14 @@ public class PiercingDamageEffect : DamageCalculated
         for (int i = 0; i < targets.Count; i++)
         {
             GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], targets[i]);
+        }
+    }
+
+    public override void ResetPreview(Placeable target)
+    {
+        foreach(LivingPlaceable placeable in targets)
+        {
+            GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().ResetPreview(placeable);
         }
     }
 

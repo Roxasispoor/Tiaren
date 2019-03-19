@@ -223,6 +223,12 @@ public class Skill
 
     public void Activate()
     {
+
+        if (GameManager.instance.ActiveSkill == this)
+        {
+            GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();
+            return;
+        }
         GameManager.instance.State = States.UseSkill;
         GameManager.instance.ActiveSkill = this;
 

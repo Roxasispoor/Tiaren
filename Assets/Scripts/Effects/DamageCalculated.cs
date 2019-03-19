@@ -102,6 +102,15 @@ public class DamageCalculated : EffectOnLiving {
         return (int) totalDmg;
     }
 
+    public int CalculateDamage(LivingPlaceable target)
+    {
+        LivingPlaceable save = Target;
+        Target = target;
+        int damage = CalculateDamage();
+        Target = save;
+        return damage;
+    }
+
     override
         public void Use()
     {
