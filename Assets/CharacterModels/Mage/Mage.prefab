@@ -72,6 +72,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
       propertyPath: m_Bones.Array.data[0]
       value: 
       objectReference: {fileID: 1326140753991936926}
@@ -163,6 +167,26 @@ PrefabInstance:
       propertyPath: m_RootBone
       value: 
       objectReference: {fileID: 1326140753991936946}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_SkinnedMotionVectors
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 62aaa1f0394411740b397c053656d365, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05843c4e213150c4fbc1066f4e864638, type: 3}
 --- !u!4 &1326140753991936946 stripped

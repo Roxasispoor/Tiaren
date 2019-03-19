@@ -152,6 +152,10 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     private RaycastSelector raycastSelector;
     /// <summary>
+    /// Prefab used to create transparentCube.
+    /// </summary>
+    public GameObject prefabTransparentCube;
+    /// <summary>
     /// Display number of the current turn
     /// </summary>
     /// 
@@ -302,7 +306,7 @@ public class GameManager : NetworkBehaviour
             if (value != null)
             {
                 value.Highlight();
-                if (State == States.UseSkill)
+                if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
                     foreach (Effect effect in ActiveSkill.effects)
                     {

@@ -64,9 +64,9 @@ public class LivingPlaceable : Placeable
     private Renderer rend;
     //Shaders (used for the highlight)
 
-    [SerializeField]
-    private Shader originalShader;
-    private Shader outlineShader;
+
+    public Shader originalShader;
+    public Shader outlineShader;
     private Color previousColor = Color.white;
 
     public float MaxHP
@@ -907,8 +907,6 @@ public class LivingPlaceable : Placeable
         
         
         rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
-        originalShader = Shader.Find("Standard");
-        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.shader = outlineShader;
         rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
         //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
@@ -1090,23 +1088,6 @@ public class LivingPlaceable : Placeable
         TargetableUnits = new List<LivingPlaceable>();
     }
 
-    public void ChangeMaterialAreaOfTarget(Material materialTarget)
-    {
-        foreach (Placeable placeable in TargetArea)
-        {
-            if (Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial == null && !placeable.IsLiving()) //if we haven't seen this one before
-            {
-                // Grid.instance.GridMatrix[node.x, node.y, node.z].GetComponent<MeshRenderer>().enabled = true;
-
-                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].oldMaterial =
-                    Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material;
-                Grid.instance.GridMatrix[placeable.GetPosition().x, placeable.GetPosition().y, placeable.GetPosition().z].GetComponent<MeshRenderer>().material = materialTarget;
-
-            }
-        }
-        GameManager.instance.ResetAllBatches();
-    }
-
     /// <summary>
     /// Reset the targets, both cube and livingPlaceable
     /// </summary>
@@ -1116,6 +1097,16 @@ public class LivingPlaceable : Placeable
         GameManager.instance.ResetAllBatches();
         TargetableUnits = null;
 
+    }
+
+    /// <summary>
+    /// Check if the okaceable is a target of that Character
+    /// </summary>
+    /// <param name="placeable"></param>
+    /// <returns></returns>
+    public bool IsPlaceableInTarget(Placeable placeable)
+    {
+        return placeable.IsLiving() && targetableUnits.Contains((LivingPlaceable)placeable) || targetArea != null && targetArea.Contains(placeable);
     }
 
     public void Save(string path)

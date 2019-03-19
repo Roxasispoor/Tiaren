@@ -216,6 +216,11 @@ public class Grid : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Return true if the position is null in the grid.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public bool CheckNull(Vector3Int position)
     {
         return CheckRange(position) && (gridMatrix[position.x, position.y, position.z] == null);

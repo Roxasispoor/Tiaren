@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36677358, g: 0.6417017, b: 0.8760933, a: 1}
+  m_IndirectSpecularColor: {r: 0.11083142, g: 0.36980858, b: 0.74241686, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -389,6 +389,8 @@ MonoBehaviour:
   isGameStarted: 0
   transmitter: {fileID: 0}
   winner: {fileID: 0}
+  prefabTransparentCube: {fileID: 1032257904305354, guid: a9723f502c08e5a45b082c6f9eb21f11,
+    type: 3}
 --- !u!4 &823285885
 Transform:
   m_ObjectHideFlags: 0

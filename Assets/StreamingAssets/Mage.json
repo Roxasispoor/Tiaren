@@ -2,7 +2,7 @@
 {"skillName":"Push","cost":1,"tourCooldownLeft":0,"cooldown":0,"maxRange":2,"minRange":0,"effectarea":0,"description":"Push a block","skillType":1,"skillarea":2,"skilleffect":1,"patternNumber":5}
 Push{"netIdLauncher":0,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"damage":500.0,"nbCases":2.0,"direction":{"x":0.0,"y":0.0,"z":0.0},"isDirectionFromPosition":true,"doesHeightCount":false};
 {"skillName":"Create","cost":1,"tourCooldownLeft":0,"cooldown":0,"maxRange":4,"minRange":0,"effectarea":0,"description":"Create a block","skillType":1,"skillarea":1,"skilleffect":3,"patternNumber":4}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3222},"face":{"x":0,"y":1,"z":0},"height":0};
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3222},"face":{"x":0,"y":1,"z":0},"height":1};
 {"skillName":"Destruction","cost":1,"tourCooldownLeft":0,"cooldown":0,"maxRange":4,"minRange":0,"effectarea":0,"description":"Destroy a block","skillType":1,"skillarea":0,"skilleffect":2,"patternNumber":3}
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"depthExceed":0};
 {"skillName":"Staff Shot","cost":1,"tourCooldownLeft":0,"cooldown":1,"maxRange":3,"minRange":0,"effectarea":0,"description":"Attack with a magical bullet","skillType":0,"skillarea":0,"skilleffect":0,"patternNumber":0}
@@ -10,7 +10,7 @@ DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveE
 {"skillName":"Fissure","cost":2,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":1,"description":"Create a chasm","skillType":1,"skillarea":3,"skilleffect":2,"patternNumber":3}
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"depthExceed":1};
 {"skillName":"Wall","cost":2,"tourCooldownLeft":0,"cooldown":1,"maxRange":4,"minRange":0,"effectarea":1,"description":"Create a wall","skillType":1,"skillarea":3,"skilleffect":3,"patternNumber":4}
-CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3222},"face":{"x":0,"y":1,"z":0},"height":1};
+CreateBlock{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"prefabListNumber":0,"prefab":{"instanceID":3222},"face":{"x":0,"y":1,"z":0},"height":2};
 {"skillName":"Explosive fireball","cost":2,"tourCooldownLeft":0,"cooldown":1,"maxRange":6,"minRange":2,"effectarea":2,"description":"Throws a fireball destroying the terrain and dealing damage","skillType":4,"skillarea":7,"skilleffect":2,"patternNumber":3}
 DamageCalculated{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"power":30.0,"scaleOn":2,"sinFactor":0.30000001192092898}
 DestroyBloc{"netIdLauncher":-1,"animLauncher":{"instanceID":0},"turnActiveEffect":1,"triggerOnce":false,"activationType":0,"netIdTarget":-1,"depthExceed":0};
