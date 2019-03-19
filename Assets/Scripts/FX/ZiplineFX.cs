@@ -49,7 +49,7 @@ public class ZiplineFX : MonoBehaviour
     /// Call it from the start of the zipline to create the rope
     /// </summary>
     /// <param name="endZipline"></param>
-    public void ConnectZipline(ZiplineFX endZipline)
+    public LineRenderer ConnectZipline(ZiplineFX endZipline, bool preiew)
     { //new Color (173,132,69)
         startZip = this;
         endZipline.StartZipline = this;
@@ -57,11 +57,20 @@ public class ZiplineFX : MonoBehaviour
         endZip = endZipline;
         rope = gameObject.AddComponent<LineRenderer>();
         endZip.rope = rope;
-        rope.material = ropeMaterial;
+        if (preiew == true)
+        {
+
+            rope.material = GameManager.instance.materialPreviewCreate;
+        }
+        else
+        {
+            rope.material = ropeMaterial;
+        }
         rope.widthMultiplier = 0.02f;
         rope.positionCount = 2;
         Vector3[] topPositions = new Vector3[] { startZip.TopPole.position, endZip.TopPole.position };
         rope.SetPositions(topPositions);
+        return rope;
     }
 
 

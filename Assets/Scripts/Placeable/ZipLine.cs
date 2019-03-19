@@ -6,6 +6,8 @@ using UnityEngine;
 public class ZipLine : ObjectOnBloc {
     public ZipLine linkedTo;
     public int netIdLinkedTo;
+    public LineRenderer rope;
+    private bool outlined;
     protected override void Awake()
     {
         base.Awake();
@@ -18,12 +20,28 @@ public class ZipLine : ObjectOnBloc {
         GivenSkills.Add(newSkill);
         Resources.Load<Sprite>("UI_Images/Abilities" + newSkill.SkillName);
     }
+
+    public void Outline()
+    {
+        if (!outlined)
+        {
+            gameObject.GetComponentInChildren<MeshRenderer>().material.shader = GameManager.instance.PlayingPlaceable.outlineShader;
+            linkedTo.GetComponentInChildren<MeshRenderer>().material.shader = GameManager.instance.PlayingPlaceable.outlineShader;
+            outlined = true;
+        }
+        else
+        {
+            gameObject.GetComponentInChildren<MeshRenderer>().material.shader = GameManager.instance.PlayingPlaceable.originalShader;
+            linkedTo.GetComponentInChildren<MeshRenderer>().material.shader = GameManager.instance.PlayingPlaceable.originalShader;
+            outlined = false;
+        }
+    }
+
     public override void Destroy()
     {
-
+        GivenSkills.Clear();
         Destroy(linkedTo.gameObject);
         Destroy(gameObject);
-
     }
     public override string Save()
     {
@@ -51,6 +69,6 @@ public class ZipLine : ObjectOnBloc {
     {
         base.Initialize();
         linkedTo = GameManager.instance.FindLocalIdeable(netIdLinkedTo).GetComponent<ZipLine>();
-        GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>());
+        rope = GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>(), false);
     }
 }
