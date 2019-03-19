@@ -64,9 +64,9 @@ public class LivingPlaceable : Placeable
     private Renderer rend;
     //Shaders (used for the highlight)
 
-    [SerializeField]
-    private Shader originalShader;
-    private Shader outlineShader;
+
+    public Shader originalShader;
+    public Shader outlineShader;
     private Color previousColor = Color.white;
 
     public float MaxHP
@@ -907,8 +907,6 @@ public class LivingPlaceable : Placeable
         
         
         rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
-        originalShader = Shader.Find("Standard");
-        outlineShader = Shader.Find("Outlined/Silhouetted Diffuse");
         rend.material.shader = outlineShader;
         rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
         //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
