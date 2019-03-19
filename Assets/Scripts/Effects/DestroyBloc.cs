@@ -45,7 +45,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
         for (int i = 0; i <depthExceed;i++)
         {
-             new DestroyBlockRelative(Target, new Vector3Int(0, -i-1, 0)).Use();
+            Placeable bloc = Grid.instance.GetPlaceableFromVector(Launcher.GetPosition() + Vector3Int.down * i);
+            if (bloc)
+            {
+                bloc.Destroy();
+            }
         }
 
         Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
