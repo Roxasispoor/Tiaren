@@ -64,6 +64,8 @@ public class RaycastSelector : MonoBehaviour
                         {
                             foreach (Placeable block in area)
                             {
+                                if (block == null)
+                                    continue;
                                 block.UnHighlight();
                                 if (GameManager.instance.ActiveSkill != null)
                                 {
@@ -109,7 +111,7 @@ public class RaycastSelector : MonoBehaviour
                         }
                         else
                         {
-                            area.Remove(GameManager.instance.Hovered);
+                            //area.Remove(GameManager.instance.Hovered);
                             foreach (Placeable block in area)
                             {
                                     block.Highlight();

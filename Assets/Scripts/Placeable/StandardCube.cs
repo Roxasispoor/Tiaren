@@ -61,7 +61,7 @@ public class StandardCube : Placeable
 
 
 
-    private GameObject QuadUp
+    public GameObject QuadUp
     {
         get
         {
