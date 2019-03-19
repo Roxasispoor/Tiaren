@@ -156,6 +156,14 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public GameObject prefabTransparentCube;
     /// <summary>
+    /// Material used for the previw of the creation of a cube.
+    /// </summary>
+    public Material materialPreviewCreate;
+    /// <summary>
+    /// Material used for the previw of the destruction of a cube.
+    /// </summary>
+    public Material materialPreviewDestroy;
+    /// <summary>
     /// Display number of the current turn
     /// </summary>
     /// 

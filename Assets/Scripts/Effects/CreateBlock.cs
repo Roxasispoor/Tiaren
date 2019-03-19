@@ -48,6 +48,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
             }
             GameObject cube = FactoryTransparentCube.Instance.getCube();
             cube.transform.position = target.GetPosition() + face * i;
+            cube.GetComponent<MeshRenderer>().material = GameManager.instance.materialPreviewCreate;
             previewedCubes.Enqueue(cube);
         }
     }
