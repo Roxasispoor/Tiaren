@@ -893,17 +893,20 @@ public class Grid : MonoBehaviour
     /// Return a list of blocks i can target with a skill
     /// </summary>
     /// <param name="Playerposition"></param>
-    /// <param name="minrange">Maximale range of the skill</param>
-    /// <param name="maxrange">Minimale range of the skill</param>
+    /// <param name="minrange"></param>
+    /// <param name="maxrange"></param>
+    /// <param name="throughtblocks"></param>
+    /// <param name="highrange"></param>
+    /// <param name="viewRange"> True for physical attacks to show the range on the floor</param>
     /// <returns></returns>
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange, bool viewRange)
     {
         int remainingrangeYZ; //remaining range
         int dirx; //x direction : 0 / -1 / 1
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
-        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange);
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange, viewRange);
 
         //Now case when x > 0
         dirx = 1;
@@ -917,7 +920,7 @@ public class Grid : MonoBehaviour
             if (x < sizeX)
             {
                 //exploring in y and z
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange);
             }
         }
 
@@ -930,7 +933,7 @@ public class Grid : MonoBehaviour
             if (x >= 0)
             {
                 //Exploring in y and z 
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange);
             }
         }
 
@@ -953,32 +956,35 @@ public class Grid : MonoBehaviour
     /// <param name="dirx">x direction (0,-1,1)</param>
     /// <param name="dirz">z direction (0,-1,1)</param>
     private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange)
+        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange, bool viewRange)
     {
         int diry = 0; //y direction
         //real block position
         int x = (int)Playerposition.x + i;
         int z = (int)Playerposition.z + j;
 
-        //Case y >= 0
-        for (int k = 0; k <= remainingrange; k++)
+        if (!viewRange)
         {
-            if (Math.Abs(i) + Math.Abs(j) + k > minrange)
+            //Case y >= 0
+            for (int k = 0; k <= remainingrange; k++)
             {
-                //real block position
-                int y = (int)Playerposition.y + k;
-                if (y < sizeY)
+                if (Math.Abs(i) + Math.Abs(j) + k > minrange)
                 {
-                    //trying to see the targeted block, if true, adding it to the target list
-                    if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
+                    //real block position
+                    int y = (int)Playerposition.y + k;
+                    if (y < sizeY)
                     {
-                        Vector3Int newblock = new Vector3Int(x, y, z);
-                        targetableblocs.Add(newblock);
+                        //trying to see the targeted block, if true, adding it to the target list
+                        if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
+                        {
+                            Vector3Int newblock = new Vector3Int(x, y, z);
+                            targetableblocs.Add(newblock);
+                        }
                     }
                 }
+                //at the end of fonction because case y=0, allow one iteraction for 0
+                diry = 1;
             }
-            //at the end of fonction because case y=0, allow one iteraction for 0
-            diry = 1;
         }
 
         //When y<0
@@ -1013,7 +1019,7 @@ public class Grid : MonoBehaviour
     /// <param name="i">number of block on x axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
     private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int dirx, bool throughtblocks, bool highrange)
+        int i, int dirx, bool throughtblocks, bool highrange, bool viewRange)
     {
         int dirz = 0; //z direction
         int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
@@ -1040,7 +1046,7 @@ public class Grid : MonoBehaviour
                         targetableblocs.Add(newblock);
                     }
                 }
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange);
             }
             dirz = 1;
         }
@@ -1067,7 +1073,7 @@ public class Grid : MonoBehaviour
                     }
                 }
                 //Search on the y axis
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange);
             }
         }
     }

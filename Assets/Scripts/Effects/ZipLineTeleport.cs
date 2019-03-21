@@ -25,7 +25,7 @@ public class ZipLineTeleport : EffectOnObjectBloc
 
     public override void ResetPreview(Placeable target)
     {
-        throw new System.NotImplementedException();
+         Debug.Log("No preview for ZipLineTeleport");
     }
 
     public override void Use()

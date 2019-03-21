@@ -52,7 +52,7 @@ public class LivingPlaceable : Placeable
     private Vector3 shootPosition;
     private int capacityInUse;
     private List<NodePath> areaOfMouvement;
-
+    private List<StandardCube> range;
     private List<Placeable> targetArea;
     private List<LivingPlaceable> targetableUnits;
 
@@ -390,6 +390,36 @@ public class LivingPlaceable : Placeable
                 }
             }
             targetArea = value;
+        }
+    }
+
+    public List<StandardCube> Range
+    {
+        get
+        {
+            return range;
+        }
+
+        set
+        {
+            if (range != null)
+            {
+                foreach (StandardCube cube in range)
+                {
+                    cube.outline.SetActive(false);
+                    cube.GetComponent<MeshRenderer>().material.SetFloat("_OutlineWidth", 0.02f);
+                }
+            }
+
+            if (value != null)
+            {
+                foreach (StandardCube cube in value)
+                {
+                    cube.outline.SetActive(true);
+                    cube.GetComponent<MeshRenderer>().material.SetFloat("_OutlineWidth", 0f);
+                }
+            }
+            range = value;
         }
     }
 
@@ -1094,7 +1124,7 @@ public class LivingPlaceable : Placeable
         TargetArea = null;
         GameManager.instance.ResetAllBatches();
         TargetableUnits = null;
-
+        Range = null;
     }
 
     /// <summary>

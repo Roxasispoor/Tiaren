@@ -31,7 +31,7 @@
 	SubShader
 	{
 		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" }
-
+		
 		Pass //Outline
 		{
 			ZWrite Off
@@ -60,6 +60,36 @@
 
 			ENDCG
 		}
+		/*
+		Pass //Outline throught
+		{
+			ZWrite Off
+			ZTest Less
+			Cull Off
+			CGPROGRAM
+
+			#pragma vertex vert
+			#pragma fragment frag
+
+			v2f vert(appdata v)
+			{
+				appdata original = v;
+				v.vertex.xyz += _OutlineWidth * normalize(v.vertex.xyz);
+
+				v2f o;
+				o.pos = UnityObjectToClipPos(v.vertex);
+				return o;
+
+			}
+
+			half4 frag(v2f i) : COLOR
+			{
+				return _OutlineColor;
+			}
+
+			ENDCG
+		}*/
+		
 
 		Tags{ "Queue" = "Geometry"}
 
