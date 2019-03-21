@@ -18,18 +18,15 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public DestroyBloc(DestroyBloc other) : base(other)
     {
         this.depthExceed = other.depthExceed;
-        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
     public DestroyBloc(int depth = 0) : base()
     {
         depthExceed = depth;
-        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
     public DestroyBloc(Placeable launcher,int depth) : base(launcher)
     {
         depthExceed = depth;
         Launcher = launcher;
-        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
 
     public override Effect Clone()
@@ -39,6 +36,10 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
     public override void Preview(Placeable target)
     {
+        if (meshDeactivatedForThePreview == null)
+        {
+            meshDeactivatedForThePreview = new Queue<MeshRenderer>();
+        }
         if (gameObjectDeactivatedForThePreview == null)
         {
             gameObjectDeactivatedForThePreview = new Queue<GameObject>();
@@ -55,6 +56,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
             {
 
                 MeshRenderer meshRenderer = bloc.GetComponent<MeshRenderer>();
+
                 meshRenderer.enabled = false;
                 meshDeactivatedForThePreview.Enqueue(meshRenderer);
 
@@ -76,15 +78,15 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public override void ResetPreview(Placeable target)
     {
         //throw new System.NotImplementedException();
-        while (meshDeactivatedForThePreview.Count > 0)
+        while (meshDeactivatedForThePreview != null && meshDeactivatedForThePreview.Count > 0)
         {
             meshDeactivatedForThePreview.Dequeue().enabled = true;
         }
-        while (gameObjectDeactivatedForThePreview.Count > 0)
+        while (gameObjectDeactivatedForThePreview != null && gameObjectDeactivatedForThePreview.Count > 0)
         {
             gameObjectDeactivatedForThePreview.Dequeue().SetActive(true);
         }
-        while (previewedCubes.Count > 0)
+        while (previewedCubes != null && previewedCubes.Count > 0)
         {
             FactoryTransparentCube.Instance.putBack(previewedCubes.Dequeue());
         }

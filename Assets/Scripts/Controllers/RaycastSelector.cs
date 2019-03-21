@@ -82,51 +82,19 @@ public class RaycastSelector : MonoBehaviour
                     
                     if (GameManager.instance.State == States.UseSkill)
                     {
-                        /*
-                        if (pattern == SkillArea.MIXEDAREA)
+                        area = GameManager.instance.ActiveSkill.patternUse(GameManager.instance.Hovered);
+                        foreach (Placeable block in area)
                         {
-                            topblock = false;
-                        }
-                        else topblock = true;
-
-                        if (pattern == SkillArea.NONE || pattern == SkillArea.MIXEDAREA)
-                        {
-                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock);
-                        }
-                        else
-                        {
-                            area = Grid.instance.HighlightEffectArea(hit.transform.GetComponent<Placeable>(), effectarea, topblock, state, pattern);
-                        }
-
-                        if (pattern == SkillArea.MIXEDAREA)
-                        {
-                            List<LivingPlaceable> Targets = new List<LivingPlaceable>();
-                            foreach (Placeable block in area)
+                            if (block == GameManager.instance.Hovered)
+                                continue;
+                            block.Highlight();
+                            if (GameManager.instance.ActiveSkill != null)
                             {
-                                block.Highlight();
-                                Vector3 Pos = block.transform.position;
-                                if (Pos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z] != null && Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z].IsLiving())
-                                    Targets.Add((LivingPlaceable)Grid.instance.GridMatrix[(int)Pos.x, (int)Pos.y + 1, (int)Pos.z]);
-                            }
-                            GameManager.instance.PlayingPlaceable.TargetableUnits = Targets;
-                        }
-                        else
-                        {
-                            //area.Remove(GameManager.instance.Hovered);
-                            foreach (Placeable block in area)
-                            {
-                                    block.Highlight();
                                 foreach (Effect effect in GameManager.instance.ActiveSkill.effects)
                                 {
                                     effect.Preview(block);
                                 }
                             }
-                            
-                        }*/
-                        area = GameManager.instance.ActiveSkill.patternUse(GameManager.instance.Hovered);
-                        foreach (Placeable block in area)
-                        {
-                            block.Highlight();
                         }
                     }
                 }
