@@ -51,10 +51,13 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
 
     public override void Preview(Placeable target)
     {
-        throw new System.NotImplementedException();
     }
 
-    public override void Use()
+    public override void ResetPreview(Placeable target)
+    {
+    }
+
+public override void Use()
     {
         if(Target==null)
         {
@@ -73,11 +76,6 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
             default:
                 throw new ArgumentException("MemberInfo must be of type FieldInfo or PropertyInfo", "member");
         }
-        
-    }
 
-    public override void ResetPreview(Placeable target)
-    {
-        throw new NotImplementedException();
     }
 }
