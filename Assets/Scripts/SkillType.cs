@@ -93,3 +93,19 @@ public enum SkillEffect
     /// </summary>
     SWORDRANGE
 }
+
+public enum PatternUseType
+{
+    /// <summary>
+    /// A typical sphere
+    /// </summary>
+    NONE,
+    /// <summary>
+    /// In a line, symetrical around the target
+    /// </summary>
+    LINE,
+    /// <summary>
+    /// Affect all the placeable around the target
+    /// </summary>
+    AROUNDTARGET
+}

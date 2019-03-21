@@ -82,6 +82,7 @@ public class RaycastSelector : MonoBehaviour
                     
                     if (GameManager.instance.State == States.UseSkill)
                     {
+                        /*
                         if (pattern == SkillArea.MIXEDAREA)
                         {
                             topblock = false;
@@ -121,6 +122,11 @@ public class RaycastSelector : MonoBehaviour
                                 }
                             }
                             
+                        }*/
+                        area = GameManager.instance.ActiveSkill.patternUse(GameManager.instance.Hovered);
+                        foreach (Placeable block in area)
+                        {
+                            block.Highlight();
                         }
                     }
                 }

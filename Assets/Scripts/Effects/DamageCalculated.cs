@@ -65,6 +65,8 @@ public class DamageCalculated : EffectOnLiving {
 
     public override void Preview(Placeable target)
     {
+        if (!target.IsLiving())
+            return;
         Launcher = GameManager.instance.PlayingPlaceable;
         Target = (LivingPlaceable) target;
         int damage = CalculateDamage();
@@ -73,6 +75,8 @@ public class DamageCalculated : EffectOnLiving {
 
     public override void ResetPreview(Placeable target)
     {
+        if (!target.IsLiving())
+            return;
         GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().ResetPreview((LivingPlaceable)target);
     }
 

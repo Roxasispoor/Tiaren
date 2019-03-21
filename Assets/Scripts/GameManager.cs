@@ -752,53 +752,16 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     || (placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
                 {
 
-                    List<Placeable> area = raycastSelector.Area;
+                    List<Placeable> area = ActiveSkill.patternUse(placeable);
 
-
-                    if (area == null && ActiveSkill.SkillArea != SkillArea.SURROUNDINGLIVING)
+                    int[] netidlist = new int[area.Count];
+                    for (int i = 0; i < netidlist.Length; i++)
                     {
-
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, new int[0], 0);
-
+                        netidlist[i] = area[i].netId;
                     }
-                    else if (ActiveSkill.SkillArea == SkillArea.SURROUNDINGLIVING || ActiveSkill.SkillArea == SkillArea.MIXEDAREA)
-                    {
+                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
+                        playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
 
-                        List<LivingPlaceable> Playerlist = playingPlaceable.TargetableUnits;
-                        int j = 0;
-                        int[] netidlist;
-
-                        if (ActiveSkill.SkillArea == SkillArea.MIXEDAREA)
-                        {
-                            netidlist = new int[Playerlist.Count + area.Count];
-                            for (j = 0; j < area.Count; j++)
-                            {
-                                netidlist[j] = area[j].netId;
-                            }
-                        }
-                        else
-                        {
-                            netidlist = new int[Playerlist.Count];
-                        }
-
-                        for (int i = j; i < netidlist.Length; i++)
-                        {
-                            netidlist[i] = Playerlist[i - j].netId;
-                        }
-
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
-                            playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
-                    }
-                    else
-                    {
-                        int[] netidlist = new int[area.Count];
-                        for (int i = 0; i < netidlist.Length; i++)
-                        {
-                            netidlist[i] = area[i].netId;
-                        }
-                        playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
-                            playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
-                    }
                 }
                 break;
 

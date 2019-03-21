@@ -40,9 +40,13 @@ public class Skill
     private SkillEffect skilleffect;
     [SerializeField]
     private int patternNumber;
-    private delegate List<Placeable> Pattern(Vector3 position, List<Placeable> vect);
-    private Pattern pattern;
+    private delegate List<Placeable> PatternVision(Vector3 position, List<Placeable> vect);
+    private PatternVision patternVision;
 
+    [SerializeField]
+    private PatternUseType patternUseType;
+    public delegate List<Placeable> PatternUse(Placeable target);
+    public PatternUse patternUse;
 
     public SkillType SkillType
     {
@@ -269,7 +273,7 @@ public class Skill
             {
                 placeables.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
             }
-            placeables = pattern(playingPlaceable.GetPosition(), placeables);
+            placeables = patternVision(playingPlaceable.GetPosition(), placeables);
             playingPlaceable.TargetArea = placeables;
             //playingPlaceable.ChangeMaterialAreaOfTarget(GameManager.instance.targetMaterial);
             GameManager.instance.ResetAllBatches();
@@ -288,7 +292,7 @@ public class Skill
             {
                 placeables.Add(livingPlaceable);
             }
-            placeables = pattern(playingPlaceable.GetPosition(), placeables);
+            placeables = patternVision(playingPlaceable.GetPosition(), placeables);
             targetUnits.Clear();
             foreach (LivingPlaceable livingPlaceable in placeables)
             {
@@ -310,7 +314,7 @@ public class Skill
             {
                 placeables.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
             }
-            placeables = pattern(playingPlaceable.GetPosition(), placeables);
+            placeables = patternVision(playingPlaceable.GetPosition(), placeables);
             Debug.LogError("not finished option : placeable");
 
         }
@@ -426,28 +430,28 @@ public class Skill
         switch (patternNumber)
         {
             case 0:
-                pattern = new Pattern(Pattern0);
+                patternVision = new PatternVision(Pattern0);
                 break;
             case 1:
-                pattern = new Pattern(Pattern1);
+                patternVision = new PatternVision(Pattern1);
                 break;
             case 2:
-                pattern = new Pattern(Pattern2);
+                patternVision = new PatternVision(Pattern2);
                 break;
             case 3:
-                pattern = new Pattern(Pattern3);
+                patternVision = new PatternVision(Pattern3);
                 break;
             case 4:
-                pattern = new Pattern(Pattern4);
+                patternVision = new PatternVision(Pattern4);
                 break;
             case 5:
-                pattern = new Pattern(Pattern5);
+                patternVision = new PatternVision(Pattern5);
                 break;
             case 6:
-                pattern = new Pattern(Pattern6);
+                patternVision = new PatternVision(Pattern6);
                 break;
             case 7:
-                pattern = new Pattern(Pattern7);
+                patternVision = new PatternVision(Pattern7);
                 break;
         }
     }
@@ -610,4 +614,115 @@ public class Skill
         }
         return targetableblock;
     }
+
+    public void InitPatternUse()
+    {
+        switch (patternUseType)
+        {
+            case PatternUseType.NONE:
+                patternUse = new PatternUse(PatternUseNone);
+                break;
+
+            case PatternUseType.LINE:
+                Debug.Log("Create LINE");
+                patternUse = new PatternUse(PatternUseLine);
+                break;
+
+            case PatternUseType.AROUNDTARGET:
+                patternUse = new PatternUse(PatternUseAround);
+                break;
+        }
+    }
+
+    public List<Placeable> PatternUseNone(Placeable target)
+    {
+        List<Placeable> targetableBlocks = new List<Placeable>();
+        Vector3 Position = target.GetPosition();
+        int sizeX = Grid.instance.sizeX;
+        int sizeY = Grid.instance.sizeY;
+        int sizeZ = Grid.instance.sizeZ;
+        
+        for (int x = Mathf.Max((int)Position.x - effectarea, 0);
+                x < Mathf.Min((int)Position.x + effectarea + 1, sizeX);
+                x++)
+        {
+            for (int y = Mathf.Max((int)Position.y - effectarea, 0);
+                y < Mathf.Min((int)Position.y + effectarea + 1, sizeY);
+                y++)
+            {
+                for (int z = Mathf.Max((int)Position.z - effectarea, 0);
+                z < Mathf.Min((int)Position.z + effectarea + 1, sizeZ);
+                z++)
+                {
+                    if (!Grid.instance.CheckNull(new Vector3Int(x,y,z))
+                        && !Grid.instance.GridMatrix[x, y, z].IsLiving() 
+                        && Mathf.Abs(x - Position.x) + Mathf.Abs(y - Position.y) + Mathf.Abs(z - Position.z) < effectarea)
+                    {
+                        targetableBlocks.Add(Grid.instance.GridMatrix[x, y, z]);
+                    }
+                }
+            }
+        }
+
+        return targetableBlocks;
+    }
+
+    public List<Placeable> PatternUseLine(Placeable target)
+    {
+        List<Placeable> targets = new List<Placeable>();
+        Vector3 Position = target.GetPosition();
+        int state = GameManager.instance.RaycastSelector.State % 2;
+        Vector3Int direction = new Vector3Int(state, 0, 1 - state);
+
+        Placeable placeableTemp = null;
+
+        targets.Add(target);
+        Debug.Log("Try to use line");
+        for (int i=1; i < effectarea; i++)
+        {
+            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() + direction * i);
+            if (placeableTemp)
+                targets.Add(placeableTemp);
+            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() - direction * i);
+            if (placeableTemp)
+                targets.Add(placeableTemp);
+        }
+
+        return targets;
+    }
+
+    public List<Placeable> PatternUseAround(Placeable target)
+    {
+        List<Placeable> targets = new List<Placeable>();
+        Vector3 position = target.GetPosition();
+
+        Placeable current = null;
+        for (int x = -1; x < 2; x++)
+        {
+            for (int z = -1; z < 2; z++)
+            {
+                current = Grid.instance.GetPlaceableFromVector(position + new Vector3(x, 0, z));
+
+                if (current != null && !(x == 0 && z == 0))
+                {
+                    targets.Add(current);
+                }
+
+            }
+        }
+
+        /*
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, -1)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, 0)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, 1)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, -1)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, 0)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, 1)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(0, 0, -1)));
+        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(0, 0, 1)));
+        */
+
+        return targets;
+    }
+
 }
