@@ -8,12 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: pfMaterial
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: dcdddbc12ff0a3942a3c4638618b481b, type: 3}
   m_ShaderKeywords: _EMISSION _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2900
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -66,6 +66,7 @@ Material:
     - _Metallic: 0.17
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OutlineWidth: 0.02
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
@@ -75,3 +76,4 @@ Material:
     m_Colors:
     - _Color: {r: 0, g: 0.22615597, b: 0.8679245, a: 0.1882353}
     - _EmissionColor: {r: 0, g: 0.042311423, b: 0.72305536, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}

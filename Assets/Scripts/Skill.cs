@@ -263,7 +263,7 @@ public class Skill
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
         if (skillType == SkillType.BLOCK || skillType == SkillType.AREA)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, false);
             List<Placeable> placeables = new List<Placeable>();
             foreach(Vector3Int pos in vect)
             {
@@ -282,6 +282,16 @@ public class Skill
         }
         else if (skillType == SkillType.LIVING)
         {
+            
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, true);
+            List<StandardCube> range = new List<StandardCube>();
+            foreach (Vector3Int pos in vect)
+            {
+                range.Add((StandardCube)Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
+            }
+            playingPlaceable.Range = range;
+
+
             targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
             List<Placeable> placeables = new List<Placeable>();
             foreach (LivingPlaceable livingPlaceable in targetUnits)
@@ -299,7 +309,7 @@ public class Skill
         }
         else if (skillType == SkillType.PLACEABLE)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, false);
             targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
             List<Placeable> placeables = new List<Placeable>();
             foreach (LivingPlaceable livingPlaceable in targetUnits)

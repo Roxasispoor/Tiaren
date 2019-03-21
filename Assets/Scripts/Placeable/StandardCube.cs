@@ -29,9 +29,14 @@ public class StandardCube : Placeable
     private GameObject[] quads;
 
     /// <summary>
+    /// Physical outline to activate if need a full outline of cube
+    /// </summary>
+    public GameObject outline;
+
+    /// <summary>
     /// Size of the child quads.
     /// </summary>
-    private const float sizeQuad = 1.02f;
+    private const float sizeQuad = 0.978f;
 
     public List<Effect> OnWalkEffects
     {
@@ -170,13 +175,13 @@ public class StandardCube : Placeable
     {
         for (int i = 0; i < quads.Length; i++)
         {
-            quads[i].transform.localScale = new Vector3(quads[i].transform.localScale.x, sizeQuad, 1);
+            quads[i].transform.localScale = new Vector3(sizeQuad, sizeQuad, 1);
             if (i == 0)  // Only for the top one
             {
-                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, sizeQuad/2, quads[i].transform.localPosition.z);
+                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, (sizeQuad + 0.024f) / 2, quads[i].transform.localPosition.z);
             } else if (i == 1)  // Only for the down one
             {
-                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, -sizeQuad/2, quads[i].transform.localPosition.z);
+                quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, -(sizeQuad + 0.024f) / 2, quads[i].transform.localPosition.z);
             } else // For the others
             {
                 quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, 0, quads[i].transform.localPosition.z);
@@ -191,18 +196,18 @@ public class StandardCube : Placeable
     {
         float heightSize = 0.2f;
 
-        QuadUp.transform.localScale = new Vector3(QuadUp.transform.localScale.x, sizeQuad, 1);
-        QuadUp.transform.localPosition = new Vector3(QuadUp.transform.localPosition.x, sizeQuad / 2, QuadUp.transform.localPosition.z);
+        QuadUp.transform.localScale = new Vector3(sizeQuad, sizeQuad, 1);
+        QuadUp.transform.localPosition = new Vector3(QuadUp.transform.localPosition.x, (sizeQuad + 0.024f) / 2, QuadUp.transform.localPosition.z);
         QuadUp.SetActive(true);
 
-        QuadDown.transform.localScale = new Vector3(QuadDown.transform.localScale.x, sizeQuad, 1);
+        QuadDown.transform.localScale = new Vector3(sizeQuad, sizeQuad, 1);
         QuadDown.transform.localPosition = new Vector3(QuadDown.transform.localPosition.x, 0.5f - heightSize + 0.01f, QuadDown.transform.localPosition.z);
         QuadDown.SetActive(true);
 
         for (int i = 2; i < quads.Length; i++) // For the rest of the quads
         {
             quads[i].transform.localScale = new Vector3(quads[i].transform.localScale.x, heightSize + 0.01f, 1); 
-            quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, 0.5f - heightSize / 2 + 0.01f, quads[i].transform.localPosition.z);
+            quads[i].transform.localPosition = new Vector3(quads[i].transform.localPosition.x, 0.5f - heightSize / 2, quads[i].transform.localPosition.z);
         }
     }
 

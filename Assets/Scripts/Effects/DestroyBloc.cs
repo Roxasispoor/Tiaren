@@ -18,15 +18,18 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public DestroyBloc(DestroyBloc other) : base(other)
     {
         this.depthExceed = other.depthExceed;
+        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
     public DestroyBloc(int depth = 0) : base()
     {
         depthExceed = depth;
+        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
     public DestroyBloc(Placeable launcher,int depth) : base(launcher)
     {
         depthExceed = depth;
         Launcher = launcher;
+        meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     }
 
     public override Effect Clone()
@@ -36,10 +39,6 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
     public override void Preview(Placeable target)
     {
-        if (meshDeactivatedForThePreview == null)
-        {
-            meshDeactivatedForThePreview = new Queue<MeshRenderer>();
-        }
         if (gameObjectDeactivatedForThePreview == null)
         {
             gameObjectDeactivatedForThePreview = new Queue<GameObject>();
