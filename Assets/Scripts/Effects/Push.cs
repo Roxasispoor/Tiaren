@@ -64,7 +64,10 @@ public class Push : EffectOnPlaceable
 
     public override void Preview(Placeable target)
     {
-        throw new System.NotImplementedException();
+    }
+    
+    public override void ResetPreview(Placeable target)
+    {
     }
 
     public override Effect Clone()
@@ -206,10 +209,5 @@ public class Push : EffectOnPlaceable
             }
         }
         return positions;
-    }
-
-    public override void ResetPreview(Placeable target)
-    {
-        throw new NotImplementedException();
     }
 }
