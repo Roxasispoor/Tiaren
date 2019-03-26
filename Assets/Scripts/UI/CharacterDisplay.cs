@@ -59,10 +59,6 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void Update()
     {
-        if (isHovered)
-        {
-            character.OnMouseOverWithLayer();
-        }
     }
     
 }

@@ -22,13 +22,9 @@ public class Skill
     [SerializeField]
     private int minRange;
     [SerializeField]
-    private int effectarea = 0;
+    private int effectarea = 1;
     [SerializeField]
     public List<Effect> effects;
-    [SerializeField]
-    public delegate bool DelegateCondition();
-    [SerializeField]
-    public DelegateCondition condition;
     [SerializeField]
     private string description = "Use the object";
     private Sprite abilitySprite;
@@ -47,6 +43,11 @@ public class Skill
     private PatternUseType patternUseType;
     public delegate List<Placeable> PatternUse(Placeable target);
     public PatternUse patternUse;
+
+    [SerializeField]
+    //private ConditionType conditionType;
+    public delegate bool DelegateCondition();
+    public DelegateCondition condition;
 
     public SkillType SkillType
     {
@@ -204,7 +205,9 @@ public class Skill
         }
     }
 
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE, SkillArea skillarea = SkillArea.NONE, int effectarea = 0)
+    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, 
+        int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE,
+        SkillArea skillarea = SkillArea.NONE, int effectarea = 1, PatternUseType patternUse = PatternUseType.NONE)
     {
         Cost = cost;
         Cooldown = cooldown;
@@ -218,6 +221,9 @@ public class Skill
         EffectArea = effectarea;
         SkillArea = skillarea;
         SkillEffect = skilleffect;
+        this.patternUseType = patternUse;
+        InitPattern();
+        InitPatternUse();
     }
 
     public Skill(string jsonFilePath)
@@ -239,21 +245,21 @@ public class Skill
         if (SkillType == SkillType.ALREADYTARGETED)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
-            if (SkillEffect == SkillEffect.UP)
-            {
-                if (Playerpos.y + 1 < Grid.instance.sizeY && Grid.instance.GridMatrix[(int)Playerpos.x, (int)Playerpos.y + 1, (int)Playerpos.z] == null)
-                {
-                    GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId, new int[0], 0);
-                }
-            }
-            else
+
+            
+            if (patternUse(GameManager.instance.PlayingPlaceable) != null)
             {
                 GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId, new int[0], 0);
+            } else
+            {
+                return;
             }
-            return;
+            
+        } else
+        {
+            ShowSkillEffectTarget(GameManager.instance.PlayingPlaceable);
         }
-
-        ShowSkillEffectTarget(GameManager.instance.PlayingPlaceable);
+        
     }
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable)
@@ -636,12 +642,18 @@ public class Skill
                 break;
 
             case PatternUseType.LINE:
-                Debug.Log("Create LINE");
                 patternUse = new PatternUse(PatternUseLine);
                 break;
 
             case PatternUseType.AROUNDTARGET:
                 patternUse = new PatternUse(PatternUseAround);
+                break;
+
+            case PatternUseType.CHECKUP:
+                patternUse = new PatternUse(PatternUseCheckUp);
+                break;
+            default:
+                patternUse = new PatternUse(PatternUseNone);
                 break;
         }
     }
@@ -723,18 +735,20 @@ public class Skill
             }
         }
 
-        /*
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, -1)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, 0)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(-1, 0, 1)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, -1)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, 0)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(1, 0, 1)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(0, 0, -1)));
-        targets.Add(Grid.instance.GetPlaceableFromVector(position + new Vector3(0, 0, 1)));
-        */
-
         return targets;
+    }
+
+    public List<Placeable> PatternUseCheckUp(Placeable target)
+    {
+        if (Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.up) == null
+             && target.GetPosition().y < Grid.instance.sizeY - 1)
+        {
+            return new List<Placeable>() { target };
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

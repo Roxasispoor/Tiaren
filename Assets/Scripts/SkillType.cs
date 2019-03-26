@@ -107,5 +107,15 @@ public enum PatternUseType
     /// <summary>
     /// Affect all the placeable around the target
     /// </summary>
-    AROUNDTARGET
+    AROUNDTARGET,
+    /// <summary>
+    /// Use to check if nothing above the target, used by alreadyTargeted.
+    /// </summary>
+    CHECKUP
+}
+
+public enum ConditionType
+{
+    NONE,
+    UP
 }

@@ -1510,19 +1510,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void UseTargeted(Skill skill)
-    {
-        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
-        {
-            foreach (Effect eff in skill.effects)
-            {
-                Effect effectToConsider = eff.Clone();
-                effectToConsider.Launcher = GameManager.instance.PlayingPlaceable;
-                effectToConsider.Use();
-            }
-        }
-    }
-
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget, int[] netidArea)
     {
