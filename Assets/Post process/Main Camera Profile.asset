@@ -14,6 +14,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - {fileID: 114429808363249224}
+  - {fileID: 114302821945990814}
+--- !u!114 &114302821945990814
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
+  m_Name: AmbientOcclusion
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  mode:
+    overrideState: 1
+    value: 0
+  intensity:
+    overrideState: 1
+    value: 0.16
+  color:
+    overrideState: 0
+    value: {r: 0, g: 0, b: 0, a: 1}
+  ambientOnly:
+    overrideState: 0
+    value: 0
+  noiseFilterTolerance:
+    overrideState: 0
+    value: 0
+  blurTolerance:
+    overrideState: 0
+    value: -4.6
+  upsampleTolerance:
+    overrideState: 0
+    value: -12
+  thicknessModifier:
+    overrideState: 0
+    value: 3.91
+  directLightingStrength:
+    overrideState: 0
+    value: 0
+  radius:
+    overrideState: 1
+    value: 1.39
+  quality:
+    overrideState: 0
+    value: 4
 --- !u!114 &114429808363249224
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -39,7 +89,7 @@ MonoBehaviour:
     defaultState: 1
   tonemapper:
     overrideState: 1
-    value: 1
+    value: 0
   toneCurveToeStrength:
     overrideState: 0
     value: 0
@@ -67,10 +117,10 @@ MonoBehaviour:
     value: 1
   temperature:
     overrideState: 1
-    value: -22
+    value: -19.5
   tint:
     overrideState: 0
-    value: 5.9
+    value: 47.2
   colorFilter:
     overrideState: 0
     value: {r: 1, g: 1, b: 1, a: 1}
@@ -78,14 +128,14 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   saturation:
-    overrideState: 1
-    value: 44.6
+    overrideState: 0
+    value: -8.9
   brightness:
     overrideState: 0
     value: 0
   postExposure:
     overrideState: 0
-    value: 0.83
+    value: 3.18
   contrast:
     overrideState: 0
     value: 0

@@ -815,6 +815,10 @@ public class LivingPlaceable : Placeable
             this.AreaOfMouvement = new List<NodePath>();
             targetArea = new List<Placeable>();
 
+            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
+            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
+            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
+
             targetableUnits = new List<LivingPlaceable>();
             this.AttachedEffects = new List<Effect>();
 
@@ -825,6 +829,7 @@ public class LivingPlaceable : Placeable
             List<Effect> ListEffects5 = new List<Effect>();
             List<Effect> ListEffects6 = new List<Effect>();
             List<Effect> ListEffects7 = new List<Effect>();
+            List<Effect> ListEffects8 = new List<Effect>();
 
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
@@ -835,11 +840,7 @@ public class LivingPlaceable : Placeable
             Skill skill3 = new Skill(1, 0, ListEffects3, SkillType.BLOCK, "Destruction", 0, 4, SkillEffect.DESTROY);
 
             //Knight
-
-            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-            ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
-
-            
+            /*
             ListEffects4.Add(new DamageCalculated(40, DamageCalculated.DamageScale.STR));
             ListEffects5.Add(new Damage(10, 3));
             ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
@@ -858,9 +859,9 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
-            
+            */
             //Ranger
-            /*
+
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -870,11 +871,14 @@ public class LivingPlaceable : Placeable
             ListEffects5.Add(new CreateBlockRelativeEffect(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0), new Vector3Int(0, -2, 0)));
             ListEffects6.Add(new PiercingDamageEffect(60, DamageCalculated.DamageScale.DEXT));
             ListEffects7.Add(new CreateZipLine(11, new Vector3Int(0, 1, 0)));
+            ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 2));
+            ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 2, 2, true, ActivationType.BEGINNING_OF_TURN));
             
             Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
             Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Zipline", 1, 5, SkillEffect.NONE, SkillArea.TOPBLOCK);
+            Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.ALREADYTARGETED, "CLimbing SKills", 1, 5);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -883,9 +887,9 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill5);
             Skills.Add(skill6);
             Skills.Add(skill7);
-            */
+            Skills.Add(skill8);
+
             //Mage
-            
             /*
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));

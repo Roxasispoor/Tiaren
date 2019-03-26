@@ -899,14 +899,14 @@ public class Grid : MonoBehaviour
     /// <param name="highrange"></param>
     /// <param name="viewRange"> True for physical attacks to show the range on the floor</param>
     /// <returns></returns>
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange, bool viewRange)
+    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
     {
         int remainingrangeYZ; //remaining range
         int dirx; //x direction : 0 / -1 / 1
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
-        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange, viewRange);
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange, viewRange, shift);
 
         //Now case when x > 0
         dirx = 1;
@@ -920,7 +920,7 @@ public class Grid : MonoBehaviour
             if (x < sizeX)
             {
                 //exploring in y and z
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange, shift);
             }
         }
 
@@ -933,7 +933,7 @@ public class Grid : MonoBehaviour
             if (x >= 0)
             {
                 //Exploring in y and z 
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange);
+                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange, shift);
             }
         }
 
@@ -956,7 +956,7 @@ public class Grid : MonoBehaviour
     /// <param name="dirx">x direction (0,-1,1)</param>
     /// <param name="dirz">z direction (0,-1,1)</param>
     private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange, bool viewRange)
+        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
     {
         int diry = 0; //y direction
         //real block position
@@ -975,7 +975,7 @@ public class Grid : MonoBehaviour
                     if (y < sizeY)
                     {
                         //trying to see the targeted block, if true, adding it to the target list
-                        if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
+                        if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                         {
                             Vector3Int newblock = new Vector3Int(x, y, z);
                             targetableblocs.Add(newblock);
@@ -998,8 +998,9 @@ public class Grid : MonoBehaviour
                 int y = (int)Playerposition.y + k;
                 if (y >= 0)
                 {
+
                     //trying to see the targeted block, if true, adding it to the target list
-                    if (GridMatrix[x, y, z] != null && (throughtblocks || !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition)))
+                    if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                     {
                         Vector3Int newblock = new Vector3Int(x, y, z);
                         targetableblocs.Add(newblock);
@@ -1019,14 +1020,14 @@ public class Grid : MonoBehaviour
     /// <param name="i">number of block on x axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
     private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int dirx, bool throughtblocks, bool highrange, bool viewRange)
+        int i, int dirx, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
     {
         int dirz = 0; //z direction
         int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
         //real block position
         int x = (int)Playerposition.x + i;
 
-        //Case z   >= 0
+        //Case z >= 0
         for (int j = 0; j <= trueremainingrange; j++)
         {
             //new remaining range
@@ -1040,13 +1041,13 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
-                        && (throughtblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition)))
+                        && (throughtblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
                         Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
                         targetableblocs.Add(newblock);
                     }
                 }
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange, shift);
             }
             dirz = 1;
         }
@@ -1066,14 +1067,14 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight and if so, add it to the bloc list
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
-                        && (throughtblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition)))
+                        && (throughtblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
                         Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
                         targetableblocs.Add(newblock);
                     }
                 }
                 //Search on the y axis
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange, shift);
             }
         }
     }
@@ -1089,7 +1090,7 @@ public class Grid : MonoBehaviour
     /// <param name="dirz">x direction</param>
     /// <param name="Playerposition"></param>
     /// <returns>True if ther is a colision</returns>
-    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition)
+    public bool RayCastBlock(int x, int y, int z, int dirx, int diry, int dirz, Vector3 Playerposition, Vector3 shift)
     {
         Vector3 playerside;
         Vector3 blockside;
@@ -1112,12 +1113,13 @@ public class Grid : MonoBehaviour
         {
             case 0:
                 return false;
+
             //One axis = straight line, i only check for any obstacle on that line
             case 1:
                 //facing the block
-                playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y + diry * 0.5f, Playerposition.z + dirz * 0.5f);
+                playerside = new Vector3(Playerposition.x + dirx * 0.485f, Playerposition.y + diry * 0.485f, Playerposition.z + dirz * 0.485f);
                 //facing the player
-                blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y - diry * 0.5f, Playerposition.z + z - dirz * 0.5f);
+                blockside = new Vector3(Playerposition.x + x - dirx * 0.485f, Playerposition.y + y + shift.y - diry * 0.485f, Playerposition.z + z - dirz * 0.485f);
 
                 //if the block is stuck to the player
                 if (Vector3.Distance(playerside, blockside) < 0.1)
@@ -1132,17 +1134,17 @@ public class Grid : MonoBehaviour
                 if (activex == 1)
                 {
                     //setting first interest point
-                    blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y, Playerposition.z + z);
+                    blockside = new Vector3(Playerposition.x + x - dirx * 0.485f, Playerposition.y + y + shift.y, Playerposition.z + z);
                     //checking for y axis
                     if (activey == 1)
                     {
                         //setting first interest point
-                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.485f + shift.y, Playerposition.z + z);
                         //Do i really need to shoot if there is a wall ?
                         if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                         {
                             //setting player interest point and shooting
-                            playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x + dirx * 0.485f, Playerposition.y, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1151,7 +1153,7 @@ public class Grid : MonoBehaviour
                         if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y+diry, (int)Playerposition.z].IsLiving())
                         {
                             //setting player interest point and shooting
-                            playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.485f, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1161,17 +1163,17 @@ public class Grid : MonoBehaviour
                     //same with z
                     else
                     {
-                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
+                        blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y + shift.y, Playerposition.z + z - dirz * 0.485f);
                         if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                         {
-                            playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
+                            playerside = new Vector3(Playerposition.x + dirx * 0.485f, Playerposition.y, Playerposition.z);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
                         }
                         if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                         {
-                            playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
+                            playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.485f);
                             if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                                 return false;
@@ -1183,18 +1185,18 @@ public class Grid : MonoBehaviour
                 //same with plane yz
                 else
                 {
-                    blockside = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
-                    blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+                    blockside = new Vector3(Playerposition.x + x, Playerposition.y + y + shift.y, Playerposition.z + z - dirz * 0.485f);
+                    blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.485f + shift.y, Playerposition.z + z);
                     if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                     {
-                        playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
+                        playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.485f);
                         if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                             return false;
                     }
                     if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y+diry, (int)Playerposition.z].IsLiving())
                     {
-                        playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
+                        playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.485f, Playerposition.z);
                         if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask) ||
                             !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask))
                             return false;
@@ -1207,36 +1209,36 @@ public class Grid : MonoBehaviour
             //if even one of them is free to go, then that mean i can target the block
             case 3:
                 //setting block's interest points
-                blockside = new Vector3(Playerposition.x + x - dirx * 0.5f, Playerposition.y + y, Playerposition.z + z);
-                blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y, Playerposition.z + z - dirz * 0.5f);
-                blockside3 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.5f, Playerposition.z + z);
+                blockside = new Vector3(Playerposition.x + x - dirx * 0.485f, Playerposition.y + y + shift.y, Playerposition.z + z);
+                blockside2 = new Vector3(Playerposition.x + x, Playerposition.y + y + shift.y, Playerposition.z + z - dirz * 0.485f);
+                blockside3 = new Vector3(Playerposition.x + x, Playerposition.y + y - diry * 0.485f + shift.y, Playerposition.z + z);
 
                 //Do i really need to shoot if there is a wall ?
                 if (GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x + dirx, (int)Playerposition.y, (int)Playerposition.z].IsLiving())
                 {
                     //setting player interest point and shooting
-                    playerside = new Vector3(Playerposition.x + dirx * 0.5f, Playerposition.y, Playerposition.z);
-                    if (!Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                    playerside = new Vector3(Playerposition.x + dirx * 0.485f, Playerposition.y, Playerposition.z);
+                    if (!Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.1f, layerMask))
                         return false;
                 }
                 //same
                 if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z + dirz] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y, (int)Playerposition.z+dirz].IsLiving())
                 {
-                    playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.5f);
-                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                    playerside = new Vector3(Playerposition.x, Playerposition.y, Playerposition.z + dirz * 0.485f);
+                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.1f, layerMask))
                         return false;
                 }
                 //same
                 if (GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z] == null || GridMatrix[(int)Playerposition.x, (int)Playerposition.y + diry, (int)Playerposition.z].IsLiving())
                 {
-                    playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.5f, Playerposition.z);
-                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.15f, layerMask)
-                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.15f, layerMask))
+                    playerside = new Vector3(Playerposition.x, Playerposition.y + diry * 0.485f, Playerposition.z);
+                    if (!Physics.Raycast(playerside, blockside - playerside, Vector3.Distance(playerside, blockside) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside2 - playerside, Vector3.Distance(playerside, blockside2) - 0.1f, layerMask)
+                        || !Physics.Raycast(playerside, blockside3 - playerside, Vector3.Distance(playerside, blockside3) - 0.1f, layerMask))
                         return false;
                 }
                 return true;
@@ -1338,8 +1340,11 @@ public class Grid : MonoBehaviour
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange - 1) + distance.y)) * maxrange) : distance.y);
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + Math.Abs(yrange);
-            if ((totaldist == 0 && minrange ==0)|| totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z, 
-                distance.x >=0 ? (distance.x ==0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
+            int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
+            int diry = distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1;
+            int dirz = distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1;
+            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+               dirx, diry, dirz, Playerposition, new Vector3(0,0,0))))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
@@ -1350,8 +1355,11 @@ public class Grid : MonoBehaviour
             Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
             float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange-1)+distance.y))*maxrange) : distance.y);
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + Math.Abs(yrange);
+            int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
+            int diry = distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1;
+            int dirz = distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1;
             if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
-                distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1, distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1, distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1, Playerposition)))
+                dirx, diry, dirz, Playerposition, new Vector3(0, 0, 0))))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
             }
