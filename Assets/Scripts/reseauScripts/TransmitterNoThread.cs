@@ -241,8 +241,8 @@ public class TransmitterNoThread : MonoBehaviour
                         NetIdeable.currentMaxId = charac1.netId >= NetIdeable.currentMaxId ? charac1.netId + 1 : NetIdeable.currentMaxId;
                         foreach (Skill skill in charac1.Skills)
                         {
-
-                            skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                            Debug.LogError("TransmitterNoThread: need to reimplement the load of abilities");
+                            //skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
                         }
                     }
                     else if (newLivingStats.playerPosesser == "player2")
@@ -265,8 +265,8 @@ public class TransmitterNoThread : MonoBehaviour
 
                         foreach (Skill skill in charac1.Skills)
                         {
-
-                            skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
+                            Debug.LogError("TransmitterNoThread: need to reimplement the load of abilities");
+                            //skill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + skill.SkillName);
                         }
 
 

@@ -133,10 +133,10 @@ public class UIManager : MonoBehaviour
             Button[] buttons = skillZone.transform.GetComponentsInChildren<Button>();
             foreach (Button button in buttons)
             {
-                if (button.GetComponent<SkillInfo>().Skill.TourCooldownLeft > 0)
+                if (button.GetComponent<SkillInfo>().Skill.cooldownTurnLeft > 0)
                 {
                     button.GetComponent<Image>().color = Color.gray;
-                    button.transform.Find("Cooldown").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.TourCooldownLeft.ToString();
+                    button.transform.Find("Cooldown").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.cooldownTurnLeft.ToString();
                 }
                 else if(button.GetComponent<SkillInfo>().Skill.Cost > GameManager.instance.PlayingPlaceable.CurrentPA)
                 {
@@ -231,7 +231,7 @@ public class UIManager : MonoBehaviour
             ability.transform.localPosition = new Vector3(firstAbility + abilityGap * numberInstantiated, 0);
             button.GetComponentInChildren<Image>().sprite = skill.AbilitySprite;
             button.transform.Find("Cost").GetComponent<Text>().text = button.GetComponent<SkillInfo>().Skill.Cost.ToString();
-            if (skill.TourCooldownLeft > 0)
+            if (skill.cooldownTurnLeft > 0)
             {
                 //button.GetComponent<Text>().text = skill.TourCooldownLeft.ToString();
                 button.GetComponentInChildren<Image>().color = Color.gray;

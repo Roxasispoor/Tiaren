@@ -835,9 +835,11 @@ public class LivingPlaceable : Placeable
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
 
+            /*
             Skill skill1 = new Skill(1, 0, ListEffects, SkillType.BLOCK, "Push", 0, 2, SkillEffect.MOVE, SkillArea.NONE);
             Skill skill2 = new Skill(1, 0, ListEffects2, SkillType.BLOCK, "Creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
             Skill skill3 = new Skill(1, 0, ListEffects3, SkillType.BLOCK, "Destruction", 0, 4, SkillEffect.DESTROY);
+            */
 
             //Knight
             /*
@@ -874,6 +876,7 @@ public class LivingPlaceable : Placeable
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 2));
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 2, 2, true, ActivationType.BEGINNING_OF_TURN));
             
+            /*
             Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
             Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
@@ -888,6 +891,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill6);
             Skills.Add(skill7);
             Skills.Add(skill8);
+            */
 
             //Mage
             /*
@@ -1199,13 +1203,14 @@ public class LivingPlaceable : Placeable
         {
             if (isNewSkill)
             {
-
+                /*
                 newSkill = JsonUtility.FromJson<Skill>(line);
                 newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 newSkill.InitPattern();
                 newSkill.InitPatternUse();
-                isNewSkill = false;
+                isNewSkill = false;*/
+                //TODO: Rework with new JSON
 
             }
             else

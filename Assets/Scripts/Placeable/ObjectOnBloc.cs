@@ -56,9 +56,11 @@ public class ObjectOnBloc : NetIdeable {
         if(isPickable)
         {
             PickObjectOnBlockEffect eff = new PickObjectOnBlockEffect(this);
-            Skill taker = new Skill(0, 0, new List<Effect>() { eff }, SkillType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
-            taker.Description = "Pick up the object on this block";
-            givenSkills.Add(taker);
+            //TODO: create the skill with the new architecture
+
+            //Skill taker = new Skill(0, 0, new List<Effect>() { eff }, SkillType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
+            //taker.Description = "Pick up the object on this block";
+            //givenSkills.Add(taker);
         }
     }
     public virtual void Destroy()

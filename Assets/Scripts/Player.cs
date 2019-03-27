@@ -1351,13 +1351,14 @@ public class Player : NetworkBehaviour
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
         {
+            /*
             if (skill.SkillType == SkillType.ALREADYTARGETED)
             {
                 skill.UseTargeted(skill);
                 RpcUseSkill(numSkill, netidTarget, new int[0]);
             }
             else
-            {
+            {*/
                 if (netidArea.Length == 0)
                 {
                     skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget) });
@@ -1483,7 +1484,7 @@ public class Player : NetworkBehaviour
                                }
                            }
                   */
-            }
+            //}
         }
     }
 
@@ -1513,14 +1514,16 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcUseSkill(int numSkill, int netidTarget, int[] netidArea)
     {
+        Debug.LogError("Attention aux already targeted");
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
+        /*
         if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
         {
             skill.UseTargeted(skill);
             GameManager.instance.PlayingPlaceable.ResetTargets();
         }
         else
-        {
+        {*/
             NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
             GameManager.instance.PlayingPlaceable.ResetTargets();
@@ -1546,7 +1549,7 @@ public class Player : NetworkBehaviour
                 rayselect.EffectArea = 0;
                 rayselect.Pattern = SkillArea.NONE;
             }
-        }
+        //}
         if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
             GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();

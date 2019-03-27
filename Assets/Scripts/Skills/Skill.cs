@@ -7,33 +7,53 @@ using UnityEngine;
 /// Class representing a skill usable by player through a character of his team
 /// </summary>
 [Serializable]
-public class Skill
+public abstract class Skill
 {
+    // ####### NEW #########
+    private string typeName;
+
     [SerializeField]
     private string skillName;
+    public string SkillName { get { return skillName; } }
+
     [SerializeField]
     private int cost;
+    public int Cost { get { return cost; } }
+
     [SerializeField]
-    private int tourCooldownLeft;
+    public int cooldownTurnLeft;
+
     [SerializeField]
     private int cooldown;
+    public int Cooldown { get { return cooldown; } }
+
+    // Mettre dans le JSON le path du sprite ?
+    private Sprite abilitySprite;
+    public Sprite AbilitySprite { get { return AbilitySprite; } }
+
+    [SerializeField]
+    private string description = "Use the object";
+    public string Description { get { return Description; } }
+
+    // ####### OLD #########
+
+
     [SerializeField]
     private int maxRange;
     [SerializeField]
     private int minRange;
     [SerializeField]
-    private int effectarea = 1;
+    private int sizeZone = 1;
+
     [SerializeField]
     public List<Effect> effects;
-    [SerializeField]
-    private string description = "Use the object";
-    private Sprite abilitySprite;
+    
     [SerializeField]
     private SkillType skillType;
     [SerializeField]
-    private SkillArea skillarea;
+    private SkillArea skillArea;
     [SerializeField]
-    private SkillEffect skilleffect;
+    private SkillEffect skillEffect;
     [SerializeField]
     private int patternNumber;
     private delegate List<Placeable> PatternVision(Vector3 position, List<Placeable> vect);
@@ -49,166 +69,11 @@ public class Skill
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
 
-    public SkillType SkillType
+    public Skill(string typeName)
     {
-        get
-        {
-            return skillType;
-        }
+        this.typeName = typeName;
 
-        set
-        {
-            skillType = value;
-        }
-    }
-
-    public SkillArea SkillArea
-    {
-        get
-        {
-            return skillarea;
-        }
-
-        set
-        {
-            skillarea = value;
-        }
-    }
-
-    public SkillEffect SkillEffect
-    {
-        get
-        {
-            return skilleffect;
-        }
-
-        set
-        {
-            skilleffect = value;
-        }
-    }
-
-    public int TourCooldownLeft
-    {
-        get
-        {
-            return tourCooldownLeft;
-        }
-
-        set
-        {
-            tourCooldownLeft = value;
-        }
-    }
-
-    public int Cooldown
-    {
-        get
-        {
-            return cooldown;
-        }
-
-        set
-        {
-            cooldown = value;
-        }
-    }
-
-    public int EffectArea
-    {
-        get
-        {
-            return effectarea;
-        }
-
-        set
-        {
-            effectarea = value;
-        }
-    }
-
-    public int Maxrange
-    {
-        get
-        {
-            return maxRange;
-        }
-
-        set
-        {
-            maxRange = value;
-        }
-    }
-
-    public int Minrange
-    {
-        get
-        {
-            return minRange;
-        }
-
-        set
-        {
-            minRange = value;
-        }
-    }
-
-    public int Cost
-    {
-        get
-        {
-            return cost;
-        }
-
-        set
-        {
-            cost = value;
-        }
-    }
-
-    public string SkillName
-    {
-        get
-        {
-            return skillName;
-        }
-
-        set
-        {
-            skillName = value;
-        }
-    }
-
-    public Sprite AbilitySprite
-    {
-        get
-        {
-            return abilitySprite;
-        }
-
-        set
-        {
-            abilitySprite = value;
-        }
-    }
-
-    public string Description
-    {
-        get
-        {
-            return description;
-        }
-
-        set
-        {
-            description = value;
-        }
-    }
-
-    public Skill(int cost, int cooldown, List<Effect> effects, SkillType skillType, string skillName, 
-        int rangeMin,int rangeMax, SkillEffect skilleffect = SkillEffect.NONE,
-        SkillArea skillarea = SkillArea.NONE, int effectarea = 1, PatternUseType patternUse = PatternUseType.NONE)
-    {
+        /*
         Cost = cost;
         Cooldown = cooldown;
         tourCooldownLeft = 0;
@@ -224,13 +89,15 @@ public class Skill
         this.patternUseType = patternUse;
         InitPattern();
         InitPatternUse();
+        */
     }
-
-    public Skill(string jsonFilePath)
+    
+    protected virtual void Init()
     {
-
+        // Lire le JSON et initialiser les viariables communes
     }
 
+    // TODO : rework les ALREADYTARGETED
     public void Activate()
     {
 
@@ -242,7 +109,7 @@ public class Skill
         GameManager.instance.State = States.UseSkill;
         GameManager.instance.ActiveSkill = this;
 
-        if (SkillType == SkillType.ALREADYTARGETED)
+        if (skillType == SkillType.ALREADYTARGETED)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
 
@@ -273,7 +140,7 @@ public class Skill
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
         if (skillType == SkillType.BLOCK || skillType == SkillType.AREA)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, false, new Vector3(0,0,0));
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0,0,0));
             List<Placeable> placeables = new List<Placeable>();
             foreach(Vector3Int pos in vect)
             {
@@ -283,16 +150,16 @@ public class Skill
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("Placeable");
-            GameManager.instance.RaycastSelector.EffectArea = EffectArea;
-            if (SkillArea == SkillArea.LINE || SkillArea == SkillArea.MIXEDAREA)
+            GameManager.instance.RaycastSelector.EffectArea = sizeZone;
+            if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
             {
-                GameManager.instance.RaycastSelector.Pattern = SkillArea;
+                GameManager.instance.RaycastSelector.Pattern = skillArea;
             }
         }
         else if (skillType == SkillType.LIVING)
         {
             
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, true, new Vector3(0, 1, 0));
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, true, new Vector3(0, 1, 0));
             List<StandardCube> range = new List<StandardCube>();
             foreach (Vector3Int pos in vect)
             {
@@ -304,7 +171,7 @@ public class Skill
             playingPlaceable.Range = range;
 
 
-            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
+            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
             List<Placeable> placeables = new List<Placeable>();
             foreach (LivingPlaceable livingPlaceable in targetUnits)
             {
@@ -321,8 +188,8 @@ public class Skill
         }
         else if (skillType == SkillType.PLACEABLE)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0, false, new Vector3(0, 0, 0));
-            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), Minrange, Maxrange, SkillArea == SkillArea.THROUGHBLOCKS, Minrange > 0);
+            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0, 0, 0));
+            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
             List<Placeable> placeables = new List<Placeable>();
             foreach (LivingPlaceable livingPlaceable in targetUnits)
             {
@@ -342,6 +209,7 @@ public class Skill
         }
     }
 
+    /*
     public bool UseTargeted(Skill skill)
     {
         if (this.tourCooldownLeft > 0)
@@ -352,9 +220,9 @@ public class Skill
         {
             return false;
         }
-        GameManager.instance.PlayingPlaceable.CurrentPA -= this.Cost;
+        GameManager.instance.PlayingPlaceable.CurrentPA -= this.cost;
         this.tourCooldownLeft = this.cooldown;
-        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        if (skill.skillType == SkillType.ALREADYTARGETED) //Simply use them
         {
             foreach (Effect eff in skill.effects)
             {
@@ -365,6 +233,7 @@ public class Skill
         }
         return true;
     }
+    */
 
     // set SkillAnimationToPlay in AnimationHandler
     public void SendAnimationInfo(List<Animator> animTargets, List<Placeable> placeableTargets, List<Vector3> positionTargets)
@@ -382,7 +251,15 @@ public class Skill
         AnimationHandler.Instance.PlayAnimation();
     }
 
-    ///TODO makes the copy and return if succeeded launching the skill
+    protected virtual bool Condition(/**/)
+    {
+        // Check PA
+        Debug.LogError("PAS DE CONDITION IMPLEMENTER");
+        return false;
+    }
+
+    public abstract bool Use(LivingPlaceable caster, List<NetIdeable> targets);
+    /*
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
         if (this.tourCooldownLeft > 0)
@@ -427,8 +304,9 @@ public class Skill
 
         GameManager.instance.ActiveSkill = null;
         return true;
-    }
+    }*/
 
+    //TODO: rework
     public string Save()
     {
         string text = JsonUtility.ToJson(this);
@@ -442,7 +320,7 @@ public class Skill
         return text;
         //File.WriteAllText(path, text);
     }
-
+/*
     public void InitPattern()
     {
         switch (patternNumber)
@@ -750,5 +628,6 @@ public class Skill
             return null;
         }
     }
+    */
 
 }

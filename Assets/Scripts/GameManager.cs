@@ -1030,9 +1030,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             // reducing cooldown of skill by 1
             foreach (Skill sk in PlayingPlaceable.Skills)
             {
-                if (sk.TourCooldownLeft > 0)
+                if (sk.cooldownTurnLeft > 0)
                 {
-                    sk.TourCooldownLeft--;
+                    sk.cooldownTurnLeft--;
                 }
             }
             player2.GetComponent<UIManager>().ChangeTurn();
