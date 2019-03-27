@@ -52,7 +52,6 @@ public class ZipLineTeleport : EffectOnObjectBloc
                 GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
                    (LivingPlaceable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0));
             }
-
         }
     }
 }

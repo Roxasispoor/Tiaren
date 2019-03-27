@@ -1,4 +1,7 @@
-﻿public enum SkillType
+﻿/// <summary>
+/// To know what you are supposed to be targetting
+/// </summary>
+public enum SkillType
 {
     /// <summary>
     /// skill targeting a living (character)
