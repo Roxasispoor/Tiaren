@@ -1,7 +1,15 @@
-﻿/// <summary>
+﻿public enum SkillTypes
+{
+    PUSH,
+    CREATE,
+    DESTROY,
+}
+
+
+/// <summary>
 /// To know what you are supposed to be targetting
 /// </summary>
-public enum SkillType
+public enum TargetType
 {
     /// <summary>
     /// skill targeting a living (character)

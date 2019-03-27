@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine.UI;
 using UnityEngine;
+using Newtonsoft.Json;
 
 [Serializable]
 public class LivingPlaceable : Placeable
@@ -46,6 +47,8 @@ public class LivingPlaceable : Placeable
     [SerializeField]
     private SpriteRenderer circleTeam;
     [SerializeField]
+    private List<SkillTypes> ChosenSkills; 
+    [SerializeField]
     private bool isDead;
     private int counterDeaths;
     private int turnsRemainingCemetery;
@@ -63,7 +66,7 @@ public class LivingPlaceable : Placeable
     private bool isTarget = false;
     private Renderer rend;
     //Shaders (used for the highlight)
-
+    
 
     public Shader originalShader;
     public Shader outlineShader;
@@ -834,12 +837,10 @@ public class LivingPlaceable : Placeable
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
-
             /*
-            Skill skill1 = new Skill(1, 0, ListEffects, SkillType.BLOCK, "Push", 0, 2, SkillEffect.MOVE, SkillArea.NONE);
-            Skill skill2 = new Skill(1, 0, ListEffects2, SkillType.BLOCK, "Creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
-            Skill skill3 = new Skill(1, 0, ListEffects3, SkillType.BLOCK, "Destruction", 0, 4, SkillEffect.DESTROY);
-            */
+            Skill skill1 = new Skill(1, 0, ListEffects, TargetType.BLOCK, "Push", 0, 2, SkillEffect.MOVE, SkillArea.NONE);
+            Skill skill2 = new Skill(1, 0, ListEffects2, TargetType.BLOCK, "Creation", 0, 4, SkillEffect.CREATE, SkillArea.TOPBLOCK);
+            Skill skill3 = new Skill(1, 0, ListEffects3, TargetType.BLOCK, "Destruction", 0, 4, SkillEffect.DESTROY);
 
             //Knight
             /*
@@ -849,10 +850,10 @@ public class LivingPlaceable : Placeable
             ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
 
-            Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(1, 2, ListEffects5, SkillType.LIVING, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill6 = new Skill(1, 3, ListEffects6, SkillType.LIVING, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill7 = new Skill(1, 2, ListEffects7, SkillType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill5 = new Skill(1, 2, ListEffects5, TargetType.LIVING, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill6 = new Skill(1, 3, ListEffects6, TargetType.LIVING, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill7 = new Skill(1, 2, ListEffects7, TargetType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -863,7 +864,7 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill7);
             */
             //Ranger
-
+            /*
             ListEffects.Add(new Push(null, this, 2, 500));
             ListEffects2.Add(new CreateBlock(Grid.instance.prefabsList[0], new Vector3Int(0, 1, 0)));
             ListEffects3.Add(new DestroyBloc());
@@ -876,12 +877,11 @@ public class LivingPlaceable : Placeable
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 2));
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 2, 2, true, ActivationType.BEGINNING_OF_TURN));
             
-            /*
-            Skill skill4 = new Skill(0, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 2, 4);
-            Skill skill5 = new Skill(0, 1, ListEffects5, SkillType.ALREADYTARGETED, "HigherGround", 0, 1);
-            Skill skill6 = new Skill(0, 1, ListEffects6, SkillType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
-            Skill skill7 = new Skill(0, 1, ListEffects7, SkillType.BLOCK, "Zipline", 1, 5, SkillEffect.NONE, SkillArea.TOPBLOCK);
-            Skill skill8 = new Skill(0, 1, ListEffects8, SkillType.ALREADYTARGETED, "CLimbing SKills", 1, 5);
+            Skill skill4 = new Skill(0, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 2, 4);
+            Skill skill5 = new Skill(0, 1, ListEffects5, TargetType.ALREADYTARGETED, "HigherGround", 0, 1);
+            Skill skill6 = new Skill(0, 1, ListEffects6, TargetType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
+            Skill skill7 = new Skill(0, 1, ListEffects7, TargetType.BLOCK, "Zipline", 1, 5, SkillEffect.NONE, SkillArea.TOPBLOCK);
+            Skill skill8 = new Skill(0, 1, ListEffects8, TargetType.ALREADYTARGETED, "CLimbing SKills", 1, 5);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -891,7 +891,6 @@ public class LivingPlaceable : Placeable
             Skills.Add(skill6);
             Skills.Add(skill7);
             Skills.Add(skill8);
-            */
 
             //Mage
             /*
@@ -904,10 +903,10 @@ public class LivingPlaceable : Placeable
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.MAG));
             ListEffects7.Add(new DestroyBloc());
             
-            Skill skill4 = new Skill(1, 1, ListEffects4, SkillType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(2, 1, ListEffects5, SkillType.BLOCK, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
-            Skill skill6 = new Skill(2, 1, ListEffects6, SkillType.BLOCK, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
-            Skill skill7 = new Skill(2, 1, ListEffects7, SkillType.AREA, "ExplosiveFireball", 2, 6, SkillEffect.DESTROY, SkillArea.MIXEDAREA, 1);
+            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill5 = new Skill(2, 1, ListEffects5, TargetType.BLOCK, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
+            Skill skill6 = new Skill(2, 1, ListEffects6, TargetType.BLOCK, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
+            Skill skill7 = new Skill(2, 1, ListEffects7, TargetType.AREA, "ExplosiveFireball", 2, 6, SkillEffect.DESTROY, SkillArea.MIXEDAREA, 1);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -1145,6 +1144,20 @@ public class LivingPlaceable : Placeable
         return placeable.IsLiving() && targetableUnits.Contains((LivingPlaceable)placeable) || targetArea != null && targetArea.Contains(placeable);
     }
 
+    public void SearchAndInstantianteSkills()
+    {
+        StreamReader reader = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
+        dynamic skills = JsonConvert.DeserializeObject(reader.ReadToEnd());
+        foreach (SkillTypes types in ChosenSkills)
+        {
+            System.Type type;
+            if (GameManager.instance.SkillDictionary.TryGetValue(types, out type))
+            {
+                Skills.Add((Skill)Activator.CreateInstance(type, skills));
+            }
+        }
+    }
+
     public void Save(string path)
     {
         //No joke keep it , it changes playerpossessser
@@ -1181,7 +1194,7 @@ public class LivingPlaceable : Placeable
     }
     public void FillLiving(StreamReader reader)
     {
-
+        
         string line;
         //Read the text from directly from the test.txt file
 
@@ -1196,21 +1209,23 @@ public class LivingPlaceable : Placeable
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
+        SearchAndInstantianteSkills()
+
+
+        /*
         bool isNewSkill = true;
         Skill newSkill = null;
-
         while ((line = reader.ReadLine()) != null)
         {
             if (isNewSkill)
             {
-                /*
+
                 newSkill = JsonUtility.FromJson<Skill>(line);
                 newSkill.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + newSkill.SkillName);
                 newSkill.effects = new List<Effect>();
                 newSkill.InitPattern();
                 newSkill.InitPatternUse();
-                isNewSkill = false;*/
-                //TODO: Rework with new JSON
+                isNewSkill = false;
 
             }
             else
@@ -1288,7 +1303,7 @@ public class LivingPlaceable : Placeable
 
             }
 
-        }
+        }*/
         reader.Close();
         //Actualize playerpossesser
         Player = Player;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 /// <summary>
 /// Class representing a skill usable by player through a character of his team
 /// </summary>
@@ -49,7 +50,7 @@ public abstract class Skill
     public List<Effect> effects;
     
     [SerializeField]
-    private SkillType skillType;
+    private TargetType skillType;
     [SerializeField]
     private SkillArea skillArea;
     [SerializeField]
@@ -69,10 +70,8 @@ public abstract class Skill
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
 
-    public Skill(string typeName)
+    public Skill(dynamic skills)
     {
-        this.typeName = typeName;
-
         /*
         Cost = cost;
         Cooldown = cooldown;
@@ -80,7 +79,7 @@ public abstract class Skill
         this.effects = effects;
         SkillName = skillName;
         this.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
-        SkillType = skillType;
+        TargetType = skillType;
         this.maxRange = rangeMax;
         this.minRange = rangeMin;
         EffectArea = effectarea;
@@ -109,7 +108,7 @@ public abstract class Skill
         GameManager.instance.State = States.UseSkill;
         GameManager.instance.ActiveSkill = this;
 
-        if (skillType == SkillType.ALREADYTARGETED)
+        if (skillType == TargetType.ALREADYTARGETED)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
 
@@ -138,7 +137,7 @@ public abstract class Skill
         playingPlaceable.ResetTargets();
         List<Vector3Int> vect = new List<Vector3Int>();
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
-        if (skillType == SkillType.BLOCK || skillType == SkillType.AREA)
+        if (skillType == TargetType.BLOCK || skillType == TargetType.AREA)
         {
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0,0,0));
             List<Placeable> placeables = new List<Placeable>();
@@ -156,7 +155,7 @@ public abstract class Skill
                 GameManager.instance.RaycastSelector.Pattern = skillArea;
             }
         }
-        else if (skillType == SkillType.LIVING)
+        else if (skillType == TargetType.LIVING)
         {
             
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, true, new Vector3(0, 1, 0));
@@ -186,7 +185,7 @@ public abstract class Skill
             playingPlaceable.TargetableUnits = targetUnits;
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("LivingPlaceable");
         }
-        else if (skillType == SkillType.PLACEABLE)
+        else if (skillType == TargetType.PLACEABLE)
         {
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0, 0, 0));
             targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
@@ -222,7 +221,7 @@ public abstract class Skill
         }
         GameManager.instance.PlayingPlaceable.CurrentPA -= this.cost;
         this.tourCooldownLeft = this.cooldown;
-        if (skill.skillType == SkillType.ALREADYTARGETED) //Simply use them
+        if (skill.skillType == TargetType.ALREADYTARGETED) //Simply use them
         {
             foreach (Effect eff in skill.effects)
             {

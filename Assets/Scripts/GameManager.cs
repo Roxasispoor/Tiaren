@@ -164,6 +164,10 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public Material materialPreviewDestroy;
     /// <summary>
+    /// Dictionary to make the correspondance between the choices of the players and the skill to create
+    /// </summary>
+    public Dictionary<SkillTypes, System.Type> SkillDictionary;
+    /// <summary>
     /// Display number of the current turn
     /// </summary>
     /// 

@@ -17,7 +17,7 @@ public class ZipLine : ObjectOnBloc {
         dropOnDeathBlocUnder = false;
         Debug.LogError("No skill created Yet !");
         //TODO: create the skill
-        //Skill newSkill = new Skill(0, 0, new List<Effect>() { new ZipLineTeleport(this) }, SkillType.ALREADYTARGETED, "Zip", 0, 0);
+        //Skill newSkill = new Skill(0, 0, new List<Effect>() { new ZipLineTeleport(this) }, TargetType.ALREADYTARGETED, "Zip", 0, 0);
         //newSkill.Description = "Use the Zipline to go down";
         //GivenSkills.Add(newSkill);
         //Resources.Load<Sprite>("UI_Images/Abilities" + newSkill.SkillName);
