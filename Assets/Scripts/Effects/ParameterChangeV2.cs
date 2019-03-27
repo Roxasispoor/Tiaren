@@ -43,6 +43,7 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         this.numberMethod = numberMethod;
         Initialize(Target);
     }
+
     public ParameterChangeV2(ParameterChangeV2<T,TProperty> other):base(other)
     {
         this.value = other.value;
@@ -61,7 +62,7 @@ public override void Use()
     {
         if(Target==null)
         {
-            throw new Exception("target is null in parameterchange, impossible!");
+            Target = GameManager.instance.PlayingPlaceable;
         }
         MemberExpression member = (MemberExpression)expression.Body;
         MemberInfo property = member.Member;
