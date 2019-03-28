@@ -13,14 +13,21 @@ class SwordAttack: Skill
         base.Init();
     }
 
-
-    public override bool Use(LivingPlaceable caster, NetIdeable target)
+    protected override bool CheckSpecificCondition(LivingPlaceable caster, NetIdeable target)
     {
-        
-        if (target is LivingPlaceable)
+        if (!target.IsLiving())
         {
-            target
+            Debug.LogError("Trying to launch an attack on a block");
+            return false;
         }
+        return true;
+    }
+
+
+    public override void UseSpecific(LivingPlaceable caster, NetIdeable target)
+    {
+
+        //TODO: gérer les animations
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
