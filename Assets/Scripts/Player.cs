@@ -823,7 +823,7 @@ public class Player : NetworkBehaviour
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable, Skill skill)
     {
         
-        if (skill.SkillType == SkillType.ALREADYTARGETED)
+        if (skill.TargetType == TargetType.ALREADYTARGETED)
         {
             Vector3 Playerpos = playingPlaceable.GetPosition();
             if (skill.SkillEffect == SkillEffect.UP)
@@ -846,7 +846,7 @@ public class Player : NetworkBehaviour
         playingPlaceable.ResetHighlightSkill();
         playingPlaceable.ResetAreaOfMovement();
         playingPlaceable.ResetTargets();
-        if (skill.SkillType == SkillType.BLOCK || skill.SkillType == SkillType.AREA)
+        if (skill.TargetType == TargetType.BLOCK || skill.TargetType == TargetType.AREA)
         {
             List<Vector3Int> vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), skill.Minrange, skill.Maxrange, skill.SkillArea == SkillArea.THROUGHBLOCKS, skill.Minrange > 0);
 
@@ -854,7 +854,7 @@ public class Player : NetworkBehaviour
             {
                 vect = Grid.instance.DrawCrossPattern(vect, playingPlaceable.GetPosition());
             }
-            else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
+            else if (skill.TargetType == TargetType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
             {
                 vect = Grid.instance.TopBlockPattern(vect);
             }
@@ -886,7 +886,7 @@ public class Player : NetworkBehaviour
             }
 
         }
-        else if (skill.SkillType == SkillType.LIVING)
+        else if (skill.TargetType == TargetType.LIVING)
         {
             List<LivingPlaceable> targetableunits = new List<LivingPlaceable>();
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
@@ -1352,7 +1352,7 @@ public class Player : NetworkBehaviour
         if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
         {
             /*
-            if (skill.SkillType == SkillType.ALREADYTARGETED)
+            if (skill.TargetType == TargetType.ALREADYTARGETED)
             {
                 skill.UseTargeted(skill);
                 RpcUseSkill(numSkill, netidTarget, new int[0]);
@@ -1400,7 +1400,7 @@ public class Player : NetworkBehaviour
                                                blockallowed = true;
                                            }
                                        }
-                                       else if (skill.SkillType == SkillType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
+                                       else if (skill.TargetType == TargetType.AREA || skill.SkillArea == SkillArea.THROUGHBLOCKS || skill.SkillArea == SkillArea.TOPBLOCK)
                                        {
                                            if (Pos.y == Grid.instance.sizeY - 1 || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z] == null || Grid.instance.GridMatrix[Pos.x, Pos.y + 1, Pos.z].IsLiving())
                                            {
@@ -1435,7 +1435,7 @@ public class Player : NetworkBehaviour
                                            blockallowed = false;
                                            Vector3Int PlaceablePos = GameManager.instance.FindLocalObject(blockid).GetPosition();
                                            Vector3Int TargetDist = PlaceablePos - Pos;
-                                           //if (skill.SkillType == SkillType.AREA || (skill.SkillType == SkillType.SELF && skill.SkillArea == SkillArea.SURROUNDINGLIVING) {
+                                           //if (skill.TargetType == TargetType.AREA || (skill.TargetType == TargetType.SELF && skill.SkillArea == SkillArea.SURROUNDINGLIVING) {
                                            if (skill.SkillArea == SkillArea.LINE)
                                            {
                                                if (state % 2 == 0)
@@ -1453,7 +1453,7 @@ public class Player : NetworkBehaviour
                                                    }
                                                }
                                            }
-                                           else if (skill.SkillType == SkillType.AREA)
+                                           else if (skill.TargetType == TargetType.AREA)
                                            {
                                                bool topblock = true;
                                                if (skill.SkillArea == SkillArea.MIXEDAREA)
@@ -1517,7 +1517,7 @@ public class Player : NetworkBehaviour
         Debug.LogError("Attention aux already targeted");
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         /*
-        if (skill.SkillType == SkillType.ALREADYTARGETED) //Simply use them
+        if (skill.TargetType == TargetType.ALREADYTARGETED) //Simply use them
         {
             skill.UseTargeted(skill);
             GameManager.instance.PlayingPlaceable.ResetTargets();

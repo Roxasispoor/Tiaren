@@ -58,7 +58,7 @@ public class ObjectOnBloc : NetIdeable {
             PickObjectOnBlockEffect eff = new PickObjectOnBlockEffect(this);
             //TODO: create the skill with the new architecture
 
-            //Skill taker = new Skill(0, 0, new List<Effect>() { eff }, SkillType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
+            //Skill taker = new Skill(0, 0, new List<Effect>() { eff }, TargetType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
             //taker.Description = "Pick up the object on this block";
             //givenSkills.Add(taker);
         }
