@@ -43,7 +43,7 @@ public abstract class Skill
     [SerializeField]
     private int minRange;
     [SerializeField]
-    private int sizeZone = 1;
+    private int size = 1;
 
     [SerializeField]
     public List<Effect> effects;
@@ -61,17 +61,16 @@ public abstract class Skill
 
     [SerializeField]
     private PatternUseType patternUseType;
-    public delegate List<Placeable> PatternUse(Placeable target);
-    public PatternUse patternUse;
+    //public delegate List<Placeable> PatternUse(Placeable target);
+    //public PatternUse patternUse;
 
     [SerializeField]
     //private ConditionType conditionType;
     public delegate bool DelegateCondition();
     public DelegateCondition condition;
 
-    public Skill(string typeName)
+    public Skill()
     {
-        this.typeName = typeName;
 
         /*
         Cost = cost;
@@ -97,6 +96,12 @@ public abstract class Skill
         // Lire le JSON et initialiser les viariables communes
     }
 
+    public abstract bool Use(LivingPlaceable caster, NetIdeable target);
+
+    protected abstract List<Placeable> PatterVision(Vector3 position, List<Placeable> vect);
+
+    //protected abstract List<Placeable> PatternUse(Placeable target);
+
     // TODO : rework les ALREADYTARGETED
     public void Activate()
     {
@@ -113,14 +118,15 @@ public abstract class Skill
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
 
-            
+            Debug.LogError("No implemented for alreadyTargeted");
+            /*
             if (patternUse(GameManager.instance.PlayingPlaceable) != null)
             {
                 GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId, new int[0], 0);
             } else
             {
                 return;
-            }
+            }*/
             
         } else
         {
@@ -150,7 +156,7 @@ public abstract class Skill
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("Placeable");
-            GameManager.instance.RaycastSelector.EffectArea = sizeZone;
+            GameManager.instance.RaycastSelector.EffectArea = size;
             if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
             {
                 GameManager.instance.RaycastSelector.Pattern = skillArea;
@@ -251,14 +257,15 @@ public abstract class Skill
         AnimationHandler.Instance.PlayAnimation();
     }
 
-    protected virtual bool Condition(/**/)
+    protected virtual bool CheckCondition()
     {
         // Check PA
-        Debug.LogError("PAS DE CONDITION IMPLEMENTER");
-        return false;
+        if (cooldownTurnLeft > 0)
+        {
+            return false;
+        }
+        return true;
     }
-
-    public abstract bool Use(LivingPlaceable caster, List<NetIdeable> targets);
     /*
     public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
     {
