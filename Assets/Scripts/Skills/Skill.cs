@@ -114,7 +114,7 @@ public abstract class Skill
 
     public bool Use(LivingPlaceable caster, NetIdeable target)
     {
-        if (!CheckCondition(caster, target))
+        if (!CheckConditions(caster, target))
         {
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
@@ -129,16 +129,16 @@ public abstract class Skill
     }
 
 
-    protected abstract bool CheckSpecificCondition(LivingPlaceable caster, NetIdeable target);
+    protected abstract bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target);
 
-    public virtual bool CheckCondition(LivingPlaceable caster, NetIdeable target)
+    public virtual bool CheckConditions(LivingPlaceable caster, NetIdeable target)
     {
         // Check PA se fait plus haut
         if (cooldownTurnLeft > 0)
         {
             return false;
         }
-        return CheckSpecificCondition(caster, target);
+        return CheckSpecificConditions(caster, target);
     }
 
     protected abstract List<Placeable> PatterVision(Vector3 position, List<Placeable> vect);

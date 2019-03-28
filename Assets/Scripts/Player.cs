@@ -1000,16 +1000,6 @@ public class Player : NetworkBehaviour
         transform.Find("TeamCanvas").gameObject.SetActive(true);
     }
 
-    public void DispatchSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
-    {
-        Skill skill = caster.Skills[skillID];
-        if (skill.Cooldown == 0 && GameManager.instance.PlayingPlaceable == caster)
-        {
-            GameManager.instance.UseSkill(skillID, caster, targets);
-        }
-    }
-
-
     //MOVING WITH BEZIER
 
     /// <summary>

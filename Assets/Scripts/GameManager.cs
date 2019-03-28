@@ -1095,17 +1095,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             BeginningOfTurn();
         }
     }
-
-    //TODO : MANAGE SKILL CREATION AND USAGE (WAITING FOR SKILL'S PROPER IMPLEMENTATION)
-    //Make a copy from model skill in skills, and fill with additional info (caster, targets)
-    public void UseSkill(int skillID, LivingPlaceable caster, List<NetIdeable> targets)
-    {
-        Skill skill = PlayingPlaceable.Skills[skillID];
-        if (caster.CurrentPA > skill.Cost && skill.Use(caster, targets))
-        {
-            caster.CurrentPA = caster.CurrentPA - skill.Cost > 0 ? caster.CurrentPA - skill.Cost : 0; //On clamp à 0, on est pas trop sur de ce qui a pu se passer dans le use
-        }
-    }
+    
     public NetIdeable FindLocalIdeable(int id)
     {
 
