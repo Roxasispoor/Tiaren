@@ -7,13 +7,19 @@ class SwordAttack: Skill
     [SerializeField]
     private int power;
 
-    protected override void Init()
+    public SwordAttack(string JSON): base(JSON)
     {
-        // Lire le JSON
-        base.Init();
+        dynamic deserializedSkill = Newtonsoft.Json.JsonConvert.DeserializeObject(JSON);
+        base.Init((SkillInfo)deserializedSkill.SwordAttack);
+        InitSpecific(deserializedSkill.SwordAttack);
     }
 
-    protected override bool CheckSpecificCondition(LivingPlaceable caster, NetIdeable target)
+    protected void InitSpecific(dynamic deserializedSkill)
+    {
+        power = (int)deserializedSkill.power;
+    }
+
+    protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
         if (!target.IsLiving())
         {
@@ -24,10 +30,13 @@ class SwordAttack: Skill
     }
 
 
-    public override void UseSpecific(LivingPlaceable caster, NetIdeable target)
+    protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-
+        
         //TODO: gérer les animations
+        DamageCalculated damageCalculated = new DamageCalculated(power, DamageCalculated.DamageScale.STR);
+        damageCalculated.Launcher = caster;
+        target.DispatchEffect(damageCalculated);
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
