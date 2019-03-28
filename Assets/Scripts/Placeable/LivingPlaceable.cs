@@ -1147,13 +1147,13 @@ public class LivingPlaceable : Placeable
     public void SearchAndInstantianteSkills()
     {
         StreamReader reader = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
-        dynamic skills = JsonConvert.DeserializeObject(reader.ReadToEnd());
+        string JSON = reader.ReadToEnd();
         foreach (SkillTypes types in ChosenSkills)
         {
             System.Type type;
             if (GameManager.instance.SkillDictionary.TryGetValue(types, out type))
             {
-                Skills.Add((Skill)Activator.CreateInstance(type, skills));
+                Skills.Add((Skill)Activator.CreateInstance(type, JSON));
             }
         }
     }
@@ -1209,7 +1209,7 @@ public class LivingPlaceable : Placeable
         Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
         newLivingStats.FillLiving(this);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
-        SearchAndInstantianteSkills()
+        SearchAndInstantianteSkills();
 
 
         /*
