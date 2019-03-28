@@ -51,7 +51,6 @@ public class Push : EffectOnPlaceable
 
     public Push(int nbCases, int damage,Vector3 direction) :this(nbCases,damage)
     {
-
         this.direction = direction;
         isDirectionFromPosition = false;
         doesHeightCount = true;

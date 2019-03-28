@@ -15,14 +15,15 @@ public abstract class Skill
     /// </summary>
     public class SkillInfo
     {
-        string skillName;
-        int cost;
-        int cooldown;
-        string description = "Use the object";
-        int maxRange;
-        int minRange;
-        int sizeZone = 1;
-        TargetType targetType;
+        public string skillName;
+        public int cost;
+        public int cooldown;
+        public string description = "Use the object";
+        public int maxRange;
+        public int minRange;
+        public int sizeZone = 1;
+        public TargetType targetType;
+        public string spritePath;
     }
     
     // ####### NEW #########
@@ -61,9 +62,6 @@ public abstract class Skill
     private int minRange;
     [SerializeField]
     private int sizeZone = 1;
-
-    [SerializeField]
-    public List<Effect> effects;
     
     [SerializeField]
     private TargetType targetType;
@@ -96,19 +94,19 @@ public abstract class Skill
         */
     }
     
-    protected virtual void Init(dynamic JSON)
+    protected virtual void Init(SkillInfo info)
     {
         // Lire le JSON et initialiser les viariables communes
-        skillName = JSON.skillName;
-        cost = JSON.cost;
-        cooldown = JSON.cooldown;
-        spritePath = JSON.spritePath;
+        skillName = info.skillName;
+        cost = info.cost;
+        cooldown = info.cooldown;
+        spritePath = info.spritePath;
         abilitySprite = Resources.Load<Sprite>(spritePath);
-        description = JSON.description;
-        maxRange = JSON.maxRange;
-        minRange = JSON.minRange;
-        sizeZone = JSON.sizeZone;
-        targetType = JSON.targetType;
+        description = info.description;
+        maxRange = info.maxRange;
+        minRange = info.minRange;
+        sizeZone = info.sizeZone;
+        targetType = info.targetType;
     }
 
 
