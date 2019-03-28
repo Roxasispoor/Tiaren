@@ -31,18 +31,18 @@ public class PushSkill : Skill
         target.DispatchEffect(effectToConsider);
     }
 
-    protected override bool CheckSpecificCondition(LivingPlaceable caster, NetIdeable target)
+    protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        if(target as Placeable == null)
+        return PatternPush(position, vect);
+    }
+
+    protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
+    {
+        if (target as Placeable == null)
         {
             Debug.LogError("target is not a placeable! Not good in push");
             return false;
         }
         return true;
-    }
-
-    protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
-    {
-        throw new System.NotImplementedException();
     }
 }

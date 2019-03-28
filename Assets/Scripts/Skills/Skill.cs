@@ -66,6 +66,8 @@ public abstract class Skill
     [SerializeField]
     private TargetType targetType;
 
+    private List<Effect> effects;
+
     //TO REMOVE
     [SerializeField]
     private SkillArea skillArea;
@@ -361,37 +363,6 @@ public abstract class Skill
         return text;
         //File.WriteAllText(path, text);
     }
-/*
-    public void InitPattern()
-    {
-        switch (patternNumber)
-        {
-            case 0:
-                patternVision = new PatternVision(Pattern0);
-                break;
-            case 1:
-                patternVision = new PatternVision(Pattern1);
-                break;
-            case 2:
-                patternVision = new PatternVision(Pattern2);
-                break;
-            case 3:
-                patternVision = new PatternVision(Pattern3);
-                break;
-            case 4:
-                patternVision = new PatternVision(Pattern4);
-                break;
-            case 5:
-                patternVision = new PatternVision(Pattern5);
-                break;
-            case 6:
-                patternVision = new PatternVision(Pattern6);
-                break;
-            case 7:
-                patternVision = new PatternVision(Pattern7);
-                break;
-        }
-    }
 
     /// <summary>
     /// No pattern
@@ -399,7 +370,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern0(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> NoPattern(Vector3 position, List<Placeable> vect)
     {
         return vect;
     }
@@ -410,7 +381,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern7(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternSpinning(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targets = new List<Placeable>(vect);
         foreach (Placeable Character in vect)
@@ -423,12 +394,12 @@ public abstract class Skill
     }
 
     /// <summary>
-    /// SwordRange pattern
+    /// SwordRange pattern (8 blocks around and up)
     /// </summary>
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern6(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternSwordRange(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableunits = new List<Placeable>(vect);
         foreach (LivingPlaceable Character in vect)
@@ -446,7 +417,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern5(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternPush(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable placeable in vect)
@@ -486,7 +457,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern4(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternCreate(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -505,7 +476,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern3(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternDestroy(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -522,7 +493,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    private List<Placeable> Pattern2(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternLine(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -539,7 +510,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    public List<Placeable> Pattern1(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternTopBlock(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -551,7 +522,7 @@ public abstract class Skill
         }
         return targetableblock;
     }
-
+    /*
     public void InitPatternUse()
     {
         switch (patternUseType)
