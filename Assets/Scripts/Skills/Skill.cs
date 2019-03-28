@@ -10,6 +10,21 @@ using Newtonsoft.Json;
 [Serializable]
 public abstract class Skill
 {
+    /// <summary>
+    /// Usefull for object creation from json
+    /// </summary>
+    public class SkillInfo
+    {
+        string skillName;
+        int cost;
+        int cooldown;
+        string description = "Use the object";
+        int maxRange;
+        int minRange;
+        int sizeZone = 1;
+        TargetType targetType;
+    }
+    
     // ####### NEW #########
     [SerializeField]
     protected string skillName;
@@ -20,11 +35,14 @@ public abstract class Skill
     public int Cost { get { return cost; } }
 
     [SerializeField]
-    public int cooldownTurnLeft;
+    public int cooldownTurnLeft = 0;
 
     [SerializeField]
     protected int cooldown;
     public int Cooldown { get { return cooldown; } }
+
+    [SerializeField]
+    private string spritePath;
 
     // Mettre dans le JSON le path du sprite ?
     protected Sprite abilitySprite;
@@ -42,32 +60,22 @@ public abstract class Skill
     [SerializeField]
     private int minRange;
     [SerializeField]
-    private int size = 1;
+    private int sizeZone = 1;
 
     [SerializeField]
     public List<Effect> effects;
     
     [SerializeField]
-    private TargetType skillType;
+    private TargetType targetType;
+
+    //TO REMOVE
     [SerializeField]
     private SkillArea skillArea;
     [SerializeField]
     private SkillEffect skillEffect;
-    //[SerializeField]
-    //private int patternNumber;
-    //private delegate List<Placeable> PatternVision(Vector3 position, List<Placeable> vect);
-    //private PatternVision patternVision;
 
-    [SerializeField]
-    private PatternUseType patternUseType;
-    //public delegate List<Placeable> PatternUse(Placeable target);
-    //public PatternUse patternUse;
 
-    [SerializeField]
-    //private ConditionType conditionType;
-    public delegate bool DelegateCondition();
- 
-    public Skill()
+    public Skill(string JSON)
     {
         /*
         Cost = cost;
@@ -88,9 +96,19 @@ public abstract class Skill
         */
     }
     
-    protected virtual void Init()
+    protected virtual void Init(dynamic JSON)
     {
         // Lire le JSON et initialiser les viariables communes
+        skillName = JSON.skillName;
+        cost = JSON.cost;
+        cooldown = JSON.cooldown;
+        spritePath = JSON.spritePath;
+        abilitySprite = Resources.Load<Sprite>(spritePath);
+        description = JSON.description;
+        maxRange = JSON.maxRange;
+        minRange = JSON.minRange;
+        sizeZone = JSON.sizeZone;
+        targetType = JSON.targetType;
     }
 
 
@@ -141,10 +159,9 @@ public abstract class Skill
         GameManager.instance.State = States.UseSkill;
         GameManager.instance.ActiveSkill = this;
 
-        if (skillType == TargetType.ALREADYTARGETED)
+        if (targetType == TargetType.ALREADYTARGETED)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
-
             Debug.LogError("No implemented for alreadyTargeted");
             /*
             if (patternUse(GameManager.instance.PlayingPlaceable) != null)
@@ -171,7 +188,7 @@ public abstract class Skill
         playingPlaceable.ResetTargets();
         List<Vector3Int> vect = new List<Vector3Int>();
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
-        if (skillType == TargetType.BLOCK || skillType == TargetType.AREA)
+        if (targetType == TargetType.BLOCK || targetType == TargetType.AREA)
         {
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0,0,0));
             List<Placeable> placeables = new List<Placeable>();
@@ -183,13 +200,13 @@ public abstract class Skill
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("Placeable");
-            GameManager.instance.RaycastSelector.EffectArea = size;
+            GameManager.instance.RaycastSelector.EffectArea = sizeZone;
             if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
             {
                 GameManager.instance.RaycastSelector.Pattern = skillArea;
             }
         }
-        else if (skillType == TargetType.LIVING)
+        else if (targetType == TargetType.LIVING)
         {
             
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, true, new Vector3(0, 1, 0));
@@ -219,7 +236,7 @@ public abstract class Skill
             playingPlaceable.TargetableUnits = targetUnits;
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("LivingPlaceable");
         }
-        else if (skillType == TargetType.PLACEABLE)
+        else if (targetType == TargetType.PLACEABLE)
         {
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0, 0, 0));
             targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
