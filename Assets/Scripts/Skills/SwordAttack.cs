@@ -8,7 +8,7 @@ class SwordAttack: Skill
     [SerializeField]
     private float power;
 
-    DamageCalculated damageEffect { get { return (DamageCalculated)effects[0]; } }
+    DamageCalculated DamageEffect { get { return (DamageCalculated)effects[0]; } }
 
     public SwordAttack(string JSON): base(JSON)
     {
@@ -39,15 +39,15 @@ class SwordAttack: Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        damageEffect.Launcher = caster;
-        target.DispatchEffect(damageEffect);
+        DamageEffect.Launcher = caster;
+        target.DispatchEffect(DamageEffect);
     }
 
     public override void Preview(NetIdeable target)
     {
         if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
         {
-            damageEffect.Preview((Placeable) target);
+            DamageEffect.Preview((Placeable) target);
         }
     }
 

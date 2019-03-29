@@ -11,6 +11,8 @@ public class PiercingShot : Skill
     [SerializeField]
     public float power;
 
+    PiercingDamageEffect DamageEffect { get { return (PiercingDamageEffect)effects[0]; } }
+
     public PiercingShot(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a piercing skill");
@@ -22,6 +24,8 @@ public class PiercingShot : Skill
     private void InitSpecific(JToken deserializedSkill)
     {
         power = (float)deserializedSkill["power"];
+        effects = new List<Effect>();
+        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.DEXT));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -41,13 +45,15 @@ public class PiercingShot : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        PiercingDamageEffect piercing = new PiercingDamageEffect(power, DamageCalculated.DamageScale.DEXT);
-        piercing.Launcher = caster;
-        target.DispatchEffect(piercing);
+        DamageEffect.Launcher = caster;
+        target.DispatchEffect(DamageEffect);
     }
 
     public override void Preview(NetIdeable target)
     {
-        Debug.LogError("Preview not implemented");
+        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
+        {
+            DamageEffect.Preview((Placeable)target);
+        }
     }
 }

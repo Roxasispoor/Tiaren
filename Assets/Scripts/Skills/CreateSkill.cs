@@ -10,6 +10,8 @@ public class CreateSkill : Skill
     string cubeName;
     GameObject cubeToCreate;
 
+    CreateBlock CreateEffect { get { return (CreateBlock)effects[0]; } }
+
     public CreateSkill(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a creation skill");
@@ -20,12 +22,14 @@ public class CreateSkill : Skill
 
     private void InitSpecific(JToken deserializedSkill)
     {
+        effects = new List<Effect>();
         cubeName = (string)deserializedSkill["cubeName"];
         foreach(GameObject cube in Grid.instance.prefabsList)
         {
             if(cube.name == cubeName)
             {
                 cubeToCreate = cube;
+                effects.Add(new CreateBlock(cubeToCreate, new Vector3Int(0, 1, 0)));
                 return;
             }
         }
@@ -44,9 +48,8 @@ public class CreateSkill : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        Effect effectToConsider = new CreateBlock(cubeToCreate, new Vector3Int(0, 1, 0));
-        effectToConsider.Launcher = caster;
-        target.DispatchEffect(effectToConsider);
+        CreateEffect.Launcher = caster;
+        target.DispatchEffect(CreateEffect);
     }
 
     public override void Preview(NetIdeable target)

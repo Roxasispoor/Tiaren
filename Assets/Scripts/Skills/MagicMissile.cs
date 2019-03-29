@@ -9,6 +9,8 @@ public class MagicMissile : Skill
     [SerializeField]
     private float power;
 
+    DamageCalculated DamageEffect { get { return (DamageCalculated)effects[0]; } }
+
     public MagicMissile(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a magicmissile skill");
@@ -20,6 +22,8 @@ public class MagicMissile : Skill
     private void InitSpecific(JToken deserializedSkill)
     {
         power = (float)deserializedSkill["power"];
+        effects = new List<Effect>();
+        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.MAG));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -39,13 +43,15 @@ public class MagicMissile : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        DamageCalculated damageCalculated = new DamageCalculated(power, DamageCalculated.DamageScale.MAG);
-        damageCalculated.Launcher = caster;
-        target.DispatchEffect(damageCalculated);
+        DamageEffect.Launcher = caster;
+        target.DispatchEffect(DamageEffect);
     }
 
     public override void Preview(NetIdeable target)
     {
-        Debug.LogError("Preview not implemented");
+        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
+        {
+            DamageEffect.Preview((Placeable)target);
+        }
     }
 }

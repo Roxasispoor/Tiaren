@@ -6,6 +6,9 @@ using System;
 
 public class DestroySkill : Skill
 {
+
+    CreateBlock DestroyEffect { get { return (CreateBlock)effects[0]; } }
+
     public DestroySkill(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a destroy skill");
@@ -16,7 +19,8 @@ public class DestroySkill : Skill
 
     private void InitSpecific(JToken deserializedSkill)
     {
-        //nothing specific to do but it's here to keep the logic
+        effects = new List<Effect>();
+        effects.Add(new DestroyBloc());
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -41,8 +45,7 @@ public class DestroySkill : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        DestroyBloc destroy = new DestroyBloc();
-        destroy.Launcher = caster;
-        target.DispatchEffect(destroy);
+        DestroyEffect.Launcher = caster;
+        target.DispatchEffect(DestroyEffect);
     }
 }
