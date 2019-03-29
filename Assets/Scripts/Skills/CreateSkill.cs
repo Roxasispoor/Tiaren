@@ -14,7 +14,7 @@ public class CreateSkill : Skill
     {
         dynamic skills = JsonConvert.DeserializeObject(JSON);
         SkillInfo info = (SkillInfo)skills.PushSkill;
-        base.Init(info);
+        //base.Init(info);
         InitSpecific(skills);
     }
 

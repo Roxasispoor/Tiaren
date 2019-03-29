@@ -9,7 +9,6 @@ class SwordAttack: Skill
 
     public SwordAttack(string JSON): base(JSON)
     {
-        Debug.LogError("Creatingg a sword skill");
         Newtonsoft.Json.Linq.JObject deserializedSkill = Newtonsoft.Json.Linq.JObject.Parse(JSON);
         base.Init(deserializedSkill["SwordAttack"]);
         InitSpecific(deserializedSkill["SwordAttack"]);
