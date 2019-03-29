@@ -46,4 +46,9 @@ public class LegSwipe : Skill
         target.DispatchEffect(debuf);
         target.DispatchEffect(rebuf);
     }
+
+    public override void Preview(NetIdeable target)
+    {
+        Debug.LogError("Preview not implemented");
+    }
 }

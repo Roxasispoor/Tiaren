@@ -45,4 +45,9 @@ public class PiercingShot : Skill
         piercing.Launcher = caster;
         target.DispatchEffect(piercing);
     }
+
+    public override void Preview(NetIdeable target)
+    {
+        Debug.LogError("Preview not implemented");
+    }
 }

@@ -43,4 +43,9 @@ public class MagicMissile : Skill
         damageCalculated.Launcher = caster;
         target.DispatchEffect(damageCalculated);
     }
+
+    public override void Preview(NetIdeable target)
+    {
+        Debug.LogError("Preview not implemented");
+    }
 }

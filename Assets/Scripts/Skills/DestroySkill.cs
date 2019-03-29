@@ -29,6 +29,11 @@ public class DestroySkill : Skill
         return true;
     }
 
+    public override void Preview(NetIdeable target)
+    {
+        Debug.LogError("Preview not implemented");
+    }
+
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
         return PatternDestroy(position, vect);

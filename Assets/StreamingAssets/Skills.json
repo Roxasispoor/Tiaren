@@ -9,6 +9,6 @@
     "minRange": 0,
     "sizeZone": 1,
     "targetType": 0,
-    "power": 40
+    "power": 40.0
   }
 }
