@@ -13,7 +13,7 @@ public class PushSkill : Skill
     public PushSkill(string JSON) : base(JSON)
     {
         dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillInfo info = (SkillInfo)skills.PushSkill;
+        SkillDataFromJSON info = (SkillDataFromJSON)skills.PushSkill;
         base.Init(info);
         InitSpecific(skills);
     }

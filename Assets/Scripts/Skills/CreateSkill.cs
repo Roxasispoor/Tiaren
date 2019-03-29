@@ -13,14 +13,14 @@ public class CreateSkill : Skill
     public CreateSkill(string JSON) : base(JSON)
     {
         dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillInfo info = (SkillInfo)skills.PushSkill;
+        SkillDataFromJSON info = (SkillDataFromJSON)skills.PushSkill;
         base.Init(info);
         InitSpecific(skills);
     }
 
     private void InitSpecific(dynamic skills)
     {
-        cubeName = skills.cubeName;
+        cubeName = skills.CreateSkill.cubeName;
         foreach(GameObject cube in Grid.instance.prefabsList)
         {
             if(cube.name == cubeName)

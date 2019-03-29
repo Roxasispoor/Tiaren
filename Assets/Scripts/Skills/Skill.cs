@@ -13,7 +13,7 @@ public abstract class Skill
     /// <summary>
     /// Usefull for object creation from json
     /// </summary>
-    public class SkillInfo
+    public class SkillDataFromJSON
     {
         public string skillName;
         public int cost;
@@ -96,7 +96,7 @@ public abstract class Skill
         */
     }
     
-    protected virtual void Init(SkillInfo info)
+    protected virtual void Init(SkillDataFromJSON info)
     {
         // Lire le JSON et initialiser les viariables communes
         skillName = info.skillName;
