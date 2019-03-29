@@ -22,8 +22,11 @@ class SwordAttack: Skill
     {
 
         effects = new List<Effect>();
-        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.STR));
+        Debug.Log("Power float: " + (float)deserializedSkill["power"]);
+        Debug.Log("Power int: " + (int)deserializedSkill["power"]);
         power = (float)deserializedSkill["power"];
+
+        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.STR));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

@@ -228,6 +228,7 @@ public class CameraScript : MonoBehaviour
     {
         if (GameManager.instance.PlayingPlaceable.Player == player && player.isLocalPlayer)
         {
+            GameManager.instance.Hovered = null;
             GameManager.instance.PlayingPlaceable.ResetTargets();
             GameManager.instance.PlayingPlaceable.ResetAreaOfMovement();
             RaycastSelector rayselect = GameManager.instance.RaycastSelector;

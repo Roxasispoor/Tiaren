@@ -305,7 +305,7 @@ public class GameManager : NetworkBehaviour
             if (hovered != null)
             {
 
-                if (State == States.UseSkill)
+                if (State == States.UseSkill && activeSkill != null)
                 {
                     ActiveSkill.UnPreview(hovered);
                     /*

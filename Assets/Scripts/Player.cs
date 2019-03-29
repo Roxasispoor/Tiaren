@@ -1518,8 +1518,6 @@ public class Player : NetworkBehaviour
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
         skill.Use(GameManager.instance.PlayingPlaceable, target);
-
-        GameManager.instance.PlayingPlaceable.ResetTargets();
             
             /*
             if (netidArea.Length == 0)
@@ -1540,16 +1538,11 @@ public class Player : NetworkBehaviour
 
 
 
-            if (GameManager.instance.RaycastSelector != null)
-            {
-                RaycastSelector rayselect = GetComponentInChildren<RaycastSelector>();
-                rayselect.EffectArea = 0;
-                rayselect.Pattern = SkillArea.NONE;
-            }
+            
         //}
         if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
-            GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();
+            cameraScript.BackToMovement();
         }
     }
 }
