@@ -3,24 +3,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 
 
 public class PiercingShot : Skill
 {
-
+    [SerializeField]
     public float power;
 
     public PiercingShot(string JSON) : base(JSON)
     {
-        dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillDataFromJSON info = (SkillDataFromJSON)skills.PushSkill;
-        base.Init(info);
-        InitSpecific(skills);
+        Debug.LogError("Creating a piercing skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
+        base.Init(deserializedSkill["PiercingShot"]);
+        InitSpecific(deserializedSkill["PiercingShot"]);
     }
 
-    private void InitSpecific(dynamic skills)
+    private void InitSpecific(JToken deserializedSkill)
     {
-        power = skills.PiercingShot.power;
+        power = (float)deserializedSkill["power"];
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -40,8 +41,8 @@ public class PiercingShot : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        DamageCalculated damageCalculated = new PiercingDamageEffect(power, DamageCalculated.DamageScale.DEXT);
-        damageCalculated.Launcher = caster;
-        target.DispatchEffect(damageCalculated);
+        PiercingDamageEffect piercing = new PiercingDamageEffect(power, DamageCalculated.DamageScale.DEXT);
+        piercing.Launcher = caster;
+        target.DispatchEffect(piercing);
     }
 }

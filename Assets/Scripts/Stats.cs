@@ -24,6 +24,7 @@ public class Stats
     public Attribute def;
     public Attribute mdef;
     public Attribute deathLength;
+    public SkillTypes[] ChosenSkills;
     //public List<Skill> skills;
     public bool isDead;
     //initialize a mano

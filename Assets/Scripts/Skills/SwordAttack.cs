@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 
 class SwordAttack: Skill
 {
@@ -9,14 +10,15 @@ class SwordAttack: Skill
 
     public SwordAttack(string JSON): base(JSON)
     {
-        dynamic deserializedSkill = Newtonsoft.Json.JsonConvert.DeserializeObject(JSON);
-        base.Init((SkillDataFromJSON)deserializedSkill.SwordAttack);
-        InitSpecific(deserializedSkill.SwordAttack);
+        Debug.LogError("Creating a sword skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
+        base.Init(deserializedSkill["SwordAttack"]);
+        InitSpecific(deserializedSkill["SwordAttack"]);
     }
 
-    protected void InitSpecific(dynamic deserializedSkill)
+    protected void InitSpecific(JToken deserializedSkill)
     {
-        power = deserializedSkill.power;
+        power = (float)deserializedSkill["power"];
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

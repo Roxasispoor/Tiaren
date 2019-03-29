@@ -1,27 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 
 public class DestroySkill : Skill
 {
     public DestroySkill(string JSON) : base(JSON)
     {
-        dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillDataFromJSON info = (SkillDataFromJSON)skills.PushSkill;
-        base.Init(info);
-        InitSpecific(skills);
+        Debug.LogError("Creating a destroy skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
+        base.Init(deserializedSkill["DestroySkill"]);
+        InitSpecific(deserializedSkill["DestroySkill"]);
     }
 
-    private void InitSpecific(dynamic skills)
+    private void InitSpecific(JToken deserializedSkill)
     {
-        
+        //nothing specific to do but it's here to keep the logic
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        throw new System.NotImplementedException();
+        if (target as Placeable == null)
+        {
+            Debug.LogError("target is not a placeable! Not good in push");
+            return false;
+        }
+        return true;
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
@@ -31,6 +36,8 @@ public class DestroySkill : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        throw new System.NotImplementedException();
+        DestroyBloc destroy = new DestroyBloc();
+        destroy.Launcher = caster;
+        target.DispatchEffect(destroy);
     }
 }

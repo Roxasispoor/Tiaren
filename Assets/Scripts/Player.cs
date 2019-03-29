@@ -1348,7 +1348,7 @@ public class Player : NetworkBehaviour
                 RpcUseSkill(numSkill, netidTarget, new int[0]);
             }
             else
-            {*/
+            {*//*
                 if (netidArea.Length == 0)
                 {
                     skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { GameManager.instance.FindLocalObject(netidTarget) });
@@ -1361,7 +1361,8 @@ public class Player : NetworkBehaviour
                         targets.Add(GameManager.instance.FindLocalObject(id));
                     }
                     skill.Use(GameManager.instance.PlayingPlaceable, targets);
-                }
+                }*/
+                skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
                 RpcUseSkill(numSkill, netidTarget, netidArea);
 
                 /*            
@@ -1514,13 +1515,17 @@ public class Player : NetworkBehaviour
         }
         else
         {*/
-            NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
+        NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
-            GameManager.instance.PlayingPlaceable.ResetTargets();
+        skill.Use(GameManager.instance.PlayingPlaceable, target);
 
+        GameManager.instance.PlayingPlaceable.ResetTargets();
+            
+            /*
             if (netidArea.Length == 0)
             {
-                skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target });
+                //skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target }); Before refactor skill
+                skill.Use(GameManager.instance.PlayingPlaceable, target);
             }
             else
             {
@@ -1531,9 +1536,11 @@ public class Player : NetworkBehaviour
                 }
 
                 skill.Use(GameManager.instance.PlayingPlaceable, idlist);
-            }
+            }*/
 
-            if (GetComponentInChildren<RaycastSelector>() != null)
+
+
+            if (GameManager.instance.RaycastSelector != null)
             {
                 RaycastSelector rayselect = GetComponentInChildren<RaycastSelector>();
                 rayselect.EffectArea = 0;

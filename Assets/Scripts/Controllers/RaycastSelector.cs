@@ -69,10 +69,12 @@ public class RaycastSelector : MonoBehaviour
                                 block.UnHighlight();
                                 if (GameManager.instance.ActiveSkill != null)
                                 {
+                                    /*
                                     foreach (Effect effect in GameManager.instance.ActiveSkill.effects)
                                     {
                                         effect.Preview(block);
                                     }
+                                    */
                                 }
                             }
                         }
@@ -82,6 +84,9 @@ public class RaycastSelector : MonoBehaviour
                     
                     if (GameManager.instance.State == States.UseSkill)
                     {
+
+                        Debug.LogError("Revoir le use et la preview");
+                        /*
                         area = GameManager.instance.ActiveSkill.patternUse(GameManager.instance.Hovered);
                         foreach (Placeable block in area)
                         {
@@ -96,6 +101,7 @@ public class RaycastSelector : MonoBehaviour
                                 }
                             }
                         }
+                        */
                     }
                 }
                 if (Input.GetMouseButtonUp(0))

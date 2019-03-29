@@ -1,20 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Newtonsoft.Json.Linq;
-using System;
+using UnityEngine;
 
-public class BowAttack : Skill
+public class MagicMissile : Skill
 {
     [SerializeField]
-    public float power;
+    private float power;
 
-    public BowAttack(string JSON) : base(JSON)
+    public MagicMissile(string JSON) : base(JSON)
     {
-        Debug.LogError("Creating a normal bow skill");
+        Debug.LogError("Creating a magicmissile skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["BowAttack"]);
-        InitSpecific(deserializedSkill["BowAttack"]);
+        base.Init(deserializedSkill["MagicMissile"]);
+        InitSpecific(deserializedSkill["MagicMissile"]);
     }
 
     private void InitSpecific(JToken deserializedSkill)
@@ -39,7 +39,7 @@ public class BowAttack : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        DamageCalculated damageCalculated = new DamageCalculated(power, DamageCalculated.DamageScale.DEXT);
+        DamageCalculated damageCalculated = new DamageCalculated(power, DamageCalculated.DamageScale.MAG);
         damageCalculated.Launcher = caster;
         target.DispatchEffect(damageCalculated);
     }
