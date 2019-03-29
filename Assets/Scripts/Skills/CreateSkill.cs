@@ -48,4 +48,9 @@ public class CreateSkill : Skill
         effectToConsider.Launcher = caster;
         target.DispatchEffect(effectToConsider);
     }
+
+    public override void Preview(NetIdeable target)
+    {
+        Debug.LogError("Preview not implemented");
+    }
 }

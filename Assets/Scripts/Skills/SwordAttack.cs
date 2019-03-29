@@ -7,6 +7,8 @@ class SwordAttack: Skill
     [SerializeField]
     private int power;
 
+    DamageCalculated damageEffect { get { return (DamageCalculated)effects[0]; } }
+
     public SwordAttack(string JSON): base(JSON)
     {
         Newtonsoft.Json.Linq.JObject deserializedSkill = Newtonsoft.Json.Linq.JObject.Parse(JSON);
@@ -17,6 +19,9 @@ class SwordAttack: Skill
     protected void InitSpecific(Newtonsoft.Json.Linq.JToken deserializedSkill)
     {
         power = (int)deserializedSkill["power"];
+
+        effects = new List<Effect>();
+        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.STR));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -32,11 +37,16 @@ class SwordAttack: Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        
-        //TODO: gérer les animations
-        DamageCalculated damageCalculated = new DamageCalculated(power, DamageCalculated.DamageScale.STR);
-        damageCalculated.Launcher = caster;
-        target.DispatchEffect(damageCalculated);
+        damageEffect.Launcher = caster;
+        target.DispatchEffect(damageEffect);
+    }
+
+    public override void Preview(NetIdeable target)
+    {
+        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
+        {
+            damageEffect.Preview((Placeable) target);
+        }
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)

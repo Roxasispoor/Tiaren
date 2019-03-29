@@ -1,7 +1,7 @@
 {
   "SwordAttack": {
     "skillName": "Sword attack",
-    "cost": 2,
+    "cost": 1,
     "cooldown": 1,
     "spritePath": "Sword attack.jpg",
     "description": "An attack with a sword",

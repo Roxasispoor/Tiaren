@@ -66,7 +66,7 @@ public abstract class Skill
     [SerializeField]
     private TargetType targetType;
 
-    private List<Effect> effects;
+    protected List<Effect> effects;
 
     //TO REMOVE
     [SerializeField]
@@ -124,6 +124,16 @@ public abstract class Skill
             return false;
         }
         return CheckSpecificConditions(caster, target);
+    }
+
+    public abstract void Preview(NetIdeable target);
+
+    public virtual void UnPreview(NetIdeable target)
+    {
+        foreach (Effect effect in effects)
+        {
+            effect.ResetPreview((Placeable) target);
+        }
     }
 
     protected abstract List<Placeable> PatterVision(Vector3 position, List<Placeable> vect);

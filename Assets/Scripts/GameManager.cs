@@ -307,6 +307,7 @@ public class GameManager : NetworkBehaviour
 
                 if (State == States.UseSkill)
                 {
+                    ActiveSkill.UnPreview(hovered);
                     /*
                     foreach (Effect effect in ActiveSkill.effects)
                     {
@@ -321,6 +322,7 @@ public class GameManager : NetworkBehaviour
                 value.Highlight();
                 if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
+                    ActiveSkill.Preview(value);
                     /*
                     foreach (Effect effect in ActiveSkill.effects)
                     {
