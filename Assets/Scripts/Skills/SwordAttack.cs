@@ -9,14 +9,15 @@ class SwordAttack: Skill
 
     public SwordAttack(string JSON): base(JSON)
     {
-        dynamic deserializedSkill = Newtonsoft.Json.JsonConvert.DeserializeObject(JSON);
-        base.Init((SkillInfo)deserializedSkill.SwordAttack);
-        InitSpecific(deserializedSkill.SwordAttack);
+        Debug.LogError("Creatingg a sword skill");
+        Newtonsoft.Json.Linq.JObject deserializedSkill = Newtonsoft.Json.Linq.JObject.Parse(JSON);
+        base.Init(deserializedSkill["SwordAttack"]);
+        InitSpecific(deserializedSkill["SwordAttack"]);
     }
 
-    protected void InitSpecific(dynamic deserializedSkill)
+    protected void InitSpecific(Newtonsoft.Json.Linq.JToken deserializedSkill)
     {
-        power = (int)deserializedSkill.power;
+        power = (int)deserializedSkill["power"];
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

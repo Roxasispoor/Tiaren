@@ -307,10 +307,11 @@ public class GameManager : NetworkBehaviour
 
                 if (State == States.UseSkill)
                 {
+                    /*
                     foreach (Effect effect in ActiveSkill.effects)
                     {
                         effect.ResetPreview(hovered);
-                    }
+                    }*/
                 }
                 hovered.UnHighlight();
             }
@@ -320,10 +321,11 @@ public class GameManager : NetworkBehaviour
                 value.Highlight();
                 if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
+                    /*
                     foreach (Effect effect in ActiveSkill.effects)
                     {
                         effect.Preview(value);
-                    }
+                    }*/
                 }
             }
             hovered = value;
@@ -354,10 +356,11 @@ public class GameManager : NetworkBehaviour
         {
             if (hovered != null)
             {
+                /*
                 foreach (Effect effect in activeSkill.effects)
                 {
                     effect.ResetPreview(Hovered);
-                }
+                }*/
             }
             activeSkill = value;
         }
@@ -417,6 +420,9 @@ public class GameManager : NetworkBehaviour
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
+
+        SkillDictionary = new Dictionary<SkillTypes, System.Type>();
+        SkillDictionary.Add(SkillTypes.SWORDATTACK, System.Type.GetType("SwordAttack"));
     }
 
 
@@ -756,7 +762,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     || (placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
                 {
 
-                    List<Placeable> area = ActiveSkill.patternUse(placeable);
+                    //List<Placeable> area = ActiveSkill.patternUse(placeable);
+                    List<Placeable> area = new List<Placeable>();
 
                     int[] netidlist = new int[area.Count];
                     for (int i = 0; i < netidlist.Length; i++)

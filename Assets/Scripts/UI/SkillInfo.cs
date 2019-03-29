@@ -35,7 +35,8 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         if (Skill.SkillName == "Zip")
         {
-            Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
+            Debug.Log("METTRE ICI LA PREVIEW DE LA ZIPLINE!!!");
+            //Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
         }
     }
 
@@ -45,7 +46,7 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
         if (Skill.SkillName == "Zip")
         {
-            Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
+            //Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
         }
     }
 

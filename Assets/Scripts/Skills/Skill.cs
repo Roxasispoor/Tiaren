@@ -75,38 +75,20 @@ public abstract class Skill
 
     public Skill(string JSON)
     {
-        /*
-        Cost = cost;
-        Cooldown = cooldown;
-        tourCooldownLeft = 0;
-        this.effects = effects;
-        SkillName = skillName;
-        this.AbilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
-        TargetType = skillType;
-        this.maxRange = rangeMax;
-        this.minRange = rangeMin;
-        EffectArea = effectarea;
-        SkillArea = skillarea;
-        SkillEffect = skilleffect;
-        this.patternUseType = patternUse;
-        InitPattern();
-        InitPatternUse();
-        */
     }
     
-    protected virtual void Init(SkillInfo info)
+    protected virtual void Init(Newtonsoft.Json.Linq.JToken jObject)
     {
-        // Lire le JSON et initialiser les viariables communes
-        skillName = info.skillName;
-        cost = info.cost;
-        cooldown = info.cooldown;
-        spritePath = info.spritePath;
-        abilitySprite = Resources.Load<Sprite>(spritePath);
-        description = info.description;
-        maxRange = info.maxRange;
-        minRange = info.minRange;
-        sizeZone = info.sizeZone;
-        targetType = info.targetType;
+        skillName = (string)jObject["skillName"];
+        cost = (int)jObject["cost"];
+        cooldown = (int)jObject["cooldown"];
+        spritePath = (string)jObject["spritePath"];
+        description = (string)jObject["description"];
+        maxRange = (int)jObject["maxRange"];
+        minRange = (int)jObject["minRange"];
+        sizeZone = (int)jObject["sizeZone"];
+        targetType = (TargetType)(int)jObject["targetType"];
+
     }
 
 
@@ -144,6 +126,7 @@ public abstract class Skill
     protected abstract List<Placeable> PatterVision(Vector3 position, List<Placeable> vect);
 
     //protected abstract List<Placeable> PatternUse(Placeable target);
+    
 
     // TODO : rework les ALREADYTARGETED
     public void Activate()
@@ -350,13 +333,17 @@ public abstract class Skill
     //TODO: rework
     public string Save()
     {
+        Debug.LogError("Need to redo this");
+        //throw new System.NotImplementedException;
+        return "SAVE SKILL NOT REWORKED";
         string text = JsonUtility.ToJson(this);
         text = "\n" + text + "\n";
+        /*
         foreach (Effect eff in effects)
         {
             text+=eff.Save();
             
-        }
+        }*/
         text = text.Remove(text.Length - 1) + ";";
         return text;
         //File.WriteAllText(path, text);

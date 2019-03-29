@@ -3,6 +3,7 @@
     PUSH,
     CREATE,
     DESTROY,
+    SWORDATTACK
 }
 
 

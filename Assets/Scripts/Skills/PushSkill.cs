@@ -14,7 +14,7 @@ public class PushSkill : Skill
     {
         dynamic skills = JsonConvert.DeserializeObject(JSON);
         SkillInfo info = (SkillInfo)skills.PushSkill;
-        base.Init(info);
+        //base.Init(info);
         InitSpecific(skills);
     }
 
@@ -31,7 +31,7 @@ public class PushSkill : Skill
         target.DispatchEffect(effectToConsider);
     }
 
-    protected override bool CheckSpecificCondition(LivingPlaceable caster, NetIdeable target)
+    protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
         if(target as Placeable == null)
         {
