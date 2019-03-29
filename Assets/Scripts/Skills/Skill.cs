@@ -47,11 +47,11 @@ public abstract class Skill
 
     // Mettre dans le JSON le path du sprite ?
     protected Sprite abilitySprite;
-    public Sprite AbilitySprite { get { return AbilitySprite; } }
+    public Sprite AbilitySprite { get { return abilitySprite; } }
 
     [SerializeField]
     protected string description = "Use the object";
-    public string Description { get { return Description; } }
+    public string Description { get { return description; } }
 
     // ####### OLD #########
 
@@ -85,6 +85,7 @@ public abstract class Skill
         cost = (int)jObject["cost"];
         cooldown = (int)jObject["cooldown"];
         spritePath = (string)jObject["spritePath"];
+        abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
         description = (string)jObject["description"];
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];

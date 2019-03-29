@@ -3,11 +3,12 @@
     "skillName": "Sword attack",
     "cost": 2,
     "cooldown": 1,
-    "spritePath": "dunno",
+    "spritePath": "Sword attack.jpg",
     "description": "An attack with a sword",
     "maxRange": 2,
     "minRange": 0,
     "sizeZone": 1,
-    "targetType": 0
+    "targetType": 0,
+    "power": 40
   }
 }

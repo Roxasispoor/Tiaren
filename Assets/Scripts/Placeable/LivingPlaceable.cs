@@ -1146,13 +1146,10 @@ public class LivingPlaceable : Placeable
 
     public void SearchAndInstantianteSkills()
     {
-        Debug.LogError("************ SearchAndInstantianteSkills ********************");
         StreamReader reader = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
         string JSON = reader.ReadToEnd();
-        Debug.LogError(JSON);
         foreach (SkillTypes types in ChosenSkills)
         {
-            Debug.Log("Looking for : " + types.ToString());
             System.Type type;
             if (GameManager.instance.SkillDictionary.TryGetValue(types, out type))
             {
@@ -1198,19 +1195,19 @@ public class LivingPlaceable : Placeable
     public void FillLiving(StreamReader reader)
     {
 
-        string line;
+        string fullText;
         //Read the text from directly from the test.txt file
 
         System.Type[] types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
         System.Type[] possible = (from System.Type type in types where type.IsSubclassOf(typeof(Effect)) && !type.IsAbstract select type).ToArray();
 
-        if ((line = reader.ReadToEnd()) == null)
+        if ((fullText = reader.ReadToEnd()) == null)
         {
             Debug.Log("Empty file while reading living form file!");
             return;
         }
-        Debug.Log("Readind line :" + line);
-        Stats newLivingStats = JsonUtility.FromJson<Stats>(line);
+        Debug.Log("Readind line :" + fullText);
+        Stats newLivingStats = JsonUtility.FromJson<Stats>(fullText);
         newLivingStats.FillLiving(this);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);
         SearchAndInstantianteSkills();
