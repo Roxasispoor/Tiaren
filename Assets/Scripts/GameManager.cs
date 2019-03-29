@@ -424,7 +424,20 @@ public class GameManager : NetworkBehaviour
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
 
         SkillDictionary = new Dictionary<SkillTypes, System.Type>();
+        SkillDictionary.Add(SkillTypes.PUSH, System.Type.GetType("PushSkill"));
+        SkillDictionary.Add(SkillTypes.CREATE, System.Type.GetType("CreateSkill"));
+        SkillDictionary.Add(SkillTypes.DESTROY, System.Type.GetType("DestroySkill"));
         SkillDictionary.Add(SkillTypes.SWORDATTACK, System.Type.GetType("SwordAttack"));
+        SkillDictionary.Add(SkillTypes.BLEEDING, System.Type.GetType("BleedingAttack"));
+        SkillDictionary.Add(SkillTypes.LEGSWIPE, System.Type.GetType("LegSwipe"));
+        SkillDictionary.Add(SkillTypes.SPINNINGATTACK, System.Type.GetType("SpinningAttack"));
+        SkillDictionary.Add(SkillTypes.BOWSHOT, System.Type.GetType("BowShot"));
+        SkillDictionary.Add(SkillTypes.PIERCINGSHOT, System.Type.GetType("PiercingShot"));
+        SkillDictionary.Add(SkillTypes.HIGHERGROUND, System.Type.GetType("HigherGround"));
+        SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("ZiplineSkill"));
+        SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
+        SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
+        SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
     }
 
 

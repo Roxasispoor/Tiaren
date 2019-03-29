@@ -69,7 +69,7 @@ public class PiercingDamageEffect : DamageCalculated
         PiercingDamage();
         for (int i = 0; i < targets.Count; i++)
         {
-            GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], targets[i]);
+            GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], 1, targets[i]);
         }
     }
 

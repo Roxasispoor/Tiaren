@@ -37,9 +37,16 @@ public class StatDisplayer : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
-    public void Preview(LivingPlaceable character, int damage)
+    public void Preview(LivingPlaceable character, int damage, int turns)
     {
         Activate(character);
-        hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage;
+        if (turns <= 1)
+        {
+            hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage;
+        }
+        else
+        {
+            hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage + " X " + turns;
+        }
     }
 }

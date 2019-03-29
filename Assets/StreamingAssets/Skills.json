@@ -1,4 +1,17 @@
 {
+  "PushSkill": {
+    "skillName": "Push",
+    "cost": 1,
+    "cooldown": 0,
+    "spritePath": "Push.jpg",
+    "description": "Push a block",
+    "maxRange": 1,
+    "minRange": 0,
+    "sizeZone": 1,
+    "targetType": 1,
+    "damage": 20,
+    "nbCases": 2
+  },
   "SwordAttack": {
     "skillName": "Sword attack",
     "cost": 1,
@@ -9,6 +22,18 @@
     "minRange": 0,
     "sizeZone": 1,
     "targetType": 0,
-    "power": 40.0
+    "power": 40
+  },
+  "BowAttack": {
+    "skillName": "Bow Shot",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Bow shot.jpg",
+    "description": "Ranged attack with your bow",
+    "maxRange": 4,
+    "minRange": 2,
+    "sizeZone": 1,
+    "targetType": 0,
+    "power": 60
   }
 }
