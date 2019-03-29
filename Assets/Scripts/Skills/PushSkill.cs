@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class PushSkill : Skill
 {
@@ -12,16 +12,16 @@ public class PushSkill : Skill
 
     public PushSkill(string JSON) : base(JSON)
     {
-        dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillInfo info = (SkillInfo)skills.PushSkill;
-        //base.Init(info);
-        InitSpecific(skills);
+        Debug.LogError("Creating a pushing skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
+        base.Init(deserializedSkill["PushSkill"]);
+        InitSpecific(deserializedSkill["PushSkill"]);
     }
 
-    protected void InitSpecific(dynamic skills)
+    protected void InitSpecific(JToken deserializedSkill)
     {
-        damage = skills.PushSkill.damage;
-        nbCases = skills.PushSkill.nbCases;
+        damage = (int)deserializedSkill["damage"];
+        nbCases = (int)deserializedSkill["nbCases"];
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)

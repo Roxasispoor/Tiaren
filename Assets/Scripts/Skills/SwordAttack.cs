@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 
 class SwordAttack: Skill
 {
     [SerializeField]
-    private int power;
+    private float power;
 
     DamageCalculated damageEffect { get { return (DamageCalculated)effects[0]; } }
 
     public SwordAttack(string JSON): base(JSON)
     {
-        Newtonsoft.Json.Linq.JObject deserializedSkill = Newtonsoft.Json.Linq.JObject.Parse(JSON);
+        Debug.LogError("Creating a sword skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
         base.Init(deserializedSkill["SwordAttack"]);
         InitSpecific(deserializedSkill["SwordAttack"]);
     }
 
-    protected void InitSpecific(Newtonsoft.Json.Linq.JToken deserializedSkill)
+    protected void InitSpecific(JToken deserializedSkill)
     {
-        power = (int)deserializedSkill["power"];
 
         effects = new List<Effect>();
         effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.STR));
+        power = (float)deserializedSkill["power"];
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -51,14 +53,7 @@ class SwordAttack: Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        List<Placeable> targetableunits = new List<Placeable>(vect);
-        foreach (LivingPlaceable Character in vect)
-        {
-            Vector3 Pos = Character.transform.position;
-            if (Math.Abs(Pos.y - position.y) > 1 || Math.Abs(Pos.x - position.x) > 1 || Math.Abs(Pos.z - position.z) > 1)
-                targetableunits.Remove(Character);
-        }
-        return targetableunits;
+        return PatternSwordRange(position, vect);
     }
 }
 

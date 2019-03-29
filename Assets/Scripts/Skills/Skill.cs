@@ -13,7 +13,7 @@ public abstract class Skill
     /// <summary>
     /// Usefull for object creation from json
     /// </summary>
-    public class SkillInfo
+    public class SkillDataFromJSON
     {
         public string skillName;
         public int cost;
@@ -91,7 +91,6 @@ public abstract class Skill
         minRange = (int)jObject["minRange"];
         sizeZone = (int)jObject["sizeZone"];
         targetType = (TargetType)(int)jObject["targetType"];
-
     }
 
 

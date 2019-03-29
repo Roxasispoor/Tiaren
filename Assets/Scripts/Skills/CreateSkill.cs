@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class CreateSkill : Skill
 {
@@ -12,15 +12,15 @@ public class CreateSkill : Skill
 
     public CreateSkill(string JSON) : base(JSON)
     {
-        dynamic skills = JsonConvert.DeserializeObject(JSON);
-        SkillInfo info = (SkillInfo)skills.PushSkill;
-        //base.Init(info);
-        InitSpecific(skills);
+        Debug.LogError("Creating a creation skill");
+        JObject deserializedSkill = JObject.Parse(JSON);
+        base.Init(deserializedSkill["CreateSkill"]);
+        InitSpecific(deserializedSkill["CreateSkill"]);
     }
 
-    private void InitSpecific(dynamic skills)
+    private void InitSpecific(JToken deserializedSkill)
     {
-        cubeName = skills.cubeName;
+        cubeName = (string)deserializedSkill["cubeName"];
         foreach(GameObject cube in Grid.instance.prefabsList)
         {
             if(cube.name == cubeName)
