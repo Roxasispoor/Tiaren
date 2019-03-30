@@ -1336,7 +1336,7 @@ public class Player : NetworkBehaviour
     /// <param name="numSkill"></param>
     /// <param name="netidTarget"></param>
     [Command]
-    public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea, int state)
+    public void CmdUseSkill(int numSkill, int netidTarget, int[] netidArea, int orientationState)
     {
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
         if (GameManager.instance.PlayingPlaceable.CurrentPA >= skill.Cost)
@@ -1362,8 +1362,9 @@ public class Player : NetworkBehaviour
                     }
                     skill.Use(GameManager.instance.PlayingPlaceable, targets);
                 }*/
+                GameManager.instance.orientationState = orientationState;
                 skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
-                RpcUseSkill(numSkill, netidTarget, netidArea);
+                RpcUseSkill(numSkill, netidTarget, netidArea, orientationState);
 
                 /*            
                            NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
@@ -1503,10 +1504,13 @@ public class Player : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUseSkill(int numSkill, int netidTarget, int[] netidArea)
+    public void RpcUseSkill(int numSkill, int netidTarget, int[] netidArea, int orientationState)
     {
         Debug.LogError("Attention aux already targeted");
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
+
+        GameManager.instance.orientationState = orientationState;
+
         /*
         if (skill.TargetType == TargetType.ALREADYTARGETED) //Simply use them
         {
@@ -1545,4 +1549,5 @@ public class Player : NetworkBehaviour
             cameraScript.BackToMovement();
         }
     }
+
 }

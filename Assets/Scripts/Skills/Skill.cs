@@ -86,10 +86,11 @@ public abstract class Skill
         cooldown = (int)jObject["cooldown"];
         spritePath = (string)jObject["spritePath"];
         abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + spritePath);
+        if (abilitySprite == null)
+            Debug.LogError("Could find the image for: " + skillName + "- at: " + "UI_Images/Abilities/" + spritePath);
         description = (string)jObject["description"];
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];
-        sizeZone = (int)jObject["sizeZone"];
         targetType = (TargetType)(int)jObject["targetType"];
     }
 
@@ -639,4 +640,33 @@ public abstract class Skill
     }
     */
 
+    /// <summary>
+    /// Patter wich return a line centered around a the target
+    /// </summary>
+    /// <param name="target">The center of the line</param>
+    /// <param name="size">size=1: only the target, size=2: the target and the two adjacent cubes</param>
+    /// <returns></returns>
+    static protected List<Placeable> PatternUseLine(Placeable target, int size = 2)
+    {
+        List<Placeable> targets = new List<Placeable>();
+        Vector3 Position = target.GetPosition();
+        int state = GameManager.instance.orientationState % 2;
+        Vector3Int direction = new Vector3Int(state, 0, 1 - state);
+
+        Placeable placeableTemp = null;
+
+        targets.Add(target);
+        Debug.Log("Try to use line");
+        for (int i = 1; i < size; i++)
+        {
+            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() + direction * i);
+            if (placeableTemp)
+                targets.Add(placeableTemp);
+            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() - direction * i);
+            if (placeableTemp)
+                targets.Add(placeableTemp);
+        }
+
+        return targets;
+    }
 }

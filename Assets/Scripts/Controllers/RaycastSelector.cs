@@ -16,9 +16,6 @@ public class RaycastSelector : MonoBehaviour
     public SkillArea Pattern
     {get {return pattern;} set {pattern = value;}}
 
-    public int State
-    { get { return state; } set { state = value; } }
-
     public int EffectArea
     { get { return effectarea; } set { effectarea = value; } }
 
@@ -30,7 +27,6 @@ public class RaycastSelector : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         layerMask = ~layerMask;
-        state = 0;
         pattern = SkillArea.NONE;
         effectarea = 0;
     }
@@ -45,7 +41,7 @@ public class RaycastSelector : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            state = (state == 3 ? 0 : state+1);
+            GameManager.instance.orientationState = (GameManager.instance.orientationState == 3 ? 0 : GameManager.instance.orientationState + 1);
             //Debug.Log(state);
         }
 
