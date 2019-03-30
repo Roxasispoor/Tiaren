@@ -85,7 +85,7 @@ public abstract class Skill
         cost = (int)jObject["cost"];
         cooldown = (int)jObject["cooldown"];
         spritePath = (string)jObject["spritePath"];
-        abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + SkillName);
+        abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + spritePath);
         description = (string)jObject["description"];
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];

@@ -47,9 +47,9 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
         displayer.Activate(GameManager.instance.PlayingPlaceable);
     }
 
-    public void PreviewEffect(int damage)
+    public void PreviewEffect(int damage, int turns)
     {
-        displayer.Preview(Character, damage);
+        displayer.Preview(Character, damage, turns);
     }
 
     public void ResetPreview()

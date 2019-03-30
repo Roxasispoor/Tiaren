@@ -10,6 +10,9 @@ public class PushSkill : Skill
     [SerializeField]
     private int nbCases;
 
+    Push PushEffect { get { return (Push)effects[0]; } }
+
+
     public PushSkill(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a pushing skill");
@@ -22,13 +25,14 @@ public class PushSkill : Skill
     {
         damage = (int)deserializedSkill["damage"];
         nbCases = (int)deserializedSkill["nbCases"];
+        effects = new List<Effect>();
+        effects.Add(new Push(nbCases, damage, false));
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        Effect effectToConsider = new Push((Placeable)target, caster, 2, damage);
-        effectToConsider.Launcher = caster;
-        target.DispatchEffect(effectToConsider);
+        PushEffect.Launcher = caster;
+        target.DispatchEffect(PushEffect);
     }
 
     public override void Preview(NetIdeable target)

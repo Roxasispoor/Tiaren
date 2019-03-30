@@ -4,14 +4,14 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using System;
 
-public class BowAttack : Skill
+public class BowShot : Skill
 {
     [SerializeField]
     public float power;
 
     DamageCalculated DamageEffect { get { return (DamageCalculated)effects[0]; } }
 
-    public BowAttack(string JSON) : base(JSON)
+    public BowShot(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a normal bow skill");
         JObject deserializedSkill = JObject.Parse(JSON);

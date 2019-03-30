@@ -21,5 +21,9 @@
   "isDead": false,
   "serializeNumber": 2,
   "netId": 0,
-  "ChosenSkills":  [3, 4]
+  "ChosenSkills":  [
+		0,
+		7,
+		3
+  ]
 }

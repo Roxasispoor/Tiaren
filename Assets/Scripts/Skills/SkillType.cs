@@ -1,10 +1,22 @@
 ﻿public enum SkillTypes
 {
-    PUSH,
+    PUSH, // 0
     CREATE,
     DESTROY,
     SWORDATTACK,
-    WALL
+    BLEEDING,
+    LEGSWIPE, // 5
+    SPINNINGATTACK,
+    BOWSHOT,
+    PIERCINGSHOT,
+    HIGHERGROUND,
+    ZIPLINE, // 10
+    MAGICMISSILE,
+    FIREBALL,
+    WALL,
+    FISSURE,
+    DOWNZIP, //15
+    PICKOBJECT
 }
 
 

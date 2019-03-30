@@ -146,7 +146,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void Preview(int damage, LivingPlaceable target)
+    public void Preview(int damage, int turns, LivingPlaceable target)
     {
         CharacterDisplay[] characters = timelineZone.transform.GetComponentsInChildren<CharacterDisplay>();
         target.DamagePreview(damage);
@@ -154,7 +154,7 @@ public class UIManager : MonoBehaviour
         {
             if (character.Character == target)
             {
-                character.PreviewEffect(damage);
+                character.PreviewEffect(damage, turns);
             }
         }
     }
