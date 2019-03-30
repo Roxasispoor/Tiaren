@@ -167,6 +167,12 @@ public class GameManager : NetworkBehaviour
     /// Dictionary to make the correspondance between the choices of the players and the skill to create
     /// </summary>
     public Dictionary<SkillTypes, System.Type> SkillDictionary;
+
+    /// <summary>
+    /// State used by the skill who need a direction.
+    /// </summary>
+    public int orientationState = 0;
+
     /// <summary>
     /// Display number of the current turn
     /// </summary>
@@ -356,13 +362,9 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (hovered != null)
+            if (hovered != null && activeSkill != null)
             {
-                /*
-                foreach (Effect effect in activeSkill.effects)
-                {
-                    effect.ResetPreview(Hovered);
-                }*/
+                activeSkill.UnPreview(hovered);
             }
             activeSkill = value;
         }
@@ -425,6 +427,7 @@ public class GameManager : NetworkBehaviour
 
         SkillDictionary = new Dictionary<SkillTypes, System.Type>();
         SkillDictionary.Add(SkillTypes.SWORDATTACK, System.Type.GetType("SwordAttack"));
+        SkillDictionary.Add(SkillTypes.WALL, System.Type.GetType("Wall"));
     }
 
 
@@ -772,8 +775,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     {
                         netidlist[i] = area[i].netId;
                     }
-                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist,
-                        playingPlaceable.player.GetComponentInChildren<RaycastSelector>().State);
+                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist, orientationState);
 
                 }
                 break;

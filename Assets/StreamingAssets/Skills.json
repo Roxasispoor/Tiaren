@@ -10,5 +10,17 @@
     "sizeZone": 1,
     "targetType": 0,
     "power": 40.0
+  },
+  "Wall": {
+    "skillName": "Wall",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "Wall.jpg",
+    "description": "Create a wall",
+    "maxRange": 4,
+    "minRange": 0,
+    "targetType": 1,
+    "sizeZone": 2,
+    "cubeName": "Cube"
   }
 }

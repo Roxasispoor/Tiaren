@@ -3,7 +3,8 @@
     PUSH,
     CREATE,
     DESTROY,
-    SWORDATTACK
+    SWORDATTACK,
+    WALL
 }
 
 

@@ -14,18 +14,16 @@ class SwordAttack: Skill
     {
         Debug.LogError("Creating a sword skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["SwordAttack"]);
-        InitSpecific(deserializedSkill["SwordAttack"]);
+        Init(deserializedSkill["SwordAttack"]);
     }
 
-    protected void InitSpecific(JToken deserializedSkill)
+    protected override void Init(JToken deserializedSkill)
     {
+        base.Init(deserializedSkill);
 
-        effects = new List<Effect>();
-        Debug.Log("Power float: " + (float)deserializedSkill["power"]);
-        Debug.Log("Power int: " + (int)deserializedSkill["power"]);
         power = (float)deserializedSkill["power"];
 
+        effects = new List<Effect>();
         effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.STR));
     }
 

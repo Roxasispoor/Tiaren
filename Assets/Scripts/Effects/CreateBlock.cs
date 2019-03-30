@@ -61,7 +61,7 @@ public class CreateBlock : EffectOnPlaceableOnly {
         }
     }
 
-    public CreateBlock(GameObject prefab, Vector3Int face,int height=0):base()
+    public CreateBlock(GameObject prefab, Vector3Int face,int height=1):base()
     {
         this.prefab = prefab;
         this.face = face;
