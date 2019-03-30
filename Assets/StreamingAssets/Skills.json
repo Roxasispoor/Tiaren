@@ -12,6 +12,29 @@
     "damage": 20,
     "nbCases": 2
   },
+  "CreateSkill": {
+    "skillName": "Create",
+    "cost": 1,
+    "cooldown": 0,
+    "spritePath": "Create.jpg",
+    "description": "Create a block",
+    "maxRange": 4,
+    "minRange": 0,
+    "sizeZone": 1,
+    "targetType": 1,
+    "cubeName": "Cube"
+  },
+  "DestroySkill": {
+    "skillName": "Destroy",
+    "cost": 1,
+    "cooldown": 0,
+    "spritePath": "Destruction.jpg",
+    "description": "Destroy a block",
+    "maxRange": 4,
+    "minRange": 0,
+    "sizeZone": 1,
+    "targetType": 1
+  },
   "SwordAttack": {
     "skillName": "Sword attack",
     "cost": 1,

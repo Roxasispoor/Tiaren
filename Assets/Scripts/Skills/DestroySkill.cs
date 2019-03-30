@@ -7,7 +7,7 @@ using System;
 public class DestroySkill : Skill
 {
 
-    CreateBlock DestroyEffect { get { return (CreateBlock)effects[0]; } }
+    DestroyBloc DestroyEffect { get { return (DestroyBloc)effects[0]; } }
 
     public DestroySkill(string JSON) : base(JSON)
     {

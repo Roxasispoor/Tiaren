@@ -977,8 +977,11 @@ public class Grid : MonoBehaviour
                         //trying to see the targeted block, if true, adding it to the target list
                         if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                         {
-                            Vector3Int newblock = new Vector3Int(x, y, z);
-                            targetableblocs.Add(newblock);
+                            if (!gridMatrix[x, y, z].IsLiving())
+                            {
+                                Vector3Int newblock = new Vector3Int(x, y, z);
+                                targetableblocs.Add(newblock);
+                            }
                         }
                     }
                 }
@@ -1002,8 +1005,11 @@ public class Grid : MonoBehaviour
                     //trying to see the targeted block, if true, adding it to the target list
                     if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                     {
-                        Vector3Int newblock = new Vector3Int(x, y, z);
-                        targetableblocs.Add(newblock);
+                        if (!gridMatrix[x, y, z].IsLiving())
+                        {
+                            Vector3Int newblock = new Vector3Int(x, y, z);
+                            targetableblocs.Add(newblock);
+                        }
                     }
                 }
             }
@@ -1043,8 +1049,11 @@ public class Grid : MonoBehaviour
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
                         && (throughtblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
-                        Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
-                        targetableblocs.Add(newblock);
+                        if (!gridMatrix[x, (int)Playerposition.y - 1, z].IsLiving())
+                        {
+                            Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
+                            targetableblocs.Add(newblock);
+                        }
                     }
                 }
                 Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange, shift);
@@ -1069,8 +1078,11 @@ public class Grid : MonoBehaviour
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
                         && (throughtblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
-                        Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
-                        targetableblocs.Add(newblock);
+                        if (!gridMatrix[x, (int)Playerposition.y - 1, z].IsLiving())
+                        {
+                            Vector3Int newblock = new Vector3Int(x, (int)Playerposition.y - 1, z);
+                            targetableblocs.Add(newblock);
+                        }
                     }
                 }
                 //Search on the y axis
