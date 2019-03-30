@@ -202,7 +202,6 @@ public abstract class Skill
         }
         else if (targetType == TargetType.LIVING)
         {
-            
             vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, true, new Vector3(0, 1, 0));
             List<StandardCube> range = new List<StandardCube>();
             foreach (Vector3Int pos in vect)

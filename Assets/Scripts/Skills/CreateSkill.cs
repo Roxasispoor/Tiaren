@@ -54,6 +54,9 @@ public class CreateSkill : Skill
 
     public override void Preview(NetIdeable target)
     {
-        Debug.LogError("Preview not implemented");
+        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
+        {
+            CreateEffect.Preview((Placeable)target);
+        }
     }
 }

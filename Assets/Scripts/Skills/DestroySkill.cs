@@ -35,7 +35,10 @@ public class DestroySkill : Skill
 
     public override void Preview(NetIdeable target)
     {
-        Debug.LogError("Preview not implemented");
+        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
+        {
+            DestroyEffect.Preview((Placeable)target);
+        }
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
