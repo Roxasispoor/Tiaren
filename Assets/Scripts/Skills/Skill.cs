@@ -86,6 +86,8 @@ public abstract class Skill
         cooldown = (int)jObject["cooldown"];
         spritePath = (string)jObject["spritePath"];
         abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + spritePath);
+        if (abilitySprite == null)
+            Debug.LogError("Could find the image for: " + skillName + "- at: " + "UI_Images/Abilities/" + spritePath);
         description = (string)jObject["description"];
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];
