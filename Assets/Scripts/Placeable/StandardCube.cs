@@ -17,6 +17,10 @@ public class StandardCube : Placeable
     /// Used for batching.
     /// </summary>
     public CombineInstance meshInCombined;
+    /// <summary>
+    /// Can a block be created above it.
+    /// </summary>
+    public bool isConstructableOn = true;
     [SerializeField]
     public bool isSpawnPoint;
 

@@ -382,6 +382,7 @@ public class Player : NetworkBehaviour
         {
             spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(localPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            spawnpoint.isConstructableOn = false;
             spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
             spawnpoint.movable = false;
@@ -1363,9 +1364,15 @@ public class Player : NetworkBehaviour
                     skill.Use(GameManager.instance.PlayingPlaceable, targets);
                 }*/
                 GameManager.instance.orientationState = orientationState;
-                skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
+                
+                bool wasSuccessfulyCast = skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
+                
+                if (wasSuccessfulyCast)
+            {
                 GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
                 RpcUseSkill(numSkill, netidTarget, netidArea, orientationState);
+            }
+                
 
                 /*            
                            NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);

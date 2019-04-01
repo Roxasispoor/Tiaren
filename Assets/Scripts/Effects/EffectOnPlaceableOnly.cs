@@ -23,7 +23,7 @@ public abstract class EffectOnPlaceableOnly : EffectOnPlaceable {
     //Do nothing if living
     public override void TargetAndInvokeEffectManager(LivingPlaceable placeable)
     {
-      
+        Debug.LogError("Try to use an effect on placeable on a LivingPlaceable");
     }
     
 

@@ -82,5 +82,17 @@
     "sizeZone": 1,
     "targetType": 0,
     "power": 60
+  },
+  "HighGround": {
+    "skillName": "High ground",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "Higher Ground",
+    "description": "Ranged attack with your bow",
+    "maxRange": 1,
+    "minRange": 1,
+    "targetType": 1,
+    "height": 2,
+    "cubeName": "Cube"
   }
 }

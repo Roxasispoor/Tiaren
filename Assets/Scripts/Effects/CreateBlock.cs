@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreateBlock : EffectOnPlaceableOnly {
+public class CreateBlock : EffectOnPlaceable {
 
     public int prefabListNumber;
     public GameObject prefab;
@@ -93,8 +93,10 @@ public class CreateBlock : EffectOnPlaceableOnly {
             //new CreateBlockRelativeEffect(Target, prefab, new Vector3Int(0, 1, 0), new Vector3Int(0, 1 + i, 0)).Use();
             if (!Grid.instance.CheckNull(Target.GetPosition() + face * i))
             {
+                Debug.Log("CreateBlockEffect : Something on the way");
                 break;
             }
+            Debug.Log("CreatingblockEffect : Creating block");
             Grid.instance.InstantiateCube(prefab, Target.GetPosition() + face * i);
         }
     }
