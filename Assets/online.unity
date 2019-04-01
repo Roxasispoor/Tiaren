@@ -464,6 +464,7 @@ MonoBehaviour:
     type: 2}
   materialPreviewDestroy: {fileID: 2100000, guid: 7763a2936eecb4748be2d315834f5e99,
     type: 2}
+  orientationState: 0
 --- !u!4 &823285885
 Transform:
   m_ObjectHideFlags: 0
@@ -516,7 +517,7 @@ MonoBehaviour:
   - {fileID: 6577926616046605527, guid: 76c112a5ed9231648afb8a47e4d58eb7, type: 3}
   - {fileID: 6647434319592275583, guid: 9bc67924c8b7c1d48b9c5e7a955406c5, type: 3}
   - {fileID: 1064643011964598, guid: 4831bdb7ff2cebc438620884323b26eb, type: 3}
-  - {fileID: 9148982756877863352, guid: 16fade5fe53e657438f9c2d6c3815114, type: 3}
+  - {fileID: 9147969235770863009, guid: 16fade5fe53e657438f9c2d6c3815114, type: 3}
   - {fileID: 3227949217091799719, guid: b986f0387ca08c949af0894ca2871704, type: 3}
   - {fileID: 611568770374783601, guid: a36596efa54db1146b4cb7a5a4eead07, type: 3}
   - {fileID: 7796269991155101278, guid: b024182ccad4fee4ab9ade65d25d1f69, type: 3}

@@ -1364,6 +1364,7 @@ public class Player : NetworkBehaviour
                 }*/
                 GameManager.instance.orientationState = orientationState;
                 skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
+                GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
                 RpcUseSkill(numSkill, netidTarget, netidArea, orientationState);
 
                 /*            
@@ -1522,27 +1523,28 @@ public class Player : NetworkBehaviour
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
         skill.Use(GameManager.instance.PlayingPlaceable, target);
-            
-            /*
-            if (netidArea.Length == 0)
+        GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
+
+        /*
+        if (netidArea.Length == 0)
+        {
+            //skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target }); Before refactor skill
+            skill.Use(GameManager.instance.PlayingPlaceable, target);
+        }
+        else
+        {
+            List<NetIdeable> idlist = new List<NetIdeable>();
+            foreach (int blockid in netidArea)
             {
-                //skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target }); Before refactor skill
-                skill.Use(GameManager.instance.PlayingPlaceable, target);
+                idlist.Add(GameManager.instance.FindLocalObject(blockid));
             }
-            else
-            {
-                List<NetIdeable> idlist = new List<NetIdeable>();
-                foreach (int blockid in netidArea)
-                {
-                    idlist.Add(GameManager.instance.FindLocalObject(blockid));
-                }
 
-                skill.Use(GameManager.instance.PlayingPlaceable, idlist);
-            }*/
+            skill.Use(GameManager.instance.PlayingPlaceable, idlist);
+        }*/
 
 
 
-            
+
         //}
         if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
