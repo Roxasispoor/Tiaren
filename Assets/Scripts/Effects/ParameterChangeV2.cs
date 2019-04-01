@@ -8,7 +8,7 @@ using UnityEngine;
 public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
     private static List<Expression<Func<T, TProperty>>> methodsForEffects;
     [SerializeField]
-    private TProperty value; //the value you want to change ex: Tproperty = float T=Placeable
+    private dynamic value; //the value you want to change ex: Tproperty = float T=Placeable
     private Expression<Func<T, TProperty>> expression;
     public int numberMethod;
 
@@ -69,10 +69,14 @@ public override void Use()
         switch (property.MemberType)
         {
             case MemberTypes.Field:
-                ((FieldInfo)property).SetValue(Target, value);
+                FieldInfo fieldInfo = (FieldInfo)property;
+                float oldField = (float)fieldInfo.GetValue(Target);
+                fieldInfo.SetValue(Target, oldField + value);
                 break;
             case MemberTypes.Property:
-                ((PropertyInfo)property).SetValue(Target, value, null);
+                PropertyInfo propertyInfo = (PropertyInfo)property;
+                float oldProperty = (float)propertyInfo.GetValue(Target);
+                propertyInfo.SetValue(Target, oldProperty + value);
                 break;
             default:
                 throw new ArgumentException("MemberInfo must be of type FieldInfo or PropertyInfo", "member");

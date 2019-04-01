@@ -15,8 +15,8 @@ public class BowShot : Skill
     {
         Debug.LogError("Creating a normal bow skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["BowAttack"]);
-        InitSpecific(deserializedSkill["BowAttack"]);
+        base.Init(deserializedSkill["BowShot"]);
+        InitSpecific(deserializedSkill["BowShot"]);
     }
 
     private void InitSpecific(JToken deserializedSkill)
