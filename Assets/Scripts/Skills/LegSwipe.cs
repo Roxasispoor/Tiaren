@@ -8,6 +8,7 @@ public class LegSwipe : Skill
 {
     int debufValue;
     int damage;
+    string field;
 
     ParameterChangeV2<LivingPlaceable, float>  buff { get { return (ParameterChangeV2<LivingPlaceable, float>)effects[0]; } }
     ParameterChangeV2<LivingPlaceable, float>  unbuff { get { return (ParameterChangeV2<LivingPlaceable, float>)effects[1]; } }
@@ -16,19 +17,21 @@ public class LegSwipe : Skill
     {
         Debug.LogError("Creating a debufPM skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["MagicMissile"]);
-        InitSpecific(deserializedSkill["MagicMissile"]);
+        base.Init(deserializedSkill["LegSwipe"]);
+        InitSpecific(deserializedSkill["LegSwipe"]);
     }
 
     private void InitSpecific(JToken deserializedSkill)
     {
         squareShaped = true;
-
-        effects = new List<Effect>();
-        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
-        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));
+        
         debufValue = (int)deserializedSkill["debufValue"];
         damage = (int)deserializedSkill["damage"];
+        field = (string)deserializedSkill["fieldName"];
+        Debug.Log(field);
+        effects = new List<Effect>();
+        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(-debufValue, 0, 0, false, ActivationType.INSTANT));
+        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(debufValue, 0, 3, true, ActivationType.BEGINNING_OF_TURN));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -50,8 +53,8 @@ public class LegSwipe : Skill
     {
         buff.Launcher = caster;
         unbuff.Launcher = caster;
-        target.DispatchEffect(buff);
-        target.DispatchEffect(unbuff);
+        target.DispatchEffect(buff.Clone());
+        target.DispatchEffect(unbuff.Clone());
     }
 
     public override void Preview(NetIdeable target)

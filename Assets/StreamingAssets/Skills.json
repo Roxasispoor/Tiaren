@@ -42,7 +42,7 @@
     "spritePath": "Sword attack",
     "description": "An attack with a sword",
     "maxRange": 1,
-    "minRange": 0, 
+    "minRange": 0,
     "sizeZone": 1,
     "targetType": 0,
     "power": 40
@@ -59,6 +59,45 @@
     "targetType": 0,
     "power": 40
   },
+  "BleedingAttack": {
+    "skillName": "Bleed",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Bleeding",
+    "description": "Damage over time",
+    "maxRange": 1,
+    "minRange": 0,
+    "sizeZone": 1,
+    "targetType": 0,
+    "damage": 10,
+    "nbTurns": 3
+  },
+  "LegSwipe": {
+    "skillName": "LegSwipe",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Leg swipe",
+    "description": "Hit in the legs reducing movement by 1",
+    "maxRange": 1,
+    "minRange": 0,
+    "sizeZone": 1,
+    "targetType": 0,
+    "damage": 10,
+    "debufValue": 1,
+    "fieldName": "MaxPMFlat"
+  },
+  "BowShot": {
+    "skillName": "Bow Shot",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Bow shot",
+    "description": "Ranged attack with your bow",
+    "maxRange": 4,
+    "minRange": 2,
+    "sizeZone": 1,
+    "targetType": 0,
+    "power": 60
+  },
   "Fissure": {
     "skillName": "Fissure",
     "cost": 2,
@@ -70,17 +109,5 @@
     "targetType": 1,
     "sizeZone": 2,
     "cubeName": "Cube"
-  },
-  "BowAttack": {
-    "skillName": "Bow Shot",
-    "cost": 1,
-    "cooldown": 1,
-    "spritePath": "Bow shot",
-    "description": "Ranged attack with your bow",
-    "maxRange": 4,
-    "minRange": 2,
-    "sizeZone": 1,
-    "targetType": 0,
-    "power": 60
   }
 }

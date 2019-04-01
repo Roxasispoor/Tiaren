@@ -1036,8 +1036,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         for (int i = PlayingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
         {
             EffectManager.instance.StartTurnUseEffect(PlayingPlaceable.AttachedEffects[i]);
-            // some code
-            // safePendingList.RemoveAt(i);
         }
 
         if (PlayingPlaceable.IsDead && PlayingPlaceable.TurnsRemaingingCemetery > 0)
