@@ -9,23 +9,7 @@ using Newtonsoft.Json;
 /// </summary>
 [Serializable]
 public abstract class Skill
-{
-    /// <summary>
-    /// Usefull for object creation from json
-    /// </summary>
-    public class SkillDataFromJSON
-    {
-        public string skillName;
-        public int cost;
-        public int cooldown;
-        public string description = "Use the object";
-        public int maxRange;
-        public int minRange;
-        public int sizeZone = 1;
-        public TargetType targetType;
-        public string spritePath;
-    }
-    
+{    
     // ####### NEW #########
     [SerializeField]
     protected string skillName;
@@ -53,6 +37,14 @@ public abstract class Skill
     protected string description = "Use the object";
     public string Description { get { return description; } }
 
+    protected bool throughblocks = false;
+    protected bool squareShaped = false;
+
+    public int MaxRange { get => maxRange;}
+    public int MinRange { get => minRange;}
+    public bool SquareShaped { get => squareShaped;}
+    public bool Throughblocks { get => throughblocks;}
+
     // ####### OLD #########
 
 
@@ -67,8 +59,7 @@ public abstract class Skill
     private TargetType targetType;
 
     protected List<Effect> effects;
-
-    //TO REMOVE
+    
     [SerializeField]
     private SkillArea skillArea;
     [SerializeField]
@@ -87,7 +78,7 @@ public abstract class Skill
         spritePath = (string)jObject["spritePath"];
         abilitySprite = Resources.Load<Sprite>("UI_Images/Abilities/" + spritePath);
         if (abilitySprite == null)
-            Debug.LogError("Could find the image for: " + skillName + "- at: " + "UI_Images/Abilities/" + spritePath);
+            Debug.LogError("Could find the image for: " + skillName + " at: " + "UI_Images/Abilities/" + spritePath);
         description = (string)jObject["description"];
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];
@@ -138,7 +129,7 @@ public abstract class Skill
 
     protected abstract List<Placeable> PatterVision(Vector3 position, List<Placeable> vect);
 
-    //protected abstract List<Placeable> PatternUse(Placeable target);
+    //protected abstract List<Placeable> (Placeable target);
     
 
     // TODO : rework les ALREADYTARGETED
@@ -184,7 +175,7 @@ public abstract class Skill
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
         if (targetType == TargetType.BLOCK || targetType == TargetType.AREA)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0,0,0));
+            vect = Grid.instance.FindTargetableBlocks(playingPlaceable.GetPosition(),this, false);
             List<Placeable> placeables = new List<Placeable>();
             foreach(Vector3Int pos in vect)
             {
@@ -202,7 +193,7 @@ public abstract class Skill
         }
         else if (targetType == TargetType.LIVING)
         {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, true, new Vector3(0, 1, 0));
+            vect = Grid.instance.FindTargetableBlocks(playingPlaceable.GetPosition(), this, true);
             List<StandardCube> range = new List<StandardCube>();
             foreach (Vector3Int pos in vect)
             {
@@ -214,7 +205,7 @@ public abstract class Skill
             playingPlaceable.Range = range;
 
 
-            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
+            targetUnits = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
             List<Placeable> placeables = new List<Placeable>();
             foreach (LivingPlaceable livingPlaceable in targetUnits)
             {
@@ -228,23 +219,6 @@ public abstract class Skill
             }
             playingPlaceable.TargetableUnits = targetUnits;
             GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("LivingPlaceable");
-        }
-        else if (targetType == TargetType.PLACEABLE)
-        {
-            vect = Grid.instance.HighlightTargetableBlocks(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0, false, new Vector3(0, 0, 0));
-            targetUnits = Grid.instance.HighlightTargetableLiving(playingPlaceable.GetPosition(), minRange, maxRange, skillArea == SkillArea.THROUGHBLOCKS, minRange > 0);
-            List<Placeable> placeables = new List<Placeable>();
-            foreach (LivingPlaceable livingPlaceable in targetUnits)
-            {
-                placeables.Add(livingPlaceable);
-            }
-            foreach (Vector3Int pos in vect)
-            {
-                placeables.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
-            }
-            placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
-            Debug.LogError("not finished option : placeable");
-
         }
         else
         {
@@ -378,13 +352,13 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    protected static List<Placeable> PatternSpinning(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternAround(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targets = new List<Placeable>(vect);
         foreach (Placeable Character in vect)
         {
             Vector3 Pos = Character.transform.position;
-            if (Pos.y - position.y != 0 || Math.Abs(Pos.x - position.x) > 1 || Math.Abs(Pos.z - position.z) > 1 || Pos == position)
+            if (Pos != position)
                 targets.Remove(Character);
         }
         return targets;
@@ -601,8 +575,8 @@ public abstract class Skill
 
         return targets;
     }
-
-    public List<Placeable> PatternUseAround(Placeable target)
+    */
+    public static List<Placeable> PatternUseAround(Placeable target)
     {
         List<Placeable> targets = new List<Placeable>();
         Vector3 position = target.GetPosition();
@@ -624,7 +598,7 @@ public abstract class Skill
 
         return targets;
     }
-
+    /*
     public List<Placeable> PatternUseCheckUp(Placeable target)
     {
         if (Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.up) == null

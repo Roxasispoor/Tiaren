@@ -899,20 +899,26 @@ public class Grid : MonoBehaviour
     /// <param name="highrange"></param>
     /// <param name="viewRange"> True for physical attacks to show the range on the floor</param>
     /// <returns></returns>
-    public List<Vector3Int> HighlightTargetableBlocks(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
+    public List<Vector3Int> FindTargetableBlocks(Vector3 Playerposition, Skill skill, bool viewRange)
     {
+        //get usefull things from skill
+        int minrange = skill.MinRange;
+        int maxrange = skill.MaxRange;
+        bool throughblocks = skill.Throughblocks;
+        bool highrange = minrange > 0 ? true : false;
+        Vector3 shift = viewRange ? new Vector3(0, 1, 0) : new Vector3(0, 0, 0);
         int remainingrangeYZ; //remaining range
         int dirx; //x direction : 0 / -1 / 1
         List<Vector3Int> targetableblocs = new List<Vector3Int>();
 
         //Case x = 0 exploration 
-        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughtblocks, highrange, viewRange, shift);
+        Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, 0, 0, throughblocks, highrange, viewRange, shift);
 
         //Now case when x > 0
         dirx = 1;
         for (int i = 1; i <= maxrange; i++)
         {
-            //Updating remaining range
+            //Updating remaining range  
             remainingrangeYZ = maxrange - i;
 
             //Targeted block position
@@ -920,7 +926,14 @@ public class Grid : MonoBehaviour
             if (x < sizeX)
             {
                 //exploring in y and z
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange, shift);
+                if (skill.SquareShaped)
+                {
+                    Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, i, dirx, throughblocks, highrange, viewRange, shift);
+                }
+                else
+                {
+                    Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughblocks, highrange, viewRange, shift);
+                }
             }
         }
 
@@ -932,8 +945,15 @@ public class Grid : MonoBehaviour
             int x = (int)Playerposition.x + i;
             if (x >= 0)
             {
-                //Exploring in y and z 
-                Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughtblocks, highrange, viewRange, shift);
+                //Exploring in y and z                 
+                if (skill.SquareShaped)
+                {
+                    Depthreading(Playerposition, targetableblocs, minrange, maxrange, maxrange, i, dirx, throughblocks, highrange, viewRange, shift);
+                }
+                else
+                {
+                    Depthreading(Playerposition, targetableblocs, minrange, maxrange, remainingrangeYZ, i, dirx, throughblocks, highrange, viewRange, shift);
+                }
             }
         }
 
@@ -956,7 +976,7 @@ public class Grid : MonoBehaviour
     /// <param name="dirx">x direction (0,-1,1)</param>
     /// <param name="dirz">z direction (0,-1,1)</param>
     private void Highreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int j, int dirx, int dirz, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
+        int i, int j, int dirx, int dirz, bool throughblocks, bool highrange, bool viewRange, Vector3 shift)
     {
         int diry = 0; //y direction
         //real block position
@@ -975,7 +995,7 @@ public class Grid : MonoBehaviour
                     if (y < sizeY)
                     {
                         //trying to see the targeted block, if true, adding it to the target list
-                        if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
+                        if (GridMatrix[x, y, z] != null && (throughblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                         {
                             if (!gridMatrix[x, y, z].IsLiving())
                             {
@@ -1003,7 +1023,7 @@ public class Grid : MonoBehaviour
                 {
 
                     //trying to see the targeted block, if true, adding it to the target list
-                    if (GridMatrix[x, y, z] != null && (throughtblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
+                    if (GridMatrix[x, y, z] != null && (throughblocks|| !RayCastBlock(i, k, j, dirx, diry, dirz, Playerposition, shift)))
                     {
                         if (!gridMatrix[x, y, z].IsLiving())
                         {
@@ -1026,7 +1046,7 @@ public class Grid : MonoBehaviour
     /// <param name="i">number of block on x axis</param>
     /// <param name="dirx">x direction (0,-1,1)</param>
     private void Depthreading(Vector3 Playerposition, List<Vector3Int> targetableblocs, int minrange, int maxrange, int remainingrange,
-        int i, int dirx, bool throughtblocks, bool highrange, bool viewRange, Vector3 shift)
+        int i, int dirx, bool throughblocks, bool highrange, bool viewRange, Vector3 shift)
     {
         int dirz = 0; //z direction
         int trueremainingrange = remainingrange; //store the remainingrange at the algorithm's start
@@ -1047,7 +1067,7 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
-                        && (throughtblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
+                        && (throughblocks || !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
                         if (!gridMatrix[x, (int)Playerposition.y - 1, z].IsLiving())
                         {
@@ -1056,7 +1076,7 @@ public class Grid : MonoBehaviour
                         }
                     }
                 }
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange, shift);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughblocks, highrange, viewRange, shift);
             }
             dirz = 1;
         }
@@ -1076,7 +1096,7 @@ public class Grid : MonoBehaviour
                 {
                     //search for the floor in range if in line of sight and if so, add it to the bloc list
                     if (GridMatrix[x, (int)Playerposition.y - 1, z] != null && (GridMatrix[x, (int)Playerposition.y, z] == null || GridMatrix[x, (int)Playerposition.y, z].IsLiving())
-                        && (throughtblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
+                        && (throughblocks ||  !RayCastBlock(i, -1, j, dirx, -1, dirz, Playerposition, shift)))
                     {
                         if (!gridMatrix[x, (int)Playerposition.y - 1, z].IsLiving())
                         {
@@ -1086,7 +1106,7 @@ public class Grid : MonoBehaviour
                     }
                 }
                 //Search on the y axis
-                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughtblocks, highrange, viewRange, shift);
+                Highreading(Playerposition, targetableblocs, minrange, maxrange, remainingrange, i, j, dirx, dirz, throughblocks, highrange, viewRange, shift);
             }
         }
     }
@@ -1261,81 +1281,6 @@ public class Grid : MonoBehaviour
     }
 
     /// <summary>
-    /// Return an area to hightlight when the player use skills with an area effect
-    /// </summary>
-    /// <param name="Cube">Current Placeable selected</param>
-    /// <param name="effectrange">Range of the effect</param>
-    /// <returns>List of blocks where the effect spreads</returns>
-    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, bool topblock)
-    {
-        List<Placeable> targetableBlocks = new List<Placeable>();
-        Vector3 Position = Cube.transform.position;
-
-        for (int x = Mathf.Max((int)Position.x - effectrange, 0);
-                x < Mathf.Min((int)Position.x + effectrange + 1, sizeX);
-                x++)
-        {
-            for (int y = Mathf.Max((int)Position.y - effectrange, 0);
-                y < Mathf.Min((int)Position.y + effectrange + 1, sizeY);
-                y++)
-            {
-                for (int z = Mathf.Max((int)Position.z - effectrange, 0);
-                z < Mathf.Min((int)Position.z + effectrange + 1, sizeZ);
-                z++)
-                {
-                    if (gridMatrix[x, y, z] != null
-                        && !gridMatrix[x, y, z].IsLiving() && Mathf.Abs(x-Position.x)+Mathf.Abs(y-Position.y)+Mathf.Abs(z-Position.z) < effectrange
-                        && (!topblock || y == sizeY - 1 || gridMatrix[x, y + 1, z] == null || gridMatrix[x, y + 1, z].IsLiving()))
-                    {
-                        targetableBlocks.Add(gridMatrix[x,y,z]);
-                    }
-                }
-            }
-        }
-
-        return targetableBlocks;
-    }
-
-    public List<Placeable> HighlightEffectArea(Placeable Cube, int effectrange, bool topblock, int state, SkillArea pattern)
-    {
-        List<Placeable> targetableBlocks = new List<Placeable>();
-        Vector3 Position = Cube.transform.position;
-
-        if (pattern == SkillArea.LINE) {
-            if (state % 2 == 0)
-            {
-                for (int x = Mathf.Max((int)Position.x - effectrange, 0);
-                x < Mathf.Min((int)Position.x + effectrange + 1, sizeX);
-                x++)
-                {
-                    if (gridMatrix[x, (int)Position.y, (int)Position.z] != null
-                            && !gridMatrix[x, (int)Position.y, (int)Position.z].IsLiving() && (!topblock || Position.y == sizeY - 1 
-                            || gridMatrix[x, (int)Position.y + 1, (int)Position.z] == null) 
-                            || (gridMatrix[x, (int)Position.y + 1, (int)Position.z] && gridMatrix[x, (int)Position.y + 1, (int)Position.z].IsLiving()))
-                    {
-                        targetableBlocks.Add(gridMatrix[x, (int)Position.y, (int)Position.z]);
-                    }
-                }
-            }
-            else
-            {
-                for (int z = Mathf.Max((int)Position.z - effectrange, 0);
-                z < Mathf.Min((int)Position.z + effectrange + 1, sizeZ);
-                z++)
-                {
-                    if (gridMatrix[(int)Position.x, (int)Position.y, z] != null
-                            && !gridMatrix[(int)Position.x, (int)Position.y, z].IsLiving() && (!topblock || Position.y == sizeY - 1 
-                            || gridMatrix[(int)Position.x, (int)Position.y + 1, z] == null || gridMatrix[(int)Position.x, (int)Position.y + 1, z].IsLiving()))
-                    {
-                        targetableBlocks.Add(gridMatrix[(int)Position.x, (int)Position.y, z]);
-                    }
-                }
-            }
-        } 
-        return targetableBlocks;
-    }
-
-    /// <summary>
     /// Return a list of all living targets in range
     /// </summary>
     /// <param name="Playerposition"></param>
@@ -1343,8 +1288,14 @@ public class Grid : MonoBehaviour
     /// <param name="maxrange"></param>
     /// <param name="throughtblocks">If we can see targets through blocks</param>
     /// <returns></returns>
-    public List<LivingPlaceable> HighlightTargetableLiving(Vector3 Playerposition, int minrange, int maxrange, bool throughtblocks, bool highrange)
+    public List<LivingPlaceable> FindTargetableLiving(Vector3 Playerposition, Skill skill)
     {
+        //get usefull parameters from skill
+        int minrange = skill.MinRange;
+        int maxrange = skill.MaxRange;
+        bool throughblocks = skill.Throughblocks;
+        bool highrange = minrange > 0 ? true : false;
+
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
         foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
@@ -1355,7 +1306,7 @@ public class Grid : MonoBehaviour
             int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
             int diry = distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1;
             int dirz = distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1;
-            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                dirx, diry, dirz, Playerposition, new Vector3(0,0,0))))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
@@ -1370,7 +1321,7 @@ public class Grid : MonoBehaviour
             int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
             int diry = distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1;
             int dirz = distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1;
-            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughtblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+            if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                 dirx, diry, dirz, Playerposition, new Vector3(0, 0, 0))))
             {
                 targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());

@@ -22,6 +22,8 @@ public class LegSwipe : Skill
 
     private void InitSpecific(JToken deserializedSkill)
     {
+        squareShaped = true;
+
         effects = new List<Effect>();
         effects.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 0));
         effects.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));

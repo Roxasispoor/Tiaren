@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 public class PiercingShot : Skill
 {
     [SerializeField]
-    public float power;
+    private float power;
 
     PiercingDamageEffect DamageEffect { get { return (PiercingDamageEffect)effects[0]; } }
 
@@ -23,6 +23,7 @@ public class PiercingShot : Skill
 
     private void InitSpecific(JToken deserializedSkill)
     {
+        throughblocks = true;
         power = (float)deserializedSkill["power"];
         effects = new List<Effect>();
         effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.DEXT));

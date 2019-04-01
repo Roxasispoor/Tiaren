@@ -430,7 +430,6 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.CREATE, System.Type.GetType("CreateSkill"));
         SkillDictionary.Add(SkillTypes.DESTROY, System.Type.GetType("DestroySkill"));
         SkillDictionary.Add(SkillTypes.SWORDATTACK, System.Type.GetType("SwordAttack"));
-        SkillDictionary.Add(SkillTypes.WALL, System.Type.GetType("Wall"));
         SkillDictionary.Add(SkillTypes.BLEEDING, System.Type.GetType("BleedingAttack"));
         SkillDictionary.Add(SkillTypes.LEGSWIPE, System.Type.GetType("LegSwipe"));
         SkillDictionary.Add(SkillTypes.SPINNINGATTACK, System.Type.GetType("SpinningAttack"));
@@ -441,6 +440,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
+        SkillDictionary.Add(SkillTypes.WALL, System.Type.GetType("Wall"));
     }
 
 

@@ -19,6 +19,8 @@ class SwordAttack: Skill
 
     protected override void Init(JToken deserializedSkill)
     {
+        squareShaped = true;
+
         base.Init(deserializedSkill);
 
         power = (float)deserializedSkill["power"];

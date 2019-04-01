@@ -41,23 +41,23 @@
     "cooldown": 1,
     "spritePath": "Sword attack",
     "description": "An attack with a sword",
-    "maxRange": 2,
+    "maxRange": 1,
+    "minRange": 0, 
+    "sizeZone": 1,
+    "targetType": 0,
+    "power": 40
+  },
+  "SpinningAttack": {
+    "skillName": "Spinning attack",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "Spinning attack",
+    "description": "Spinning attack dealing damage all around you",
+    "maxRange": 1,
     "minRange": 0,
     "sizeZone": 1,
     "targetType": 0,
-    "power": 40.0
-  },
-  "Wall": {
-    "skillName": "Wall",
-    "cost": 2,
-    "cooldown": 1,
-    "spritePath": "Wall",
-    "description": "Create a wall",
-    "maxRange": 4,
-    "minRange": 0,
-    "targetType": 1,
-    "sizeZone": 2,
-    "cubeName": "Cube"
+    "power": 40
   },
   "BowAttack": {
     "skillName": "Bow Shot",
