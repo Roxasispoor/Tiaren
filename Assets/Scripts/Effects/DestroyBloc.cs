@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class DestroyBloc : EffectOnPlaceableOnly
 {
-    public int depthExceed=0;
+    public int depth=1;
 
     private Queue<MeshRenderer> meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     private Queue<GameObject> gameObjectDeactivatedForThePreview = new Queue<GameObject>();
@@ -17,15 +17,15 @@ public class DestroyBloc : EffectOnPlaceableOnly
 
     public DestroyBloc(DestroyBloc other) : base(other)
     {
-        this.depthExceed = other.depthExceed;
+        this.depth = other.depth;
     }
-    public DestroyBloc(int depth = 0) : base()
+    public DestroyBloc(int depth = 1) : base()
     {
-        depthExceed = depth;
+        this.depth = depth;
     }
     public DestroyBloc(Placeable launcher,int depth) : base(launcher)
     {
-        depthExceed = depth;
+        this.depth = depth;
         Launcher = launcher;
     }
 
@@ -49,7 +49,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
             previewedCubes = new Queue<GameObject>();
         }
         //throw new System.NotImplementedException();
-        for (int i = 0; i < depthExceed + 1; i++)
+        for (int i = 0; i < depth; i++)
         {
             StandardCube bloc = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.down * i) as StandardCube;
             if (bloc)
@@ -99,7 +99,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         //Vector3 pos = Target.GetPosition();
         //Target.Destroy();
         List<Vector3> oldPos = new List<Vector3>();
-        for (int i = 0; i <depthExceed + 1;i++)
+        for (int i = 0; i < depth; i++)
         {
             Placeable bloc = Grid.instance.GetPlaceableFromVector(Target.GetPosition() + Vector3Int.down * i);
             if (bloc && !bloc.IsLiving())
