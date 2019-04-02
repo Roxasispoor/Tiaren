@@ -515,8 +515,8 @@ public abstract class Skill
                 break;
         }
     }
-
-    public List<Placeable> PatternUseNone(Placeable target)
+    */
+    public List<Placeable> PatternUseSphere(Placeable target, int sizezone)
     {
         List<Placeable> targetableBlocks = new List<Placeable>();
         Vector3 Position = target.GetPosition();
@@ -524,21 +524,21 @@ public abstract class Skill
         int sizeY = Grid.instance.sizeY;
         int sizeZ = Grid.instance.sizeZ;
         
-        for (int x = Mathf.Max((int)Position.x - effectarea, 0);
-                x < Mathf.Min((int)Position.x + effectarea + 1, sizeX);
+        for (int x = Mathf.Max((int)Position.x - sizezone, 0);
+                x < Mathf.Min((int)Position.x + sizezone + 1, sizeX);
                 x++)
         {
-            for (int y = Mathf.Max((int)Position.y - effectarea, 0);
-                y < Mathf.Min((int)Position.y + effectarea + 1, sizeY);
+            for (int y = Mathf.Max((int)Position.y - sizezone, 0);
+                y < Mathf.Min((int)Position.y + sizezone + 1, sizeY);
                 y++)
             {
-                for (int z = Mathf.Max((int)Position.z - effectarea, 0);
-                z < Mathf.Min((int)Position.z + effectarea + 1, sizeZ);
+                for (int z = Mathf.Max((int)Position.z - sizezone, 0);
+                z < Mathf.Min((int)Position.z + sizezone + 1, sizeZ);
                 z++)
                 {
                     if (!Grid.instance.CheckNull(new Vector3Int(x,y,z))
                         && !Grid.instance.GridMatrix[x, y, z].IsLiving() 
-                        && Mathf.Abs(x - Position.x) + Mathf.Abs(y - Position.y) + Mathf.Abs(z - Position.z) < effectarea)
+                        && Mathf.Abs(x - Position.x) + Mathf.Abs(y - Position.y) + Mathf.Abs(z - Position.z) < sizezone)
                     {
                         targetableBlocks.Add(Grid.instance.GridMatrix[x, y, z]);
                     }
@@ -548,31 +548,7 @@ public abstract class Skill
 
         return targetableBlocks;
     }
-
-    public List<Placeable> PatternUseLine(Placeable target)
-    {
-        List<Placeable> targets = new List<Placeable>();
-        Vector3 Position = target.GetPosition();
-        int state = GameManager.instance.RaycastSelector.State % 2;
-        Vector3Int direction = new Vector3Int(state, 0, 1 - state);
-
-        Placeable placeableTemp = null;
-
-        targets.Add(target);
-        Debug.Log("Try to use line");
-        for (int i=1; i < effectarea; i++)
-        {
-            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() + direction * i);
-            if (placeableTemp)
-                targets.Add(placeableTemp);
-            placeableTemp = Grid.instance.GetPlaceableFromVector(target.GetPosition() - direction * i);
-            if (placeableTemp)
-                targets.Add(placeableTemp);
-        }
-
-        return targets;
-    }
-    */
+    
     public static List<Placeable> PatternUseAround(Placeable target)
     {
         List<Placeable> targets = new List<Placeable>();

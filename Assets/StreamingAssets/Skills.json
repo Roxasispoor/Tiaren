@@ -111,14 +111,14 @@
     "cubeName": "Cube"
   },
     "Fissure": {
-      "skillName": "Fissure",
-      "cost": 2,
-      "cooldown": 1,
-      "spritePath": "Fissure",
-      "description": "Create a chasm",
-      "maxRange": 4,
-      "minRange": 0,
-      "targetType": 1,
-      "sizeZone": 2
+	"skillName": "Fissure",
+	"cost": 2,
+	"cooldown": 1,
+	"spritePath": "Fissure",
+	"description": "Create a chasm",
+	"maxRange": 4,
+	"minRange": 0,
+	"targetType": 1,
+	"sizeZone": 2
     }
   }
