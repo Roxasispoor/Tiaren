@@ -497,9 +497,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         player2.gameObject.name = "player2";
 
         Player1.spawnList = Grid.instance.GetSpawnPlayer(Player1);
-        Debug.Log("Nb spawn P1: " + Player1.spawnList.Count);
         Player2.spawnList = Grid.instance.GetSpawnPlayer(Player2);
-        Debug.Log("Nb spawn P1: " + Player1.spawnList.Count);
 
         if (isClient)
         {
@@ -1189,7 +1187,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         StandardCube spawnpoint;
         for (int i = 0; i < player.spawnList.Count; i++)
         {
-            Debug.LogError("SpawnPOINTS!!!!!!!!!!!!!!!!!!!!!!!!!");
             spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
             if (material != null)
             {

@@ -1206,7 +1206,6 @@ public class LivingPlaceable : Placeable
             Debug.Log("Empty file while reading living form file!");
             return;
         }
-        Debug.Log("Readind line :" + fullText);
         Stats newLivingStats = JsonUtility.FromJson<Stats>(fullText);
         newLivingStats.FillLiving(this);
         this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + ClassName);

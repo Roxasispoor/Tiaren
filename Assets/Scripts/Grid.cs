@@ -885,7 +885,7 @@ public class Grid : MonoBehaviour
 
         SpawnPlayer1 = jagged.GetSpawnsP1();
         SpawnPlayer2 = jagged.GetSpawnsP2();
-        Debug.Log(Placeable.currentMaxId);
+        Debug.Log("CurrentMaxId: " + Placeable.currentMaxId);
 
     }
 
