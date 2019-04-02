@@ -21,11 +21,12 @@
   "isDead": false,
   "serializeNumber": 2,
   "netId": 0,
-  "ChosenSkills":  [
-		0,
-		1,
-		2,
-		3,
+  "ChosenSkills": [
+    10,
+    0,
+    1,
+    2,
+    3,
     9
   ]
 }

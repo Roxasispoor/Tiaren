@@ -35,6 +35,17 @@
     "sizeZone": 1,
     "targetType": 1
   },
+  "CreateZiplineSkill": {
+    "skillName": "Create zipline",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "ZipLine",
+    "description": "Create a zipline",
+    "maxRange": 5,
+    "minRange": 1,
+    "targetType": 1,
+    "prefabZiplineName": "ZipParent"
+  },
   "SwordAttack": {
     "skillName": "Sword attack",
     "cost": 1,
@@ -110,15 +121,15 @@
     "height": 2,
     "cubeName": "Cube"
   },
-    "Fissure": {
-      "skillName": "Fissure",
-      "cost": 2,
-      "cooldown": 1,
-      "spritePath": "Fissure",
-      "description": "Create a chasm",
-      "maxRange": 4,
-      "minRange": 0,
-      "targetType": 1,
-      "sizeZone": 2
-    }
+  "Fissure": {
+    "skillName": "Fissure",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "Fissure",
+    "description": "Create a chasm",
+    "maxRange": 4,
+    "minRange": 0,
+    "targetType": 1,
+    "sizeZone": 2
   }
+}

@@ -436,7 +436,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.BOWSHOT, System.Type.GetType("BowShot"));
         SkillDictionary.Add(SkillTypes.PIERCINGSHOT, System.Type.GetType("PiercingShot"));
         SkillDictionary.Add(SkillTypes.HIGHGROUND, System.Type.GetType("HighGround"));
-        SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("ZiplineSkill"));
+        SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("CreateZiplineSkill"));
         SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
