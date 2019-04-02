@@ -70,7 +70,7 @@
     "sizeZone": 1,
     "targetType": 0,
     "damage": 10,
-    "nbTurns": 3
+    "nbTurns": 2
   },
   "LegSwipe": {
     "skillName": "LegSwipe",

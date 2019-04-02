@@ -280,11 +280,11 @@ public class UIManager : MonoBehaviour
             image.GetComponentInChildren<Slider>().value = character.Character.CurrentHP;
             if (character.Character.Player.gameObject == gameObject)
             {
-                filter.color = new Color(0, 1, 1, 0.5f);
+                filter.color = new Color(0, 1, 1, 0.7f);
             }
             else
             {
-                filter.color = new Color(1, 0, 0, 0.5f);
+                filter.color = new Color(1, 0, 0, 0.7f);
             }
             if (numberInstantiated >= 1)
             {
