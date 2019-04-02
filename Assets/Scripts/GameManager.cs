@@ -495,6 +495,12 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseBatchFolder();
         player1.gameObject.name = "player1";
         player2.gameObject.name = "player2";
+
+        Player1.spawnList = Grid.instance.GetSpawnPlayer(Player1);
+        Debug.Log("Nb spawn P1: " + Player1.spawnList.Count);
+        Player2.spawnList = Grid.instance.GetSpawnPlayer(Player2);
+        Debug.Log("Nb spawn P1: " + Player1.spawnList.Count);
+
         if (isClient)
         {
             localPlayer.color = localPlayerColor;
@@ -502,13 +508,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
             otherPlayer.color = ennemyPlayerColor;
 
-            localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+            
             localPlayer.SendSpawnToCamera();
-            otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
             otherPlayer.SendSpawnToCamera();
+
+            ModifyNormalBlockToSpawnBlock(localPlayer, GameManager.instance.spawnAllyMaterial);
+            ModifyNormalBlockToSpawnBlock(otherPlayer, GameManager.instance.spawnEnemyMaterial);
         } else
         {
-//Player1.FindAndChangeCubeToBecomeSpawn();
+            Debug.LogError("Creating the spawn points for the server");
+            ModifyNormalBlockToSpawnBlock(Player1);
+            ModifyNormalBlockToSpawnBlock(Player2);
         }
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
@@ -1166,6 +1176,31 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className, prefaToSpawn);
 
         playerComponent.characters.Add(charac);
+    }
+
+    //TODO: Use the class component
+    /// <summary>
+    /// Set the parameters for the blocks in the spawnList of the player.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="material"></param>
+    private static void ModifyNormalBlockToSpawnBlock(Player player, Material material = null)
+    {
+        StandardCube spawnpoint;
+        for (int i = 0; i < player.spawnList.Count; i++)
+        {
+            Debug.LogError("SpawnPOINTS!!!!!!!!!!!!!!!!!!!!!!!!!");
+            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
+            if (material != null)
+            {
+                spawnpoint.GetComponent<MeshRenderer>().material = material;
+            }
+            spawnpoint.isConstructableOn = false;
+            spawnpoint.isSpawnPoint = true;
+            spawnpoint.Destroyable = false;
+            spawnpoint.movable = false;
+            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
+        }
     }
 
     private void Update()

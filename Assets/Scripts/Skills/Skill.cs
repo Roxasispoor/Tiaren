@@ -147,8 +147,6 @@ public abstract class Skill
             GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();
             return;
         }
-        GameManager.instance.State = States.UseSkill;
-        GameManager.instance.ActiveSkill = this;
 
         if (oneClickUse)
         {
@@ -157,6 +155,8 @@ public abstract class Skill
 
         } else
         {
+            GameManager.instance.State = States.UseSkill;
+            GameManager.instance.ActiveSkill = this;
             ShowSkillEffectTarget(GameManager.instance.PlayingPlaceable);
         }
         
