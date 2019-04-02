@@ -109,6 +109,7 @@
     "targetType": 1,
     "height": 2,
     "cubeName": "Cube"
+  },
     "Fissure": {
       "skillName": "Fissure",
       "cost": 2,
