@@ -435,7 +435,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.SPINNINGATTACK, System.Type.GetType("SpinningAttack"));
         SkillDictionary.Add(SkillTypes.BOWSHOT, System.Type.GetType("BowShot"));
         SkillDictionary.Add(SkillTypes.PIERCINGSHOT, System.Type.GetType("PiercingShot"));
-        SkillDictionary.Add(SkillTypes.HIGHERGROUND, System.Type.GetType("HigherGround"));
+        SkillDictionary.Add(SkillTypes.HIGHGROUND, System.Type.GetType("HighGround"));
         SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("ZiplineSkill"));
         SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
@@ -506,6 +506,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             localPlayer.SendSpawnToCamera();
             otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
             otherPlayer.SendSpawnToCamera();
+        } else
+        {
+//Player1.FindAndChangeCubeToBecomeSpawn();
         }
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;

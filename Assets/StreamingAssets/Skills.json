@@ -98,16 +98,27 @@
     "targetType": 0,
     "power": 60
   },
-  "Fissure": {
-    "skillName": "Fissure",
+  "HighGround": {
+    "skillName": "High ground",
     "cost": 2,
     "cooldown": 1,
-    "spritePath": "Fissure",
-    "description": "Create a chasm",
-    "maxRange": 4,
-    "minRange": 0,
+    "spritePath": "Higher Ground",
+    "description": "Ranged attack with your bow",
+    "maxRange": 1,
+    "minRange": 1,
     "targetType": 1,
-    "sizeZone": 2,
+    "height": 2,
     "cubeName": "Cube"
+  },
+    "Fissure": {
+      "skillName": "Fissure",
+      "cost": 2,
+      "cooldown": 1,
+      "spritePath": "Fissure",
+      "description": "Create a chasm",
+      "maxRange": 4,
+      "minRange": 0,
+      "targetType": 1,
+      "sizeZone": 2
+    }
   }
-}

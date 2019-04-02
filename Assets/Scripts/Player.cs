@@ -348,7 +348,7 @@ public class Player : NetworkBehaviour
         cameraScript.Init();
     }
 
-    public void displaySpawn()
+    public void spawnCharacters()
     {
         if (isLocalPlayer)
         {
@@ -357,17 +357,38 @@ public class Player : NetworkBehaviour
             Player localPlayer = GameManager.instance.GetLocalPlayer();
             Player enemyPlayer = GameManager.instance.GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
 
+            List<int> localPlayerCharacters = localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters;
+            List<int> enemyPlayerCharacters = enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters;
 
-            if (localPlayer == GameManager.instance.Player1)
+            ModifyNormalBlockToSpawnBlock(localPlayer, GameManager.instance.spawnAllyMaterial);
+            ModifyNormalBlockToSpawnBlock(enemyPlayer, GameManager.instance.spawnEnemyMaterial);
+
+            if (GameManager.instance.Player1 == localPlayer)    // Player need to always spawn in the same order for the NetID
             {
-                SpawnLocalPlayer(localPlayer);
-                SpawnEnemyPlayer(enemyPlayer);
-            }
-            else
+                for (int i = 0; i < localPlayerCharacters.Count; i++)
+                {
+                    GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayerCharacters[i]);
+                }
+
+                for (int i = 0; i < enemyPlayerCharacters.Count; i++)
+                {
+                    GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayerCharacters[i]);
+                }
+            } else
             {
-                SpawnEnemyPlayer(enemyPlayer);
-                SpawnLocalPlayer(localPlayer);
+
+                for (int i = 0; i < enemyPlayerCharacters.Count; i++)
+                {
+                    GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayerCharacters[i]);
+                }
+
+                for (int i = 0; i < localPlayerCharacters.Count; i++)
+                {
+                    GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayerCharacters[i]);
+                }
             }
+
+            
 
             GameManager.instance.ResetAllBatches();
             gameObject.GetComponent<UIManager>().SpawnUI();
@@ -375,21 +396,23 @@ public class Player : NetworkBehaviour
     }
 
     //TODO: Use the class component
-    private void SpawnLocalPlayer(Player localPlayer)
+    /// <summary>
+    /// Set the parameters for the blocks in the spawnList of the player.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="material"></param>
+    private void ModifyNormalBlockToSpawnBlock(Player player, Material material)
     {
         StandardCube spawnpoint;
-        for (int i = 0; i < localPlayer.spawnList.Count; i++)
+        for (int i = 0; i < player.spawnList.Count; i++)
         {
-            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(localPlayer.spawnList[i] + Vector3.down);
-            spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnAllyMaterial;
+            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
+            spawnpoint.GetComponent<MeshRenderer>().material = material;
+            spawnpoint.isConstructableOn = false;
             spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
             spawnpoint.movable = false;
             spawnpoint.gravityType = GravityType.NULL_GRAVITY;
-            if (i < localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
-            {
-                GameManager.instance.CreateCharacter(localPlayer.gameObject, localPlayer.spawnList[i], localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
-            }
         }
     }
 
@@ -400,6 +423,7 @@ public class Player : NetworkBehaviour
         {
             spawnpoint = (StandardCube) Grid.instance.GetPlaceableFromVector(enemyPlayer.spawnList[i] + Vector3.down);
             spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
+            spawnpoint.isConstructableOn = false;
             spawnpoint.isSpawnPoint = true;
             spawnpoint.Destroyable = false;
             spawnpoint.movable = false;
@@ -494,7 +518,7 @@ public class Player : NetworkBehaviour
         List<int> numbers = new List<int>(otherPlayerChoices);
         GameManager.instance.GetOtherPlayer(gameObject).GetComponent<UIManager>().CurrentCharacters = numbers;
         GameManager.instance.State = States.Spawn;
-        displaySpawn();
+        spawnCharacters();
     }
 
     public void GameReady()
@@ -1363,9 +1387,15 @@ public class Player : NetworkBehaviour
                     skill.Use(GameManager.instance.PlayingPlaceable, targets);
                 }*/
                 GameManager.instance.orientationState = orientationState;
-                skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
+                
+                bool wasSuccessfulyCast = skill.Use(GameManager.instance.PlayingPlaceable, GameManager.instance.FindLocalObject(netidTarget));
+                
+                if (wasSuccessfulyCast)
+            {
                 GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
                 RpcUseSkill(numSkill, netidTarget, netidArea, orientationState);
+            }
+                
 
                 /*            
                            NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
