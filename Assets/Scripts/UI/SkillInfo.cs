@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     private Skill skill;
 
     public static SkillInfo currentSkill = null;
+
+    public Text cost;
+    public Text cooldown;
+    public Image buttonImage;
 
     [SerializeField]
     private GameObject highlight;
@@ -56,6 +61,27 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             SkillInfo.currentSkill.SetHighlight(false);
         SkillInfo.currentSkill = this;
         SetHighlight(true);
+    }
+
+    public void UpdateButtonInfo()
+    {
+        buttonImage.sprite = skill.AbilitySprite;
+        cost.text = skill.Cost.ToString();
+        DisplayAvailability();
+    }
+
+    public void DisplayAvailability()
+    {
+        buttonImage.color = Color.white;
+        if (skill.cooldownTurnLeft > 0)
+        {
+            cooldown.text = skill.cooldownTurnLeft.ToString();
+            buttonImage.color = Color.gray;
+        }
+        if(GameManager.instance.PlayingPlaceable.CurrentPA < skill.Cost)
+        {
+            buttonImage.color = Color.gray;
+        }
     }
 
     public void SetHighlight(bool active)

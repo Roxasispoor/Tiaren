@@ -52,9 +52,8 @@ public class DestroyBloc : EffectOnPlaceableOnly
         for (int i = 0; i < depth; i++)
         {
             StandardCube bloc = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.down * i) as StandardCube;
-            if (bloc)
+            if (bloc != null && bloc.Destroyable == true)
             {
-
                 MeshRenderer meshRenderer = bloc.GetComponent<MeshRenderer>();
 
                 meshRenderer.enabled = false;

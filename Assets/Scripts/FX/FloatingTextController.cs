@@ -17,7 +17,7 @@ public class FloatingTextController : MonoBehaviour
             Debug.LogError("Text not found");
     }
 
-    public static void CreateFloatingText(string text, Transform location)
+    public static void CreateFloatingText(string text, Transform location, Color color)
     {
         if (!popupText)
             return;
@@ -28,6 +28,7 @@ public class FloatingTextController : MonoBehaviour
 
         instance.transform.SetParent(canvas.transform, false);
         instance.transform.position = screenPosition;
+        instance.SetTextColor(color);
         instance.SetText(text);
     }
 }

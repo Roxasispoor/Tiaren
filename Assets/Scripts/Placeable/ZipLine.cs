@@ -56,11 +56,9 @@ public class ZipLine : ObjectOnBloc {
         base.SomethingPutAbove();
         if(!Grid.instance.GetPlaceableFromVector(GetPosition()+new Vector3Int(0,1,0)).IsLiving())
         {
-            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
-                GameManager.instance.PlayingPlaceable, GameManager.instance.PlayingPlaceable.GetPosition());
-
+            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().updateSpecialAbilities(GameManager.instance.PlayingPlaceable,
+                GameManager.instance.PlayingPlaceable.GetPosition());
            Destroy();
-            
         }
        
     }

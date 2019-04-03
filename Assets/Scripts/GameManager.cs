@@ -579,18 +579,18 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         if (gameMode == GameMode.DEATHMATCH)
         {
             player2.GetComponent<Player>().isWinner = true;
-            foreach (GameObject character in player1.GetComponent<Player>().characters)
+            foreach (LivingPlaceable character in player1.GetComponent<Player>().characters)
             {
-                if (!character.GetComponent<LivingPlaceable>().IsDead)
+                if (!character.IsDead)
                 {
                     player2.GetComponent<Player>().isWinner = false;
                     break;
                 }
             }
             player1.GetComponent<Player>().isWinner = true;
-            foreach (GameObject character in player2.GetComponent<Player>().characters)
+            foreach (LivingPlaceable character in player2.GetComponent<Player>().characters)
             {
-                if (!character.GetComponent<LivingPlaceable>().IsDead)
+                if (!character.IsDead)
                 {
                     player1.GetComponent<Player>().isWinner = false;
                     break;
@@ -653,16 +653,14 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         TurnOrder.Clear();
         //add every character once and sort them
-        foreach (GameObject character in player1.GetComponent<Player>().Characters)
+        foreach (LivingPlaceable character in player1.GetComponent<Player>().Characters)
         {
-            LivingPlaceable placeable = character.GetComponent<LivingPlaceable>();
-            StackAndPlaceable newCharacter = new StackAndPlaceable(placeable, placeable.SpeedStack, false);
+            StackAndPlaceable newCharacter = new StackAndPlaceable(character, character.SpeedStack, false);
             TurnOrder.Add(newCharacter);
         }
-        foreach (GameObject character in player2.GetComponent<Player>().Characters)
+        foreach (LivingPlaceable character in player2.GetComponent<Player>().Characters)
         {
-            LivingPlaceable placeable = character.GetComponent<LivingPlaceable>();
-            StackAndPlaceable newCharacter = new StackAndPlaceable(placeable, placeable.SpeedStack, false);
+            StackAndPlaceable newCharacter = new StackAndPlaceable(character, character.SpeedStack, false);
             TurnOrder.Add(newCharacter);
         }
         TurnOrder.Sort((x, y) => x.SpeedStack == y.SpeedStack ? 1 : (int)((x.SpeedStack - y.SpeedStack) / (Mathf.Abs(x.SpeedStack - y.SpeedStack))));
@@ -1056,12 +1054,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
         else
         {
-
             if (PlayingPlaceable.IsDead)
             {
                 PlayingPlaceable.IsDead = false;
                 PlayingPlaceable.Player.Respawn(PlayingPlaceable);
             }
+
+            player1.GetComponent<Timer>().StartTimer(timerLength);
+            player2.GetComponent<Timer>().StartTimer(timerLength);
+
+            PlayingPlaceable.CurrentPM = PlayingPlaceable.MaxPM;
+            PlayingPlaceable.CurrentPA = PlayingPlaceable.PaMax;
 
             //initialise UI
             // reducing cooldown of skill by 1
@@ -1072,19 +1075,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     sk.cooldownTurnLeft--;
                 }
             }
-            player2.GetComponent<UIManager>().ChangeTurn();
-            player1.GetComponent<UIManager>().ChangeTurn();
+            if (isClient)
+            {
+                localPlayer.GetComponent<UIManager>().ChangeTurn();
+            }
             State = States.Move;
             
             SetCamera();
 
-            PlayingPlaceable.CurrentPM = PlayingPlaceable.MaxPM;
-            PlayingPlaceable.CurrentPA = PlayingPlaceable.PaMax;
-            Debug.Log(PlayingPlaceable.CurrentPA);
-            PlayingPlaceable.Player.clock.IsFinished = false;
             PlayingPlaceable.Player.cameraScript.BackToMovement();
-            player1.GetComponent<Timer>().StartTimer(timerLength);
-            player2.GetComponent<Timer>().StartTimer(timerLength);
         }
     }
     
@@ -1111,16 +1110,15 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     {
         if (winner == null)
         {
-            //cleaning and checks and synchro with banana dancing if needed
+            //cleaning and checks and synchro
             Debug.Log("tour suivaaaaaaaaant Area of movement=" + PlayingPlaceable.AreaOfMouvement.Count);
             if (PlayingPlaceable.Player.isLocalPlayer)
             {
                 PlayingPlaceable.ResetTargets();
                 PlayingPlaceable.ResetAreaOfMovement();
                 PlayingPlaceable.ResetHighlightSkill();
-                RaycastSelector rayselect = PlayingPlaceable.Player.GetComponentInChildren<RaycastSelector>();
-                rayselect.EffectArea = 0;
-                rayselect.Pattern = SkillArea.NONE;
+                raycastSelector.EffectArea = 0;
+                raycastSelector.Pattern = SkillArea.NONE;
                 PlayingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
@@ -1173,7 +1171,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
         InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className, prefaToSpawn);
 
-        playerComponent.characters.Add(charac);
+        playerComponent.characters.Add(charac.GetComponent<LivingPlaceable>());
     }
 
     //TODO: Use the class component

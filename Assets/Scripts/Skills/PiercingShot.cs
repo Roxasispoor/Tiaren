@@ -26,7 +26,7 @@ public class PiercingShot : Skill
         throughblocks = true;
         power = (float)deserializedSkill["power"];
         effects = new List<Effect>();
-        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.DEXT));
+        effects.Add(new PiercingDamageEffect(power, DamageCalculated.DamageScale.DEXT));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

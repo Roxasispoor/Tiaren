@@ -36,7 +36,7 @@ public class PickObjectOnBlockEffect : EffectOnObjectBloc
             Target.transform.localPosition = new Vector3();
             Target.GetComponentInChildren<Transform>().localPosition = Vector3.down;
             Target.transform.localRotation = Quaternion.identity;
-            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(GameManager.instance.PlayingPlaceable,
+            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().updateSpecialAbilities(GameManager.instance.PlayingPlaceable,
                 GameManager.instance.PlayingPlaceable.GetPosition());
         }
     }

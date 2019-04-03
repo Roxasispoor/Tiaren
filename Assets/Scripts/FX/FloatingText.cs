@@ -7,18 +7,23 @@ public class FloatingText : MonoBehaviour {
 
     [SerializeField]
     private Animator animator;
-    private Text damageText;
+    private Text displayText;
 
     void OnEnable()
     {
         AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
         Debug.Log(clipInfo.Length);
         Destroy(gameObject, clipInfo[0].clip.length);
-        damageText = animator.GetComponent<Text>();
+        displayText = animator.GetComponent<Text>();
     }
 
     public void SetText(string text)
     {
-        damageText.text = text;
+        displayText.text = text;
+    }
+
+    public void  SetTextColor(Color color)
+    {
+        displayText.color = color;
     }
 }
