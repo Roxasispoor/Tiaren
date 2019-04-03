@@ -436,7 +436,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.BOWSHOT, System.Type.GetType("BowShot"));
         SkillDictionary.Add(SkillTypes.PIERCINGSHOT, System.Type.GetType("PiercingShot"));
         SkillDictionary.Add(SkillTypes.HIGHGROUND, System.Type.GetType("HighGround"));
-        SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("ZiplineSkill"));
+        SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("CreateZiplineSkill"));
         SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
@@ -495,6 +495,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseBatchFolder();
         player1.gameObject.name = "player1";
         player2.gameObject.name = "player2";
+
+        Player1.spawnList = Grid.instance.GetSpawnPlayer(Player1);
+        Player2.spawnList = Grid.instance.GetSpawnPlayer(Player2);
+
         if (isClient)
         {
             localPlayer.color = localPlayerColor;
@@ -502,13 +506,17 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Player otherPlayer = GetOtherPlayer(localPlayer.gameObject).GetComponent<Player>();
             otherPlayer.color = ennemyPlayerColor;
 
-            localPlayer.spawnList = Grid.instance.GetSpawnPlayer(localPlayer);
+            
             localPlayer.SendSpawnToCamera();
-            otherPlayer.spawnList = Grid.instance.GetSpawnPlayer(otherPlayer);
             otherPlayer.SendSpawnToCamera();
+
+            ModifyNormalBlockToSpawnBlock(localPlayer, GameManager.instance.spawnAllyMaterial);
+            ModifyNormalBlockToSpawnBlock(otherPlayer, GameManager.instance.spawnEnemyMaterial);
         } else
         {
-//Player1.FindAndChangeCubeToBecomeSpawn();
+            Debug.LogError("Creating the spawn points for the server");
+            ModifyNormalBlockToSpawnBlock(Player1);
+            ModifyNormalBlockToSpawnBlock(Player2);
         }
         //To activate for perf, desactivate for pf
         transmitter.networkManager = networkManager;
@@ -1164,6 +1172,30 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         InitialiseCharacter(charac, player, spawnCoordinates, GameManager.instance.PossibleCharacters[prefaToSpawn].className, prefaToSpawn);
 
         playerComponent.characters.Add(charac.GetComponent<LivingPlaceable>());
+    }
+
+    //TODO: Use the class component
+    /// <summary>
+    /// Set the parameters for the blocks in the spawnList of the player.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="material"></param>
+    private static void ModifyNormalBlockToSpawnBlock(Player player, Material material = null)
+    {
+        StandardCube spawnpoint;
+        for (int i = 0; i < player.spawnList.Count; i++)
+        {
+            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
+            if (material != null)
+            {
+                spawnpoint.GetComponent<MeshRenderer>().material = material;
+            }
+            spawnpoint.isConstructableOn = false;
+            spawnpoint.isSpawnPoint = true;
+            spawnpoint.Destroyable = false;
+            spawnpoint.movable = false;
+            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
+        }
     }
 
     private void Update()

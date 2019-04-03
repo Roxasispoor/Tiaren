@@ -60,8 +60,7 @@ public class CameraScript : MonoBehaviour
         rotation = transform.rotation;
 
         grid = GameObject.Find("GameManager").GetComponent<Grid>();
-
-        Debug.Log(spawncenter);
+        
         Vector3 spawntoobjective = new Vector3(grid.sizeX / 2, spawncenter.y, grid.sizeZ / 2) - spawncenter;
         XDeg = spawntoobjective.x >= 0 ? Vector3.Angle(Vector3.forward, spawntoobjective) : -Vector3.Angle(Vector3.forward, spawntoobjective);
         YDeg = Vector3.Angle(Vector3.up, spawntoobjective) - 45;

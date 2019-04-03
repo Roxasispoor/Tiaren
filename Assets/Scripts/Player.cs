@@ -360,9 +360,6 @@ public class Player : NetworkBehaviour
             List<int> localPlayerCharacters = localPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters;
             List<int> enemyPlayerCharacters = enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters;
 
-            ModifyNormalBlockToSpawnBlock(localPlayer, GameManager.instance.spawnAllyMaterial);
-            ModifyNormalBlockToSpawnBlock(enemyPlayer, GameManager.instance.spawnEnemyMaterial);
-
             if (GameManager.instance.Player1 == localPlayer)    // Player need to always spawn in the same order for the NetID
             {
                 for (int i = 0; i < localPlayerCharacters.Count; i++)
@@ -388,31 +385,8 @@ public class Player : NetworkBehaviour
                 }
             }
 
-            
-
             GameManager.instance.ResetAllBatches();
             gameObject.GetComponent<UIManager>().SpawnUI();
-        }
-    }
-
-    //TODO: Use the class component
-    /// <summary>
-    /// Set the parameters for the blocks in the spawnList of the player.
-    /// </summary>
-    /// <param name="player"></param>
-    /// <param name="material"></param>
-    private void ModifyNormalBlockToSpawnBlock(Player player, Material material)
-    {
-        StandardCube spawnpoint;
-        for (int i = 0; i < player.spawnList.Count; i++)
-        {
-            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
-            spawnpoint.GetComponent<MeshRenderer>().material = material;
-            spawnpoint.isConstructableOn = false;
-            spawnpoint.isSpawnPoint = true;
-            spawnpoint.Destroyable = false;
-            spawnpoint.movable = false;
-            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
         }
     }
 
