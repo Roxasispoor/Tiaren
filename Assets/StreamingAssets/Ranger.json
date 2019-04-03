@@ -1,31 +1,41 @@
 {
-  "className": "Ranger",
-  "positionSave": {
-    "x": 0.0,
-    "y": 0.0,
-    "z": 0.0
-  },
-  "playerPosesser": "",
-  "maxHP": { "baseValue": 100.0 },
-  "currentHP": { "baseValue": 100.0 },
-  "pmMax": { "baseValue": 5.0 },
-  "currentPM": { "baseValue": 5.0 },
-  "currentPA": { "baseValue": 3.0 },
-  "paMax": { "baseValue": 3.0 },
-  "speed": { "baseValue": 60.0 },
-  "speedStack": { "baseValue": 0.01666666753590107 },
-  "jump": { "baseValue": 1.0 },
-  "def": { "baseValue": 50.0 },
-  "mdef": { "baseValue": 45.0 },
-  "deathLength": { "baseValue": 1.0 },
-  "isDead": false,
-  "serializeNumber": 2,
-  "netId": 0,
-  "ChosenSkills":  [
+	"className": "Ranger",
+	"positionSave": 
+	{
+		"x": 0.0,
+		"y": 0.0,
+		"z": 0.0
+	},
+	"playerPosesser": "",
+	"maxHP": { "baseValue": 100.0 },
+	"currentHP": { "baseValue": 100.0 },
+	"pmMax": { "baseValue": 5.0 },
+	"currentPM": { "baseValue": 5.0 },
+	"currentPA": { "baseValue": 3.0 },
+	"paMax": { "baseValue": 3.0 },
+	"speed": { "baseValue": 60.0 },
+	"speedStack": { "baseValue": 0.01666666753590107 },
+	"jump": { "baseValue": 1.0 },
+	"def": { "baseValue": 50.0 },
+	"mdef": { "baseValue": 45.0 },
+	"deathLength": { "baseValue": 1.0 },
+	"isDead": false,
+	"serializeNumber": 2,
+	"netId": 0,
+	"ChosenSkills":  
+	[
 		0,
 		1,
 		2,
 		3,
-    9
-  ]
+		4,
+		5,
+		6,
+		7,
+		8,
+		11,
+		12,
+		13,
+		14
+	]
 }

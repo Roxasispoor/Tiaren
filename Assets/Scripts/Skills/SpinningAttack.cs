@@ -31,9 +31,10 @@ public class SpinningAttack : Skill
     {
         List<Placeable> affectedPlaceable = Skill.PatternUseAround((Placeable)target);
 
+        LivingPlaceable fleshyTarget;
         foreach (Placeable placeable in affectedPlaceable)
         {
-            LivingPlaceable fleshyTarget = placeable as LivingPlaceable;
+            fleshyTarget = placeable as LivingPlaceable;
             if (fleshyTarget)
             {
                 DamageEffect.Preview(fleshyTarget);
@@ -45,9 +46,10 @@ public class SpinningAttack : Skill
     {
         List<Placeable> affectedPlaceable = Skill.PatternUseAround((Placeable)target);
 
+        LivingPlaceable fleshyTarget;
         foreach (Placeable placeable in affectedPlaceable)
         {
-            LivingPlaceable fleshyTarget = placeable as LivingPlaceable;
+            fleshyTarget = placeable as LivingPlaceable;
             if (fleshyTarget)
             {
                 DamageEffect.ResetPreview(fleshyTarget);

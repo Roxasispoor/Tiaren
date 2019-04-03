@@ -60,7 +60,7 @@ public class CreateZipLine : CreateBlock
         {
             ResetPreview(Target);
             createMesh(false);
-            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(GameManager.instance.PlayingPlaceable,
+            GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().updateSpecialAbilities(GameManager.instance.PlayingPlaceable,
             GameManager.instance.PlayingPlaceable.GetPosition());
         }
         else

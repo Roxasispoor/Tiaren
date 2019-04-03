@@ -143,6 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1943e6f260bfc4f4c888d30fa06c51ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: {fileID: 4367172332017264822}
+  cooldown: {fileID: 114633989750433964}
+  buttonImage: {fileID: 114515039533574862}
   highlight: {fileID: 1623191308908478}
 --- !u!1 &1112430853555570
 GameObject:

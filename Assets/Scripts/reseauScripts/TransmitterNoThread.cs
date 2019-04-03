@@ -230,7 +230,7 @@ public class TransmitterNoThread : MonoBehaviour
                            newLivingStats.positionSave, Quaternion.identity);
                         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
-                        GameManager.instance.player1.GetComponent<Player>().Characters.Add(charac);
+                        GameManager.instance.player1.GetComponent<Player>().Characters.Add(charac1);
                         charac1.Player = GameManager.instance.player1.GetComponent<Player>();
                         Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
                                 (int)newLivingStats.positionSave.z);
@@ -252,7 +252,7 @@ public class TransmitterNoThread : MonoBehaviour
                            newLivingStats.positionSave, Quaternion.identity);
                         LivingPlaceable charac1 = charac.GetComponent<LivingPlaceable>();
 
-                        GameManager.instance.player2.GetComponent<Player>().Characters.Add(charac);
+                        GameManager.instance.player2.GetComponent<Player>().Characters.Add(charac1);
                         charac1.Player = GameManager.instance.player2.GetComponent<Player>();
                         Vector3Int posPers = new Vector3Int((int)newLivingStats.positionSave.x, (int)newLivingStats.positionSave.y,
                                 (int)newLivingStats.positionSave.z);

@@ -49,7 +49,7 @@ public class ZipLineTeleport : EffectOnObjectBloc
             }
             if(Launcher.Player.isLocalPlayer)
             {
-                GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(
+                GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().updateSpecialAbilities(
                    (LivingPlaceable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0));
             }
         }

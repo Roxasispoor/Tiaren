@@ -120,7 +120,16 @@ public class Grid : MonoBehaviour
 
     public Placeable GetPlaceableFromVector(Vector3 pos)
     {
-        return GridMatrix[(int)pos.x, (int)pos.y, (int)pos.z];
+        Vector3Int intpos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+        if (CheckRange(intpos))
+        {
+            return GridMatrix[intpos.x, intpos.y, intpos.z];
+        }
+        else
+        {
+            Debug.Log("Out of range in getplaceablefromvector" + pos);
+            return null;
+        }
     }
 
     /// <summary>
@@ -1298,9 +1307,9 @@ public class Grid : MonoBehaviour
 
         List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
 
-        foreach (GameObject gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
+        foreach (LivingPlaceable gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
         {
-            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            Vector3 distance = gameObjCharacter.GetPosition() - Playerposition;
             float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange - 1) + distance.y)) * maxrange) : distance.y);
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + Math.Abs(yrange);
             int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
@@ -1309,13 +1318,13 @@ public class Grid : MonoBehaviour
             if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                dirx, diry, dirz, Playerposition, new Vector3(0,0,0))))
             {
-                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+                targetableliving.Add(gameObjCharacter);
             }
         }
 
-        foreach (GameObject gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
+        foreach (LivingPlaceable gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
         {
-            Vector3 distance = gameObjCharacter.GetComponent<LivingPlaceable>().GetPosition() - Playerposition;
+            Vector3 distance = gameObjCharacter.GetPosition() - Playerposition;
             float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange-1)+distance.y))*maxrange) : distance.y);
             float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + Math.Abs(yrange);
             int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
@@ -1324,7 +1333,7 @@ public class Grid : MonoBehaviour
             if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
                 dirx, diry, dirz, Playerposition, new Vector3(0, 0, 0))))
             {
-                targetableliving.Add(gameObjCharacter.GetComponent<LivingPlaceable>());
+                targetableliving.Add(gameObjCharacter);
             }
         }
 

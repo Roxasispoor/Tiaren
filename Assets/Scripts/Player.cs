@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
     [SyncVar]
     private int score;
     public bool isReadyToPlay = false;
-    public List<GameObject> characters = new List<GameObject>();
+    public List<LivingPlaceable> characters = new List<LivingPlaceable>();
     public List<int> numberPrefab;
     public List<Vector3Int> spawnList;
     private Vector3Int placeToGo;
@@ -65,7 +65,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public List<GameObject> Characters
+    public List<LivingPlaceable> Characters
     {
         get
         {
@@ -252,7 +252,7 @@ public class Player : NetworkBehaviour
             if (living.Player == null)
             {
                 living.Player = this;
-                Characters.Add(living.gameObject);
+                Characters.Add(living);
             }
         }
     }
@@ -539,16 +539,16 @@ public class Player : NetworkBehaviour
     {
         if (GameManager.instance.player2.GetComponent<Player>() != this && !this.isLocalPlayer)
         {
-            foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+            foreach (LivingPlaceable c in GameManager.instance.player1.GetComponent<Player>().characters)
             {
-                c.SetActive(false);
+                c.gameObject.SetActive(false);
             }
         }
         if (GameManager.instance.player1.GetComponent<Player>() != this && !this.isLocalPlayer)
         {
-            foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+            foreach (LivingPlaceable c in GameManager.instance.player2.GetComponent<Player>().characters)
             {
-                c.SetActive(false);
+                c.gameObject.SetActive(false);
             }
         }
         SwapPositionSpawn(positions, ids);
@@ -627,9 +627,9 @@ public class Player : NetworkBehaviour
     public void BiasSpeed(float[] biases)
     {
         int i = 0;
-        foreach (GameObject chara in Characters)
+        foreach (LivingPlaceable chara in Characters)
         {
-            chara.GetComponent<LivingPlaceable>().SpeedStack += biases[i];
+            chara.SpeedStack += biases[i];
             i++;
         }
     }
@@ -658,13 +658,13 @@ public class Player : NetworkBehaviour
     {
         Debug.Log("Try to change UI");
         // Make the other player's characters visiblr again
-        foreach (GameObject c in GameManager.instance.player1.GetComponent<Player>().characters)
+        foreach (LivingPlaceable c in GameManager.instance.player1.GetComponent<Player>().characters)
         {
-            c.SetActive(true);
+            c.gameObject.SetActive(true);
         }
-        foreach (GameObject c in GameManager.instance.player2.GetComponent<Player>().characters)
+        foreach (LivingPlaceable c in GameManager.instance.player2.GetComponent<Player>().characters)
         {
-            c.SetActive(true);
+            c.gameObject.SetActive(true);
         }
 
         // Remove the material from the spawning points
@@ -693,7 +693,7 @@ public class Player : NetworkBehaviour
         {
             localPlayer = GameManager.instance.GetOtherPlayer(gameObject);
         }
-
+        localPlayer.GetComponent<UIManager>().InitAbilities(GameManager.instance.GetLocalPlayer());
         localPlayer.GetComponent<UIManager>().spawnCanvas.SetActive(false);
         localPlayer.GetComponent<UIManager>().teamCanvas.SetActive(false); //just making sure and useful for reco
         localPlayer.GetComponent<UIManager>().gameCanvas.SetActive(true);
@@ -1529,7 +1529,7 @@ public class Player : NetworkBehaviour
         {
             GameManager.instance.ActiveSkill = null;
             GameManager.instance.State = States.Move;
-            FloatingTextController.CreateFloatingText("Not enought PA", GameManager.instance.PlayingPlaceable.transform);
+            FloatingTextController.CreateFloatingText("Not enought PA", GameManager.instance.PlayingPlaceable.transform, Color.red);
             cameraScript.BackToMovement();
         }
     }
@@ -1541,41 +1541,13 @@ public class Player : NetworkBehaviour
         Skill skill = NumberToSkill(GameManager.instance.PlayingPlaceable, numSkill);
 
         GameManager.instance.orientationState = orientationState;
-
-        /*
-        if (skill.TargetType == TargetType.ALREADYTARGETED) //Simply use them
-        {
-            skill.UseTargeted(skill);
-            GameManager.instance.PlayingPlaceable.ResetTargets();
-        }
-        else
-        {*/
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
         skill.Use(GameManager.instance.PlayingPlaceable, target);
         GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
 
-        /*
-        if (netidArea.Length == 0)
-        {
-            //skill.Use(GameManager.instance.PlayingPlaceable, new List<NetIdeable>() { target }); Before refactor skill
-            skill.Use(GameManager.instance.PlayingPlaceable, target);
-        }
-        else
-        {
-            List<NetIdeable> idlist = new List<NetIdeable>();
-            foreach (int blockid in netidArea)
-            {
-                idlist.Add(GameManager.instance.FindLocalObject(blockid));
-            }
+        gameObject.GetComponent<UIManager>().UpdateAvailability();
 
-            skill.Use(GameManager.instance.PlayingPlaceable, idlist);
-        }*/
-
-
-
-
-        //}
         if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
             cameraScript.BackToMovement();

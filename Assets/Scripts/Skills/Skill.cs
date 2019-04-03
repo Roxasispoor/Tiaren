@@ -516,7 +516,7 @@ public abstract class Skill
         }
     }
     */
-    public List<Placeable> PatternUseSphere(Placeable target, int sizezone)
+    public static List<Placeable> PatternUseSphere(Placeable target, int sizezone)
     {
         List<Placeable> targetableBlocks = new List<Placeable>();
         Vector3 Position = target.GetPosition();
@@ -548,7 +548,7 @@ public abstract class Skill
 
         return targetableBlocks;
     }
-    
+
     public static List<Placeable> PatternUseAround(Placeable target)
     {
         List<Placeable> targets = new List<Placeable>();

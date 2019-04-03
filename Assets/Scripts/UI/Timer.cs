@@ -36,6 +36,7 @@ public class Timer : MonoBehaviour
         targetTime = time;
         maxTime = time;
         timerDisplay.fillAmount = 1;
+        isFinished = false;
     }
 
     void Update()
