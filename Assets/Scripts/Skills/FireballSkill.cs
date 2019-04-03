@@ -32,8 +32,9 @@ public class FireballSkill : Skill
 
     public override void Preview(NetIdeable target)
     {
-        List<Placeable> affectedPlaceable = Skill.((Placeable)target);
+        //List<Placeable> affectedPlaceable = Skill.((Placeable)target);
 
+        /*
         foreach (Placeable placeable in affectedPlaceable)
         {
             LivingPlaceable fleshyTarget = placeable as LivingPlaceable;
@@ -41,7 +42,7 @@ public class FireballSkill : Skill
             {
                 DamageEffect.ResetPreview(fleshyTarget);
             }
-        }
+        }*/
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

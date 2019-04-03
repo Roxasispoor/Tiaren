@@ -28,6 +28,10 @@ public abstract class NetIdeable : MonoBehaviour {
     {
         get
         {
+            if (attachedEffects == null)
+            {
+                attachedEffects = new List<Effect>();
+            }
             return attachedEffects;
         }
 

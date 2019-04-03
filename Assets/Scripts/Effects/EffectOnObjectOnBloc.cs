@@ -1,4 +1,6 @@
-﻿public abstract class EffectOnObjectBloc : Effect
+﻿using UnityEngine;
+
+public abstract class EffectOnObjectBloc : Effect
 {
     public ObjectOnBloc target;
     public int netIdTarget = -1;
@@ -33,6 +35,7 @@
 
     public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)//TODO, doesn't work
     {
+        Debug.LogError("TargetAndInvokeEffectManager for EffectOnObjectBloc");
         Target = placeable;
         EffectManager.instance.DirectAttack(this);
     }

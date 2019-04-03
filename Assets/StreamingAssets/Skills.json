@@ -46,6 +46,16 @@
     "targetType": 1,
     "prefabZiplineName": "ZipParent"
   },
+  "UseZipline": {
+    "skillName": "Zip !",
+    "cost": 0,
+    "cooldown": 0,
+    "spritePath": "Zip",
+    "description": "Travel fast using the zipline",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 0
+  },
   "SwordAttack": {
     "skillName": "Sword attack",
     "cost": 1,

@@ -71,6 +71,9 @@ public abstract class Skill
     [SerializeField]
     private SkillEffect skillEffect;
 
+    protected Skill()
+    {
+    }
 
     public Skill(string JSON)
     {
@@ -89,8 +92,23 @@ public abstract class Skill
         maxRange = (int)jObject["maxRange"];
         minRange = (int)jObject["minRange"];
         targetType = (TargetType)(int)jObject["targetType"];
+
+        effects = new List<Effect>();
     }
 
+    protected void CopyMainVariables(Skill skill)
+    {
+        skillName = skill.SkillName;
+        cost = skill.Cost;
+        cooldown = skill.Cooldown;
+        abilitySprite = skill.AbilitySprite;
+        description = skill.Description;
+        maxRange = skill.MaxRange;
+        minRange = skill.MinRange;
+        targetType = skill.targetType;
+
+        effects = new List<Effect>();
+    }
 
     protected abstract void UseSpecific(LivingPlaceable caster, NetIdeable target);
 

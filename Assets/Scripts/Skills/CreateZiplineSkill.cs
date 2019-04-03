@@ -16,6 +16,11 @@ class CreateZiplineSkill : Skill
         Debug.LogError("Creating a Zipline skill");
         JObject deserializedSkill = JObject.Parse(JSON);
         Init(deserializedSkill["CreateZiplineSkill"]);
+
+        if (UseZipline.reference == null)
+        {
+            UseZipline.reference = new UseZipline(JSON);
+        }
     }
 
     protected override void Init(JToken deserializedSkill)
