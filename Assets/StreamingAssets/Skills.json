@@ -179,5 +179,15 @@
     "maxRange": 0,
     "minRange": 0,
     "targetType": 0
+  },
+  "PickObject": {
+    "skillName": "Pick ",
+    "cost": 0,
+    "cooldown": 0,
+    "spritePath": "Pick_Object",
+    "description": "Pick the object on the block",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 0
   }
 }

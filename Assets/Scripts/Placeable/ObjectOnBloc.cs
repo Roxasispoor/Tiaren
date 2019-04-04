@@ -61,6 +61,8 @@ public class ObjectOnBloc : NetIdeable {
             //Skill taker = new Skill(0, 0, new List<Effect>() { eff }, TargetType.ALREADYTARGETED, "Pick_Object", 0, 1);//No cooldown because skills from these objects aren't resetted
             //taker.Description = "Pick up the object on this block";
             //givenSkills.Add(taker);
+            Skill pickSkill = PickObject.CreateNewInstanceFromReferenceAndSetTarget(this);
+            givenSkills.Add(pickSkill);
         }
     }
     public virtual void Destroy()

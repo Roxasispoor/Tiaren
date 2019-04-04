@@ -14,7 +14,6 @@ public class Flag : ObjectOnBloc {
     }
     public override void SomethingPutAbove()
     {
-        Debug.Log("raise!");
          Vector3Int currentPos = GetPosition();
         while (Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z] != null && currentPos.y < Grid.instance.sizeY)
         {

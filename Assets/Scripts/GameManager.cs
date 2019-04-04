@@ -441,6 +441,12 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
         SkillDictionary.Add(SkillTypes.WALL, System.Type.GetType("Wall"));
+        SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
+
+        StreamReader readerJSON = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
+        string JSON = readerJSON.ReadToEnd();
+
+        PickObject.reference = new PickObject(JSON);
     }
 
 
