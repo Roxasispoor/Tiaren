@@ -72,6 +72,11 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void DisplayAvailability()
     {
+        if (skill == null)
+        {
+            return;
+        }
+
         buttonImage.color = Color.white;
         if (skill.cooldownTurnLeft > 0)
         {
