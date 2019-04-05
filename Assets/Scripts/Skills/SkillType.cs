@@ -16,7 +16,9 @@
     MAGICMISSILE,
     FIREBALL,
     WALL, //15
-    FISSURE, 
+    FISSURE,
+    EARTHBENDING,
+    DOWNZIP,
     PICKOBJECT
 }
 

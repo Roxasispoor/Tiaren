@@ -201,5 +201,27 @@
     "maxRange": 0,
     "minRange": 0,
     "targetType": 0
+  },
+  "PickObject": {
+    "skillName": "Pick ",
+    "cost": 0,
+    "cooldown": 0,
+    "spritePath": "Pick_Object",
+    "description": "Pick the object on the block",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 0
+  },
+  "EarthBending": {
+    "skillName": "Earth bending",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "EarthBending",
+    "description": "Lift a cube from the ground and throw it straight ahead",
+    "maxRange": 2,
+    "minRange": 1,
+    "targetType": 1,
+    "nbCasePush": 4,
+    "damage": 50
   }
 }

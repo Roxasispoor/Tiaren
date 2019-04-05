@@ -244,11 +244,7 @@ public class UIManager : MonoBehaviour
         //Give each button the rigth skill
         for (int i = 0; i < abilityButtons.Count; i++)
         {
-            if(character.Skills.Count < i)
-            {
-                abilityButtons[i].SetActive(false);
-            }
-            else
+            if(i < character.Skills.Count)
             {
                 abilityButtons[i].SetActive(true);
                 abilityButtons[i].GetComponentInChildren<SkillInfo>().Skill = character.Skills[i];
@@ -256,6 +252,10 @@ public class UIManager : MonoBehaviour
                 abilityButtons[i].GetComponentInChildren<Button>().onClick.RemoveAllListeners();
                 abilityButtons[i].GetComponentInChildren<Button>().onClick.AddListener(character.Skills[i].Activate);
                 abilityButtons[i].GetComponentInChildren<Button>().onClick.AddListener(SoundHandler.Instance.PlayUISound);
+            }
+            else
+            {
+                abilityButtons[i].SetActive(false);
             }
         }
         updateSpecialAbilities(character, position);
@@ -306,7 +306,8 @@ public class UIManager : MonoBehaviour
     {
         foreach(GameObject button in abilityButtons)
         {
-            button.GetComponentInChildren<SkillInfo>().DisplayAvailability();
+            SkillInfo skillInfo = button.GetComponentInChildren<SkillInfo>();
+            skillInfo.DisplayAvailability();
         }
     }
 
