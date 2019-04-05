@@ -23,10 +23,6 @@ public class Pull : Push
     public Pull(Placeable target, Placeable launcher, int nbCases, int damage) : base(target, launcher, nbCases, damage)
     {
     }
-    public override void GetDirection()
-    {
-        direction = Launcher.GetPosition() - Target.GetPosition();
-    }
     public override void Use()
     {
         base.Use();

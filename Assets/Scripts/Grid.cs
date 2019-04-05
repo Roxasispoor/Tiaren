@@ -235,10 +235,37 @@ public class Grid : MonoBehaviour
         return CheckRange(position) && (gridMatrix[position.x, position.y, position.z] == null);
     }
 
+    /// <summary>
+    /// Return true if the position is null in the grid.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public bool CheckNull(Vector3 position)
+    {
+        return CheckRange(position) && (gridMatrix[(int)position.x, (int)position.y, (int)position.z] == null);
+    }
+
+    /// <summary>
+    /// Check if the vector is in the range of the grid.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns>True if in the grid</returns>
     public bool CheckRange(Vector3Int position)
     {
         return position.x >= 0 && position.x < sizeX 
             && position.y >= 0 && position.y < sizeY 
+            && position.z >= 0 && position.z < sizeZ;
+    }
+
+    /// <summary>
+    /// Check if the vector is in the range of the grid.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns>True if in the grid</returns>
+    public bool CheckRange(Vector3 position)
+    {
+        return position.x >= 0 && position.x < sizeX
+            && position.y >= 0 && position.y < sizeY
             && position.z >= 0 && position.z < sizeZ;
     }
 
