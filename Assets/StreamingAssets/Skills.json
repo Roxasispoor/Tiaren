@@ -189,5 +189,17 @@
     "maxRange": 0,
     "minRange": 0,
     "targetType": 0
+  },
+  "EarthBending": {
+    "skillName": "Earth bending",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "EarthBending",
+    "description": "Lift a cube from the ground and throw it straight ahead",
+    "maxRange": 2,
+    "minRange": 1,
+    "targetType": 1,
+    "nbCasePush": 4,
+    "damage": 50
   }
 }

@@ -16,7 +16,8 @@
     WALL,
     FISSURE,
     DOWNZIP, //15
-    PICKOBJECT
+    PICKOBJECT,
+    EARTHBENDING
 }
 
 
