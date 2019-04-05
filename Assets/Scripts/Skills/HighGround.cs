@@ -66,6 +66,7 @@ class HighGround : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
+        //target and launcher should be equal
         CreateBlockEffect.Launcher = caster;
 
         MoveEffect.Launcher = caster;

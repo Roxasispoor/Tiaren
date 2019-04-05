@@ -117,18 +117,16 @@ public class DamageCalculated : EffectOnLiving {
     override
         public void Use()
     {
-        
-        if(Launcher.IsLiving())
+        if(Target.IsLiving())
         {
+            Launcher = GameManager.instance.PlayingPlaceable;
             int totalDmg = CalculateDamage();
             EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
         }
         else
         {
-            Debug.LogError("Damage calculated from a not living placeable");
+            Debug.LogError("Damage calculated on a non living plaeable in forbidden");
         }
-
-
     }
 
 }

@@ -674,9 +674,7 @@ public class Grid : MonoBehaviour
     }
 
     /// <summary>
-    /// Handle gravity : for object of type SIMPLE_GRAVITY. if nothing below => fall 
-    /// for other objects, if not link to the ground, they fall
-    /// Batching is applying at the end of gravuty application if blocks have fallen
+    /// Handle all the gravity
     /// </summary>
     public void Gravity(int x, int y, int z)
     {
