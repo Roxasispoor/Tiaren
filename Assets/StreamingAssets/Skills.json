@@ -86,8 +86,8 @@
     "description": "Charge in a line push things on the way",
     "maxRange": 5,
     "minRange": 0,
-    "targetType": 0,
-    "power": 10
+    "targetType": 3,
+    "power": 40
   },
   "BowShot": {
     "skillName": "Bow Shot",
@@ -178,7 +178,7 @@
     "maxRange": 5,
     "minRange": 1,
     "sizeZone": 2,
-    "targetType": 1,
+    "targetType": 3,
     "power": 50
   },
   "CreateZiplineSkill": {

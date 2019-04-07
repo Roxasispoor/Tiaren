@@ -1544,8 +1544,10 @@ public class Player : NetworkBehaviour
         NetIdeable target = GameManager.instance.FindLocalObject(netidTarget);
 
         skill.Use(askingPlaceable, target);
-     
-        gameObject.GetComponent<UIManager>().UpdateAvailability();
+        if (isLocalPlayer)
+        {
+            gameObject.GetComponent<UIManager>().UpdateAvailability();
+        }
 
         if (askingPlaceable.Player.isLocalPlayer)
         {

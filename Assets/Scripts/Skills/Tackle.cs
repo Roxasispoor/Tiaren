@@ -74,12 +74,16 @@ public class Tackle : Skill
         }
         else if (!colisions[0].IsLiving())
         {
+            Debug.Log("found a non living obstacle");
             travelDistance = GetTravelDistanceWithBlock(caster, (StandardCube)colisions[0], direction);
+            Debug.Log("travel distance " +travelDistance.ToString());
 
             MoveEffect.Direction = direction * travelDistance;
 
-            caster.DispatchEffect(MoveEffect);
+            PushEffect.Launcher = caster;
             colisions[0].DispatchEffect(PushEffect);
+
+            caster.DispatchEffect(MoveEffect);
         }
         else if (colisions[0].IsLiving())
         {
@@ -152,7 +156,7 @@ public class Tackle : Skill
         }
         else
         {
-            return (int)(Math.Abs(diff.x + diff.z)-1);
+            return (int)(Math.Abs(diff.x + diff.z) - 1);
         }
     }
 
@@ -171,7 +175,7 @@ public class Tackle : Skill
             if (caster.GetPosition().z < target.GetPosition().z)
                 direction = new Vector3Int(0, 0, 1);
             else
-                direction = new Vector3Int(0, 0, 1);
+                direction = new Vector3Int(0, 0, -1);
         }
         else if (caster.GetPosition().z == target.GetPosition().z)
         {

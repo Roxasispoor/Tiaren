@@ -62,6 +62,7 @@ public class Push : EffectOnPlaceable
     {
         this.nbCases = nbCases;
         this.damage = damage;
+        isDirectionFromPosition = true;
     }
 
     public override void Preview(Placeable target)
@@ -89,7 +90,6 @@ public class Push : EffectOnPlaceable
     override
     public void Use()
     {
-
         if (isDirectionFromPosition)
         {
             if (Launcher==Target)

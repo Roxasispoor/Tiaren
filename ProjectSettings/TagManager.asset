@@ -16,7 +16,7 @@ TagManager:
   - 
   - PathQuad
   - LivingPlaceable
-  - Placeable
+  - Cube
   - ObjectOnBlock
   - PostProcessing
   - 

@@ -22,7 +22,7 @@ class PickObject : Skill
 
     public PickObject(string JSON) : base(JSON)
     {
-        Debug.LogError("Pick the object");
+        Debug.LogError("Creating Pick the object");
         JObject deserializedSkill = JObject.Parse(JSON);
         Init(deserializedSkill["PickObject"]);
         oneClickUse = true;
