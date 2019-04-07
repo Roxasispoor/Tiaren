@@ -114,7 +114,7 @@ public abstract class Skill
 
     public bool Use(LivingPlaceable caster, NetIdeable target)
     {
-        if (!CheckConditions(caster, target))
+        if (caster.CurrentPA < Cost && !CheckConditions(caster, target))
         {
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
@@ -124,6 +124,7 @@ public abstract class Skill
 
         GameManager.instance.ActiveSkill = null;
         this.cooldownTurnLeft = this.cooldown;
+        caster.CurrentPA -= Cost;
         return true;
 
     }
