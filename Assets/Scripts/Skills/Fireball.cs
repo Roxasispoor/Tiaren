@@ -10,6 +10,7 @@ public class Fireball : Skill
     private float power;
     [SerializeField]
     private int sizezone;
+    private List<Placeable> affectedPlaceable = new List<Placeable>();
 
     DamageCalculated DamageEffect { get { return (DamageCalculated)effects[0]; } }
     DestroyBloc DestroyEffect { get { return (DestroyBloc)effects[1]; } }
@@ -33,9 +34,8 @@ public class Fireball : Skill
 
     public override void Preview(NetIdeable target)
     {
-        List<Placeable> affectedPlaceable = Skill.PatternUseSphere((Placeable)target, sizezone);
-
-        /*
+        affectedPlaceable = Skill.PatternUseSphere((Placeable)target, sizezone);
+        
         foreach (Placeable placeable in affectedPlaceable)
         {
             if (placeable.IsLiving())
@@ -46,7 +46,22 @@ public class Fireball : Skill
             {
                 DestroyEffect.Preview(placeable);
             }
-        }*/
+        }
+    }
+
+    public override void UnPreview(NetIdeable target)
+    {
+        foreach (Placeable placeable in affectedPlaceable)
+        {
+            if (placeable.IsLiving())
+            {
+                DamageEffect.ResetPreview(placeable);
+            }
+            else
+            {
+                DestroyEffect.ResetPreview(placeable);
+            }
+        }
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -63,7 +78,7 @@ public class Fireball : Skill
     {
         DamageEffect.Launcher = caster;
 
-        List<Placeable> affectedPlaceable = Skill.PatternUseSphere((Placeable)target, sizezone);
+        affectedPlaceable = Skill.PatternUseSphere((Placeable)target, sizezone);
         
         foreach (Placeable placeable in affectedPlaceable)
         {

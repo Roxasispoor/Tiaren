@@ -122,26 +122,6 @@ public enum SkillEffect
     SWORDRANGE
 }
 
-public enum PatternUseType
-{
-    /// <summary>
-    /// A typical sphere
-    /// </summary>
-    NONE,
-    /// <summary>
-    /// In a line, symetrical around the target
-    /// </summary>
-    LINE,
-    /// <summary>
-    /// Affect all the placeable around the target
-    /// </summary>
-    AROUNDTARGET,
-    /// <summary>
-    /// Use to check if nothing above the target, used by alreadyTargeted.
-    /// </summary>
-    CHECKUP
-}
-
 public enum ConditionType
 {
     NONE,

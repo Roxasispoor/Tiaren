@@ -299,7 +299,6 @@ public class UIManager : MonoBehaviour
         {
             specialSkillZone.gameObject.SetActive(false);
         }
-
     }
 
     public void UpdateAvailability()

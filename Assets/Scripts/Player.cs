@@ -1520,7 +1520,10 @@ public class Player : NetworkBehaviour
         skill.Use(GameManager.instance.PlayingPlaceable, target);
         GameManager.instance.PlayingPlaceable.CurrentPA -= skill.Cost;
 
-        gameObject.GetComponent<UIManager>().UpdateAvailability();
+        if (isLocalPlayer)
+        {
+            gameObject.GetComponent<UIManager>().UpdateAvailability();
+        }
 
         if (GameManager.instance.PlayingPlaceable.Player.isLocalPlayer)
         {
