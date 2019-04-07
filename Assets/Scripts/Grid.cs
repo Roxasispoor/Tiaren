@@ -191,7 +191,7 @@ public class Grid : MonoBehaviour
         }
         if (CheckNull(position))
         {
-            GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, Grid.instance.transform);
+            GameObject newBlock = Instantiate(prefab, new Vector3(position.x, position.y, position.z), Quaternion.identity, GameManager.instance.gridFolder.transform);
             gridMatrix[position.x, position.y, position.z] = newBlock.GetComponent<Placeable>();
 
             Placeable blockUnder = GetPlaceableFromVector(position + Vector3Int.down);
@@ -830,7 +830,7 @@ public class Grid : MonoBehaviour
     /// </summary>
     /// <param name="grid"></param>
     /// <param name="pathJson"> The path to the map in Json</param>
-    public void CreareGrid(GameObject parent, string pathJson)
+    public void CreateGrid(GameObject parent, string pathJson)
     {
         Debug.Log("Load Map");
         JaggedGrid jagged = JaggedGrid.FillGridFromJSON(pathJson);

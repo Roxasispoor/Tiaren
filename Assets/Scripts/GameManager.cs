@@ -167,7 +167,10 @@ public class GameManager : NetworkBehaviour
     /// Dictionary to make the correspondance between the choices of the players and the skill to create
     /// </summary>
     public Dictionary<SkillTypes, System.Type> SkillDictionary;
-
+    /// <summary>
+    /// References the grid folder
+    /// </summary>
+    public GameObject gridFolder;
     /// <summary>
     /// State used by the skill who need a direction.
     /// </summary>
@@ -491,10 +494,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             GameManager.instance.localPlayer = player1.GetComponent<Player>().hasAuthority ? player1.GetComponent<Player>() : player2.GetComponent<Player>();
         }
-        GameObject grid = new GameObject("GridFolder");
-        grid.AddComponent<NetworkIdentity>();
+        gridFolder = new GameObject("GridFolder");
+        gridFolder.AddComponent<NetworkIdentity>();
         string pathToMap = Path.Combine(Application.streamingAssetsPath, mapToCharge);
-        Grid.instance.CreareGrid(grid, pathToMap);
+        Grid.instance.CreateGrid(gridFolder, pathToMap);
         transmitter.networkManager = networkManager;
         
         Debug.Log("Right before select");
@@ -1013,7 +1016,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
         }
 
-        MeshFilter[] meshFilters = Grid.instance.GetComponentsInChildren<MeshFilter>();
+        MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
         foreach (MeshFilter meshFilter in meshFilters)
         {
