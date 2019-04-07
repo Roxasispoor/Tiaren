@@ -71,6 +71,9 @@ class HighGround : Skill
 
         MoveEffect.Launcher = caster;
         MoveEffect.Target = caster;
+        MoveEffect.UseGravity = false;
+        MoveEffect.UseBezier = true;
+
 
         Vector3Int positionPlayerStart = target.GetPosition();
         int freeSpaceAbove = 0;

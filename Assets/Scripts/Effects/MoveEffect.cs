@@ -35,6 +35,8 @@ public class MoveEffect : EffectOnLiving {
         }
     }
 
+    public bool UseGravity { get => useGravity; set => useGravity = value; }
+
     public MoveEffect()
     {
         Direction=new Vector3Int();
@@ -43,7 +45,7 @@ public class MoveEffect : EffectOnLiving {
     {
         this.Direction = direction;
         this.UseBezier = useBezier;
-        this.useGravity = useGravity;
+        this.UseGravity = useGravity;
     }
     public MoveEffect(Vector3Int direction, int numberOfturn, bool useBezier, bool useGravity, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfturn, triggerAtEnd, activationType)
     {
@@ -54,7 +56,7 @@ public class MoveEffect : EffectOnLiving {
     {
         this.Direction = other.Direction;
         this.UseBezier = other.useBezier;
-        this.useGravity = other.useGravity;
+        this.UseGravity = other.UseGravity;
     }
 
     public override void Initialize(LivingPlaceable livingPlaceable)
@@ -80,7 +82,7 @@ public class MoveEffect : EffectOnLiving {
     {
         this.Direction = direction;
         this.UseBezier = useBezier;
-        this.useGravity = useGravity;
+        this.UseGravity = useGravity;
     }
 
 
@@ -108,7 +110,7 @@ public class MoveEffect : EffectOnLiving {
                  AnimationHandler.Instance.StartCoroutine(AnimationHandler.Instance.WaitAndPushBlock(Target, path, pushSpeed, GetTimeOfLauncherAnimation()));
                 */
             }
-            if (useGravity)
+            if (UseGravity)
             {
                 Grid.instance.Gravity(Target.GetPosition().x, Target.GetPosition().y, Target.GetPosition().z);
             }
