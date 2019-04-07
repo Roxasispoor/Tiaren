@@ -66,10 +66,14 @@ class HighGround : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
+        //target and launcher should be equal
         CreateBlockEffect.Launcher = caster;
 
         MoveEffect.Launcher = caster;
         MoveEffect.Target = caster;
+        MoveEffect.UseGravity = false;
+        MoveEffect.UseBezier = true;
+
 
         Vector3Int positionPlayerStart = target.GetPosition();
         int freeSpaceAbove = 0;

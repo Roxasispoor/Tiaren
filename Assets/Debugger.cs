@@ -53,7 +53,6 @@ public class Debugger : MonoBehaviour
                 {
                     characterDisplays.Add(chara);
                 }
-                Debug.Log("Loaded " + characterDisplays.Count + "Characters");
             }
 
             if (GameManager.instance.Hovered != null)

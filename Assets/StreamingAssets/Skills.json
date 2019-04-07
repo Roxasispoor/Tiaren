@@ -76,8 +76,18 @@
     "minRange": 0,
     "targetType": 0,
     "damage": 10,
-    "debufValue": 1,
-    "fieldName": "MaxPMFlat"
+    "buffValue": 1,
+  },
+    "Tackle": {
+    "skillName": "Tackle",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Tackle",
+    "description": "Charge in a line push things on the way",
+    "maxRange": 5,
+    "minRange": 0,
+    "targetType": 3,
+    "power": 40
   },
   "BowShot": {
     "skillName": "Bow Shot",
@@ -112,6 +122,18 @@
     "targetType": 1,
     "height": 2,
     "cubeName": "Cube"
+  },
+  "AcrobaticSkill": {
+    "skillName": "Acrobatics",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "default",
+    "description": "Hit in the legs reducing movement by 1",
+    "maxRange": 1,
+    "minRange": 0,
+    "targetType": 0,
+    "damage": 10,
+    "buffValue": 1
   },
   "MagicMissile": {
     "skillName": "Magic Missile",
@@ -156,7 +178,7 @@
     "maxRange": 5,
     "minRange": 1,
     "sizeZone": 2,
-    "targetType": 1,
+    "targetType": 3,
     "power": 50
   },
   "CreateZiplineSkill": {

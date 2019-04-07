@@ -167,7 +167,10 @@ public class GameManager : NetworkBehaviour
     /// Dictionary to make the correspondance between the choices of the players and the skill to create
     /// </summary>
     public Dictionary<SkillTypes, System.Type> SkillDictionary;
-
+    /// <summary>
+    /// References the grid folder
+    /// </summary>
+    public GameObject gridFolder;
     /// <summary>
     /// State used by the skill who need a direction.
     /// </summary>
@@ -422,7 +425,6 @@ public class GameManager : NetworkBehaviour
 
         transmitter = GetComponent<TransmitterNoThread>();
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
-        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
 
         SkillDictionary = new Dictionary<SkillTypes, System.Type>();
@@ -433,10 +435,12 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.BLEEDING, System.Type.GetType("BleedingAttack"));
         SkillDictionary.Add(SkillTypes.LEGSWIPE, System.Type.GetType("LegSwipe"));
         SkillDictionary.Add(SkillTypes.SPINNINGATTACK, System.Type.GetType("SpinningAttack"));
+        SkillDictionary.Add(SkillTypes.TACKLE, System.Type.GetType("Tackle"));
         SkillDictionary.Add(SkillTypes.BOWSHOT, System.Type.GetType("BowShot"));
         SkillDictionary.Add(SkillTypes.PIERCINGSHOT, System.Type.GetType("PiercingShot"));
         SkillDictionary.Add(SkillTypes.HIGHGROUND, System.Type.GetType("HighGround"));
         SkillDictionary.Add(SkillTypes.ZIPLINE, System.Type.GetType("CreateZiplineSkill"));
+        SkillDictionary.Add(SkillTypes.ACROBATIC, System.Type.GetType("AcrobaticSkill"));
         SkillDictionary.Add(SkillTypes.MAGICMISSILE, System.Type.GetType("MagicMissile"));
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
@@ -492,10 +496,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         {
             GameManager.instance.localPlayer = player1.GetComponent<Player>().hasAuthority ? player1.GetComponent<Player>() : player2.GetComponent<Player>();
         }
-        GameObject grid = new GameObject("GridFolder");
-        grid.AddComponent<NetworkIdentity>();
+        gridFolder = new GameObject("GridFolder");
+        gridFolder.AddComponent<NetworkIdentity>();
         string pathToMap = Path.Combine(Application.streamingAssetsPath, mapToCharge);
-        Grid.instance.CreareGrid(grid, pathToMap);
+        Grid.instance.CreateGrid(gridFolder, pathToMap);
         transmitter.networkManager = networkManager;
         
         Debug.Log("Right before select");
@@ -782,7 +786,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 if (placeable.walkable && playingPlaceable.player.isLocalPlayer)
                 {
                     Vector3[] path = GetPathFromClicked(placeable);//Check and move on server
-                    playingPlaceable.Player.CmdMoveTo(path);
+                    playingPlaceable.Player.CmdMoveTo(path, playingPlaceable.netId);
                 }
                 break;
 
@@ -1014,7 +1018,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             dictionaryMaterialsFilling = new Dictionary<string, List<Batch>>();
         }
 
-        MeshFilter[] meshFilters = Grid.instance.GetComponentsInChildren<MeshFilter>();
+        MeshFilter[] meshFilters = gridFolder.GetComponentsInChildren<MeshFilter>();
         //Todo: if necessary chose them by big cube or something
         foreach (MeshFilter meshFilter in meshFilters)
         {

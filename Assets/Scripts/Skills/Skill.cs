@@ -114,7 +114,7 @@ public abstract class Skill
 
     public bool Use(LivingPlaceable caster, NetIdeable target)
     {
-        if (!CheckConditions(caster, target))
+        if (caster.CurrentPA < Cost && !CheckConditions(caster, target))
         {
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
@@ -124,6 +124,7 @@ public abstract class Skill
 
         GameManager.instance.ActiveSkill = null;
         this.cooldownTurnLeft = this.cooldown;
+        caster.CurrentPA -= Cost;
         return true;
 
     }
@@ -187,6 +188,8 @@ public abstract class Skill
         playingPlaceable.ResetHighlightSkill();
         playingPlaceable.ResetAreaOfMovement();
         playingPlaceable.ResetTargets();
+        LayerMask livingMask = LayerMask.GetMask("LivingPlaceable");
+        LayerMask cubeMask = LayerMask.GetMask("Cube");
         List<Vector3Int> vect = new List<Vector3Int>();
         List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
         if (targetType == TargetType.BLOCK || targetType == TargetType.AREA)
@@ -200,7 +203,7 @@ public abstract class Skill
             placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
-            GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("Placeable");
+            GameManager.instance.RaycastSelector.layerMask = cubeMask;
             if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
             {
                 GameManager.instance.RaycastSelector.Pattern = skillArea;
@@ -233,7 +236,34 @@ public abstract class Skill
                 targetUnits.Add(livingPlaceable);
             }
             playingPlaceable.TargetableUnits = targetUnits;
-            GameManager.instance.RaycastSelector.layerMask = LayerMask.GetMask("LivingPlaceable");
+            GameManager.instance.RaycastSelector.layerMask = livingMask;
+        }
+        else if (targetType == TargetType.PLACEABLE)
+        {
+            vect = Grid.instance.FindTargetableBlocks(playingPlaceable.GetPosition(), this, false);
+            List<Placeable> floortargets = new List<Placeable>();
+            foreach (Vector3Int pos in vect)
+            {
+                floortargets.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
+            }
+            floortargets = PatterVision(playingPlaceable.GetPosition(), floortargets);
+            playingPlaceable.TargetArea = floortargets;
+
+
+            targetUnits = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
+            List<Placeable> placeables = new List<Placeable>();
+            foreach (LivingPlaceable livingPlaceable in targetUnits)
+            {
+                placeables.Add(livingPlaceable);
+            }
+            placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
+            targetUnits.Clear();
+            foreach (LivingPlaceable livingPlaceable in placeables)
+            {
+                targetUnits.Add(livingPlaceable);
+            }
+            playingPlaceable.TargetableUnits = targetUnits;
+            GameManager.instance.RaycastSelector.layerMask = livingMask | cubeMask;
         }
         else
         {
@@ -555,7 +585,6 @@ public abstract class Skill
                 z++)
                 {
                     if (!Grid.instance.CheckNull(new Vector3Int(x,y,z))
-                        && !Grid.instance.GridMatrix[x, y, z].IsLiving() 
                         && Mathf.Abs(x - Position.x) + Mathf.Abs(y - Position.y) + Mathf.Abs(z - Position.z) < sizezone)
                     {
                         targetableBlocks.Add(Grid.instance.GridMatrix[x, y, z]);

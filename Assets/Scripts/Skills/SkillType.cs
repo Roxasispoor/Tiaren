@@ -7,17 +7,19 @@
     BLEEDING,
     LEGSWIPE, // 5
     SPINNINGATTACK,
+    TACKLE,
     BOWSHOT,
     PIERCINGSHOT,
-    HIGHGROUND,
-    ZIPLINE, // 10
+    HIGHGROUND, // 10
+    ZIPLINE, 
+    ACROBATIC,
     MAGICMISSILE,
     FIREBALL,
-    WALL,
+    WALL, //15
     FISSURE,
-    DOWNZIP, //15
-    PICKOBJECT,
-    EARTHBENDING
+    EARTHBENDING,
+    DOWNZIP,
+    PICKOBJECT
 }
 
 
@@ -118,26 +120,6 @@ public enum SkillEffect
     /// Keep the 8 adjacent targets only
     /// </summary>
     SWORDRANGE
-}
-
-public enum PatternUseType
-{
-    /// <summary>
-    /// A typical sphere
-    /// </summary>
-    NONE,
-    /// <summary>
-    /// In a line, symetrical around the target
-    /// </summary>
-    LINE,
-    /// <summary>
-    /// Affect all the placeable around the target
-    /// </summary>
-    AROUNDTARGET,
-    /// <summary>
-    /// Use to check if nothing above the target, used by alreadyTargeted.
-    /// </summary>
-    CHECKUP
 }
 
 public enum ConditionType
