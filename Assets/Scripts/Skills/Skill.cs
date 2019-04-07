@@ -401,7 +401,7 @@ public abstract class Skill
         List<Placeable> targets = new List<Placeable>(vect);
         foreach (Placeable Character in vect)
         {
-            Vector3 Pos = Character.transform.position;
+            Vector3 Pos = Character.GetPosition();
             if (Pos != position)
                 targets.Remove(Character);
         }
@@ -419,7 +419,7 @@ public abstract class Skill
         List<Placeable> targetableunits = new List<Placeable>(vect);
         foreach (LivingPlaceable Character in vect)
         {
-            Vector3 Pos = Character.transform.position;
+            Vector3 Pos = Character.GetPosition();
             if (Math.Abs(Pos.y - position.y) > 1 || Math.Abs(Pos.x - position.x) > 1 || Math.Abs(Pos.z - position.z) > 1)
                 targetableunits.Remove(Character);
         }

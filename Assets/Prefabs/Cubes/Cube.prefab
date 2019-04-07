@@ -122,6 +122,7 @@ MonoBehaviour:
   explored: 0
   grounded: 0
   player: {fileID: 0}
+  isConstructableOn: 1
   isSpawnPoint: 0
   outline: {fileID: 6671982591421320108}
 --- !u!114 &114945978310607720

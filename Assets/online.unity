@@ -464,6 +464,7 @@ MonoBehaviour:
     type: 2}
   materialPreviewDestroy: {fileID: 2100000, guid: 7763a2936eecb4748be2d315834f5e99,
     type: 2}
+  gridFolder: {fileID: 0}
   orientationState: 0
 --- !u!4 &823285885
 Transform:
