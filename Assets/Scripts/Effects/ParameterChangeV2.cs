@@ -50,11 +50,11 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         this.expression = other.expression;
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
     }
 

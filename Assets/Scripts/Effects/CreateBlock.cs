@@ -37,7 +37,7 @@ public class CreateBlock : EffectOnPlaceable {
         this.height = other.height;
     }
     
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         for (int i = 1; i < height + 1 ; i++)
         {
@@ -53,7 +53,7 @@ public class CreateBlock : EffectOnPlaceable {
         }
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         while (previewedCubes.Count > 0)
         {

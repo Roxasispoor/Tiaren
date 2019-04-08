@@ -98,8 +98,8 @@ public abstract class Effect
     /// <summary>
     /// Preview for the effect
     /// </summary>
-    public abstract void Preview(Placeable target);
-    public abstract void ResetPreview(Placeable target);
+    public abstract void Preview(NetIdeable target);
+    public abstract void ResetPreview(NetIdeable target);
     public abstract NetIdeable GetTarget();
     // Use this for initialization
     public abstract void Use();

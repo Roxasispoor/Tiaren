@@ -62,7 +62,7 @@ public class PiercingDamageEffect : DamageCalculated
         }
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         Target = (LivingPlaceable) target;
         Launcher = GameManager.instance.PlayingPlaceable;
@@ -73,7 +73,7 @@ public class PiercingDamageEffect : DamageCalculated
         }
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         foreach(LivingPlaceable placeable in targets)
         {

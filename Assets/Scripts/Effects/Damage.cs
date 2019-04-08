@@ -3,7 +3,7 @@
 /// <summary>
 /// Class representing damage
 /// </summary>
-public class Damage : EffectOnLiving
+public class Damage : EffectOnNetIdeable
 {
     [SerializeField]
     private int damageValue;
@@ -20,7 +20,7 @@ public class Damage : EffectOnLiving
     {
         damageValue = value;
     }
-    public Damage(Damage other) : base(other)
+    public Damage(Damage other)
     {
         this.damageValue = other.damageValue;
     }
@@ -54,11 +54,11 @@ public class Damage : EffectOnLiving
         }
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
     }
 
@@ -70,13 +70,19 @@ public class Damage : EffectOnLiving
     override
         public void Use()
     {
-        
+        IHurtable hurtable = Target as IHurtable;
+        if (hurtable == null)
+        {
+            Debug.LogError("Try to damage a non-Hurtable NetIdeable");
+        }
+        hurtable.ReceiveDamage(DamageValue);
+        /*
         Target.CurrentHP -= DamageValue;
         FloatingTextController.CreateFloatingText(DamageValue.ToString(), Target.transform, Color.red);
         if (Target.CurrentHP <= 0)
         {
             Target.Destroy();
             Target.gameObject.SetActive(false);
-        }
+        }*/
     }
 }
