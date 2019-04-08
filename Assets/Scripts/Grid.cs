@@ -566,6 +566,7 @@ public class Grid : MonoBehaviour
 
             }
         }
+        Debug.LogError(x + " " + y + " " + z);
         //no need to check this block back
         if (gridMatrix[x, y, z] != null)
             gridMatrix[x, y, z].explored = true;

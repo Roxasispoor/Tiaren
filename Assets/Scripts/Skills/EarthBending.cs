@@ -29,17 +29,15 @@ public class EarthBending : Skill
         effects = new List<Effect>();
         effects.Add(new Push(1, 0, Vector3.up, false));
         effects.Add(new Push(nbCasePush, damage, false));
+        PushInLineEffect.pushSpeed = 5f;
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
         PushUpEffect.Launcher = caster;
         PushInLineEffect.Launcher = caster;
-        Debug.Log("Position avant 1er: " + target.GetPosition());
         target.DispatchEffect(PushUpEffect);
-        Debug.Log("Position après 1er: " + target.GetPosition());
         target.DispatchEffect(PushInLineEffect);
-        Debug.Log("Position fin: " + target.GetPosition());
     }
 
     public override void Preview(NetIdeable target)

@@ -20,7 +20,7 @@ public class Push : EffectOnPlaceable
     [SerializeField]
     private bool doesHeightCount;
     [SerializeField]
-    private const float pushSpeed= 1f;
+    public float pushSpeed= 1f;
     [SerializeField]
     private bool shouldApplyGravity = true;
    
@@ -98,7 +98,15 @@ public class Push : EffectOnPlaceable
             }
             GenerateDirectionFromLaucherAndTarget();
         }
-        Debug.Log("Direction: " + direction);
+
+        direction.Normalize();
+
+        //if we point more than one direction
+        if (!(Mathf.Abs(direction.x) == 1 ^ Mathf.Abs(direction.y) == 1 ^ Mathf.Abs(direction.z) == 1))
+        {
+            Debug.LogError(direction);  
+            Debug.LogError("Push: ERROR try to push in a non-straight line");
+        }
 
         int distance = (int)nbCases;
 
@@ -113,24 +121,27 @@ public class Push : EffectOnPlaceable
 
         if(path.Count > 1)
         {
-            Vector3 pos = Target.transform.position;
+            Vector3 targetPositionStart = Target.GetPosition();
             Grid.instance.MovePlaceable(Target, new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z), GameManager.instance.isServer);
             GameManager.instance.RemoveBlockFromBatch((StandardCube)Target);
             if (GameManager.instance.isClient)
-            { 
-                GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(Target.transform);
+            {
+                Vector3 launcherPosition = Launcher.transform.position;
+                Vector3 positionToLook = new Vector3(targetPositionStart.x, launcherPosition.y, targetPositionStart.z);
+                GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(positionToLook, Vector3.up);
                 GameManager.instance.PlayingPlaceable.Player.StartMoveAlongBezier(path, Target, pushSpeed, false);
             }
 
             if (shouldApplyGravity)
             {
-                Grid.instance.Gravity((int)pos.x, (int)pos.y, (int)pos.z);
-                Debug.Log("Gravity Applied");
+                Vector3 targetPositionEnd = Target.GetPosition();
+
+                Grid.instance.Gravity((int)targetPositionStart.x, (int)targetPositionStart.y, (int)targetPositionStart.z);
+                Grid.instance.Gravity((int)targetPositionEnd.x, (int)targetPositionEnd.y, (int)targetPositionEnd.z);
             }
         }
     }
-
-    //Todo check que ça sort pas du terrain...
+    
     public List<Vector3> GeneratePath(Vector3 direction, int distance, out Placeable collision)
     {
 
