@@ -7,7 +7,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 
 [Serializable]
-public class LivingPlaceable : Placeable
+public class LivingPlaceable : Placeable, IHurtable
 {
     /// <summary>
     /// Used to save position, only actualized at this point
@@ -966,6 +966,17 @@ public class LivingPlaceable : Placeable
         if (!Grid.instance.UseAwakeLiving && GameManager.instance.isClient)
         {
             flyingInfo.transform.LookAt(GameManager.instance.GetLocalPlayer().GetComponentInChildren<Camera>().gameObject.transform);
+        }
+    }
+
+    public void ReceiveDamage(float damage)
+    {
+        CurrentHP -= damage;
+        FloatingTextController.CreateFloatingText(damage.ToString(), transform, Color.red);
+        if (CurrentHP <= 0)
+        {
+            Destroy();
+            gameObject.SetActive(false);
         }
     }
 
