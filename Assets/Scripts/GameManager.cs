@@ -128,6 +128,10 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public bool isGameStarted = false;
     /// <summary>
+    /// Represents the time during which the tittle card is on the screen
+    /// </summary>
+    public float timeBetweenTurns;
+    /// <summary>
     /// Used for the network
     /// </summary>
     public TransmitterNoThread transmitter;
@@ -641,6 +645,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             player1.GetComponent<Player>().winText.gameObject.SetActive(true);
             player2.GetComponent<Player>().winText.gameObject.SetActive(true);
+            State = States.GameOver;
         }
         if (player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
         {
@@ -1045,15 +1050,34 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-
-
-    public void BeginningOfTurn()
+    private IEnumerator WaitForTurnStart(float timeToWait)
     {
+        yield return new WaitForSeconds(timeToWait);
+        BeginningOfTurn();
+    }
+
+    /// <summary>
+    /// called before the beginning of turn to show the tittle card
+    /// </summary>
+    public void TransitBetweenTurn()
+    {
+        state = States.TurnChange;
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
         PlayingPlaceable.SpeedStack += 1 / PlayingPlaceable.Speed;
+        if (isClient)
+        {
+            localPlayer.GetComponent<UIManager>().ShowTurnCard();
+        }
+        else
+        {
+            StartCoroutine(WaitForTurnStart(5));
+        }
+    }
 
+    public void BeginningOfTurn()
+    {
         for (int i = PlayingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
         {
             EffectManager.instance.StartTurnUseEffect(PlayingPlaceable.AttachedEffects[i]);
@@ -1135,8 +1159,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
-            BeginningOfTurn();
+            TransitBetweenTurn();
         }
+    }
+
+    public void ChangeTurnAnimation()
+    {
+
     }
     
     public NetIdeable FindLocalIdeable(int id)

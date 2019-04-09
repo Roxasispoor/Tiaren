@@ -543,7 +543,7 @@ public class Player : NetworkBehaviour
             GameManager.instance.InitStartGameServer();
             RpcEndSpawnAndStartGame();
             GameManager.instance.isGameStarted = true;
-            GameManager.instance.BeginningOfTurn();
+            GameManager.instance.TransitBetweenTurn();
         }
     }
 
@@ -632,7 +632,7 @@ public class Player : NetworkBehaviour
     public void ChangeUi()
     {
         Debug.Log("Try to change UI");
-        // Make the other player's characters visiblr again
+        // Make the other player's characters visible again
         foreach (LivingPlaceable c in GameManager.instance.player1.GetComponent<Player>().characters)
         {
             c.gameObject.SetActive(true);
@@ -681,7 +681,7 @@ public class Player : NetworkBehaviour
     public void RpcEndSpawnAndStartGame()
     {
         ChangeUi();
-        GameManager.instance.BeginningOfTurn();
+        GameManager.instance.TransitBetweenTurn();
     }
 
     [ClientRpc]
@@ -723,9 +723,10 @@ public class Player : NetworkBehaviour
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
+            if (clock.IsStarted && clock.IsFinished && GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
             {
                 RpcEndTurn(GameManager.instance.PlayingPlaceable.netId); //permet une resynchronisation au rythme server
+                clock.IsStarted = false;
                 GameManager.instance.EndOFTurn();
             }
         }

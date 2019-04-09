@@ -1109,7 +1109,6 @@ public class LivingPlaceable : Placeable
     public void HighlightAreaOfMovement()
     {
         Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Cube");
-        float heightSize = 0.2f;
         Debug.Log("area of movement " + areaOfMouvement.Count);
     }
 

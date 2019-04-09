@@ -1,1 +1,1 @@
-﻿public enum States { TeamSelect, Spawn, Move, UseSkill}
+﻿public enum States { TeamSelect, Spawn, Move, UseSkill, TurnChange, GameOver}

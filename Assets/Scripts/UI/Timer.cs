@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
     private bool isFinished;
+    private bool isStarted = false;
     private float maxTime;
     private float targetTime = 0;
     public Image timerDisplay;
@@ -31,11 +32,14 @@ public class Timer : MonoBehaviour
         }
     }
 
+    public bool IsStarted { get => isStarted; set => isStarted = value; }
+
     public void StartTimer(float time)
     {
         targetTime = time;
         maxTime = time;
         timerDisplay.fillAmount = 1;
+        IsStarted = true;
         isFinished = false;
     }
 
