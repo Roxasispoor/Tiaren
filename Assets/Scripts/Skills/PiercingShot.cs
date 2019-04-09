@@ -31,9 +31,9 @@ public class PiercingShot : Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        if (!target.IsLiving())
+        if (target as IHurtable == null)
         {
-            Debug.LogError("Trying to launch an attack on a block");
+            Debug.LogError("Trying to launch an attack on a non hurtable");
             return false;
         }
         return true;

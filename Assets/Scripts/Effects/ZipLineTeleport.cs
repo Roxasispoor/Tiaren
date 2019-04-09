@@ -37,7 +37,7 @@ public class ZipLineTeleport : EffectOnObjectBloc
        // Debug.DrawRay(Target.GetPosition() + new Vector3(0, 1.5f, 0), arrival - Target.GetPosition(),Color.green,10f);
         if (arrival.GetPosition().y<Target.GetPosition().y && Grid.instance.CheckNull(arrival.GetPosition() + new Vector3Int(0,1,0))
             && !Physics.Raycast(start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position, direction,
-            (direction).magnitude,LayerMask.GetMask("Placeable")))
+            (direction).magnitude,LayerMask.GetMask("Cube")))
         {
             Grid.instance.MovePlaceable(Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
             

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -1163,9 +1164,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-    public void ChangeTurnAnimation()
+    public void ReturnToMenu()
     {
-
+        SceneManager.LoadScene(0);
     }
     
     public NetIdeable FindLocalIdeable(int id)

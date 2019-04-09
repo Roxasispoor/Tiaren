@@ -9,6 +9,8 @@ class CreateZiplineSkill : Skill
     [SerializeField]
     private GameObject ziplinePrefab;
 
+    private Vector3 topPosition;
+
     CreateZipLine CreateZiplineEffect { get { return (CreateZipLine)effects[0]; } }
 
     public CreateZiplineSkill(string JSON) : base(JSON)
@@ -44,6 +46,12 @@ class CreateZiplineSkill : Skill
         {
             Debug.LogError(skillName + ": could not find the prefab");
         }
+        else
+        {
+            //Position du point en haut du piquet de la tyro
+            topPosition = new Vector3(0, 1.05f, 0);
+            Debug.Log(topPosition);
+        }
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -51,6 +59,13 @@ class CreateZiplineSkill : Skill
         Placeable placeableAboveTarget = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3.up);
 
         if (placeableAboveTarget != null)
+        {
+            return false;
+        }
+        Vector3 start = caster.GetPosition() - new Vector3Int(0, 1, 0) + topPosition;
+        Vector3 arrival = target.GetPosition() + topPosition;
+        Vector3 direction = arrival - start;
+        if (Physics.Raycast(start, direction, (direction).magnitude, LayerMask.GetMask("Cube")))
         {
             return false;
         }
@@ -69,7 +84,7 @@ class CreateZiplineSkill : Skill
 
     public override void Preview(NetIdeable target)
     {
-        Debug.LogError(SkillName + ": no preview");
+        CreateZiplineEffect.Preview(target);
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)

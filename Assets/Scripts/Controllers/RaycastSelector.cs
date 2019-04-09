@@ -45,6 +45,14 @@ public class RaycastSelector : MonoBehaviour
             return;
         }
 
+        if (GameManager.instance.State == States.GameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             GameManager.instance.orientationState = (GameManager.instance.orientationState == 3 ? 0 : GameManager.instance.orientationState + 1);
