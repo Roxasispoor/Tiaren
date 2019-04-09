@@ -27,7 +27,7 @@ public class ParameterChange<T> : EffectOnPlaceable
         this.paramNewValue = other.paramNewValue;
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         throw new System.NotImplementedException();
     }
@@ -44,7 +44,7 @@ public class ParameterChange<T> : EffectOnPlaceable
         return new ParameterChange<T>(this);
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         throw new NotImplementedException();
     }

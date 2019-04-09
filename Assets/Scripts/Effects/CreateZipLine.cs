@@ -21,10 +21,14 @@ public class CreateZipLine : CreateBlock
         return new CreateZipLine(this);
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         Launcher = GameManager.instance.PlayingPlaceable;
-        Target = target;
+        Target = target as Placeable;   //TODO: (Pierrick:) pourquoi la taget c'est un placeable ?
+        if (Target = null)
+        {
+            Debug.LogError("CreateZipline, something went wrong");
+        }
         createMesh(true);
     }
 
@@ -46,7 +50,7 @@ public class CreateZipLine : CreateBlock
         zip1.GetComponentInChildren<ZipLine>().rope = zip1.GetComponentInChildren<ZiplineFX>().ConnectZipline(zip2.GetComponentInChildren<ZiplineFX>(), preview);
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         if (zip != null)
         {

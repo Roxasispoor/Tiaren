@@ -63,7 +63,7 @@ public class DamageCalculated : EffectOnLiving {
     }
 
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         if (!target.IsLiving())
             return;
@@ -73,7 +73,7 @@ public class DamageCalculated : EffectOnLiving {
         GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damage, 1, (LivingPlaceable) target);
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         if (!target.IsLiving())
             return;

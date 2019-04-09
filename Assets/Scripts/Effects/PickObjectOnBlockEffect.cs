@@ -17,12 +17,12 @@ public class PickObjectOnBlockEffect : EffectOnObjectBloc
         return new PickObjectOnBlockEffect(this);
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         throw new System.NotImplementedException();
     }

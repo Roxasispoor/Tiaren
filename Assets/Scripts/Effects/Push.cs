@@ -65,11 +65,11 @@ public class Push : EffectOnPlaceable
         isDirectionFromPosition = true;
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
     }
     
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
     }
 

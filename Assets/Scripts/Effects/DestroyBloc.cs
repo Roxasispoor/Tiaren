@@ -34,7 +34,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         return new DestroyBloc(this);
     }
 
-    public override void Preview(Placeable target)
+    public override void Preview(NetIdeable target)
     {
         if (meshDeactivatedForThePreview == null)
         {
@@ -74,7 +74,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         }
     }
 
-    public override void ResetPreview(Placeable target)
+    public override void ResetPreview(NetIdeable target)
     {
         //throw new System.NotImplementedException();
         while (meshDeactivatedForThePreview != null && meshDeactivatedForThePreview.Count > 0)
