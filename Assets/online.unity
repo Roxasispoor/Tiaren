@@ -449,6 +449,7 @@ MonoBehaviour:
   - {fileID: 6577926616046605527, guid: 76c112a5ed9231648afb8a47e4d58eb7, type: 3}
   - {fileID: 6647434319592275583, guid: 9bc67924c8b7c1d48b9c5e7a955406c5, type: 3}
   - {fileID: 4982909871920518425, guid: 6c432c4c17d414e4c8e74fa289b125aa, type: 3}
+  - {fileID: 5666483806287872802, guid: 4836c46c399bac143b89f2ff3e90d565, type: 3}
   player1: {fileID: 0}
   player2: {fileID: 0}
   player1Username: 
@@ -464,6 +465,7 @@ MonoBehaviour:
     type: 2}
   materialPreviewDestroy: {fileID: 2100000, guid: 7763a2936eecb4748be2d315834f5e99,
     type: 2}
+  gridFolder: {fileID: 0}
   orientationState: 0
 --- !u!4 &823285885
 Transform:
@@ -527,6 +529,7 @@ MonoBehaviour:
   - {fileID: 8205040314302890780, guid: b08ca4f8ce017c2478de0a892994f850, type: 3}
   - {fileID: 4982909871920518425, guid: 6c432c4c17d414e4c8e74fa289b125aa, type: 3}
   - {fileID: 5111957847024802556, guid: 24fd0f089b62f6a4d9c222d93304d894, type: 3}
+  - {fileID: 5666483806287872802, guid: 4836c46c399bac143b89f2ff3e90d565, type: 3}
   spawnPlayer1: []
   spawnPlayer2: []
 --- !u!114 &823285890

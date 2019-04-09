@@ -1,0 +1,37 @@
+{
+	"className": "Ninja",
+	"positionSave": 
+	{
+		"x": 0.0,
+		"y": 0.0,
+		"z": 0.0
+	},
+	"playerPosesser": "",
+	"maxHP": { "baseValue": 120.0 },
+	"currentHP": { "baseValue": 120.0 },
+	"pmMax": { "baseValue": 5.0 },
+	"currentPM": { "baseValue": 5.0 },
+	"currentPA": { "baseValue": 3.0 },
+	"paMax": { "baseValue": 3.0 },
+	"speed": { "baseValue": 65.0 },
+	"speedStack": { "baseValue": 0.0153846153846154 },
+	"jump": { "baseValue": 1.0 },
+	"def": { "baseValue": 65.0 },
+	"mdef": { "baseValue": 55.0 },
+	"deathLength": { "baseValue": 1.0 },
+	"isDead": false,
+	"serializeNumber": 4,
+	"netId": 0,
+	"ChosenSkills":  
+	[
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		7,
+		15,
+		16
+	]
+}
