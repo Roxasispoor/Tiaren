@@ -14,11 +14,7 @@ public class Push : EffectOnPlaceable
     [SerializeField]
     private float nbCases;
     [SerializeField]
-    protected Vector3 direction;
-    [SerializeField]
-    private bool isDirectionFromPosition;
-    [SerializeField]
-    private bool doesHeightCount;
+    protected Vector3 direction = Vector3.zero;
     [SerializeField]
     public float pushSpeed= 1f;
     [SerializeField]
@@ -30,13 +26,6 @@ public class Push : EffectOnPlaceable
         this.damage = other.damage;
         this.nbCases = other.nbCases;
         this.direction = other.direction;
-        this.isDirectionFromPosition = other.isDirectionFromPosition;
-        this.doesHeightCount = other.doesHeightCount;
-    }
-    public Push( int nbCases, int damage,bool doesHeightCount) : this(nbCases, damage)
-    {
-        this.doesHeightCount =doesHeightCount;
-        isDirectionFromPosition = true;
     }
 
     /// <summary>
@@ -48,21 +37,17 @@ public class Push : EffectOnPlaceable
     {
         this.nbCases = nbCases;
         this.damage = damage;
-        isDirectionFromPosition = true;
       }
 
     public Push(int nbCases, int damage,Vector3 direction, bool applyGravity = true) :this(nbCases,damage)
     {
         this.direction = direction;
-        isDirectionFromPosition = false;
-        doesHeightCount = true;
         shouldApplyGravity = applyGravity;
     }
     public Push( int nbCases, int damage)
     {
         this.nbCases = nbCases;
         this.damage = damage;
-        isDirectionFromPosition = true;
     }
 
     public override void Preview(NetIdeable target)
@@ -90,7 +75,7 @@ public class Push : EffectOnPlaceable
     override
     public void Use()
     {
-        if (isDirectionFromPosition)
+        if (direction == Vector3.zero)
         {
             if (Launcher==Target)
             {
