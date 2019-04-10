@@ -223,5 +223,18 @@
     "targetType": 1,
     "nbCasePush": 4,
     "damage": 50
+  },
+  "RepulsiveGrenade": {
+    "skillName": "Repulsive grenade",
+    "cost":1,
+    "cooldown": 1,
+    "spritePath": "RepulsiveGrenade",
+    "description": "throw a grenade pushing the character away of the center of the explosion",
+    "maxRange": 4,
+    "minRange": 1,
+    "targetType": 1,
+    "nbCasePush": 2,
+    "damagePush": 10,
+    "damage": 5
   }
 }
