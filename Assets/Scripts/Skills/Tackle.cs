@@ -129,7 +129,7 @@ public class Tackle : Skill
 
                     MoveEffect.Target = caster;
                     MoveEffect.Launcher = caster;
-                    travelDistance = GetTravelDistanceWithLiving(caster, colisions[0], direction) + pushDistance;
+                    travelDistance = GetTravelDistanceWithLiving(caster, colisions[0], direction);
                     MoveEffect.Direction = direction * travelDistance;
                     caster.DispatchEffect(MoveEffect);
                 }
@@ -163,17 +163,17 @@ public class Tackle : Skill
         {
             return distance;
         }
-        if(placeable.GetPosition().x + direction.x * distance > Grid.instance.sizeX)
+        if(placeable.GetPosition().x + direction.x * distance >= Grid.instance.sizeX)
         {
-            return Grid.instance.sizeX - placeable.GetPosition().x;
+            return Grid.instance.sizeX - placeable.GetPosition().x - 1;
         }
         if (placeable.GetPosition().x + direction.x * distance < 0)
         {
             return placeable.GetPosition().x;
         }
-        if (placeable.GetPosition().z + direction.z * distance > Grid.instance.sizeZ)
+        if (placeable.GetPosition().z + direction.z * distance >= Grid.instance.sizeZ)
         {
-            return Grid.instance.sizeZ - placeable.GetPosition().z;
+            return Grid.instance.sizeZ - placeable.GetPosition().z - 1;
         }
         if (placeable.GetPosition().z + direction.z * distance < 0)
         {

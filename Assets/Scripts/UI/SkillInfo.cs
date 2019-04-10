@@ -71,8 +71,13 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         buttonImage.color = Color.white;
         if (skill.cooldownTurnLeft > 0)
         {
+            cooldown.gameObject.SetActive(true);
             cooldown.text = skill.cooldownTurnLeft.ToString();
             buttonImage.color = Color.gray;
+        }
+        else
+        {
+            cooldown.gameObject.SetActive(false);
         }
         if(GameManager.instance.PlayingPlaceable.CurrentPA < skill.Cost)
         {
