@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class RaycastSelector : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class RaycastSelector : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-
+                SceneManager.LoadScene(0);
             }
         }
 

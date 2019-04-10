@@ -34,7 +34,11 @@ public class UIManager : MonoBehaviour
     public TMP_Text paDisplay;
     public Image yourTurnCard;
     public Image ennemyTurnCard;
+    public Image camModeDisplay;
 
+    //Sprites to keep
+    public Sprite worldCam;
+    public Sprite charaCam;
 
     //Ability buttons
     private List<GameObject> abilityButtons;
@@ -403,6 +407,21 @@ public class UIManager : MonoBehaviour
                 child.GetComponent<Button>().onClick.RemoveAllListeners();
             }
             Destroy(child.gameObject);
+        }
+    }
+
+    public void DisplayCameraMode(int mode)
+    {
+        switch(mode)
+        {
+            case 1:
+                camModeDisplay.sprite = worldCam;
+                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                break;
+            case 0:
+                camModeDisplay.sprite = charaCam;
+                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                break;
         }
     }
 }

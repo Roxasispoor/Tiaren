@@ -287,7 +287,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
-        DicoCondition.Add("ResetTarget", () => Input.GetButtonDown("ResetTarget"));
+        DicoCondition.Add("SwitchCameraType", () => Input.GetButtonDown("SwitchCameraType"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
         Isready = false;
