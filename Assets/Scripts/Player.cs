@@ -944,8 +944,10 @@ public class Player : NetworkBehaviour
             return;
         if (Grid.instance.CheckPath(path, askingPlaceable))
         {
-            Move(path,askingPlaceable,true);
-            RpcMoveTo(path,netIdAskingChar);
+            List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
+
+            Move(finalPath.ToArray(), askingPlaceable, true);
+            RpcMoveTo(finalPath.ToArray(), netIdAskingChar);
         }
         else
         {
@@ -958,25 +960,13 @@ public class Player : NetworkBehaviour
         Vector3Int charPosition = askingPlaceable.GetPosition();
         //Move placeable on server
         Debug.LogError("Start" + charPosition);
-
         Grid.instance.GridMatrix[charPosition.x, charPosition.y, charPosition.z] = null;
 
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = askingPlaceable;
         if(mustUpdateTransform)
             askingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-        //Trigger effect the ones after the others, does not interrupt path
-        foreach (Vector3 current in path)
-        {
-            foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
-            {
-                //makes the deep copy, send it to effect manager and zoo
-                Effect effectToConsider = effect.Clone();
-                effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
-                //Double dispatch
-                askingPlaceable.DispatchEffect(effectToConsider);
-            }
-        }
+        
         askingPlaceable.CurrentPM -= path.Length - 1;
     }
     /// <summary>
@@ -993,9 +983,9 @@ public class Player : NetworkBehaviour
             Debug.LogError(netIdAskingChar + "wasn't found in rpcMoveTo");
             return;
         }
-        Move(path,askingPlaceable,false);
-
         List<Vector3> bezierPath = new List<Vector3>(path);
+
+        Move(path,askingPlaceable,false);
 
         if (askingPlaceable.moveCoroutine != null)
         {

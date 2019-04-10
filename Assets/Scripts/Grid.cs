@@ -606,11 +606,8 @@ public class Grid : MonoBehaviour
 
     public void MovePlaceable(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
     {
-        if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
-           && desiredPosition.y >= 0 && desiredPosition.y < sizeY
-           && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
-         (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
-          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable != CrushType.CRUSHSTAY))
+        if (bloc != null && bloc.GetPosition() != desiredPosition && CheckRange(desiredPosition) &&
+         gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null)
         {
             Vector3 oldPosition = bloc.GetPosition();
 
@@ -640,12 +637,40 @@ public class Grid : MonoBehaviour
             {
                 ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
             }
-
         }
         else
         {
             Debug.LogError("MoveBlock error: To define");
         }
+    }
+
+    public List<Vector3> CheckPathForEffect(Vector3[] path, LivingPlaceable placeable)
+    {
+        bool effectFound = false;
+        List<Vector3> realPath = new List<Vector3>();
+        foreach(Vector3 node in path)
+        {
+            if(true == effectFound)
+            {
+                break;
+            }
+            realPath.Add(Vector3Int.FloorToInt(node));
+            StandardCube cube = (StandardCube)GetPlaceableFromVector(node);
+            if (null == cube)
+            {
+                Debug.LogError("non cube in path or null in path");
+                return null;
+            }
+            if(cube.OnWalkEffects.Count > 0)
+            {
+                effectFound = true;
+                foreach(Effect onWalkEffect in cube.OnWalkEffects)
+                {
+                    placeable.DispatchEffect(onWalkEffect);
+                }
+            }
+        }
+        return realPath;
     }
 
     public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)

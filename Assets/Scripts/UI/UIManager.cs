@@ -233,13 +233,10 @@ public class UIManager : MonoBehaviour
             ability.transform.localPosition = new Vector3(firstAbility + abilityGap * i, 0);
             abilityButtons.Add(ability);
         }
-        Debug.Log("Ability button fait " + abilityButtons.Count);
     }
 
     public void UpdateAbilities(LivingPlaceable character, Vector3Int position)
     {
-        Debug.Log("Ability button fait maintenant " + abilityButtons.Count);
-        Debug.Log("Le character contient " + character.Skills.Count + " skills");
         if (character == null)
         {
             return;

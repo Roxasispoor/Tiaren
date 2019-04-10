@@ -1186,7 +1186,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         NodePath inListDestination = PlayingPlaceable.AreaOfMouvement.Find(destination.Equals);
         if (inListDestination != null)
         {
-            Vector3[] realPath = inListDestination.GetFullPath();
+            Vector3[] realPath = inListDestination.GetPathFromStart();
             return realPath;
         }
         return null;
