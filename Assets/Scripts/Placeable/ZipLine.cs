@@ -66,6 +66,6 @@ public class ZipLine : ObjectOnBloc {
     {
         base.Initialize();
         linkedTo = GameManager.instance.FindLocalIdeable(netIdLinkedTo).GetComponent<ZipLine>();
-        rope = GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>(), false);
+        rope = GetComponentInChildren<ZiplineFX>().ConnectZipline(linkedTo.GetComponentInChildren<ZiplineFX>());
     }
 }

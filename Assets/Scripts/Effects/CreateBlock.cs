@@ -46,7 +46,7 @@ public class CreateBlock : EffectOnPlaceable {
             {
                 break;
             }
-            GameObject cube = FactoryTransparentCube.Instance.getCube();
+            GameObject cube = FXManager.Instance.getCube();
             cube.transform.position = target.GetPosition() + face * i;
             cube.GetComponent<MeshRenderer>().material = GameManager.instance.materialPreviewCreate;
             previewedCubes.Enqueue(cube);
@@ -57,7 +57,7 @@ public class CreateBlock : EffectOnPlaceable {
     {
         while (previewedCubes.Count > 0)
         {
-            FactoryTransparentCube.Instance.putBack(previewedCubes.Dequeue());
+            FXManager.Instance.putBack(previewedCubes.Dequeue());
         }
     }
 
