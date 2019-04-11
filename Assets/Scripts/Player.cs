@@ -1030,8 +1030,8 @@ public class Player : NetworkBehaviour
         //   integral[0,1] sqrt(f(t)) dt
 
         Vector3[] A ={ C[1] - C[0],  // A[0] not zero by assumption
-        C[0] - 2.0f*C[1] + C[2]
-    };
+            C[0] - 2.0f*C[1] + C[2]
+            };
 
         float length;
 
@@ -1126,6 +1126,135 @@ public class Player : NetworkBehaviour
 
     [Client]
 
+    // NEW ONE *******************************************************************
+    // NEW ONE *******************************************************************
+    // NEW ONE *******************************************************************
+    public static IEnumerator NewMoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator, float speed, bool goStraight)
+    {
+        if (path.Count < 2)
+        {
+            yield break;
+        }
+
+        placeable.isMoving = true;
+        
+        float timeBezier = 0f;
+        Vector3 delta = placeable.transform.position - path[0];
+        Vector3 previousCheckpoint = path[0];
+        Vector3 controlPoint = new Vector3();
+        bool isBezier = true;
+
+        bool isJumping = false;
+
+        //For visual rotation
+        Vector3 targetDir = path[1] - placeable.transform.position;
+        targetDir.y = 0;
+
+        int stepInPath = 1;
+        int stepRef = 1;
+        float distance = CalculateDistance(previousCheckpoint, path[stepInPath], ref isBezier, ref controlPoint);
+        float distanceParcourue = 0;
+        SoundHandler.Instance.StartWalkSound();
+        while (timeBezier < 1)
+        {
+            distanceParcourue += (speed * Time.deltaTime);
+            timeBezier = distanceParcourue / distance;
+
+            while (timeBezier > 1 && stepInPath < path.Count - 1) // If we overstep the next checkpoint, compute to the following which is not overstep
+            {
+
+
+                distanceParcourue -= distance;
+                previousCheckpoint = path[stepInPath];
+                stepInPath++; 
+                targetDir = path[stepInPath] - placeable.transform.position;//next one
+                targetDir.y = 0;// don't move up 
+
+                distance = CalculateDistance(previousCheckpoint, path[stepInPath], ref isBezier, ref controlPoint);//On calcule la distance au noeud suivant
+                timeBezier = distanceParcourue / distance; //on recalcule
+
+            }
+
+            if (stepInPath == path.Count - 1 && timeBezier > 1)
+            {
+                // arrived to the last node of path, in precedent loop
+                placeable.transform.position = path[stepInPath] + delta;
+                // exit yield loop
+                break;
+            }
+
+            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            //change what we look at
+
+            if (isBezier)
+            {
+                if (!isJumping)
+                {
+                    isJumping = true;
+                    stepRef = stepInPath;
+                    animator.Play("jump");
+                    SoundHandler.Instance.PauseWalkSound();
+
+                }
+                else
+                {
+                    if (stepInPath != stepRef)
+                    {
+                        stepRef = stepInPath;
+                        animator.Play("land 0");
+                        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+
+                    }
+                }
+
+
+                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (previousCheckpoint) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[stepInPath]);
+
+            }
+            else
+            {
+                if (isJumping)
+                {
+                    isJumping = false;
+                    animator.Play("land 1");
+                    yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+                    SoundHandler.Instance.StartWalkSound();
+                }
+                else
+                {
+                    animator.Play("walking");
+
+                }
+
+                placeable.transform.position = Vector3.Lerp(previousCheckpoint + delta, path[stepInPath] + delta, timeBezier);
+
+            }
+
+
+
+
+            yield return null;
+
+        }
+        if (isJumping)
+        {
+            animator.Play("land 2");
+        }
+        else
+        {
+            animator.SetTrigger("idle");
+        }
+        SoundHandler.Instance.StopWalkSound();
+        placeable.isMoving = false;
+        //GameManager.instance.PlayingPlaceable.destination = new Vector3Int();
+
+        Debug.Log("End" + placeable.GetPosition());
+        //Debug.Log("End transform" + placeable.transform);
+    }
+
+    [Client]
+
     // ONLY FOR CHARACTER
     public static IEnumerator MoveAlongBezier(List<Vector3> path, LivingPlaceable placeable, float speed)
     {
@@ -1137,8 +1266,15 @@ public class Player : NetworkBehaviour
         {
             placeable.transform.position = new Vector3(placeable.destination.x, placeable.destination.y, placeable.destination.z);
         }
+
+        foreach (Vector3 vect in path)
+        {
+
+            Debug.LogError("In path: " + vect);
+        }
+
         placeable.isMoving = true;
-        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y + 1, (int)path[path.Count - 1].z);
+        placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
 
         float timeBezier = 0f;
         Vector3 delta = placeable.transform.position - path[0];

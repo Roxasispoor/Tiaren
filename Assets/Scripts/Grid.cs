@@ -655,7 +655,7 @@ public class Grid : MonoBehaviour
                 break;
             }
             realPath.Add(Vector3Int.FloorToInt(node));
-            StandardCube cube = (StandardCube)GetPlaceableFromVector(node);
+            StandardCube cube = GetPlaceableFromVector(node) as StandardCube;
             if (null == cube)
             {
                 Debug.LogError("non cube in path or null in path");
