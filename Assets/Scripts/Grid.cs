@@ -606,11 +606,8 @@ public class Grid : MonoBehaviour
 
     public void MovePlaceable(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
     {
-        if (bloc != null && bloc.GetPosition() != desiredPosition && desiredPosition.x >= 0 && desiredPosition.x < sizeX
-           && desiredPosition.y >= 0 && desiredPosition.y < sizeY
-           && desiredPosition.z >= 0 && desiredPosition.z < sizeZ &&
-         (gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null ||
-          gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z].Crushable != CrushType.CRUSHSTAY))
+        if (bloc != null && bloc.GetPosition() != desiredPosition && CheckRange(desiredPosition) &&
+         gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null)
         {
             Vector3 oldPosition = bloc.GetPosition();
 
@@ -640,12 +637,40 @@ public class Grid : MonoBehaviour
             {
                 ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
             }
-
         }
         else
         {
             Debug.LogError("MoveBlock error: To define");
         }
+    }
+
+    public List<Vector3> CheckPathForEffect(Vector3[] path, LivingPlaceable placeable)
+    {
+        bool effectFound = false;
+        List<Vector3> realPath = new List<Vector3>();
+        foreach(Vector3 node in path)
+        {
+            if(true == effectFound)
+            {
+                break;
+            }
+            realPath.Add(Vector3Int.FloorToInt(node));
+            StandardCube cube = (StandardCube)GetPlaceableFromVector(node);
+            if (null == cube)
+            {
+                Debug.LogError("non cube in path or null in path");
+                return null;
+            }
+            if(cube.OnWalkEffects.Count > 0)
+            {
+                effectFound = true;
+                foreach(Effect onWalkEffect in cube.OnWalkEffects)
+                {
+                    placeable.DispatchEffect(onWalkEffect);
+                }
+            }
+        }
+        return realPath;
     }
 
     public void SwitchPlaceable(Placeable placeableA, Placeable placeableB)
@@ -679,26 +704,78 @@ public class Grid : MonoBehaviour
     /// <param name="ydrop"></param>
     public void HandleCrush(int x, int y, int z, int ydrop)
     {
+        Vector3Int desiredPosition = new Vector3Int();
         if (gridMatrix[x, y, z].IsLiving())
         {
-            LivingPlaceable Character = (LivingPlaceable)gridMatrix[x, y, z];
-            int damage = Math.Max(ydrop - Character.Jump, 0) * falldamage;
-            if (damage > 0)
-            {
-                EffectManager.instance.DirectAttack(new Damage(Character, gridMatrix[x, y - ydrop, z], Math.Max(ydrop - Character.Jump, 0) * falldamage));
-            }
-        }
+            LivingPlaceable character = (LivingPlaceable)gridMatrix[x, y, z];
+            int damage = Math.Max(ydrop - character.Jump, 0) * falldamage;
 
-        if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
+            if (gridMatrix[x, y - ydrop, z] == null)
+            {
+                desiredPosition = new Vector3Int(x, y - ydrop, z);
+                if (damage > 0)
+                {
+                    character.DispatchEffect(new Damage(character, character, damage));
+                }
+            }
+            else
+            {
+                desiredPosition = FindFallingSpot(x, y, z, ydrop);
+                if (desiredPosition == new Vector3Int(-1, -1, -1))
+                {
+                    character.Destroy();
+                    return;
+                }
+                if (damage > 0)
+                {
+                    character.DispatchEffect(new Damage(character, character, damage));
+                }
+                character.DispatchEffect(new Damage(character, character, (int)(30*30 / character.Def)));
+                ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], (int)(30 * 30 / character.Def)));
+                simpleGravity();
+
+            }
+            MovePlaceable(gridMatrix[x, y, z], desiredPosition);
+        }
+        else if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
             MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
         {
-            EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
+            ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
             gridMatrix[x, y, z].Destroy(); 
             gridMatrix[x, y, z] = null;
         }
+    }
+
+    /// <summary>
+    /// Search for a place to make a living fall next to the living it falls on
+    /// search clockwise from z pos to x pos
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    /// <param name="ydrop"></param>
+    private Vector3Int FindFallingSpot(int x, int y, int z, int ydrop)
+    {
+        if(gridMatrix[x, y - ydrop, z + 1] == null)
+        {
+            return new Vector3Int(x, y - ydrop, z + 1);
+        }
+        if (gridMatrix[x + 1, y - ydrop, z] == null)
+        {
+            return new Vector3Int(x + 1, y - ydrop, z);
+        }
+        if (gridMatrix[x, y - ydrop, z - 1] == null)
+        {
+            return new Vector3Int(x, y - ydrop, z - 1);
+        }
+        if (gridMatrix[x - 1, y - ydrop, z] == null)
+        {
+            return new Vector3Int(x - 1, y - ydrop, z);
+        }
+        return new Vector3Int(-1, -1, -1);
     }
 
     /// <summary>
@@ -728,7 +805,8 @@ public class Grid : MonoBehaviour
                     {
                         //batchlist.Add(gridMatrix[x, y, z]);
                         //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving()) GameManager.instance.RemoveBlockFromBatch((StandardCube)gridMatrix[x, y, z]);
+                        if (!gridMatrix[x, y, z].IsLiving())
+                            GameManager.instance.RemoveBlockFromBatch((StandardCube)gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null

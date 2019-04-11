@@ -47,7 +47,16 @@ public class EarthBending : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        return PatternCreate(position, vect);
+        vect = PatternCreate(position, vect);
+        LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
+        for (int i = 0; i < vect.Count; i++)
+        {
+            if (caster != null && !CheckSpecificConditions(caster, vect[i]))
+            {
+                vect.Remove(vect[i]);
+            }
+        }
+        return vect;
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

@@ -287,7 +287,7 @@ public class Player : NetworkBehaviour
         DicoAxis.Add("AxisYCamera", () => Input.GetAxis("Mouse Y"));
         DicoAxis.Add("AxisZoomCamera", () => Input.GetAxis("Mouse ScrollWheel"));
         DicoCondition.Add("BackToMovement", () => Input.GetButtonDown("BackToMovement"));
-        DicoCondition.Add("ResetTarget", () => Input.GetButtonDown("ResetTarget"));
+        DicoCondition.Add("SwitchCameraType", () => Input.GetButtonDown("SwitchCameraType"));
         DicoCondition.Add("OrbitCamera", () => Input.GetMouseButton(1));
         DicoCondition.Add("PanCamera", () => Input.GetMouseButton(2));
         Isready = false;
@@ -543,7 +543,7 @@ public class Player : NetworkBehaviour
             GameManager.instance.InitStartGameServer();
             RpcEndSpawnAndStartGame();
             GameManager.instance.isGameStarted = true;
-            GameManager.instance.BeginningOfTurn();
+            GameManager.instance.TransitBetweenTurn();
         }
     }
 
@@ -632,7 +632,7 @@ public class Player : NetworkBehaviour
     public void ChangeUi()
     {
         Debug.Log("Try to change UI");
-        // Make the other player's characters visiblr again
+        // Make the other player's characters visible again
         foreach (LivingPlaceable c in GameManager.instance.player1.GetComponent<Player>().characters)
         {
             c.gameObject.SetActive(true);
@@ -681,7 +681,7 @@ public class Player : NetworkBehaviour
     public void RpcEndSpawnAndStartGame()
     {
         ChangeUi();
-        GameManager.instance.BeginningOfTurn();
+        GameManager.instance.TransitBetweenTurn();
     }
 
     [ClientRpc]
@@ -723,9 +723,10 @@ public class Player : NetworkBehaviour
     {
         if (isServer && GameManager.instance.player1 != null && GameManager.instance.player2 != null)
         {
-            if (clock.IsFinished && GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
+            if (clock.IsStarted && clock.IsFinished && GameManager.instance.PlayingPlaceable && GameManager.instance.PlayingPlaceable.Player == this)
             {
                 RpcEndTurn(GameManager.instance.PlayingPlaceable.netId); //permet une resynchronisation au rythme server
+                clock.IsStarted = false;
                 GameManager.instance.EndOFTurn();
             }
         }
@@ -943,8 +944,10 @@ public class Player : NetworkBehaviour
             return;
         if (Grid.instance.CheckPath(path, askingPlaceable))
         {
-            Move(path,askingPlaceable,true);
-            RpcMoveTo(path,netIdAskingChar);
+            List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
+
+            Move(finalPath.ToArray(), askingPlaceable, true);
+            RpcMoveTo(finalPath.ToArray(), netIdAskingChar);
         }
         else
         {
@@ -957,25 +960,13 @@ public class Player : NetworkBehaviour
         Vector3Int charPosition = askingPlaceable.GetPosition();
         //Move placeable on server
         Debug.LogError("Start" + charPosition);
-
         Grid.instance.GridMatrix[charPosition.x, charPosition.y, charPosition.z] = null;
 
         Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
             (int)path[path.Length - 1].z] = askingPlaceable;
         if(mustUpdateTransform)
             askingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
-        //Trigger effect the ones after the others, does not interrupt path
-        foreach (Vector3 current in path)
-        {
-            foreach (Effect effect in ((StandardCube)Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z]).OnWalkEffects)
-            {
-                //makes the deep copy, send it to effect manager and zoo
-                Effect effectToConsider = effect.Clone();
-                effectToConsider.Launcher = Grid.instance.GridMatrix[(int)current.x, (int)current.y, (int)current.z];
-                //Double dispatch
-                askingPlaceable.DispatchEffect(effectToConsider);
-            }
-        }
+        
         askingPlaceable.CurrentPM -= path.Length - 1;
     }
     /// <summary>
@@ -992,9 +983,9 @@ public class Player : NetworkBehaviour
             Debug.LogError(netIdAskingChar + "wasn't found in rpcMoveTo");
             return;
         }
-        Move(path,askingPlaceable,false);
-
         List<Vector3> bezierPath = new List<Vector3>(path);
+
+        Move(path,askingPlaceable,false);
 
         if (askingPlaceable.moveCoroutine != null)
         {

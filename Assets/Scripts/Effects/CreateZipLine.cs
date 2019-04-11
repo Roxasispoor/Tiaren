@@ -24,8 +24,8 @@ public class CreateZipLine : CreateBlock
     public override void Preview(NetIdeable target)
     {
         Launcher = GameManager.instance.PlayingPlaceable;
-        Target = target as Placeable;   //TODO: (Pierrick:) pourquoi la taget c'est un placeable ?
-        if (Target = null)
+        Target = target as StandardCube;   
+        if (Target == null)
         {
             Debug.LogError("CreateZipline, something went wrong");
         }

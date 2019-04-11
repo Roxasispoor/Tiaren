@@ -52,7 +52,15 @@ public class Tackle : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        return NoPattern(position, vect);
+        LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
+        for (int i = 0; i < vect.Count; i++)
+        {
+            if (caster != null && !CheckSpecificConditions(caster, vect[i]))
+            {
+                vect.Remove(vect[i]);
+            }
+        }
+        return vect;
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
@@ -69,14 +77,12 @@ public class Tackle : Skill
 
         if (colisions.Count == 0)
         {
-            MoveEffect.Direction = direction * MaxRange;
+            MoveEffect.Direction =  direction * CorrectOutbound(caster, direction, MaxRange);
             caster.DispatchEffect(MoveEffect);
         }
         else if (!colisions[0].IsLiving())
         {
-            Debug.Log("found a non living obstacle");
             travelDistance = GetTravelDistanceWithBlock(caster, (StandardCube)colisions[0], direction);
-            Debug.Log("travel distance " +travelDistance.ToString());
 
             MoveEffect.Direction = direction * travelDistance;
 
@@ -114,14 +120,18 @@ public class Tackle : Skill
                 if(outsiderangeColision == null)
                 {
                     pushDistance = MaxRange - GetTravelDistanceWithLiving(caster, colisions[0], direction);
-                    MoveEffect.Direction = direction * MaxRange;
-                    caster.DispatchEffect(MoveEffect);
-
+                    pushDistance = CorrectOutbound(colisions[0], direction, pushDistance);
                     MoveEffect.Target = (LivingPlaceable)colisions[0];
                     MoveEffect.Launcher = (LivingPlaceable)colisions[0];
                     MoveEffect.Direction = direction * pushDistance;
                     ((LivingPlaceable)colisions[0]).DispatchEffect(DamageEffect);
                     ((LivingPlaceable)colisions[0]).DispatchEffect(MoveEffect);
+
+                    MoveEffect.Target = caster;
+                    MoveEffect.Launcher = caster;
+                    travelDistance = GetTravelDistanceWithLiving(caster, colisions[0], direction);
+                    MoveEffect.Direction = direction * travelDistance;
+                    caster.DispatchEffect(MoveEffect);
                 }
                 else
                 {
@@ -147,10 +157,37 @@ public class Tackle : Skill
         }
     }
 
+    private int CorrectOutbound(Placeable placeable, Vector3Int direction, int distance)
+    {
+        if (Grid.instance.CheckRange(placeable.GetPosition() + direction * distance))
+        {
+            return distance;
+        }
+        if(placeable.GetPosition().x + direction.x * distance >= Grid.instance.sizeX)
+        {
+            return Grid.instance.sizeX - placeable.GetPosition().x - 1;
+        }
+        if (placeable.GetPosition().x + direction.x * distance < 0)
+        {
+            return placeable.GetPosition().x;
+        }
+        if (placeable.GetPosition().z + direction.z * distance >= Grid.instance.sizeZ)
+        {
+            return Grid.instance.sizeZ - placeable.GetPosition().z - 1;
+        }
+        if (placeable.GetPosition().z + direction.z * distance < 0)
+        {
+            return placeable.GetPosition().z;
+        }
+        Debug.LogError("not inbound but doesn't go out on either x or z");
+        return 0;
+    }
+
     private int GetTravelDistanceWithBlock(LivingPlaceable movingPiece, StandardCube obstacle, Vector3Int direction)
     {
         Vector3Int diff = movingPiece.GetPosition() - obstacle.GetPosition();
-        if (Grid.instance.GetPlaceableFromVector(obstacle.GetPosition() + direction) == null)
+        if (Grid.instance.GetPlaceableFromVector(obstacle.GetPosition() + direction) == null 
+            && Grid.instance.CheckRange(obstacle.GetPosition() + direction))
         {
             return (int)(Math.Abs(diff.x + diff.z));
         }

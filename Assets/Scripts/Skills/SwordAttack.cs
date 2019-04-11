@@ -31,7 +31,7 @@ class SwordAttack: Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        if (!target.IsLiving())
+        if (target as IHurtable == null)
         {
             Debug.LogError("Trying to launch an attack on a block");
             return false;
@@ -56,7 +56,16 @@ class SwordAttack: Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        return PatternSwordRange(position, vect);
+        vect = PatternSwordRange(position, vect);
+        LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
+        for (int i = 0; i < vect.Count; i++)
+        {
+            if (caster != null && !CheckSpecificConditions(caster, vect[i]))
+            {
+                vect.Remove(vect[i]);
+            }
+        }
+        return vect;
     }
 }
 

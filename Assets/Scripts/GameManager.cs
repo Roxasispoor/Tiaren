@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Classe centrale gérant le déroulement des tours et répertoriant les objets
@@ -127,6 +128,10 @@ public class GameManager : NetworkBehaviour
     /// True if the game started (Set before the 1st turn)
     /// </summary>
     public bool isGameStarted = false;
+    /// <summary>
+    /// Represents the time during which the tittle card is on the screen
+    /// </summary>
+    public float timeBetweenTurns;
     /// <summary>
     /// Used for the network
     /// </summary>
@@ -642,6 +647,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
             player1.GetComponent<Player>().winText.gameObject.SetActive(true);
             player2.GetComponent<Player>().winText.gameObject.SetActive(true);
+            State = States.GameOver;
         }
         if (player1.GetComponent<Player>().isWinner && !player2.GetComponent<Player>().isWinner)
         {
@@ -1046,15 +1052,34 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         }
     }
 
-
-
-    public void BeginningOfTurn()
+    private IEnumerator WaitForTurnStart(float timeToWait)
     {
+        yield return new WaitForSeconds(timeToWait);
+        BeginningOfTurn();
+    }
+
+    /// <summary>
+    /// called before the beginning of turn to show the tittle card
+    /// </summary>
+    public void TransitBetweenTurn()
+    {
+        state = States.TurnChange;
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
         PlayingPlaceable.SpeedStack += 1 / PlayingPlaceable.Speed;
+        if (isClient)
+        {
+            localPlayer.GetComponent<UIManager>().ShowTurnCard();
+        }
+        else
+        {
+            StartCoroutine(WaitForTurnStart(5));
+        }
+    }
 
+    public void BeginningOfTurn()
+    {
         for (int i = PlayingPlaceable.AttachedEffects.Count - 1; i >= 0; i--)
         {
             EffectManager.instance.StartTurnUseEffect(PlayingPlaceable.AttachedEffects[i]);
@@ -1136,8 +1161,13 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }
-            BeginningOfTurn();
+            TransitBetweenTurn();
         }
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
     
     public NetIdeable FindLocalIdeable(int id)
@@ -1157,7 +1187,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         NodePath inListDestination = PlayingPlaceable.AreaOfMouvement.Find(destination.Equals);
         if (inListDestination != null)
         {
-            Vector3[] realPath = inListDestination.GetFullPath();
+            Vector3[] realPath = inListDestination.GetPathFromStart();
             return realPath;
         }
         return null;

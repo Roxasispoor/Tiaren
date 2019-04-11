@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -31,6 +32,13 @@ public class UIManager : MonoBehaviour
     public TMP_Text hpDisplay;
     public TMP_Text movDisplay;
     public TMP_Text paDisplay;
+    public Image yourTurnCard;
+    public Image ennemyTurnCard;
+    public Image camModeDisplay;
+
+    //Sprites to keep
+    public Sprite worldCam;
+    public Sprite charaCam;
 
     //Ability buttons
     private List<GameObject> abilityButtons;
@@ -229,13 +237,10 @@ public class UIManager : MonoBehaviour
             ability.transform.localPosition = new Vector3(firstAbility + abilityGap * i, 0);
             abilityButtons.Add(ability);
         }
-        Debug.Log("Ability button fait " + abilityButtons.Count);
     }
 
     public void UpdateAbilities(LivingPlaceable character, Vector3Int position)
     {
-        Debug.Log("Ability button fait maintenant " + abilityButtons.Count);
-        Debug.Log("Le character contient " + character.Skills.Count + " skills");
         if (character == null)
         {
             return;
@@ -343,6 +348,32 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ShowTurnCard()
+    {
+        ClearZone(timelineZone.gameObject);
+        UpdateTimeline();
+        playerTurnObjects.SetActive(false);
+        StartCoroutine(TurnCard());
+    }
+
+    private IEnumerator TurnCard()
+    {
+        if(GameManager.instance.PlayingPlaceable.Player.gameObject == gameObject)
+        {
+            yourTurnCard.gameObject.SetActive(true);
+            yield return new WaitForSeconds(GameManager.instance.timeBetweenTurns);
+            yourTurnCard.gameObject.SetActive(false);
+            GameManager.instance.BeginningOfTurn();
+        }
+        else
+        {
+            ennemyTurnCard.gameObject.SetActive(true);
+            yield return new WaitForSeconds(GameManager.instance.timeBetweenTurns);
+            ennemyTurnCard.gameObject.SetActive(false);
+            GameManager.instance.BeginningOfTurn();
+        }
+    }
+
     public void ChangeTurn()
     {
         if (GameManager.instance.PlayingPlaceable.Player.gameObject == gameObject)
@@ -360,14 +391,6 @@ public class UIManager : MonoBehaviour
                     .GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
             }
         }
-        else if (GameManager.instance.PlayingPlaceable.Player.gameObject != gameObject)
-        {
-            ClearZone(specialSkillZone.gameObject);
-            ClearZone(timelineZone.gameObject);
-            UpdateTimeline();
-
-            playerTurnObjects.SetActive(false);
-        }
     }
 
     public void ResetEndTurn()
@@ -384,6 +407,21 @@ public class UIManager : MonoBehaviour
                 child.GetComponent<Button>().onClick.RemoveAllListeners();
             }
             Destroy(child.gameObject);
+        }
+    }
+
+    public void DisplayCameraMode(int mode)
+    {
+        switch(mode)
+        {
+            case 1:
+                camModeDisplay.sprite = worldCam;
+                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                break;
+            case 0:
+                camModeDisplay.sprite = charaCam;
+                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                break;
         }
     }
 }

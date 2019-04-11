@@ -102,7 +102,7 @@ public class CameraScript : MonoBehaviour
         
 
         //If camera mode change
-        if (player.DicoCondition["ResetTarget"]())
+        if (player.DicoCondition["SwitchCameraType"]())
         {
             if (freecam == 0 && GameManager.instance.isGameStarted && target != GameManager.instance.PlayingPlaceable.transform) //Focus on plying placeable if were on other character
             {
@@ -116,14 +116,8 @@ public class CameraScript : MonoBehaviour
                 //updating camera mode
                 freecam = freecam == 1 ? 0 : freecam + 1;
 
-                //if skyview mode
-                if (freecam == 2)
-                {
-                    transform.LookAt(target.transform);
-                    rotation = transform.rotation;
-                    position = new Vector3(grid.sizeX / 2, grid.sizeY * 2, grid.sizeZ / 2);
-                }
-                else if (freecam == 0)
+                // 1 -> locked on charac  0-> free camera
+                if (freecam == 0)
                 {
                     if (GameManager.instance.isGameStarted)
                     {
@@ -134,6 +128,8 @@ public class CameraScript : MonoBehaviour
                 {
                     position = target.position;
                 }
+
+                GameManager.instance.GetLocalPlayer().gameObject.GetComponent<UIManager>().DisplayCameraMode(freecam);
             }
         }
 

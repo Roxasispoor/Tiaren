@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class RaycastSelector : MonoBehaviour
 {
@@ -39,6 +40,20 @@ public class RaycastSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //deactivate input during change of turn
+        if (GameManager.instance.State == States.TurnChange)
+        {
+            return;
+        }
+
+        if (GameManager.instance.State == States.GameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene(0);
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             GameManager.instance.orientationState = (GameManager.instance.orientationState == 3 ? 0 : GameManager.instance.orientationState + 1);

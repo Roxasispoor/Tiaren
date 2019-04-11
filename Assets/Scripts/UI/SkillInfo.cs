@@ -38,21 +38,12 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
             gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Activate(Skill);
         }
-        if (Skill.SkillName == "Zip")
-        {
-            Debug.Log("METTRE ICI LA PREVIEW DE LA ZIPLINE!!!");
-            //Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
-        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
-        if (Skill.SkillName == "Zip")
-        {
-            //Skill.effects[0].GetTarget().GetComponent<ZipLine>().Outline();
-        }
     }
 
     public void BecomeCurrentSkill()
@@ -80,8 +71,13 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         buttonImage.color = Color.white;
         if (skill.cooldownTurnLeft > 0)
         {
+            cooldown.gameObject.SetActive(true);
             cooldown.text = skill.cooldownTurnLeft.ToString();
             buttonImage.color = Color.gray;
+        }
+        else
+        {
+            cooldown.gameObject.SetActive(false);
         }
         if(GameManager.instance.PlayingPlaceable.CurrentPA < skill.Cost)
         {
