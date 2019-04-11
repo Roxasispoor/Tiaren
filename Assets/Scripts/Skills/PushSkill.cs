@@ -26,7 +26,7 @@ public class PushSkill : Skill
         damage = (int)deserializedSkill["damage"];
         nbCases = (int)deserializedSkill["nbCases"];
         effects = new List<Effect>();
-        effects.Add(new Push(nbCases, damage, false));
+        effects.Add(new Push(nbCases, damage));
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)

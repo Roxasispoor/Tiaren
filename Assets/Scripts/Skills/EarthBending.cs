@@ -28,7 +28,7 @@ public class EarthBending : Skill
         nbCasePush = (int)deserializedSkill["nbCasePush"];
         effects = new List<Effect>();
         effects.Add(new Push(1, 0, Vector3.up, false));
-        effects.Add(new Push(nbCasePush, damage, false));
+        effects.Add(new Push(nbCasePush, damage));
         PushInLineEffect.pushSpeed = 5f;
     }
 
