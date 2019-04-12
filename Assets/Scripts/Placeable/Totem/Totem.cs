@@ -9,6 +9,7 @@ public abstract class Totem : StandardCube, IHurtable
     protected int MaxHp;
     protected enum State { PURE, CORRUPTED}
     protected State state = State.PURE;
+    [SerializeField]
     protected float range;
 
     protected List<Effect> effects = new List<Effect>();
@@ -28,7 +29,7 @@ public abstract class Totem : StandardCube, IHurtable
             hp--;
             SwitchState();
         }
-        else if (hp < 3)
+        else if (hp < MaxHp)
         {
             hp++;
             SwitchState();

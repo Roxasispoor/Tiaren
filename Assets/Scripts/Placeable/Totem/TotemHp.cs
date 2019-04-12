@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TotemHp : Totem, IEffectOnTurnStart
 {
+    [SerializeField]
+    private int power;
+
     HealingEffect HealingEffect { get { return (HealingEffect)effects[0]; } }
     DamageCalculated DamageEffect { get { return (DamageCalculated)effects[1]; } }
 
@@ -11,8 +14,8 @@ public class TotemHp : Totem, IEffectOnTurnStart
     {
         base.Awake();
         range = 4;
-        effects.Add(new HealingEffect(20));
-        effects.Add(new DamageCalculated(20, DamageCalculated.DamageScale.BRUT));
+        effects.Add(new HealingEffect(power));
+        effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.BRUT));
     }
 
     public void ApplyEffect(Placeable target)

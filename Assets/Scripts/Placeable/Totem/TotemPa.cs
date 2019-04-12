@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class TotemPa : Totem, IEffectOnTurnStart
 {
+    private int power;
+    private int nbTurns;
 
     protected override void Awake()
     {
         base.Awake();
-        range = 4;
     }
 
     public void ApplyEffect(Placeable target)
@@ -16,9 +17,9 @@ public class TotemPa : Totem, IEffectOnTurnStart
         if(target as LivingPlaceable)
         {
             if (state == State.PURE)
-                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, 1, 3, 1);
+                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, power, 3, nbTurns);
             else
-                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, -1, 3, 1);
+                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, -power, 3, nbTurns);
         }
     }
 

@@ -466,7 +466,8 @@ MonoBehaviour:
   - {fileID: 5111957847024802556, guid: 24fd0f089b62f6a4d9c222d93304d894, type: 3}
   - {fileID: 5666483806287872802, guid: 4836c46c399bac143b89f2ff3e90d565, type: 3}
   - {fileID: 7743267109780865715, guid: dd3975a61bbb92e4885084c19a32e690, type: 3}
-  - {fileID: 9182250310805075903, guid: ce50aec614ae49b4fa596f3703e9fba5, type: 3}
+  - {fileID: 9182250310805075901, guid: ce50aec614ae49b4fa596f3703e9fba5, type: 3}
+  - {fileID: 6983445455873946778, guid: 413da2c10cb346a4ba573a18312be69c, type: 3}
   spawnPlayer1: []
   spawnPlayer2: []
 --- !u!114 &823285890
