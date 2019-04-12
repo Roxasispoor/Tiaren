@@ -4,23 +4,34 @@ using UnityEngine;
 
 public class TotemHp : Totem, IEffectOnTurnStart
 {
-    private List<Effect> effects = new List<Effect>();
-
-    DamageCalculated DamageEffect { get { return (DamageCalculated)effects[2]; } }
+    HealingEffect HealingEffect { get { return (HealingEffect)effects[0]; } }
+    DamageCalculated DamageEffect { get { return (DamageCalculated)effects[1]; } }
 
     protected override void Awake()
     {
         base.Awake();
-        effects.Add(new DamageCalculated(30, DamageCalculated.DamageScale.MAG));
+        range = 4;
+        effects.Add(new HealingEffect(20));
+        effects.Add(new DamageCalculated(20, DamageCalculated.DamageScale.BRUT));
     }
 
     public void ApplyEffect(Placeable target)
     {
-        throw new System.NotImplementedException();
+        if (target as LivingPlaceable)
+        {
+            if (state == State.PURE)
+                target.DispatchEffect(HealingEffect);
+            else
+                target.DispatchEffect(DamageEffect);
+        }
     }
 
-    protected override void FindTargets()
+    protected override void CheckInRange(LivingPlaceable target)
     {
-        throw new System.NotImplementedException();
+        Vector3 direction = target.GetPosition() - GetPosition();
+        if (Physics.Raycast(GetPosition(), direction, range, LayerMask.GetMask("LivingPlaceable")))
+        {
+            ApplyEffect(target);
+        }
     }
 }

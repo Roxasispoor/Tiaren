@@ -40,13 +40,21 @@ public class StatDisplayer : MonoBehaviour {
     public void Preview(LivingPlaceable character, int damage, int turns)
     {
         Activate(character);
-        if (turns <= 1)
+        if (damage > 0)
         {
-            hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage;
+            if (turns <= 1)
+            {
+                hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage;
+            }
+            else
+            {
+                hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage + " X " + turns;
+            }
         }
         else
         {
-            hp.text = "HP : " + character.CurrentHP + "<color=#ff0000ff> - " + damage + " X " + turns;
+            int value = -damage;
+            hp.text = "HP : " + character.CurrentHP + "<color=#008000ff> + " + value; ;
         }
     }
 }

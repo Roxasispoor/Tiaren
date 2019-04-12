@@ -6,11 +6,10 @@ using UnityEngine;
 
 public class LegSwipe : Skill
 {
-    int debufValue;
+    int buffValue;
     int damage;
 
-    ParameterChangeV2<LivingPlaceable, float>  buff { get { return (ParameterChangeV2<LivingPlaceable, float>)effects[0]; } }
-    ParameterChangeV2<LivingPlaceable, float>  unbuff { get { return (ParameterChangeV2<LivingPlaceable, float>)effects[1]; } }
+    DamageCalculated DamageEffect { get { return (DamageCalculated)effects[0]; } }
 
     public LegSwipe(string JSON) : base(JSON)
     {
@@ -23,12 +22,10 @@ public class LegSwipe : Skill
     private void InitSpecific(JToken deserializedSkill)
     {
         squareShaped = true;
-        
-        debufValue = (int)deserializedSkill["buffValue"];
+        buffValue = (int)deserializedSkill["buffValue"];
         damage = (int)deserializedSkill["damage"];
         effects = new List<Effect>();
-        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(debufValue, 0, 0, false, ActivationType.INSTANT));
-        effects.Add(new ParameterChangeV2<LivingPlaceable, float>(-debufValue, 0, 3, true, ActivationType.BEGINNING_OF_TURN));
+        effects.Add(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT));
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
@@ -56,10 +53,8 @@ public class LegSwipe : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        buff.Launcher = caster;
-        unbuff.Launcher = caster;
-        target.DispatchEffect(buff.Clone());
-        target.DispatchEffect(unbuff.Clone());
+        ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, buffValue, 0, 3);
+        target.DispatchEffect(DamageEffect);
     }
 
     public override void Preview(NetIdeable target)

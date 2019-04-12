@@ -30,6 +30,12 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
         expression = MethodsForEffects[numberMethod];
     }
 
+    public static void CreateChangeAndReset(Placeable target, dynamic value, int numberMethod, int numberOfturns = 1)
+    {
+        target.DispatchEffect(new ParameterChangeV2<T, TProperty>(value, numberMethod, numberOfturns, false, ActivationType.INSTANT));
+        target.DispatchEffect(new ParameterChangeV2<T, TProperty>(-value, numberMethod, numberOfturns, true, ActivationType.BEGINNING_OF_TURN));
+    }
+
     public override Effect Clone()
     {
         return new ParameterChangeV2<T, TProperty>(this);
@@ -47,7 +53,8 @@ public class ParameterChangeV2<T, TProperty> : EffectOnLiving {
     public ParameterChangeV2(ParameterChangeV2<T,TProperty> other):base(other)
     {
         this.value = other.value;
-        this.expression = other.expression;
+        this.numberMethod = other.numberMethod;
+        Initialize(Target);
     }
 
     public override void Preview(NetIdeable target)

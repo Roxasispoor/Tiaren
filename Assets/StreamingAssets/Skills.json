@@ -76,7 +76,7 @@
     "minRange": 0,
     "targetType": 0,
     "damage": 10,
-    "buffValue": 1,
+    "buffValue": -1,
   },
     "Tackle": {
     "skillName": "Tackle",

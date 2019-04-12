@@ -76,13 +76,5 @@ public class Damage : EffectOnNetIdeable
             Debug.LogError("Try to damage a non-Hurtable NetIdeable");
         }
         hurtable.ReceiveDamage(DamageValue);
-        /*
-        Target.CurrentHP -= DamageValue;
-        FloatingTextController.CreateFloatingText(DamageValue.ToString(), Target.transform, Color.red);
-        if (Target.CurrentHP <= 0)
-        {
-            Target.Destroy();
-            Target.gameObject.SetActive(false);
-        }*/
     }
 }

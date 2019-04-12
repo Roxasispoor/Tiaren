@@ -55,7 +55,7 @@ public class FXManager : MonoBehaviour
         if (null == zipStart && null == zipEnd)
         {
             zipEnd = Instantiate(GameManager.instance.prefabTransparentZipline, target.GetPosition(), Quaternion.identity);
-            zipStart = Instantiate(GameManager.instance.prefabTransparentZipline, launcher.GetPosition() - new Vector3Int(0, -1, 0), Quaternion.identity);
+            zipStart = Instantiate(GameManager.instance.prefabTransparentZipline, launcher.GetPosition() + new Vector3Int(0, -1, 0), Quaternion.identity);
             zipStart.GetComponentInChildren<ZiplineFX>().ConnectZipline(zipEnd.GetComponentInChildren<ZiplineFX>());
         }
         else

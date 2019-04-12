@@ -983,7 +983,7 @@ public class LivingPlaceable : Placeable, IHurtable
     public void DamagePreview(int damage)
     {
         float realValue = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
-        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = realValue - damage / MaxHP;
+        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = (realValue - damage) / MaxHP;
     }
 
     public void ResetPreview()
