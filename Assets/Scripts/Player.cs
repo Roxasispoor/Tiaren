@@ -987,7 +987,7 @@ public class Player : NetworkBehaviour
 
         Move(path,askingPlaceable,false);
 
-        StartMoveAlongBezier(bezierPath, askingPlaceable, animator: askingPlaceable.GetComponent<Animator>());
+        FollowPathAnimation(bezierPath, askingPlaceable, animator: askingPlaceable.GetComponent<Animator>(), 3f);
 
         /*
         if (askingPlaceable.moveCoroutine != null)
@@ -1087,7 +1087,7 @@ public class Player : NetworkBehaviour
     /// <param name="nextNode"></param>
     /// <param name="isBezier"></param>
     /// <returns></returns>
-    public static float CalculateDistance(Vector3 start, Vector3 nextNode, ref bool isBezier, ref Vector3 controlPoint)
+    public static float CalculateDistance(Vector3 start, Vector3 nextNode, out bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
 
@@ -1105,8 +1105,16 @@ public class Player : NetworkBehaviour
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="placeable"></param>
+    /// <param name="animator"></param>
+    /// <param name="speed"></param>
+    /// <param name="noCurve"></param>
     [Client]
-    public void StartMoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool justLerp = false)
+    public void FollowPathAnimation(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool noCurve = false)
     {
         if (path.Count > 1)
         {
@@ -1116,23 +1124,23 @@ public class Player : NetworkBehaviour
                 placeable.moveCoroutine = null;
 
             }
-            placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
-            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed: speed, animator: animator));
+            placeable.destination = Vector3Int.FloorToInt(path[path.Count - 1]);
+            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, noCurve: noCurve));
 
         }
     }
 
-    /// <summary>
+    /// <summary> // TODO: use the transform of the 3D model rather than the placeable transform
     /// Make the transform follow the path given (the path is relative, not the real position).
     /// </summary>
     /// <param name="path">Path to follow</param>
     /// <param name="placeable">Transform to move</param>
     /// <param name="animator">To set if animation should be played</param>
     /// <param name="speed"></param>
-    /// <param name="goStraight"></param>
+    /// <param name="useBezier">If false, use bezier curve</param>
     /// <returns></returns>
     [Client]
-    public static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool goStraight = false)
+    private static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool noCurve = false)
     {
         if (path.Count < 2)
         {
@@ -1152,9 +1160,11 @@ public class Player : NetworkBehaviour
         Vector3 targetDir = path[1] - placeable.transform.position;
         targetDir.y = 0;
 
+        bool useBezier;
+
         int stepInPath = 1;
         int stepRef = 1;
-        float distance = CalculateDistance(previousCheckpoint, path[stepInPath], ref goStraight, ref controlPoint);
+        float distance = CalculateDistance(previousCheckpoint, path[stepInPath], out useBezier, ref controlPoint);
         float distanceParcourue = 0;
         SoundHandler.Instance.StartWalkSound();
         while (timeBezier < 1)
@@ -1172,7 +1182,7 @@ public class Player : NetworkBehaviour
                 targetDir = path[stepInPath] - placeable.transform.position;//next one
                 targetDir.y = 0;// don't move up 
 
-                distance = CalculateDistance(previousCheckpoint, path[stepInPath], ref goStraight, ref controlPoint);//On calcule la distance au noeud suivant
+                distance = CalculateDistance(previousCheckpoint, path[stepInPath], out useBezier, ref controlPoint);//On calcule la distance au noeud suivant
                 timeBezier = distanceParcourue / distance; //on recalcule
 
             }
@@ -1189,7 +1199,7 @@ public class Player : NetworkBehaviour
             placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
             //change what we look at
 
-            if (goStraight)
+            if (useBezier && !noCurve)
             {
                 if (animator != null)
                 {
