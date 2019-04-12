@@ -984,8 +984,13 @@ public class Player : NetworkBehaviour
             return;
         }
         List<Vector3> bezierPath = new List<Vector3>(path);
-
+        
         Move(path,askingPlaceable,false);
+
+        for (int i = 0; i < bezierPath.Count; i++)
+        {
+            bezierPath[i] += Vector3.up;
+        }
 
         FollowPathAnimation(bezierPath, askingPlaceable, animator: askingPlaceable.GetComponent<Animator>(), 3f);
 
@@ -1112,9 +1117,9 @@ public class Player : NetworkBehaviour
     /// <param name="placeable"></param>
     /// <param name="animator"></param>
     /// <param name="speed"></param>
-    /// <param name="noCurve"></param>
+    /// <param name="useCurve"></param>
     [Client]
-    public void FollowPathAnimation(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool noCurve = false)
+    public void FollowPathAnimation(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool useCurve = true)
     {
         if (path.Count > 1)
         {
@@ -1125,13 +1130,13 @@ public class Player : NetworkBehaviour
 
             }
             placeable.destination = Vector3Int.FloorToInt(path[path.Count - 1]);
-            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, noCurve: noCurve));
+            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, useCurve: useCurve));
 
         }
     }
 
     /// <summary> // TODO: use the transform of the 3D model rather than the placeable transform
-    /// Make the transform follow the path given (the path is relative, not the real position).
+    /// Make the transform follow the path given.
     /// </summary>
     /// <param name="path">Path to follow</param>
     /// <param name="placeable">Transform to move</param>
@@ -1140,7 +1145,7 @@ public class Player : NetworkBehaviour
     /// <param name="useBezier">If false, use bezier curve</param>
     /// <returns></returns>
     [Client]
-    private static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool noCurve = false)
+    private static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool useCurve = false)
     {
         if (path.Count < 2)
         {
@@ -1150,7 +1155,6 @@ public class Player : NetworkBehaviour
         placeable.isMoving = true;
         
         float timeBezier = 0f;
-        Vector3 delta = placeable.transform.position - path[0];
         Vector3 previousCheckpoint = path[0];
         Vector3 controlPoint = new Vector3();
 
@@ -1179,8 +1183,6 @@ public class Player : NetworkBehaviour
                 distanceParcourue -= distance;
                 previousCheckpoint = path[stepInPath];
                 stepInPath++; 
-                targetDir = path[stepInPath] - placeable.transform.position;//next one
-                targetDir.y = 0;// don't move up 
 
                 distance = CalculateDistance(previousCheckpoint, path[stepInPath], out useBezier, ref controlPoint);//On calcule la distance au noeud suivant
                 timeBezier = distanceParcourue / distance; //on recalcule
@@ -1190,16 +1192,22 @@ public class Player : NetworkBehaviour
             if (stepInPath == path.Count - 1 && timeBezier > 1)
             {
                 // arrived to the last node of path, in precedent loop
-                placeable.transform.position = path[stepInPath] + delta;
+                placeable.transform.position = path[stepInPath];
                 // exit yield loop
                 break;
             }
 
-            Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
-            placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            if (placeable.IsLiving())
+            {
+                targetDir = path[stepInPath] - placeable.transform.position;//next one
+                targetDir.y = 0;// don't move up 
+                Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
+                placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
+            }
+
             //change what we look at
 
-            if (useBezier && !noCurve)
+            if (useBezier && useCurve)
             {
                 if (animator != null)
                 {
@@ -1223,7 +1231,7 @@ public class Player : NetworkBehaviour
                     }
                 }
 
-                placeable.transform.position = delta + Mathf.Pow(1 - timeBezier, 2) * (previousCheckpoint) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[stepInPath]);
+                placeable.transform.position = Mathf.Pow(1 - timeBezier, 2) * (previousCheckpoint) + 2 * (1 - timeBezier) * timeBezier * (controlPoint) + Mathf.Pow(timeBezier, 2) * (path[stepInPath]);
 
             }
             else
@@ -1244,7 +1252,16 @@ public class Player : NetworkBehaviour
                     }
                 }
 
-                placeable.transform.position = Vector3.Lerp(previousCheckpoint + delta, path[stepInPath] + delta, timeBezier);
+                Vector3 next = Vector3.Lerp(previousCheckpoint, path[stepInPath], timeBezier);
+
+                //Debug.LogError("NextPositionCalculated: " + next);
+                Debug.LogError("PreviousPosition: " + placeable.transform.position);
+                /*
+                Debug.LogError("path[stepInPath] + delta: " + path[stepInPath] + delta);
+                Debug.LogError("previousCheckpoint + delta" + previousCheckpoint + delta);
+                Debug.LogError("timeBezier" + timeBezier);*/
+
+                placeable.transform.position = next;
 
             }
 
@@ -1268,10 +1285,8 @@ public class Player : NetworkBehaviour
         }
         SoundHandler.Instance.StopWalkSound();
         placeable.isMoving = false;
-        //GameManager.instance.PlayingPlaceable.destination = new Vector3Int();
 
         Debug.Log("End" + placeable.GetPosition());
-        //Debug.Log("End transform" + placeable.transform);
     }
 
     /*

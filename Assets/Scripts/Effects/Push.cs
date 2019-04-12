@@ -127,7 +127,7 @@ public class Push : EffectOnPlaceable
                 Vector3 launcherPosition = Launcher.transform.position;
                 Vector3 positionToLook = new Vector3(targetPositionStart.x, launcherPosition.y, targetPositionStart.z);
                 GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(positionToLook, Vector3.up);
-                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Target, null, pushSpeed, true);
+                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Target, null, pushSpeed, false);
             }
 
             if (shouldApplyGravity)

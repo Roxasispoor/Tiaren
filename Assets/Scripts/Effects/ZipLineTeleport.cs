@@ -44,8 +44,8 @@ public class ZipLineTeleport : EffectOnObjectBloc
             if (GameManager.instance.isClient)
             {
 
-                List<Vector3> path = new List<Vector3>() { Launcher.GetPosition() + Vector3Int.down, arrival.GetPosition() };// + new Vector3Int(0, 1, 0) };
-                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Launcher, null, 4f, true);
+                List<Vector3> path = new List<Vector3>() { Launcher.GetPosition(), arrival.GetPosition() + Vector3Int.up };
+                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Launcher, null, 4f, false);
                
             }
             if(Launcher.Player.isLocalPlayer)
