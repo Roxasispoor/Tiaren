@@ -103,11 +103,11 @@ public class Push : EffectOnPlaceable
         {
             if (Target.IsLiving())
             {
-                EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)Target, Launcher, damage));
+                Target.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
             }
             if (placeableHitted.IsLiving())
             {
-                EffectManager.instance.DirectAttack(new Damage((LivingPlaceable)placeableHitted, Launcher, damage));
+                Target.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
             }
         }
 

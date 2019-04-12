@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DamageCalculated : EffectOnLiving {
   
-    public enum DamageScale {STR,DEXT,MAG}
+    public enum DamageScale {STR,DEXT,MAG,BRUT}
     [SerializeField]
     private float power;
     [SerializeField]
@@ -65,7 +65,7 @@ public class DamageCalculated : EffectOnLiving {
 
     public override void Preview(NetIdeable target)
     {
-        if (!target.IsLiving())
+        if (target as IHurtable == null)
             return;
         Launcher = GameManager.instance.PlayingPlaceable;
         Target = (LivingPlaceable) target;
@@ -96,6 +96,10 @@ public class DamageCalculated : EffectOnLiving {
         {
             totalDmg = power * power / Target.Mdef;
         }
+        else if (scaleOn == DamageScale.BRUT)
+        {
+            totalDmg = power;
+        }
         if (Launcher.GetPosition().y > Target.GetPosition().y)
         {
             totalDmg *= ( 1 + SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
@@ -117,7 +121,7 @@ public class DamageCalculated : EffectOnLiving {
     override
         public void Use()
     {
-        if(Target.IsLiving())
+        if(Target as IHurtable != null)
         {
             Launcher = GameManager.instance.PlayingPlaceable;
             int totalDmg = CalculateDamage();

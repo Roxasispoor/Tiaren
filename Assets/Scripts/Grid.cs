@@ -40,7 +40,8 @@ public class Grid : MonoBehaviour
     public List<Vector3Int> spawnPlayer1;
     public List<Vector3Int> spawnPlayer2;
 
-    public int FallDamage
+    public int Fall
+
     {
         get
         {
@@ -715,7 +716,7 @@ public class Grid : MonoBehaviour
                 desiredPosition = new Vector3Int(x, y - ydrop, z);
                 if (damage > 0)
                 {
-                    character.DispatchEffect(new Damage(character, character, damage));
+                    character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
                 }
             }
             else
@@ -728,10 +729,10 @@ public class Grid : MonoBehaviour
                 }
                 if (damage > 0)
                 {
-                    character.DispatchEffect(new Damage(character, character, damage));
+                    character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
                 }
-                character.DispatchEffect(new Damage(character, character, (int)(30*30 / character.Def)));
-                ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], (int)(30 * 30 / character.Def)));
+                character.DispatchEffect(new DamageCalculated((int)(30 * 30 / character.Def), DamageCalculated.DamageScale.BRUT, 0));
+                ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new DamageCalculated((int)(30 * 30 / character.Def), DamageCalculated.DamageScale.BRUT, 0));
                 simpleGravity();
 
             }
@@ -743,7 +744,7 @@ public class Grid : MonoBehaviour
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
         {
-            ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new Damage((LivingPlaceable)gridMatrix[x, y - ydrop, z], gridMatrix[x, y, z], blockfalldamage * ydrop));
+            ((LivingPlaceable)gridMatrix[x, y - ydrop, z]).DispatchEffect(new DamageCalculated(blockfalldamage * ydrop, DamageCalculated.DamageScale.BRUT, 0));
             gridMatrix[x, y, z].Destroy(); 
             gridMatrix[x, y, z] = null;
         }

@@ -435,6 +435,7 @@ public class GameManager : NetworkBehaviour
         transmitter = GetComponent<TransmitterNoThread>();
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
         ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
+        ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentPAFlat);
 
         SkillDictionary = new Dictionary<SkillTypes, System.Type>();
         SkillDictionary.Add(SkillTypes.PUSH, System.Type.GetType("PushSkill"));
