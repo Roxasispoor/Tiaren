@@ -161,6 +161,10 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public GameObject prefabTransparentCube;
     /// <summary>
+    /// Prefab used to preview the zipline
+    /// </summary>
+    public GameObject prefabTransparentZipline;
+    /// <summary>
     /// Material used for the previw of the creation of a cube.
     /// </summary>
     public Material materialPreviewCreate;
