@@ -1116,14 +1116,8 @@ public class Player : NetworkBehaviour
                 placeable.moveCoroutine = null;
 
             }
-            if (placeable.IsLiving())
-            {
-                placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed: speed, animator: animator));
-            }
-            else
-            {
-                placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, goStraight: justLerp, animator: animator));
-            }
+            placeable.destination = new Vector3Int((int)path[path.Count - 1].x, (int)path[path.Count - 1].y, (int)path[path.Count - 1].z);
+            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, (LivingPlaceable)placeable, speed: speed, animator: animator));
 
         }
     }
