@@ -225,7 +225,7 @@ public class CameraScript : MonoBehaviour
         {
             GameManager.instance.Hovered = null;
             GameManager.instance.PlayingPlaceable.ResetTargets();
-            GameManager.instance.PlayingPlaceable.ResetAreaOfMovement();
+            GameManager.instance.PlayingPlaceable.ClearAreaOfMovement();
             RaycastSelector rayselect = GameManager.instance.RaycastSelector;
             rayselect.EffectArea = 0;
             rayselect.Pattern = SkillArea.NONE;

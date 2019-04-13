@@ -942,11 +942,13 @@ public class Player : NetworkBehaviour
         LivingPlaceable askingPlaceable = CheckAskingTurn(netIdAskingChar);
         if (null == askingPlaceable)
             return;
+
         if (Grid.instance.CheckPath(path, askingPlaceable))
         {
             List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
 
             Move(finalPath.ToArray(), askingPlaceable, true);
+
             RpcMoveTo(finalPath.ToArray(), netIdAskingChar);
         }
         else
@@ -955,15 +957,11 @@ public class Player : NetworkBehaviour
         }
     }
 
+    // TODO: rename et voir si besoin de refactor
     public void Move(Vector3[] path, LivingPlaceable askingPlaceable,bool mustUpdateTransform)
     {
-        Vector3Int charPosition = askingPlaceable.GetPosition();
-        //Move placeable on server
-        Debug.LogError("Start" + charPosition);
-        Grid.instance.GridMatrix[charPosition.x, charPosition.y, charPosition.z] = null;
+        Grid.instance.MovePlaceable(askingPlaceable, Vector3Int.FloorToInt(path[path.Length - 1]) + Vector3Int.up, mustUpdateTransform);
 
-        Grid.instance.GridMatrix[(int)path[path.Length - 1].x, (int)path[path.Length - 1].y + 1,
-            (int)path[path.Length - 1].z] = askingPlaceable;
         if(mustUpdateTransform)
             askingPlaceable.transform.position = path[path.Length - 1] + new Vector3(0, 1, 0);
         
