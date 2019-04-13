@@ -1128,7 +1128,6 @@ public class Player : NetworkBehaviour
                 placeable.moveCoroutine = null;
 
             }
-            placeable.destination = Vector3Int.FloorToInt(path[path.Count - 1]);
             placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, useCurve: useCurve));
 
         }

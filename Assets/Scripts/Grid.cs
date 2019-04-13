@@ -613,6 +613,9 @@ public class Grid : MonoBehaviour
             Vector3 oldPosition = bloc.GetPosition();
 
             gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
+
+            bloc.logicPosition = desiredPosition;
+
             if (true)
             {
                 gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to null

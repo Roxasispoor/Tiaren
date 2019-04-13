@@ -9,18 +9,18 @@ public abstract class NetIdeable : MonoBehaviour {
     protected List<Effect> attachedEffects;
     public bool shouldBatch=true;
     public bool isMoving=false;
-    public Vector3Int destination;
+    public Vector3Int logicPosition = Vector3Int.down;
     public static int currentMaxId = 0;
 
     public Vector3Int GetPosition()
     {
-        if(!isMoving)
+        if(logicPosition == Vector3Int.down)
         { 
         return new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
         }
         else
         {
-            return destination;
+            return logicPosition;
 
         }
     }
