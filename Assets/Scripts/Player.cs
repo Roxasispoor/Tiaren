@@ -1092,11 +1092,11 @@ public class Player : NetworkBehaviour
     /// <param name="nextNode"></param>
     /// <param name="isBezier"></param>
     /// <returns></returns>
-    public static float CalculateDistance(Vector3 start, Vector3 nextNode, out bool isBezier, ref Vector3 controlPoint)
+    public static float CalculateDistance(Vector3 start, Vector3 nextNode, bool useCurve, out bool isBezier, ref Vector3 controlPoint)
     {
         isBezier = start.y != nextNode.y;
 
-        if (isBezier)// if difference of height
+        if (isBezier && useCurve)// if difference of height
         {
             controlPoint = (nextNode + start + 2 * new Vector3(0, Mathf.Abs(nextNode.y - start.y), 0)) / 2;
 
@@ -1104,7 +1104,6 @@ public class Player : NetworkBehaviour
         }
         else
         {
-
             return Vector3.Distance(start, nextNode);
         }
 
@@ -1168,7 +1167,7 @@ public class Player : NetworkBehaviour
 
         int stepInPath = 1;
         int stepRef = 1;
-        float distance = CalculateDistance(previousCheckpoint, path[stepInPath], out useBezier, ref controlPoint);
+        float distance = CalculateDistance(previousCheckpoint, path[stepInPath], useCurve, out useBezier, ref controlPoint);
         float distanceParcourue = 0;
         SoundHandler.Instance.StartWalkSound();
         while (timeBezier < 1)
@@ -1184,7 +1183,7 @@ public class Player : NetworkBehaviour
                 previousCheckpoint = path[stepInPath];
                 stepInPath++; 
 
-                distance = CalculateDistance(previousCheckpoint, path[stepInPath], out useBezier, ref controlPoint);//On calcule la distance au noeud suivant
+                distance = CalculateDistance(previousCheckpoint, path[stepInPath], useCurve, out useBezier, ref controlPoint);//On calcule la distance au noeud suivant
                 timeBezier = distanceParcourue / distance; //on recalcule
 
             }
@@ -1200,6 +1199,7 @@ public class Player : NetworkBehaviour
             if (placeable.IsLiving())
             {
                 targetDir = path[stepInPath] - placeable.transform.position;//next one
+                
                 targetDir.y = 0;// don't move up 
                 Vector3 vectorRotation = Vector3.RotateTowards(placeable.transform.forward, targetDir, 0.2f, 0);
                 placeable.transform.rotation = Quaternion.LookRotation(vectorRotation);
@@ -1253,13 +1253,7 @@ public class Player : NetworkBehaviour
                 }
 
                 Vector3 next = Vector3.Lerp(previousCheckpoint, path[stepInPath], timeBezier);
-
-                //Debug.LogError("NextPositionCalculated: " + next);
-                Debug.LogError("PreviousPosition: " + placeable.transform.position);
-                /*
-                Debug.LogError("path[stepInPath] + delta: " + path[stepInPath] + delta);
-                Debug.LogError("previousCheckpoint + delta" + previousCheckpoint + delta);
-                Debug.LogError("timeBezier" + timeBezier);*/
+                
 
                 placeable.transform.position = next;
 
