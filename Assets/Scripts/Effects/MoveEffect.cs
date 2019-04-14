@@ -6,7 +6,7 @@ public class MoveEffect : EffectOnLiving {
     [SerializeField]
     private Vector3Int direction;
     [SerializeField]
-    private bool useBezier=false;
+    private bool updateTransform=true;
     [SerializeField]
     private bool useGravity = true;
     public Vector3Int Direction
@@ -22,16 +22,16 @@ public class MoveEffect : EffectOnLiving {
         }
     }
 
-    public bool UseBezier
+    public bool UpdateTransform
     {
         get
         {
-            return useBezier;
+            return updateTransform;
         }
 
         set
         {
-            useBezier = value;
+            updateTransform = value;
         }
     }
 
@@ -41,21 +41,21 @@ public class MoveEffect : EffectOnLiving {
     {
         Direction=new Vector3Int();
     }
-    public MoveEffect(Vector3Int direction, bool useBezier, bool useGravity)
+    public MoveEffect(Vector3Int direction, bool updateTransform, bool useGravity)
     {
         this.Direction = direction;
-        this.UseBezier = useBezier;
+        this.UpdateTransform = updateTransform;
         this.UseGravity = useGravity;
     }
-    public MoveEffect(Vector3Int direction, int numberOfturn, bool useBezier, bool useGravity, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfturn, triggerAtEnd, activationType)
+    public MoveEffect(Vector3Int direction, int numberOfturn, bool updateTransform, bool useGravity, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfturn, triggerAtEnd, activationType)
     {
         this.Direction = direction;
-        this.UseBezier = useBezier;
+        this.UpdateTransform = updateTransform;
     }
     public MoveEffect(MoveEffect other) : base(other)
     {
         this.Direction = other.Direction;
-        this.UseBezier = other.useBezier;
+        this.UpdateTransform = other.updateTransform;
         this.UseGravity = other.UseGravity;
     }
 
@@ -81,7 +81,7 @@ public class MoveEffect : EffectOnLiving {
     public MoveEffect(LivingPlaceable target, Placeable launcher, Vector3Int direction,bool useBezier, bool useGravity) : base(target, launcher)
     {
         this.Direction = direction;
-        this.UseBezier = useBezier;
+        this.UpdateTransform = useBezier;
         this.UseGravity = useGravity;
     }
 
@@ -96,11 +96,11 @@ public class MoveEffect : EffectOnLiving {
     {
         if(Target.movable && Grid.instance.CheckNull(Target.GetPosition() + direction))
         {
-            Grid.instance.MovePlaceable(Target, Target.GetPosition() + direction, UseBezier);
+            Grid.instance.MovePlaceable(Target, Target.GetPosition() + direction, updateTransform);
             Debug.Log("Has been logically moved");
 
             //TODO mettre une animation
-           if(UseBezier) //Coroutine conflicts, annoying, sorry
+           if(UpdateTransform) //Coroutine conflicts, annoying, sorry
             {
                 /* Animator animLauncher = GameManager.instance.playingPlaceable.gameObject.GetComponent<Animator>();
 
