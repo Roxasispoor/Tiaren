@@ -65,6 +65,7 @@ public class GrappleHook : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
+        offset = FindDestinationOffset(GameManager.instance.PlayingPlaceable, (StandardCube)target);
         Debug.Log(offset.ToString());
         MoveEffect.Direction = (target.GetPosition() + offset) - caster.GetPosition();
         caster.DispatchEffect(MoveEffect);
