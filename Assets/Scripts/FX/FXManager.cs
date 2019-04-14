@@ -110,7 +110,7 @@ public class FXManager : MonoBehaviour
     }
 
 
-    public void Grapplepreview(StandardCube target, Vector3Int offset)
+    public void Grapplepreview(StandardCube target, Vector3 offset)
     {
         Vector3 imagePosition = (Vector3)offset * 0.5f;
         
@@ -125,6 +125,7 @@ public class FXManager : MonoBehaviour
             grapple.SetActive(true);
             grapple.transform.position = target.GetPosition() + imagePosition;
         }
+        grapple.transform.up = imagePosition;
     }
 
     public void GrappleUnpreview()
