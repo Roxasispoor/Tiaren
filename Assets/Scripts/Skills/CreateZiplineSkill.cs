@@ -79,7 +79,6 @@ class CreateZiplineSkill : Skill
         CreateZiplineEffect.Target = caster;
 
         target.DispatchEffect(CreateZiplineEffect);
-
     }
 
     public override void Preview(NetIdeable target)

@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 823285884}
   - component: {fileID: 823285883}
   - component: {fileID: 823285886}
+  - component: {fileID: 823285888}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -392,14 +393,6 @@ MonoBehaviour:
   timeBetweenTurns: 2
   transmitter: {fileID: 0}
   winner: {fileID: 0}
-  prefabTransparentCube: {fileID: 1032257904305354, guid: a9723f502c08e5a45b082c6f9eb21f11,
-    type: 3}
-  prefabTransparentZipline: {fileID: 5516278300780320103, guid: 6db603408438364488bb3da814d2db4b,
-    type: 3}
-  materialPreviewCreate: {fileID: 2100000, guid: 7eada7a3231809c4aaf97babeda8c9f6,
-    type: 2}
-  materialPreviewDestroy: {fileID: 2100000, guid: 7763a2936eecb4748be2d315834f5e99,
-    type: 2}
   gridFolder: {fileID: 0}
   orientationState: 0
 --- !u!4 &823285885
@@ -470,6 +463,28 @@ MonoBehaviour:
   - {fileID: 6983445455873946778, guid: 413da2c10cb346a4ba573a18312be69c, type: 3}
   spawnPlayer1: []
   spawnPlayer2: []
+--- !u!114 &823285888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823285882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c90344277736114d9dc73ab4fb21fff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabTransparentCube: {fileID: 1032257904305354, guid: a9723f502c08e5a45b082c6f9eb21f11,
+    type: 3}
+  prefabTransparentZipline: {fileID: 5516278300780320103, guid: 6db603408438364488bb3da814d2db4b,
+    type: 3}
+  prefabGrapple: {fileID: 5586588493350522898, guid: 58b54f1f6609b134084efea5c823e872,
+    type: 3}
+  materialPreviewCreate: {fileID: 2100000, guid: 7eada7a3231809c4aaf97babeda8c9f6,
+    type: 2}
+  materialPreviewDestroy: {fileID: 2100000, guid: 7763a2936eecb4748be2d315834f5e99,
+    type: 2}
 --- !u!114 &823285890
 MonoBehaviour:
   m_ObjectHideFlags: 0

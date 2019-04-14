@@ -4,7 +4,26 @@ using UnityEngine;
 
 public class FXManager : MonoBehaviour
 {
-    private static FXManager instance;
+    /// <summary>
+    /// Prefab used to create transparentCube.
+    /// </summary>
+    public GameObject prefabTransparentCube;
+    /// <summary>
+    /// Prefab used to preview the zipline
+    /// </summary>
+    public GameObject prefabTransparentZipline;
+
+    public GameObject prefabGrapple;
+    /// <summary>
+    /// Material used for the previw of the creation of a cube.
+    /// </summary>
+    public Material materialPreviewCreate;
+    /// <summary>
+    /// Material used for the previw of the destruction of a cube.
+    /// </summary>
+    public Material materialPreviewDestroy;
+
+    public static FXManager instance;
 
     private Queue<GameObject> freeTransparentCubes;
     private Transform parent;
@@ -12,22 +31,24 @@ public class FXManager : MonoBehaviour
     private GameObject zipStart;
     private GameObject zipEnd;
 
-    public static FXManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                GameObject go = new GameObject("Factory");
-                instance = go.AddComponent<FXManager>();
-                instance.parent = instance.transform;
-            }
-            return instance;
-        }
-    }
+    private GameObject grapple;
 
-    FXManager()
+    private void Awake()
     {
+        // Singleton patern
+        if (instance == null)
+        {
+
+            //if not, set instance to this
+            instance = this;
+        }
+        //If instance already exists and it's not this:
+        else if (instance != this)
+        {
+
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+            Destroy(gameObject);
+        }
         freeTransparentCubes = new Queue<GameObject>();
     }
 
@@ -35,12 +56,19 @@ public class FXManager : MonoBehaviour
     {
         if (freeTransparentCubes.Count > 0)
         {
-            GameObject cube =  freeTransparentCubes.Dequeue();
+            GameObject cube = freeTransparentCubes.Dequeue();
             cube.SetActive(true);
             return cube;
-        } else
+        }
+        else
         {
-            return Instantiate(GameManager.instance.prefabTransparentCube, parent);
+            if(null != prefabTransparentCube)
+                return Instantiate(prefabTransparentCube);
+            else
+            {
+                Debug.LogError("the prefab is not there");
+                return null;
+            }
         }
     }
 
@@ -50,12 +78,17 @@ public class FXManager : MonoBehaviour
         freeTransparentCubes.Enqueue(cube);
     }
 
+    /// <summary>
+    /// Preview for the zipline
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="launcher"></param>
     public void ZiplinePreview(StandardCube target, LivingPlaceable launcher)
     {
         if (null == zipStart && null == zipEnd)
         {
-            zipEnd = Instantiate(GameManager.instance.prefabTransparentZipline, target.GetPosition(), Quaternion.identity);
-            zipStart = Instantiate(GameManager.instance.prefabTransparentZipline, launcher.GetPosition() + new Vector3Int(0, -1, 0), Quaternion.identity);
+            zipEnd = Instantiate(prefabTransparentZipline, target.GetPosition(), Quaternion.identity);
+            zipStart = Instantiate(prefabTransparentZipline, launcher.GetPosition() + new Vector3Int(0, -1, 0), Quaternion.identity);
             zipStart.GetComponentInChildren<ZiplineFX>().ConnectZipline(zipEnd.GetComponentInChildren<ZiplineFX>());
         }
         else
@@ -74,5 +107,29 @@ public class FXManager : MonoBehaviour
             zipStart.SetActive(false);
             zipEnd.SetActive(false);
         }
+    }
+
+
+    public void Grapplepreview(StandardCube target, Vector3Int offset)
+    {
+        Vector3 imagePosition = (Vector3)offset * 0.5f;
+        
+        if(null == grapple)
+        {
+            grapple = Instantiate(prefabGrapple, target.GetPosition() + imagePosition, Quaternion.identity);
+            grapple.GetComponentInChildren<MeshRenderer>().material = materialPreviewCreate;
+            grapple.GetComponent<GrappleFX>().ConnectRope(materialPreviewCreate);
+        }
+        else
+        {
+            grapple.SetActive(true);
+            grapple.transform.position = target.GetPosition() + imagePosition;
+        }
+    }
+
+    public void GrappleUnpreview()
+    {
+        if (null != grapple)
+            grapple.SetActive(false);
     }
 }

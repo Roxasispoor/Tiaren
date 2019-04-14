@@ -28,6 +28,8 @@ public class PiercingDamageEffect : DamageCalculated
 
     public void PiercingDamage()
     {
+        if (null == Launcher)
+            Launcher = GameManager.instance.PlayingPlaceable;
         targets.Clear();
         damages.Clear();
         int effectivedmg;
@@ -65,7 +67,6 @@ public class PiercingDamageEffect : DamageCalculated
     public override void Preview(NetIdeable target)
     {
         Target = (LivingPlaceable) target;
-        Launcher = GameManager.instance.PlayingPlaceable;
         PiercingDamage();
         for (int i = 0; i < targets.Count; i++)
         {
