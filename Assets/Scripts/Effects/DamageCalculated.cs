@@ -67,7 +67,6 @@ public class DamageCalculated : EffectOnLiving {
     {
         if (target as IHurtable == null)
             return;
-        Launcher = GameManager.instance.PlayingPlaceable;
         Target = (LivingPlaceable) target;
         int damage = CalculateDamage();
         GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damage, 1, (LivingPlaceable) target);
@@ -87,6 +86,8 @@ public class DamageCalculated : EffectOnLiving {
     /// <returns></returns>
     public int CalculateDamage()
     {
+        if (null == Launcher)
+            Launcher = GameManager.instance.PlayingPlaceable;
         float totalDmg = 0;
         if (scaleOn == DamageScale.STR || scaleOn == DamageScale.DEXT)
         {
@@ -123,7 +124,6 @@ public class DamageCalculated : EffectOnLiving {
     {
         if(Target as IHurtable != null)
         {
-            Launcher = GameManager.instance.PlayingPlaceable;
             int totalDmg = CalculateDamage();
             EffectManager.instance.DirectAttack(new Damage(Target, Launcher, totalDmg));
         }

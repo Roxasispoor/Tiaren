@@ -29,7 +29,7 @@ public class CreateZipLine : CreateBlock
         {
             Debug.LogError("CreateZipline, something went wrong");
         }
-        FXManager.Instance.ZiplinePreview((StandardCube)Target, (LivingPlaceable)Launcher);
+        FXManager.instance.ZiplinePreview((StandardCube)Target, (LivingPlaceable)Launcher);
     }
 
     public void createMesh()
@@ -43,7 +43,7 @@ public class CreateZipLine : CreateBlock
 
     public override void ResetPreview(NetIdeable target)
     {
-        FXManager.Instance.ZiplineUnpreview();
+        FXManager.instance.ZiplineUnpreview();
     }
 
     public override void Use()

@@ -25,7 +25,6 @@ public class HealingEffect : EffectOnNetIdeable
     {
         if (!target.IsLiving())
             return;
-        Launcher = GameManager.instance.PlayingPlaceable;
         Target = (LivingPlaceable)target;
         GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(-healingValue, 1, (LivingPlaceable)target); 
     }

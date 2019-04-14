@@ -63,9 +63,9 @@ public class DestroyBloc : EffectOnPlaceableOnly
                 quad.SetActive(false);
                 gameObjectDeactivatedForThePreview.Enqueue(quad);
 
-                GameObject cube = FXManager.Instance.getCube();
+                GameObject cube = FXManager.instance.getCube();
                 cube.transform.position = target.GetPosition() + Vector3Int.down * i;
-                cube.GetComponent<MeshRenderer>().material = GameManager.instance.materialPreviewDestroy;
+                cube.GetComponent<MeshRenderer>().material = FXManager.instance.materialPreviewDestroy;
                 previewedCubes.Enqueue(cube);
 
                 //bloc.Destroy();
@@ -87,7 +87,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         }
         while (previewedCubes != null && previewedCubes.Count > 0)
         {
-            FXManager.Instance.putBack(previewedCubes.Dequeue());
+            FXManager.instance.putBack(previewedCubes.Dequeue());
         }
     }
 

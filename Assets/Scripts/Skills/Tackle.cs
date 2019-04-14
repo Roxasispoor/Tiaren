@@ -73,7 +73,7 @@ public class Tackle : Skill
 
         Vector3Int direction = FindDirection(caster, target);
         List<Placeable> colisions = ColisionSearch(caster, target, direction);
-        MoveEffect.UseBezier = true;
+        MoveEffect.UpdateTransform = true;
         MoveEffect.Target = caster;
         MoveEffect.Launcher = caster;
         Placeable outsiderangeColision = Grid.instance.GetPlaceableFromVector(caster.GetPosition() + direction * (MaxRange + 1));

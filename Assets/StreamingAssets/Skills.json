@@ -236,5 +236,15 @@
     "nbCasePush": 2,
     "damagePush": 10,
     "damage": 5
+  },
+    "GrappleHook": {
+    "skillName": "Grapple",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "default",
+    "description": "Grapple to move around",
+    "maxRange": 5,
+    "minRange": 1,
+    "targetType": 1
   }
 }

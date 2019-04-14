@@ -157,22 +157,6 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     private RaycastSelector raycastSelector;
     /// <summary>
-    /// Prefab used to create transparentCube.
-    /// </summary>
-    public GameObject prefabTransparentCube;
-    /// <summary>
-    /// Prefab used to preview the zipline
-    /// </summary>
-    public GameObject prefabTransparentZipline;
-    /// <summary>
-    /// Material used for the previw of the creation of a cube.
-    /// </summary>
-    public Material materialPreviewCreate;
-    /// <summary>
-    /// Material used for the previw of the destruction of a cube.
-    /// </summary>
-    public Material materialPreviewDestroy;
-    /// <summary>
     /// Dictionary to make the correspondance between the choices of the players and the skill to create
     /// </summary>
     public Dictionary<SkillTypes, System.Type> SkillDictionary;
@@ -458,6 +442,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
         SkillDictionary.Add(SkillTypes.EARTHBENDING, System.Type.GetType("EarthBending"));
         SkillDictionary.Add(SkillTypes.REPULSIVEGRENADE, System.Type.GetType("RepulsiveGrenade"));
+        SkillDictionary.Add(SkillTypes.GRAPPLE, System.Type.GetType("GrappleHook"));
 
         // ***** BELOW - Initialise the skills given in game *****
         StreamReader readerJSON = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
