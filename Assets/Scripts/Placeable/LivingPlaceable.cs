@@ -1123,7 +1123,7 @@ public class LivingPlaceable : Placeable, IHurtable
         Debug.Log("area of movement " + areaOfMouvement.Count);
     }
 
-    public void ResetAreaOfMovement()
+    public void ClearAreaOfMovement()
     {
         AreaOfMouvement = new List<NodePath>();
     }

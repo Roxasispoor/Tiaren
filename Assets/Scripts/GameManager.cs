@@ -911,30 +911,24 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         return Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z] != null ? Grid.instance.GridMatrix[pos.x, pos.y - 1, pos.z].transform.Find("Inventory").GetComponentsInChildren<ObjectOnBloc>() : new ObjectOnBloc[0];
     }
 
+    // TODO: rename/supprimer cette fonction, son objectif est incertain (Pierrick)
     public void MoveLogic(List<Vector3> bezierPath)
     {
         if (PlayingPlaceable.Player.isLocalPlayer)
         {
-            PlayingPlaceable.ResetAreaOfMovement();
-            Vector3 lastPositionCharac = bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0);
-            Debug.Log("Dernière pos character : " + lastPositionCharac);
-            PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(bezierPath[bezierPath.Count - 1] + new Vector3(0, 1, 0), PlayingPlaceable.CurrentPM,
+            PlayingPlaceable.ClearAreaOfMovement();
+
+            Vector3 positionChara = playingPlaceable.GetPosition();
+
+            PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(positionChara, PlayingPlaceable.CurrentPM,
                PlayingPlaceable.Jump, PlayingPlaceable.Player);
             PlayingPlaceable.HighlightAreaOfMovement();
-            PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(PlayingPlaceable,
-                new Vector3Int((int)lastPositionCharac.x, (int)lastPositionCharac.y, (int)lastPositionCharac.z));
+
+            PlayingPlaceable.Player.GetComponent<UIManager>().UpdateAbilities(PlayingPlaceable, Vector3Int.FloorToInt(positionChara));
         }
     }
 
-    public void OnEndAnimationEffectEnd()
-    {
 
-        if (PlayingPlaceable.Player.isLocalPlayer)
-        {
-            MoveLogic(new List<Vector3>() { PlayingPlaceable.GetPosition() - new Vector3(0, 1, 0) });
-            GameManager.instance.State = States.Move;
-        }
-    }
     public void InitStartGameServer()
     {
         List<float> biases = new List<float>();
@@ -1143,7 +1137,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             if (PlayingPlaceable.Player.isLocalPlayer)
             {
                 PlayingPlaceable.ResetTargets();
-                PlayingPlaceable.ResetAreaOfMovement();
+                PlayingPlaceable.ClearAreaOfMovement();
                 PlayingPlaceable.ResetHighlightSkill();
                 raycastSelector.EffectArea = 0;
                 raycastSelector.Pattern = SkillArea.NONE;

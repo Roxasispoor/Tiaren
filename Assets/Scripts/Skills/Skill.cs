@@ -186,7 +186,7 @@ public abstract class Skill
         GameManager.instance.RaycastSelector.Pattern = SkillArea.NONE;
         GameManager.instance.RaycastSelector.EffectArea = 0;
         playingPlaceable.ResetHighlightSkill();
-        playingPlaceable.ResetAreaOfMovement();
+        playingPlaceable.ClearAreaOfMovement();
         playingPlaceable.ResetTargets();
         LayerMask livingMask = LayerMask.GetMask("LivingPlaceable");
         LayerMask cubeMask = LayerMask.GetMask("Cube");

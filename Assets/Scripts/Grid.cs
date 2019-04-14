@@ -361,6 +361,12 @@ public class Grid : MonoBehaviour
         if (distance <= 0)
             return accessibleBloc;
 
+        if(!GetPlaceableFromVector(startPosition + Vector3.down).walkable)
+        {
+            Debug.LogError("Try to start from a non walkable bloc");
+            return accessibleBloc;
+        }
+
         toCheck.Enqueue(NodePath.startPath(startPosition));
 
         int n_iteration = 0;
@@ -605,43 +611,58 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public void MovePlaceable(Placeable bloc, Vector3Int desiredPosition,bool updateTransform=true)
+    public void MovePlaceable(Placeable placeable, Vector3Int desiredPosition,bool updateTransform=true)
     {
-        if (bloc != null && bloc.GetPosition() != desiredPosition && CheckRange(desiredPosition) &&
-         gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] == null)
+        if (placeable == null)
         {
-            Vector3 oldPosition = bloc.GetPosition();
-
-            gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = bloc;//adding a link
-            if (true)
-            {
-                gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to null
-            }
-
-            if (updateTransform)
-            {
-                if(bloc.isMoving)
-                {
-                    if(bloc.IsLiving())
-                    {
-                        Animator anim = bloc.gameObject.GetComponent<Animator>();
-                        anim.SetTrigger("idle");
-                    }
-                    bloc.isMoving = false;
-                    StopCoroutine(bloc.moveCoroutine);
-                }
-                bloc.transform.position = desiredPosition; //shifting model
-            }
-            if(!bloc.IsLiving()
-                && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null
-                && !GetPlaceableFromVector(desiredPosition + Vector3Int.down).IsLiving())
-            {
-                ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
-            }
+            Debug.LogError("MovePlaceable: placeable is null");
+            return;
         }
-        else
+        if (placeable.GetPosition() == desiredPosition)
         {
-            Debug.LogError("MoveBlock error: To define");
+            return;
+        }
+        if (!CheckRange(desiredPosition))
+        {
+            Debug.LogError("MovePlaceable: placeable not in range");
+            return;
+        }
+        if (!CheckNull(desiredPosition))
+        {
+            Debug.LogError("MovePlaceable: desiredPosition is already occupied by " + GetPlaceableFromVector(desiredPosition).name);
+            return;
+        }
+
+        Vector3 oldPosition = placeable.GetPosition();
+
+        gridMatrix[desiredPosition.x, desiredPosition.y, desiredPosition.z] = placeable;//adding a link
+
+        placeable.logicPosition = desiredPosition;
+
+        if (true)
+        {
+            gridMatrix[(int)oldPosition.x, (int)oldPosition.y, (int)oldPosition.z] = null;//put former place to null
+        }
+
+        if (updateTransform)
+        {
+            if(placeable.isMoving)
+            {
+                if(placeable.IsLiving())
+                {
+                    Animator anim = placeable.gameObject.GetComponent<Animator>();
+                    anim.SetTrigger("idle");
+                }
+                placeable.isMoving = false;
+                StopCoroutine(placeable.moveCoroutine);
+            }
+            placeable.transform.position = desiredPosition; //shifting model
+        }
+        if(!placeable.IsLiving()
+            && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null
+            && !GetPlaceableFromVector(desiredPosition + Vector3Int.down).IsLiving())
+        {
+            ((StandardCube)GetPlaceableFromVector(desiredPosition + Vector3Int.down)).SomethingPutAbove();
         }
     }
 
