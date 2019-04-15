@@ -9,7 +9,7 @@
     "minRange": 0,
     "targetType": 1,
     "damage": 20,
-    "nbCases": 2
+    "nbCases": 1
   },
   "CreateSkill": {
     "skillName": "Create",
@@ -198,7 +198,7 @@
     "cooldown": 1,
     "spritePath": "EarthBending",
     "description": "Lift a cube from the ground and throw it straight ahead",
-    "maxRange": 2,
+    "maxRange": 1,
     "minRange": 1,
     "targetType": 1,
     "nbCasePush": 4,

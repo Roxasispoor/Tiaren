@@ -29,7 +29,14 @@ public class GrappleHook : Skill
     public override void Preview(NetIdeable target)
     {
         offset = FindDestinationOffset(GameManager.instance.PlayingPlaceable, (StandardCube)target);
-        FXManager.instance.Grapplepreview((StandardCube)target, offset);
+
+        Vector3 offsetPreview = GameManager.instance.PlayingPlaceable.GetPosition() - (Vector3)(target.GetPosition() + offset);
+        float max = Mathf.Max(Mathf.Abs(offsetPreview.x), Mathf.Abs(offsetPreview.z));
+        offsetPreview.y = 0;
+        offsetPreview.x /= max;
+        offsetPreview.z /= max;
+
+        FXManager.instance.Grapplepreview((StandardCube)target, offset + offsetPreview);
     }
 
     public override void UnPreview(NetIdeable target)
@@ -58,6 +65,7 @@ public class GrappleHook : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
+        offset = FindDestinationOffset(GameManager.instance.PlayingPlaceable, (StandardCube)target);
         Debug.Log(offset.ToString());
         MoveEffect.Direction = (target.GetPosition() + offset) - caster.GetPosition();
         caster.DispatchEffect(MoveEffect);

@@ -51,15 +51,16 @@ public class DestroyBloc : EffectOnPlaceableOnly
         //throw new System.NotImplementedException();
         for (int i = 0; i < depth; i++)
         {
-            StandardCube bloc = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.down * i) as StandardCube;
-            if (bloc != null && bloc.Destroyable == true)
+            StandardCube block = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.down * i) as StandardCube;
+            if (block != null && block.Destroyable == true)
             {
-                MeshRenderer meshRenderer = bloc.GetComponent<MeshRenderer>();
+                MeshRenderer meshRenderer = block.GetComponent<MeshRenderer>();
+                GameManager.instance.RemoveBlockFromBatch(block);
 
                 meshRenderer.enabled = false;
                 meshDeactivatedForThePreview.Enqueue(meshRenderer);
 
-                GameObject quad = bloc.QuadUp.transform.parent.gameObject;
+                GameObject quad = block.QuadUp.transform.parent.gameObject;
                 quad.SetActive(false);
                 gameObjectDeactivatedForThePreview.Enqueue(quad);
 
