@@ -16,9 +16,10 @@ public class GridSearcher : Editor
         
         if (GUILayout.Button("Search"))
         {
-            if (grid.GridMatrix[position.x, position.y, position.z] != null)
+            Placeable searchResult = grid.GetPlaceableFromVector(position);
+            if (searchResult != null)
             {
-                Debug.Log("At" + position.x + ", " + position.y + ", " + position.z + " is " + grid.GridMatrix[position.x, position.y, position.z]);
+                Debug.Log("At" + position.x + ", " + position.y + ", " + position.z + " is " + searchResult, searchResult);
             }
             else
             {
