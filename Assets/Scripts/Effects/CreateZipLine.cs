@@ -2,8 +2,6 @@
 
 public class CreateZipLine : CreateBlock
 {
-    private GameObject zip;
-
     public CreateZipLine(CreateBlock other) : base(other)
     {
 

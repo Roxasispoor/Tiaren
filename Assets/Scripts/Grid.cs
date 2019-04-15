@@ -174,7 +174,8 @@ public class Grid : MonoBehaviour
     }
     public GameObject InstanciateObjectOnBloc(GameObject prefab,Vector3Int position)
     {
-        GameObject newObjectOnBloc = Instantiate(prefab, Grid.instance.GridMatrix[position.x,position.y,position.z].gameObject.transform.Find("Inventory"));
+        GameObject newObjectOnBloc = Instantiate(prefab, Grid.instance.GetPlaceableFromVector(position).gameObject.transform.Find("Inventory"));
+        ((StandardCube)Grid.instance.GetPlaceableFromVector(position)).SomethingPutOn(newObjectOnBloc.GetComponent<ObjectOnBloc>());
         newObjectOnBloc.GetComponent<NetIdeable>().netId = NetIdeable.currentMaxId;
         NetIdeable.currentMaxId++;
         return newObjectOnBloc;
@@ -573,7 +574,6 @@ public class Grid : MonoBehaviour
 
             }
         }
-        Debug.LogError(x + " " + y + " " + z);
         //no need to check this block back
         if (gridMatrix[x, y, z] != null)
             gridMatrix[x, y, z].explored = true;
@@ -668,28 +668,25 @@ public class Grid : MonoBehaviour
 
     public List<Vector3> CheckPathForEffect(Vector3[] path, LivingPlaceable placeable)
     {
-        bool effectFound = false;
+        bool stop = false;
         List<Vector3> realPath = new List<Vector3>();
+        realPath.Add(path[0]);
         foreach(Vector3 node in path)
         {
-            if(true == effectFound)
+            if (node != path[0])
             {
-                break;
-            }
-            realPath.Add(Vector3Int.FloorToInt(node));
-            StandardCube cube = GetPlaceableFromVector(node) as StandardCube;
-            if (null == cube)
-            {
-                Debug.LogError("non cube in path or null in path");
-                return null;
-            }
-            if(cube.OnWalkEffects.Count > 0)
-            {
-                effectFound = true;
-                foreach(Effect onWalkEffect in cube.OnWalkEffects)
+                if (true == stop)
                 {
-                    placeable.DispatchEffect(onWalkEffect);
+                    break;
                 }
+                realPath.Add(node);
+                StandardCube cube = GetPlaceableFromVector(node) as StandardCube;
+                if (null == cube)
+                {
+                    Debug.LogError("non cube in path or null in path");
+                    return null;
+                }
+                stop = cube.ShouldStopMove;
             }
         }
         return realPath;

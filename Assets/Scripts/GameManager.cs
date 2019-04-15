@@ -439,10 +439,11 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.FISSURE, System.Type.GetType("Fissure"));
         SkillDictionary.Add(SkillTypes.FIREBALL, System.Type.GetType("Fireball"));
         SkillDictionary.Add(SkillTypes.WALL, System.Type.GetType("Wall"));
-        SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
         SkillDictionary.Add(SkillTypes.EARTHBENDING, System.Type.GetType("EarthBending"));
         SkillDictionary.Add(SkillTypes.REPULSIVEGRENADE, System.Type.GetType("RepulsiveGrenade"));
         SkillDictionary.Add(SkillTypes.GRAPPLE, System.Type.GetType("GrappleHook"));
+        SkillDictionary.Add(SkillTypes.MAKIBISHI, System.Type.GetType("MakibishiSkill"));
+        SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
 
         // ***** BELOW - Initialise the skills given in game *****
         StreamReader readerJSON = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));

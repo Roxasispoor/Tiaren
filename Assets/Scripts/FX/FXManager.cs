@@ -12,8 +12,14 @@ public class FXManager : MonoBehaviour
     /// Prefab used to preview the zipline
     /// </summary>
     public GameObject prefabTransparentZipline;
-
+    /// <summary>
+    /// Prefab used to show the grapple
+    /// </summary>
     public GameObject prefabGrapple;
+    /// <summary>
+    /// Prefab used to preview the picots
+    /// </summary>
+    public GameObject prefabTransparentMakibishi;
     /// <summary>
     /// Material used for the previw of the creation of a cube.
     /// </summary>
@@ -26,10 +32,11 @@ public class FXManager : MonoBehaviour
     public static FXManager instance;
 
     private Queue<GameObject> freeTransparentCubes;
-    private Transform parent;
 
     private GameObject zipStart;
     private GameObject zipEnd;
+
+    private GameObject makibishiPreview;
 
     private GameObject grapple;
 
@@ -78,6 +85,7 @@ public class FXManager : MonoBehaviour
         freeTransparentCubes.Enqueue(cube);
     }
 
+   
     /// <summary>
     /// Preview for the zipline
     /// </summary>
@@ -85,7 +93,7 @@ public class FXManager : MonoBehaviour
     /// <param name="launcher"></param>
     public void ZiplinePreview(StandardCube target, LivingPlaceable launcher)
     {
-        if (null == zipStart && null == zipEnd)
+        if (null == makibishiPreview)
         {
             zipEnd = Instantiate(prefabTransparentZipline, target.GetPosition(), Quaternion.identity);
             zipStart = Instantiate(prefabTransparentZipline, launcher.GetPosition() + new Vector3Int(0, -1, 0), Quaternion.identity);
@@ -106,6 +114,27 @@ public class FXManager : MonoBehaviour
         {
             zipStart.SetActive(false);
             zipEnd.SetActive(false);
+        }
+    }
+
+    public void MakibishiPreview(StandardCube target)
+    {
+        if (null == makibishiPreview)
+        {
+            makibishiPreview = Instantiate(prefabTransparentMakibishi, target.GetPosition(), Quaternion.identity);
+        }
+        else
+        {
+            makibishiPreview.SetActive(true);
+            makibishiPreview.transform.position = target.GetPosition();
+        }
+    }
+
+    public void MakibishiUnpreview()
+    {
+        if (makibishiPreview != null)
+        {
+            makibishiPreview.SetActive(false);
         }
     }
 

@@ -53,7 +53,7 @@ public class GrappleHook : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        return PatternTopBlock(position, vect);
+        return PatternCreate(position, vect);
     }
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)

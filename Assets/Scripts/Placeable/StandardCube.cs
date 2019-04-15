@@ -11,8 +11,10 @@ public class StandardCube : Placeable
 
     [NonSerialized]
     public Batch batch;
+    private bool shouldStopMove = false;
     protected List<Effect> onWalkEffects;
     protected bool destroyable;
+    private List<ObjectOnBloc> objectOns;
     /// <summary>
     /// Used for batching.
     /// </summary>
@@ -119,6 +121,9 @@ public class StandardCube : Placeable
         }
     }
 
+    public List<ObjectOnBloc> ObjectOns { get => objectOns; set => objectOns = value; }
+    public bool ShouldStopMove { get => shouldStopMove; set => shouldStopMove = value; }
+
     protected override void Awake()
     {
         base.Awake();
@@ -137,6 +142,7 @@ public class StandardCube : Placeable
         this.grounded = false;
         this.onWalkEffects = new List<Effect>();
         this.AttachedEffects = new List<Effect>();
+        this.ObjectOns = new List<ObjectOnBloc>();
 
         quads = new GameObject[6];
 
@@ -157,9 +163,9 @@ public class StandardCube : Placeable
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (Transform obj in transform.Find("Inventory"))
+            foreach (ObjectOnBloc obj in ObjectOns)
             {
-                obj.GetComponent<ObjectOnBloc>().Destroy();
+                obj.Destroy();
             }
             if (!IsLiving())
             {
@@ -363,4 +369,10 @@ public class StandardCube : Placeable
         }
     }
 
+    public virtual void SomethingPutOn(ObjectOnBloc objectOn)
+    {
+        ObjectOns.Add(objectOn);
+        objectOn.parent = this;
+        ShouldStopMove = objectOn.stopOnWalk;
+    }
 }

@@ -39,16 +39,16 @@ public class ZipLineTeleport : EffectOnObjectBloc
             && !Physics.Raycast(start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position, direction,
             (direction).magnitude,LayerMask.GetMask("Cube")))
         {
-            Grid.instance.MovePlaceable(Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
+            Grid.instance.MovePlaceable((Placeable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0), GameManager.instance.isServer);
             
             if (GameManager.instance.isClient)
             {
 
                 List<Vector3> path = new List<Vector3>() { start.GetPosition() + Vector3Int.up, arrival.GetPosition() + Vector3Int.up };
-                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Launcher, null, 4f, false);
+                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, (Placeable)Launcher, null, 4f, false);
                
             }
-            if(Launcher.Player.isLocalPlayer)
+            if(((Placeable)Launcher).Player.isLocalPlayer)
             {
                 GameManager.instance.PlayingPlaceable.Player.GetComponent<UIManager>().updateSpecialAbilities(
                    (LivingPlaceable)Launcher, arrival.GetPosition() + new Vector3Int(0, 1, 0));
