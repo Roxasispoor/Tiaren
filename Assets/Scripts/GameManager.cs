@@ -1139,8 +1139,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 PlayingPlaceable.ResetTargets();
                 PlayingPlaceable.ClearAreaOfMovement();
                 PlayingPlaceable.ResetHighlightSkill();
-                raycastSelector.EffectArea = 0;
-                raycastSelector.Pattern = SkillArea.NONE;
                 PlayingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();

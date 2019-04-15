@@ -1687,7 +1687,7 @@ public class Player : NetworkBehaviour
             Debug.LogError("AskingChar not found on client");
             return;
         }
-        Debug.LogError("Attention aux already targeted");
+
         Skill skill = NumberToSkill(askingPlaceable, numSkill);
 
         GameManager.instance.orientationState = orientationState;

@@ -227,8 +227,6 @@ public class CameraScript : MonoBehaviour
             GameManager.instance.PlayingPlaceable.ResetTargets();
             GameManager.instance.PlayingPlaceable.ClearAreaOfMovement();
             RaycastSelector rayselect = GameManager.instance.RaycastSelector;
-            rayselect.EffectArea = 0;
-            rayselect.Pattern = SkillArea.NONE;
             GameManager.instance.State = States.Move;
             GameManager.instance.ActiveSkill = null;
             GameManager.instance.PlayingPlaceable.AreaOfMouvement = Grid.instance.CanGo(GameManager.instance.PlayingPlaceable.GetPosition(), GameManager.instance.PlayingPlaceable.CurrentPM,

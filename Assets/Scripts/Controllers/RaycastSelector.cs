@@ -7,18 +7,11 @@ using UnityEngine.SceneManagement;
 public class RaycastSelector : MonoBehaviour
 {
     public LayerMask layerMask = 0;
-    private int effectarea; //effectarea radius
+
     private bool topblock = true;
     private int state;
-    private SkillArea pattern;
     private List<Placeable> area;
     new public Camera camera;
-
-    public SkillArea Pattern
-    {get {return pattern;} set {pattern = value;}}
-
-    public int EffectArea
-    { get { return effectarea; } set { effectarea = value; } }
 
     public List<Placeable> Area
     { get { return area; } set { area = value; } }
@@ -28,8 +21,6 @@ public class RaycastSelector : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         layerMask = ~layerMask;
-        pattern = SkillArea.NONE;
-        effectarea = 0;
     }
 
     private void OnEnable()
@@ -67,57 +58,15 @@ public class RaycastSelector : MonoBehaviour
             Ray ray = camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100000, layerMask) && !EventSystem.current.IsPointerOverGameObject())
             {
-                if (hit.transform.GetComponent<Placeable>() != null && hit.transform.GetComponent<Placeable>() != GameManager.instance.Hovered)
+                Placeable placeableHitted = hit.transform.GetComponent<Placeable>();
+
+                if (placeableHitted != null && placeableHitted != GameManager.instance.Hovered)
                 {
-                    if (GameManager.instance.Hovered != null)
-                    {
-                        if (area != null)
-                        {
-                            foreach (Placeable block in area)
-                            {
-                                if (block == null)
-                                    continue;
-                                block.UnHighlight();
-                                if (GameManager.instance.ActiveSkill != null)
-                                {
-                                    /*
-                                    foreach (Effect effect in GameManager.instance.ActiveSkill.effects)
-                                    {
-                                        effect.Preview(block);
-                                    }
-                                    */
-                                }
-                            }
-                        }
-                    }
-
-                    GameManager.instance.Hovered = hit.transform.GetComponent<Placeable>();
-                    
-                    if (GameManager.instance.State == States.UseSkill)
-                    {
-
-                        Debug.LogError("Revoir le use et la preview");
-                        /*
-                        area = GameManager.instance.ActiveSkill.patternUse(GameManager.instance.Hovered);
-                        foreach (Placeable block in area)
-                        {
-                            if (block == GameManager.instance.Hovered)
-                                continue;
-                            block.Highlight();
-                            if (GameManager.instance.ActiveSkill != null)
-                            {
-                                foreach (Effect effect in GameManager.instance.ActiveSkill.effects)
-                                {
-                                    effect.Preview(block);
-                                }
-                            }
-                        }
-                        */
-                    }
+                    GameManager.instance.Hovered = placeableHitted;
                 }
                 if (Input.GetMouseButtonUp(0))
                 {
-                    GameManager.instance.ClickOnPlaceable(hit.transform.GetComponent<Placeable>());
+                    GameManager.instance.ClickOnPlaceable(placeableHitted);
                 }
             }
             else

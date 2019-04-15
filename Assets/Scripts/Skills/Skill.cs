@@ -64,12 +64,6 @@ public abstract class Skill
 
     // ####### OLD #########
     
-    //TO REMOVE
-
-    [SerializeField]
-    private SkillArea skillArea;
-    [SerializeField]
-    private SkillEffect skillEffect;
 
     protected Skill()
     {
@@ -183,8 +177,6 @@ public abstract class Skill
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable)
     {
-        GameManager.instance.RaycastSelector.Pattern = SkillArea.NONE;
-        GameManager.instance.RaycastSelector.EffectArea = 0;
         playingPlaceable.ResetHighlightSkill();
         playingPlaceable.ClearAreaOfMovement();
         playingPlaceable.ResetTargets();
@@ -204,10 +196,6 @@ public abstract class Skill
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = cubeMask;
-            if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
-            {
-                GameManager.instance.RaycastSelector.Pattern = skillArea;
-            }
         }
         else if (targetType == TargetType.LIVING)
         {
