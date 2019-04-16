@@ -111,7 +111,7 @@ MonoBehaviour:
   netId: 0
   shouldBatch: 1
   isMoving: 0
-  destination: {x: 0, y: 0, z: 0}
+  logicPosition: {x: 0, y: -1, z: 0}
   walkable: 0
   movable: 0
   traversableType: 0
@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 23241966921510652}
   - component: {fileID: 64151789991202330}
   m_Layer: 8
-  m_Name: QuadFront
+  m_Name: QuadBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 23080343184381692}
   - component: {fileID: 64053192078362482}
   m_Layer: 8
-  m_Name: QuadBack
+  m_Name: QuadFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

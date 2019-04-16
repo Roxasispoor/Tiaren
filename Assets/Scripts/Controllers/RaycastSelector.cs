@@ -7,14 +7,44 @@ using UnityEngine.SceneManagement;
 public class RaycastSelector : MonoBehaviour
 {
     public LayerMask layerMask = 0;
-
-    private bool topblock = true;
-    private int state;
-    private List<Placeable> area;
+    
     new public Camera camera;
 
-    public List<Placeable> Area
-    { get { return area; } set { area = value; } }
+    private SelectionInfo currentHovered = new SelectionInfo();
+    
+    public SelectionInfo CurrentHovered
+    {
+        get
+        {
+            return currentHovered;
+        }
+    }
+    /*
+        set
+        {
+            
+            if (currentHovered.placeable != null)
+            {
+                Placeable placeable = currentHovered.placeable;
+                if (GameManager.instance.State == States.UseSkill && GameManager.instance.ActiveSkill != null)
+                {
+                    GameManager.instance.ActiveSkill.UnPreview(placeable);
+                }
+                placeable.UnHighlight();
+            }
+
+            if (value.placeable != null)
+            {
+                Placeable placeable = value.placeable;
+                placeable.Highlight();
+                if (GameManager.instance.State == States.UseSkill && GameManager.instance.PlayingPlaceable.IsPlaceableInTarget(placeable))
+                {
+                    GameManager.instance.ActiveSkill.Preview(placeable);
+                }
+            }
+            currentHovered = value;
+        }
+    }*/
 
     // Use this for initialization
     void Start()
@@ -47,11 +77,11 @@ public class RaycastSelector : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            GameManager.instance.orientationState = (GameManager.instance.orientationState == 3 ? 0 : GameManager.instance.orientationState + 1);
+            currentHovered.orientationState = (currentHovered.orientationState == 3 ? 0 : currentHovered.orientationState + 1);
             //Debug.Log(state);
         }
 
-        if (GameManager .instance.isGameStarted || GameManager.instance.State == States.Spawn )
+        if (GameManager.instance.isGameStarted || GameManager.instance.State == States.Spawn )
         {
 
             RaycastHit hit;
@@ -59,10 +89,14 @@ public class RaycastSelector : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100000, layerMask) && !EventSystem.current.IsPointerOverGameObject())
             {
                 Placeable placeableHitted = hit.transform.GetComponent<Placeable>();
+                Vector3 faceHitted = hit.normal;
 
-                if (placeableHitted != null && placeableHitted != GameManager.instance.Hovered)
+                currentHovered.face = faceHitted;
+                if (placeableHitted != currentHovered.placeable)
                 {
+                    UnHighligthAndUnPreviewCurrent();
                     GameManager.instance.Hovered = placeableHitted;
+                    HighligthAndPreviewCurrent();
                 }
                 if (Input.GetMouseButtonUp(0))
                 {
@@ -73,8 +107,40 @@ public class RaycastSelector : MonoBehaviour
             {
                 if (GameManager.instance.Hovered != null)
                 {
-                    GameManager.instance.Hovered = null;
+                    currentHovered = new SelectionInfo();
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Unhighlight the currently placeable considered as hovered.
+    /// </summary>
+    private void UnHighligthAndUnPreviewCurrent()
+    {
+        if (currentHovered.placeable != null)
+        {
+            Placeable placeable = currentHovered.placeable;
+            if (GameManager.instance.State == States.UseSkill && GameManager.instance.ActiveSkill != null)
+            {
+                GameManager.instance.ActiveSkill.UnPreview(placeable);
+            }
+            placeable.UnHighlight();
+        }
+    }
+
+    /// <summary>
+    /// Highlight the currently placeable considered as hovered.
+    /// </summary>
+    private void HighligthAndPreviewCurrent()
+    {
+        if (currentHovered.placeable != null)
+        {
+            Placeable placeable = currentHovered.placeable;
+            placeable.Highlight();
+            if (GameManager.instance.State == States.UseSkill && GameManager.instance.PlayingPlaceable.IsPlaceableInTarget(placeable))
+            {
+                GameManager.instance.ActiveSkill.Preview(placeable);
             }
         }
     }

@@ -310,11 +310,6 @@ public class GameManager : NetworkBehaviour
                 if (State == States.UseSkill && activeSkill != null)
                 {
                     ActiveSkill.UnPreview(hovered);
-                    /*
-                    foreach (Effect effect in ActiveSkill.effects)
-                    {
-                        effect.ResetPreview(hovered);
-                    }*/
                 }
                 hovered.UnHighlight();
             }
@@ -325,11 +320,6 @@ public class GameManager : NetworkBehaviour
                 if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
                     ActiveSkill.Preview(value);
-                    /*
-                    foreach (Effect effect in ActiveSkill.effects)
-                    {
-                        effect.Preview(value);
-                    }*/
                 }
             }
             hovered = value;
@@ -898,10 +888,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void  ResetAllBatches()
     {
-        if (Hovered != null)
-        {
-            Hovered = null;
-        }
         Resources.UnloadUnusedAssets();
         GameManager.instance.InitialiseBatchFolder();
     }
