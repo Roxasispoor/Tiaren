@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1032257904305354}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.99, y: 0.99, z: 0.99}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4107186286264018}
   - {fileID: 4475150880021966}
@@ -111,7 +111,7 @@ MonoBehaviour:
   netId: 0
   shouldBatch: 1
   isMoving: 0
-  destination: {x: 0, y: 0, z: 0}
+  logicPosition: {x: 0, y: -1, z: 0}
   walkable: 0
   movable: 0
   traversableType: 0
