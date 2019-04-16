@@ -55,9 +55,9 @@ public class Debugger : MonoBehaviour
                 }
             }
 
-            if (GameManager.instance.Hovered != null)
+            if (GameManager.instance.RaycastSelector.CurrentHovered.placeable != null)
             {
-                DisplayInfo(GameManager.instance.Hovered);
+                DisplayInfo(GameManager.instance.RaycastSelector.CurrentHovered.placeable);
             } else
             {
                 foreach (CharacterDisplay chara in characterDisplays)

@@ -90,12 +90,11 @@ public class RaycastSelector : MonoBehaviour
             {
                 Placeable placeableHitted = hit.transform.GetComponent<Placeable>();
                 Vector3 faceHitted = hit.normal;
-
-                currentHovered.face = faceHitted;
-                if (placeableHitted != currentHovered.placeable)
+                if (placeableHitted != currentHovered.placeable || faceHitted != currentHovered.face)
                 {
                     UnHighligthAndUnPreviewCurrent();
-                    GameManager.instance.Hovered = placeableHitted;
+                    currentHovered.face = faceHitted;
+                    currentHovered.placeable = placeableHitted;
                     HighligthAndPreviewCurrent();
                 }
                 if (Input.GetMouseButtonUp(0))
@@ -105,10 +104,8 @@ public class RaycastSelector : MonoBehaviour
             }
             else
             {
-                if (GameManager.instance.Hovered != null)
-                {
-                    currentHovered = new SelectionInfo();
-                }
+                UnHighligthAndUnPreviewCurrent();
+                currentHovered.placeable = null;
             }
         }
     }
@@ -116,7 +113,7 @@ public class RaycastSelector : MonoBehaviour
     /// <summary>
     /// Unhighlight the currently placeable considered as hovered.
     /// </summary>
-    private void UnHighligthAndUnPreviewCurrent()
+    public void UnHighligthAndUnPreviewCurrent()
     {
         if (currentHovered.placeable != null)
         {

@@ -282,9 +282,7 @@ public class GameManager : NetworkBehaviour
                 EndSpawn();
             } else if (state == States.UseSkill && value != state) // Previous state UseSkill and next != UseSkill
             {
-                if (SkillInfo.currentSkill)
-                    SkillInfo.currentSkill.SetHighlight(false);
-                SkillInfo.currentSkill = null;
+                raycastSelector.UnHighligthAndUnPreviewCurrent();
             }
 
             if (value == States.Move)
@@ -294,7 +292,7 @@ public class GameManager : NetworkBehaviour
             state = value;
         }
     }
-
+    /*
     public Placeable Hovered
     {
         get
@@ -324,7 +322,7 @@ public class GameManager : NetworkBehaviour
             }
             hovered = value;
         }
-    }
+    }*/
 
     public RaycastSelector RaycastSelector
     {
@@ -348,10 +346,6 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (hovered != null && activeSkill != null)
-            {
-                activeSkill.UnPreview(hovered);
-            }
             activeSkill = value;
         }
     }
@@ -1033,7 +1027,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// </summary>
     public void TransitBetweenTurn()
     {
-        state = States.TurnChange;
+        State = States.TurnChange;
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
