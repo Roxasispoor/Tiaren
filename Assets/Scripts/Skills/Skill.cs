@@ -150,8 +150,7 @@ public abstract class Skill
 
     //protected abstract List<Placeable> (Placeable target);
     
-
-    // TODO : rework les ALREADYTARGETED
+    
     public void Activate()
     {
 
@@ -164,7 +163,7 @@ public abstract class Skill
         if (oneClickUse)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
-            GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId, new int[0], 0);
+            GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId);
 
         } else
         {
@@ -627,11 +626,19 @@ public abstract class Skill
     /// <param name="target">The center of the line</param>
     /// <param name="size">size=1: only the target, size=2: the target and the two adjacent cubes</param>
     /// <returns></returns>
-    static protected List<Placeable> PatternUseLine(Placeable target, int size = 2)
+    static protected List<Placeable> PatternUseLine(Placeable target, bool isPreview, int size = 2)
     {
+        int state;
+        if (isPreview)
+        {
+            state = GameManager.instance.RaycastSelector.CurrentHovered.orientationState;
+        }
+        else
+        {
+            state = GameManager.instance.currentSelection.orientationState;
+        }
         List<Placeable> targets = new List<Placeable>();
         Vector3 Position = target.GetPosition();
-        int state = GameManager.instance.orientationState % 2;
         Vector3Int direction = new Vector3Int(state, 0, 1 - state);
 
         Placeable placeableTemp = null;

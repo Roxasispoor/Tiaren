@@ -112,9 +112,9 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     private States state;
     /// <summary>
-    /// The placeable currently hovered (filled by the camera script)
+    /// The selection used to launch a skill.
     /// </summary>
-    private Placeable hovered;
+    public SelectionInfo currentSelection;
     /// <summary>
     /// A list sorted by the apparition order of the next characters (the list is wide enough
     /// to have each characters appearing at least once).
@@ -164,10 +164,6 @@ public class GameManager : NetworkBehaviour
     /// References the grid folder
     /// </summary>
     public GameObject gridFolder;
-    /// <summary>
-    /// State used by the skill who need a direction.
-    /// </summary>
-    public int orientationState = 0;
 
     /// <summary>
     /// Display number of the current turn
@@ -790,8 +786,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     {
                         netidlist[i] = area[i].netId;
                     }
-                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist, orientationState);
+                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId);
 
+                    RaycastSelector.UnHighligthAndUnPreviewCurrent();
                 }
                 break;
 
