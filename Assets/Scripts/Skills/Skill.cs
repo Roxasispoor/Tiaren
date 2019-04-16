@@ -64,12 +64,6 @@ public abstract class Skill
 
     // ####### OLD #########
     
-    //TO REMOVE
-
-    [SerializeField]
-    private SkillArea skillArea;
-    [SerializeField]
-    private SkillEffect skillEffect;
 
     protected Skill()
     {
@@ -156,8 +150,7 @@ public abstract class Skill
 
     //protected abstract List<Placeable> (Placeable target);
     
-
-    // TODO : rework les ALREADYTARGETED
+    
     public void Activate()
     {
 
@@ -170,7 +163,7 @@ public abstract class Skill
         if (oneClickUse)
         {
             Vector3 Playerpos = GameManager.instance.PlayingPlaceable.GetPosition();
-            GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId, new int[0], 0);
+            GameManager.instance.PlayingPlaceable.Player.OnUseSkill(Player.SkillToNumber(GameManager.instance.PlayingPlaceable, this), GameManager.instance.PlayingPlaceable.netId);
 
         } else
         {
@@ -183,8 +176,6 @@ public abstract class Skill
 
     public void ShowSkillEffectTarget(LivingPlaceable playingPlaceable)
     {
-        GameManager.instance.RaycastSelector.Pattern = SkillArea.NONE;
-        GameManager.instance.RaycastSelector.EffectArea = 0;
         playingPlaceable.ResetHighlightSkill();
         playingPlaceable.ClearAreaOfMovement();
         playingPlaceable.ResetTargets();
@@ -204,10 +195,6 @@ public abstract class Skill
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = cubeMask;
-            if (skillArea == SkillArea.LINE || skillArea == SkillArea.MIXEDAREA)
-            {
-                GameManager.instance.RaycastSelector.Pattern = skillArea;
-            }
         }
         else if (targetType == TargetType.LIVING)
         {
@@ -639,11 +626,19 @@ public abstract class Skill
     /// <param name="target">The center of the line</param>
     /// <param name="size">size=1: only the target, size=2: the target and the two adjacent cubes</param>
     /// <returns></returns>
-    static protected List<Placeable> PatternUseLine(Placeable target, int size = 2)
+    static protected List<Placeable> PatternUseLine(Placeable target, bool isPreview, int size = 2)
     {
+        int state;
+        if (isPreview)
+        {
+            state = GameManager.instance.RaycastSelector.CurrentHovered.orientationState;
+        }
+        else
+        {
+            state = GameManager.instance.currentSelection.orientationState;
+        }
         List<Placeable> targets = new List<Placeable>();
         Vector3 Position = target.GetPosition();
-        int state = GameManager.instance.orientationState % 2;
         Vector3Int direction = new Vector3Int(state, 0, 1 - state);
 
         Placeable placeableTemp = null;

@@ -40,7 +40,7 @@ class Fissure : Skill
     {
         DestroyBlockEffect.Launcher = caster;
 
-        List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, sizeZone);
+        List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, false, sizeZone);
 
 
         foreach (Placeable placeable in affectedPlaceable)
@@ -57,7 +57,7 @@ class Fissure : Skill
 
     public override void Preview(NetIdeable target)
     {
-        List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, sizeZone);
+        List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, true, sizeZone);
 
         
 

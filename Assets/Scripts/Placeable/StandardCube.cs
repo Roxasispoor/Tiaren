@@ -231,11 +231,28 @@ public class StandardCube : Placeable
             return;
         }
 
-        foreach (GameObject quad in quads)
+        if (GameManager.instance.State == States.UseSkill)
         {
-            quad.SetActive(true);
-            quad.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
+            GameObject activeQuad = GetQuadFromVector(GameManager.instance.RaycastSelector.CurrentHovered.face);
+            activeQuad.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
+        } else
+        {
+            foreach (GameObject quad in quads)
+            {
+                quad.SetActive(true);
+                quad.GetComponent<MeshRenderer>().material = GameManager.instance.highlightingMaterial;
+            }
         }
+    }
+
+    private GameObject GetQuadFromVector(Vector3 vector)
+    {
+        if (vector == Vector3.up) return QuadUp;
+        if (vector == Vector3.down) return QuadDown;
+        if (vector == Vector3.right) return QuadRight;
+        if (vector == Vector3.left) return QuadLeft;
+        if (vector == Vector3.forward) return QuadFront;
+        return QuadBack;
     }
 
     /// <summary>

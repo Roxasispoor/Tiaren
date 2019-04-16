@@ -112,9 +112,9 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     private States state;
     /// <summary>
-    /// The placeable currently hovered (filled by the camera script)
+    /// The selection used to launch a skill.
     /// </summary>
-    private Placeable hovered;
+    public SelectionInfo currentSelection;
     /// <summary>
     /// A list sorted by the apparition order of the next characters (the list is wide enough
     /// to have each characters appearing at least once).
@@ -164,10 +164,6 @@ public class GameManager : NetworkBehaviour
     /// References the grid folder
     /// </summary>
     public GameObject gridFolder;
-    /// <summary>
-    /// State used by the skill who need a direction.
-    /// </summary>
-    public int orientationState = 0;
 
     /// <summary>
     /// Display number of the current turn
@@ -282,9 +278,7 @@ public class GameManager : NetworkBehaviour
                 EndSpawn();
             } else if (state == States.UseSkill && value != state) // Previous state UseSkill and next != UseSkill
             {
-                if (SkillInfo.currentSkill)
-                    SkillInfo.currentSkill.SetHighlight(false);
-                SkillInfo.currentSkill = null;
+                raycastSelector.UnHighligthAndUnPreviewCurrent();
             }
 
             if (value == States.Move)
@@ -294,7 +288,7 @@ public class GameManager : NetworkBehaviour
             state = value;
         }
     }
-
+    /*
     public Placeable Hovered
     {
         get
@@ -310,11 +304,6 @@ public class GameManager : NetworkBehaviour
                 if (State == States.UseSkill && activeSkill != null)
                 {
                     ActiveSkill.UnPreview(hovered);
-                    /*
-                    foreach (Effect effect in ActiveSkill.effects)
-                    {
-                        effect.ResetPreview(hovered);
-                    }*/
                 }
                 hovered.UnHighlight();
             }
@@ -325,16 +314,11 @@ public class GameManager : NetworkBehaviour
                 if (State == States.UseSkill && playingPlaceable.IsPlaceableInTarget(value))
                 {
                     ActiveSkill.Preview(value);
-                    /*
-                    foreach (Effect effect in ActiveSkill.effects)
-                    {
-                        effect.Preview(value);
-                    }*/
                 }
             }
             hovered = value;
         }
-    }
+    }*/
 
     public RaycastSelector RaycastSelector
     {
@@ -358,10 +342,6 @@ public class GameManager : NetworkBehaviour
 
         set
         {
-            if (hovered != null && activeSkill != null)
-            {
-                activeSkill.UnPreview(hovered);
-            }
             activeSkill = value;
         }
     }
@@ -807,8 +787,9 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     {
                         netidlist[i] = area[i].netId;
                     }
-                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId, netidlist, orientationState);
+                    playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId);
 
+                    RaycastSelector.UnHighligthAndUnPreviewCurrent();
                 }
                 break;
 
@@ -899,10 +880,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     }
     public void  ResetAllBatches()
     {
-        if (Hovered != null)
-        {
-            Hovered = null;
-        }
         Resources.UnloadUnusedAssets();
         GameManager.instance.InitialiseBatchFolder();
     }
@@ -1048,7 +1025,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
     /// </summary>
     public void TransitBetweenTurn()
     {
-        state = States.TurnChange;
+        State = States.TurnChange;
         numberTurn++;
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
@@ -1140,8 +1117,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 PlayingPlaceable.ResetTargets();
                 PlayingPlaceable.ClearAreaOfMovement();
                 PlayingPlaceable.ResetHighlightSkill();
-                raycastSelector.EffectArea = 0;
-                raycastSelector.Pattern = SkillArea.NONE;
                 PlayingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();

@@ -38,7 +38,16 @@ public class CreateSkill : Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        return true;
+        StandardCube targetedCube = target as StandardCube;
+        if (target == null)
+        {
+            //Debug.Log("Cannot use CreateSkill because the tager is null or not a cube.");
+            return false;
+        }
+
+        Vector3 potentialPositionToCreate = target.GetPosition() + GameManager.instance.RaycastSelector.CurrentHovered.face;
+
+        return Grid.instance.CheckNull(potentialPositionToCreate); ;
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
@@ -58,11 +67,14 @@ public class CreateSkill : Skill
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
         CreateEffect.Launcher = caster;
+        CreateEffect.face = Vector3Int.FloorToInt(GameManager.instance.currentSelection.face);
         target.DispatchEffect(CreateEffect);
     }
 
     public override void Preview(NetIdeable target)
     {
+        CreateEffect.face = Vector3Int.FloorToInt(GameManager.instance.RaycastSelector.CurrentHovered.face);
+
         if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
         {
             CreateEffect.Preview((Placeable)target);
