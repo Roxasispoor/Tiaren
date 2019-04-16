@@ -36,6 +36,8 @@ public class CreateSkill : Skill
         Debug.LogError("Could not find the prefab named " + cubeName);
     }
 
+
+    // TODO : Maybe make to check, one for use and one for the vision
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
         StandardCube targetedCube = target as StandardCube;
@@ -45,9 +47,11 @@ public class CreateSkill : Skill
             return false;
         }
 
+        /* Check if the face is free
         Vector3 potentialPositionToCreate = target.GetPosition() + GameManager.instance.RaycastSelector.CurrentHovered.face;
-
         return Grid.instance.CheckNull(potentialPositionToCreate); ;
+        */
+        return true;
     }
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
