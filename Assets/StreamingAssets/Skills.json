@@ -135,6 +135,17 @@
     "damage": 10,
     "buffValue": 1
   },
+  "CreateZiplineSkill": {
+    "skillName": "Create zipline",
+    "cost": 2,
+    "cooldown": 1,
+    "spritePath": "ZipLine",
+    "description": "Create a zipline",
+    "maxRange": 5,
+    "minRange": 1,
+    "targetType": 1,
+    "prefabZiplineName": "ZipParent"
+  },
   "MagicMissile": {
     "skillName": "Magic Missile",
     "cost": 1,
@@ -181,37 +192,6 @@
     "targetType": 3,
     "power": 50
   },
-  "CreateZiplineSkill": {
-    "skillName": "Create zipline",
-    "cost": 2,
-    "cooldown": 1,
-    "spritePath": "ZipLine",
-    "description": "Create a zipline",
-    "maxRange": 5,
-    "minRange": 1,
-    "targetType": 1,
-    "prefabZiplineName": "ZipParent"
-  },
-  "UseZipline": {
-    "skillName": "Zip !",
-    "cost": 0,
-    "cooldown": 0,
-    "spritePath": "Zip",
-    "description": "Travel fast using the zipline",
-    "maxRange": 0,
-    "minRange": 0,
-    "targetType": 0
-  },
-  "PickObject": {
-    "skillName": "Pick ",
-    "cost": 0,
-    "cooldown": 0,
-    "spritePath": "Pick_Object",
-    "description": "Pick the object on the block",
-    "maxRange": 0,
-    "minRange": 0,
-    "targetType": 0
-  },
   "EarthBending": {
     "skillName": "Earth bending",
     "cost": 2,
@@ -224,7 +204,7 @@
     "nbCasePush": 4,
     "damage": 50
   },
-  "RepulsiveGrenade": {
+	"RepulsiveGrenade": {
     "skillName": "Repulsive grenade",
     "cost":1,
     "cooldown": 1,
@@ -246,5 +226,37 @@
     "maxRange": 5,
     "minRange": 1,
     "targetType": 1
+  },  
+	"MakibishiSkill": {
+    "skillName": "Makibishi",
+    "cost": 1,
+    "cooldown": 0,
+    "spritePath": "default",
+    "description": "Spread caltrops on the ground, hurting anyone who steps on it",
+    "maxRange": 4,
+    "minRange": 1,
+    "targetType": 1,
+    "prefabName": "MakibishiParent",
+	"power": 15
+  },
+  "UseZipline": {
+    "skillName": "Zip !",
+    "cost": 0,
+    "cooldown": 0,
+    "spritePath": "Zip",
+    "description": "Travel fast using the zipline",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 0
+  },
+  "PickObject": {
+    "skillName": "Pick ",
+    "cost": 0,
+    "cooldown": 0,
+    "spritePath": "Pick_Object",
+    "description": "Pick the object on the block",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 0
   }
 }

@@ -459,8 +459,9 @@ MonoBehaviour:
   - {fileID: 5111957847024802556, guid: 24fd0f089b62f6a4d9c222d93304d894, type: 3}
   - {fileID: 5666483806287872802, guid: 4836c46c399bac143b89f2ff3e90d565, type: 3}
   - {fileID: 7743267109780865715, guid: dd3975a61bbb92e4885084c19a32e690, type: 3}
-  - {fileID: 9182250310805075901, guid: ce50aec614ae49b4fa596f3703e9fba5, type: 3}
-  - {fileID: 6983445455873946778, guid: 413da2c10cb346a4ba573a18312be69c, type: 3}
+  - {fileID: 6983258318820954295, guid: 413da2c10cb346a4ba573a18312be69c, type: 3}
+  - {fileID: 9182350182714594192, guid: ce50aec614ae49b4fa596f3703e9fba5, type: 3}
+  - {fileID: 3909215721193717840, guid: e52839621d07427418e7b03210c58708, type: 3}
   spawnPlayer1: []
   spawnPlayer2: []
 --- !u!114 &823285888
@@ -480,6 +481,8 @@ MonoBehaviour:
   prefabTransparentZipline: {fileID: 5516278300780320103, guid: 6db603408438364488bb3da814d2db4b,
     type: 3}
   prefabGrapple: {fileID: 5586588493350522898, guid: 58b54f1f6609b134084efea5c823e872,
+    type: 3}
+  prefabTransparentMakibishi: {fileID: 8728788379515520811, guid: 8a02fb1e3e6169543a79438b69d4023f,
     type: 3}
   materialPreviewCreate: {fileID: 2100000, guid: 7eada7a3231809c4aaf97babeda8c9f6,
     type: 2}

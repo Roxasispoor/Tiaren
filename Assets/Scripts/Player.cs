@@ -948,6 +948,7 @@ public class Player : NetworkBehaviour
             List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
 
             Move(finalPath.ToArray(), askingPlaceable, true);
+            EffectManager.instance.EffectsOnBlock((StandardCube)Grid.instance.GetPlaceableFromVector(path[path.Length - 1]), askingPlaceable);
 
             RpcMoveTo(finalPath.ToArray(), netIdAskingChar);
         }
@@ -985,13 +986,14 @@ public class Player : NetworkBehaviour
         
         Move(path,askingPlaceable,false);
 
+        EffectManager.instance.EffectsOnBlock((StandardCube)Grid.instance.GetPlaceableFromVector(askingPlaceable.GetPosition() + Vector3.down), askingPlaceable);
+
         for (int i = 0; i < bezierPath.Count; i++)
         {
             bezierPath[i] += Vector3.up;
         }
 
         FollowPathAnimation(bezierPath, askingPlaceable, animator: askingPlaceable.GetComponent<Animator>(), 3f);
-
         /*
         if (askingPlaceable.moveCoroutine != null)
         {

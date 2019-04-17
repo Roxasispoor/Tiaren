@@ -10,6 +10,8 @@ public class ObjectOnBloc : NetIdeable {
     public bool isPicked;
     public bool dropOnDeathPicker;
     public bool dropOnDeathBlocUnder;
+    public bool stopOnWalk = false;
+    public Placeable parent;
     public override void DispatchEffect(Effect effect)
     {
       
@@ -137,5 +139,9 @@ public class ObjectOnBloc : NetIdeable {
         {
             isPicked = true;
         }
+    }
+
+    public virtual void TriggerOnWalk(Placeable target)
+    {
     }
 }

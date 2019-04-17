@@ -17,7 +17,7 @@ public abstract class Effect
     /// <summary>
     ///  The creator of the effect.
     /// </summary>
-    private Placeable launcher;
+    private NetIdeable launcher;
 
     /// <summary>
     /// The number of turn left for the effect.
@@ -40,7 +40,7 @@ public abstract class Effect
     /// <summary>
     ///  The creator of the effect.
     /// </summary>
-    public virtual Placeable Launcher
+    public virtual NetIdeable Launcher
     {
         get
         {

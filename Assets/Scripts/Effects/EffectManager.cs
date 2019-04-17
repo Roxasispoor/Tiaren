@@ -89,6 +89,19 @@ public class EffectManager : MonoBehaviour
         return isblocked;*/
     }
 
+    public void EffectsOnBlock(StandardCube cube, Placeable target)
+    {
+        for(int i = cube.ObjectOns.Count-1; i >= 0; i--)
+        {
+            cube.ObjectOns[i].TriggerOnWalk(target);
+        }
+        foreach(Effect effect in cube.OnWalkEffects)
+        {
+            target.DispatchEffect(effect);
+        }
+        
+    }
+
 
     public void AttachEffect(Effect effect)
     {
