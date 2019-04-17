@@ -32,7 +32,12 @@ class Fissure : Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        return true;
+        StandardCube cube = target as StandardCube;
+        if (cube == null)
+        {
+            return false;
+        }
+        return cube.Destroyable;
     }
 
 
@@ -42,6 +47,7 @@ class Fissure : Skill
 
         List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, false, sizeZone);
 
+        DestroyBlockEffect.direction =  Vector3Int.FloorToInt(-1 * CollectSelectionInfo(false).face);
 
         foreach (Placeable placeable in affectedPlaceable)
         {
@@ -59,7 +65,7 @@ class Fissure : Skill
     {
         List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, true, sizeZone);
 
-        
+        DestroyBlockEffect.direction = Vector3Int.FloorToInt(-1 * CollectSelectionInfo(true).face);
 
         foreach (Placeable placeable in affectedPlaceable)
         {
@@ -73,11 +79,11 @@ class Fissure : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        vect = PatternCreateTop(position, vect);
+        vect = PatternDestroy(position, vect);
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
         for (int i = 0; i < vect.Count; i++)
         {
-            if (caster != null && !CheckSpecificConditions(caster, vect[i]))
+            if (!CheckSpecificConditions(caster, vect[i]))
             {
                 vect.Remove(vect[i]);
             }

@@ -43,13 +43,23 @@ class Wall : Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        return true;
+        StandardCube targetedCube = target as StandardCube;
+        if (target == null)
+        {
+            //Debug.Log("Cannot use CreateSkill because the tager is null or not a cube.");
+            return false;
+        }
+
+        Vector3 potentialPositionToCreate = target.GetPosition() + GameManager.instance.currentSelection.face;
+
+        return Skill.CheckConditionCreateOnPosition(potentialPositionToCreate); // Check if the face is free
     }
 
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
         CreateBlockEffect.Launcher = caster;
+        CreateBlockEffect.face = Vector3Int.FloorToInt(CollectSelectionInfo(false).face);
 
         List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, false, sizeZone);
 
@@ -70,6 +80,7 @@ class Wall : Skill
     {
         List<Placeable> affectedPlaceable = Skill.PatternUseLine((Placeable)target, true, sizeZone);
 
+        CreateBlockEffect.face = Vector3Int.FloorToInt(CollectSelectionInfo(true).face);
 
         foreach (Placeable placeable in affectedPlaceable)
         {
@@ -83,15 +94,7 @@ class Wall : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        vect = PatternCreateTop(position, vect);
-        LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for (int i = 0; i < vect.Count; i++)
-        {
-            if (caster != null && !CheckSpecificConditions(caster, vect[i]))
-            {
-                vect.Remove(vect[i]);
-            }
-        }
+        vect = PatternCreate(vect);
         return vect;
     }
 }

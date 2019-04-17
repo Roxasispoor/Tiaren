@@ -45,8 +45,8 @@ public class CreateSkill : Skill
             //Debug.Log("Cannot use CreateSkill because the tager is null or not a cube.");
             return false;
         }
-        
-        Vector3 potentialPositionToCreate = target.GetPosition() + GameManager.instance.RaycastSelector.CurrentHovered.face;
+
+        Vector3 potentialPositionToCreate = target.GetPosition() + GameManager.instance.currentSelection.face;
 
         return Skill.CheckConditionCreateOnPosition(potentialPositionToCreate); // Check if the face is free
     }
@@ -54,7 +54,6 @@ public class CreateSkill : Skill
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
         vect =  PatternCreate(vect);
-        LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
         return vect;
     }
 

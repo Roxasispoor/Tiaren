@@ -8,6 +8,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
 {
     public int depth=1;
 
+    /// <summary>
+    /// The direcion of to dig.
+    /// </summary>
+    public Vector3Int direction = Vector3Int.down;
+
     private Queue<MeshRenderer> meshDeactivatedForThePreview = new Queue<MeshRenderer>();
     private Queue<GameObject> gameObjectDeactivatedForThePreview = new Queue<GameObject>();
     /// <summary>
@@ -51,7 +56,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         //throw new System.NotImplementedException();
         for (int i = 0; i < depth; i++)
         {
-            StandardCube block = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.down * i) as StandardCube;
+            StandardCube block = Grid.instance.GetPlaceableFromVector(target.GetPosition() + direction * i) as StandardCube;
             if (block != null && block.Destroyable == true)
             {
                 MeshRenderer meshRenderer = block.GetComponent<MeshRenderer>();
@@ -65,7 +70,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
                 gameObjectDeactivatedForThePreview.Enqueue(quad);
 
                 GameObject cube = FXManager.instance.getCube();
-                cube.transform.position = target.GetPosition() + Vector3Int.down * i;
+                cube.transform.position = target.GetPosition() + direction * i;
                 cube.GetComponent<MeshRenderer>().material = FXManager.instance.materialPreviewDestroy;
                 previewedCubes.Enqueue(cube);
 
@@ -101,7 +106,7 @@ public class DestroyBloc : EffectOnPlaceableOnly
         List<Vector3> oldPos = new List<Vector3>();
         for (int i = 0; i < depth; i++)
         {
-            Placeable bloc = Grid.instance.GetPlaceableFromVector(Target.GetPosition() + Vector3Int.down * i);
+            Placeable bloc = Grid.instance.GetPlaceableFromVector(Target.GetPosition() + direction * i);
             if (bloc && !bloc.IsLiving())
             {
                 bloc.Destroy();
