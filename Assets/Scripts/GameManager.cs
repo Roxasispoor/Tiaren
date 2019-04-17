@@ -779,14 +779,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                     || (placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
                 {
 
-                    //List<Placeable> area = ActiveSkill.patternUse(placeable);
-                    List<Placeable> area = new List<Placeable>();
-
-                    int[] netidlist = new int[area.Count];
-                    for (int i = 0; i < netidlist.Length; i++)
-                    {
-                        netidlist[i] = area[i].netId;
-                    }
                     playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId);
 
                     RaycastSelector.UnHighligthAndUnPreviewCurrent();

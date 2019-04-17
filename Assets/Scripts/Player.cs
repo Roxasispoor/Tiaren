@@ -391,26 +391,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void SpawnEnemyPlayer(Player enemyPlayer)
-    {
-        StandardCube spawnpoint;
-        for (int i = 0; i < enemyPlayer.spawnList.Count; i++)
-        {
-            spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(enemyPlayer.spawnList[i] + Vector3.down);
-            spawnpoint.GetComponent<MeshRenderer>().material = GameManager.instance.spawnEnemyMaterial;
-            spawnpoint.isConstructableOn = false;
-            spawnpoint.isSpawnPoint = true;
-            spawnpoint.Destroyable = false;
-            spawnpoint.movable = false;
-            spawnpoint.gravityType = GravityType.NULL_GRAVITY;
-            if (i < enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters.Count)
-            {
-                GameManager.instance.CreateCharacter(enemyPlayer.gameObject, enemyPlayer.spawnList[i], enemyPlayer.gameObject.GetComponent<UIManager>().CurrentCharacters[i]);
-            }
-        }
-
-    }
-
     [Command]
     public void CmdTeamReady(int[] characterChoices)
     {
