@@ -13,12 +13,12 @@ public class TotemHp : Totem, IEffectOnTurnStart
     protected override void Awake()
     {
         base.Awake();
-        range = 4;
+        EffectManager.instance.Totems.Add(this);
         effects.Add(new HealingEffect(power));
         effects.Add(new DamageCalculated(power, DamageCalculated.DamageScale.BRUT));
     }
 
-    public void ApplyEffect(Placeable target)
+    public override void ApplyEffect(Placeable target)
     {
         if (target as LivingPlaceable)
         {
@@ -29,12 +29,13 @@ public class TotemHp : Totem, IEffectOnTurnStart
         }
     }
 
-    protected override void CheckInRange(LivingPlaceable target)
+    public  override bool CheckInRange(LivingPlaceable target)
     {
         Vector3 direction = target.GetPosition() - GetPosition();
         if (Physics.Raycast(GetPosition(), direction, range, LayerMask.GetMask("LivingPlaceable")))
         {
-            ApplyEffect(target);
+            return true;
         }
+        return false;
     }
 }

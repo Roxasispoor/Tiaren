@@ -89,11 +89,7 @@ public class SpinningAttack : Skill
 
         foreach (Placeable placeable in affectedPlaceable)
         {
-            LivingPlaceable fleshyTarget = placeable as LivingPlaceable;
-            if (fleshyTarget)
-            {
-                fleshyTarget.DispatchEffect(DamageEffect);
-            }
+            placeable.DispatchEffect(DamageEffect);
         }
     }
 }

@@ -1420,7 +1420,7 @@ public class Grid : MonoBehaviour
     /// <param name="maxrange"></param>
     /// <param name="throughtblocks">If we can see targets through blocks</param>
     /// <returns></returns>
-    public List<LivingPlaceable> FindTargetableLiving(Vector3 Playerposition, Skill skill)
+    public List<Placeable> FindTargetableLiving(Vector3 Playerposition, Skill skill)
     {
         //get usefull parameters from skill
         int minrange = skill.MinRange;
@@ -1428,8 +1428,9 @@ public class Grid : MonoBehaviour
         bool throughblocks = skill.Throughblocks;
         bool highrange = minrange > 0 ? true : false;
 
-        List<LivingPlaceable> targetableliving = new List<LivingPlaceable>();
+        List<Placeable> targetableliving = new List<Placeable>();
 
+        //Check plyer 1 characters
         foreach (LivingPlaceable gameObjCharacter in GameManager.instance.player1.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetPosition() - Playerposition;
@@ -1445,6 +1446,7 @@ public class Grid : MonoBehaviour
             }
         }
 
+        //Check player 2 characters
         foreach (LivingPlaceable gameObjCharacter in GameManager.instance.player2.GetComponent<Player>().Characters)
         {
             Vector3 distance = gameObjCharacter.GetPosition() - Playerposition;
@@ -1457,6 +1459,30 @@ public class Grid : MonoBehaviour
                 dirx, diry, dirz, Playerposition, new Vector3(0, 0, 0))))
             {
                 targetableliving.Add(gameObjCharacter);
+            }
+        }
+
+        //check totems
+        foreach (Placeable gameObjTotem in EffectManager.instance.Totems)
+        {
+            if (gameObjTotem as IHurtable != null)
+            {
+                Vector3 distance = gameObjTotem.GetPosition() - Playerposition;
+                float yrange = (highrange ? (distance.y >= 0 ? distance.y : Math.Max(0, (-(maxrange - 1) + distance.y)) * maxrange) : distance.y);
+                float totaldist = Mathf.Abs(distance.x) + Mathf.Abs(distance.z) + Math.Abs(yrange);
+                int dirx = distance.x >= 0 ? (distance.x == 0 ? 0 : 1) : -1;
+                int diry = distance.y >= 0 ? (distance.y == 0 ? 0 : 1) : -1;
+                int dirz = distance.z >= 0 ? (distance.z == 0 ? 0 : 1) : -1;
+                if ((totaldist == 0 && minrange == 0) || totaldist <= maxrange && totaldist >= minrange && (throughblocks || !RayCastBlock((int)distance.x, (int)distance.y, (int)distance.z,
+                    dirx, diry, dirz, Playerposition, new Vector3(0, 0, 0))))
+                {
+                    targetableliving.Add(gameObjTotem);
+                }
+            }
+            else
+            {
+                Debug.LogError("non hurtable in effectmanager.totems");
+                return null;
             }
         }
 

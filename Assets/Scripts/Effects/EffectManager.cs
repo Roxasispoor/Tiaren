@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class EffectManager : MonoBehaviour
 {
     public static EffectManager instance;
+
+    private List<Totem> totems = new List<Totem>();
+
+    public List<Totem> Totems { get => totems; set => totems = value; }
 
     private void Awake()
     {
@@ -61,6 +66,17 @@ public class EffectManager : MonoBehaviour
         {
             //effect.GetTarget().AttachedEffects.RemoveAll((x) => x.GetType() == typeof(Effect));
             effect.GetTarget().AttachedEffects.Remove(effect);
+        }
+    }
+
+    public void TriggerTotems(LivingPlaceable target)
+    {
+        foreach(Totem totem in Totems)
+        {
+            if (totem.CheckInRange(target))
+            {
+                totem.ApplyEffect(target);
+            }
         }
     }
 

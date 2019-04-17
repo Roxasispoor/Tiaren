@@ -641,19 +641,19 @@ public class Player : NetworkBehaviour
         {
             c.gameObject.SetActive(true);
         }
-
+        
         // Remove the material from the spawning points
         for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
         {
             Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
                 Grid.instance.SpawnPlayer1[i].z];
-            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+            bloc.GetComponent<MeshRenderer>().material = bloc.oldMaterial;
         }
         for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
         {
             Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
                 Grid.instance.SpawnPlayer2[i].z];
-            bloc.GetComponent<MeshRenderer>().material = bloc.baseMaterial;
+            bloc.GetComponent<MeshRenderer>().material = bloc.oldMaterial;
         }
 
         GameManager.instance.ResetAllBatches();
@@ -890,7 +890,7 @@ public class Player : NetworkBehaviour
             }
 
         }
-        else if (skill.TargetType == TargetType.LIVING)
+        else if (skill.TargetType == TargetType.HURTABLE)
         {
             List<LivingPlaceable> targetableunits = new List<LivingPlaceable>();
             if (skill.SkillEffect == SkillEffect.SWORDRANGE)
@@ -1518,14 +1518,14 @@ public class Player : NetworkBehaviour
         newSelection.FillFromNetwork(infoSelection);
 
         GameManager.instance.currentSelection = newSelection;
-
+        
         bool wasSuccessfulyCast = skill.Use(askingPlaceable, newSelection.placeable);
 
         if (wasSuccessfulyCast)
         {
             RpcUseSkill(numSkill, infoSelection, netIdAskingChar);
         }
-            
+         
     }
 
     /// <summary>

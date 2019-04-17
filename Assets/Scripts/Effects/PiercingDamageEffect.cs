@@ -5,7 +5,7 @@ using UnityEngine;
 public class PiercingDamageEffect : DamageCalculated
 {
     public float diminutionRate = 0.34f;
-    private List<LivingPlaceable> targets = new List<LivingPlaceable>();
+    private List<NetIdeable> targets = new List<NetIdeable>();
     private List<int> damages = new List<int>();
 
     public PiercingDamageEffect() : base()
@@ -39,7 +39,7 @@ public class PiercingDamageEffect : DamageCalculated
         int totalThrough = 0;
         foreach (RaycastHit hit in hits)
         {
-            LivingPlaceable placeable = hit.collider.gameObject.GetComponent<LivingPlaceable>();
+            NetIdeable placeable = hit.collider.gameObject.GetComponent<NetIdeable>();
             if (placeable == null )
             {
                 totalThrough++;
@@ -48,7 +48,7 @@ public class PiercingDamageEffect : DamageCalculated
             {
                 totalDmg = CalculateDamage(placeable);
                 effectivedmg = (int)(totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
-                targets.Add(hit.collider.gameObject.GetComponent<LivingPlaceable>());
+                targets.Add(hit.collider.gameObject.GetComponent<NetIdeable>());
                 damages.Add(effectivedmg);
                 totalThrough++;
             }
@@ -56,7 +56,7 @@ public class PiercingDamageEffect : DamageCalculated
             {
                 totalDmg = CalculateDamage(placeable);
                 effectivedmg = (int)(totalThrough * diminutionRate < 1 ? totalDmg * (1 - totalThrough * diminutionRate) : 0);
-                targets.Add(hit.collider.gameObject.GetComponent<LivingPlaceable>());
+                targets.Add(hit.collider.gameObject.GetComponent<NetIdeable>());
                 damages.Add(effectivedmg);
                 break;
             }
@@ -70,7 +70,8 @@ public class PiercingDamageEffect : DamageCalculated
         PiercingDamage();
         for (int i = 0; i < targets.Count; i++)
         {
-            GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], 1, targets[i]);
+            if(targets[i] as LivingPlaceable != null)
+                GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], 1, (LivingPlaceable)targets[i]);
         }
     }
 

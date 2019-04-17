@@ -57,7 +57,7 @@ public class LivingPlaceable : Placeable, IHurtable
     private List<NodePath> areaOfMouvement;
     private List<StandardCube> range;
     private List<Placeable> targetArea;
-    private List<LivingPlaceable> targetableUnits;
+    private List<Placeable> targetableHurtable;
 
     public Canvas flyingInfo;
     public Sprite characterSprite;
@@ -335,31 +335,31 @@ public class LivingPlaceable : Placeable, IHurtable
     }
 
 
-    public List<LivingPlaceable> TargetableUnits
+    public List<Placeable> TargetableHurtable
     {
         get
         {
-            return targetableUnits;
+            return targetableHurtable;
         }
 
         set
         {
-            if (targetableUnits != null)
+            if (targetableHurtable != null)
             {
-                foreach (LivingPlaceable living in targetableUnits)
+                foreach (Placeable living in targetableHurtable)
                 {
-                    living.UnHighlightTarget();
+                    living.UnHighlight();
                 }
             }
 
             if (value != null)
             {
-                foreach (LivingPlaceable living in value)
+                foreach (Placeable living in value)
                 {
-                    living.HighlightForSkill();
+                    living.HighlightForAttacks();
                 }
             }
-            targetableUnits = value;
+            targetableHurtable = value;
         }
     }
 
@@ -822,7 +822,7 @@ public class LivingPlaceable : Placeable, IHurtable
             ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
             ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.JumpFlat);
 
-            targetableUnits = new List<LivingPlaceable>();
+            targetableHurtable = new List<Placeable>();
             this.AttachedEffects = new List<Effect>();
 
             List<Effect> ListEffects = new List<Effect>();
@@ -850,10 +850,10 @@ public class LivingPlaceable : Placeable, IHurtable
             ListEffects6.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 0, 2, true, ActivationType.BEGINNING_OF_TURN));
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.STR));
 
-            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill5 = new Skill(1, 2, ListEffects5, TargetType.LIVING, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill6 = new Skill(1, 3, ListEffects6, TargetType.LIVING, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
-            Skill skill7 = new Skill(1, 2, ListEffects7, TargetType.LIVING, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
+            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.HURTABLE, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill5 = new Skill(1, 2, ListEffects5, TargetType.HURTABLE, "Bleeding", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill6 = new Skill(1, 3, ListEffects6, TargetType.HURTABLE, "debuffPm", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill7 = new Skill(1, 2, ListEffects7, TargetType.HURTABLE, "Spinning", 0, 2, SkillEffect.SPINNING, SkillArea.SURROUNDINGLIVING);
 
             Skills.Add(skill1);
             Skills.Add(skill2);
@@ -877,9 +877,9 @@ public class LivingPlaceable : Placeable, IHurtable
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(-1, 2));
             ListEffects8.Add(new ParameterChangeV2<LivingPlaceable, float>(0, 2, 2, true, ActivationType.BEGINNING_OF_TURN));
             
-            Skill skill4 = new Skill(0, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 2, 4);
+            Skill skill4 = new Skill(0, 1, ListEffects4, TargetType.HURTABLE, "Basic_attack", 2, 4);
             Skill skill5 = new Skill(0, 1, ListEffects5, TargetType.ALREADYTARGETED, "HigherGround", 0, 1);
-            Skill skill6 = new Skill(0, 1, ListEffects6, TargetType.LIVING, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
+            Skill skill6 = new Skill(0, 1, ListEffects6, TargetType.HURTABLE, "Piercing_arrow", 3, 10, SkillEffect.NONE, SkillArea.THROUGHBLOCKS);
             Skill skill7 = new Skill(0, 1, ListEffects7, TargetType.BLOCK, "Zipline", 1, 5, SkillEffect.NONE, SkillArea.TOPBLOCK);
             Skill skill8 = new Skill(0, 1, ListEffects8, TargetType.ALREADYTARGETED, "CLimbing SKills", 1, 5);
 
@@ -903,7 +903,7 @@ public class LivingPlaceable : Placeable, IHurtable
             ListEffects7.Add(new DamageCalculated(30, DamageCalculated.DamageScale.MAG));
             ListEffects7.Add(new DestroyBloc());
             
-            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.LIVING, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
+            Skill skill4 = new Skill(1, 1, ListEffects4, TargetType.HURTABLE, "Basic_attack", 0, 2, SkillEffect.SWORDRANGE);
             Skill skill5 = new Skill(2, 1, ListEffects5, TargetType.BLOCK, "Fissure", 0, 4, SkillEffect.DESTROY, SkillArea.LINE, 1);
             Skill skill6 = new Skill(2, 1, ListEffects6, TargetType.BLOCK, "Wall", 0, 3, SkillEffect.CREATE, SkillArea.LINE, 1);
             Skill skill7 = new Skill(2, 1, ListEffects7, TargetType.AREA, "ExplosiveFireball", 2, 6, SkillEffect.DESTROY, SkillArea.MIXEDAREA, 1);
@@ -931,7 +931,7 @@ public class LivingPlaceable : Placeable, IHurtable
         this.crushable = CrushType.CRUSHDAMAGE;
         this.AreaOfMouvement = new List<NodePath>();
         targetArea = new List<Placeable>();
-        targetableUnits = new List<LivingPlaceable>();
+        targetableHurtable = new List<Placeable>();
         this.AttachedEffects = new List<Effect>();
         this.Skills = new List<Skill>();
         this.IsDead = false;
@@ -942,10 +942,6 @@ public class LivingPlaceable : Placeable, IHurtable
         
         
         rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
-        rend.material.shader = outlineShader;
-        rend.material.SetColor("_Color", Color.white - new Color(0, 0, 0, 0.3f));
-        //rend.material.SetColor("_Color", new Color(1,1,1,0.725f));
-        rend.material.SetFloat("_Outline", 0.02f);
         rend.material.shader = originalShader;
     }
 
@@ -957,7 +953,7 @@ public class LivingPlaceable : Placeable, IHurtable
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
             LoadFromjson(Path.Combine(Application.streamingAssetsPath, ClassName + ".json"));
             circleTeam.color = Player.color;
-            targetableUnits = new List<LivingPlaceable>();
+            targetableHurtable = new List<Placeable>();
         }
     }
 
@@ -1094,14 +1090,9 @@ public class LivingPlaceable : Placeable, IHurtable
         }
         else
         {
+            isTarget = false;
             DesactivateOutline();
         }
-    }
-
-    public void UnHighlightTarget()
-    {
-        isTarget = false;
-        DesactivateOutline();
     }
 
     public void HighlightForSpawn()
@@ -1111,7 +1102,7 @@ public class LivingPlaceable : Placeable, IHurtable
         isTarget = true;
     }
 
-    public void HighlightForSkill()
+    public override void HighlightForAttacks()
     {
         ActivateOutline(Color.red);
         previousColor = Color.red;
@@ -1130,7 +1121,7 @@ public class LivingPlaceable : Placeable, IHurtable
 
     public void ResetHighlightSkill()
     {
-        TargetableUnits = new List<LivingPlaceable>();
+        TargetableHurtable = new List<Placeable>();
     }
 
     /// <summary>
@@ -1139,8 +1130,8 @@ public class LivingPlaceable : Placeable, IHurtable
     public void ResetTargets()
     {
         TargetArea = null;
+        TargetableHurtable = null;
         GameManager.instance.ResetAllBatches();
-        TargetableUnits = null;
         Range = null;
     }
 
@@ -1151,7 +1142,7 @@ public class LivingPlaceable : Placeable, IHurtable
     /// <returns></returns>
     public bool IsPlaceableInTarget(Placeable placeable)
     {
-        return placeable.IsLiving() && targetableUnits.Contains((LivingPlaceable)placeable) || targetArea != null && targetArea.Contains(placeable);
+        return (null != placeable as IHurtable) && targetableHurtable.Contains(placeable) || targetArea != null && targetArea.Contains(placeable);
     }
 
     public void SearchAndInstantianteSkills()

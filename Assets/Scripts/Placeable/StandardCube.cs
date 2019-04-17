@@ -27,7 +27,7 @@ public class StandardCube : Placeable
     public bool isSpawnPoint;
 
     private bool isInAreaOfMovement = false;
-    private bool isTarget = false;
+    protected bool isTarget = false;
 
     /// <summary>
     /// An array of all the quad of the cube (up; down; left; right; front; back)
