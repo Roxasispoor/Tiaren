@@ -259,18 +259,18 @@ public abstract class Skill
     }
 
     /// <summary>
-    /// Find the face selected, this depend if we are in preview or use.
+    /// Find the right selection info, this depend if we are in preview or use.
     /// </summary>
     /// <param name="isPreview">true if preview, false if use.</param>
-    /// <returns>The face selected.</returns>
-    protected static Vector3Int CollectSelectedFace(bool isPreview)
+    /// <returns>The selection info.</returns>
+    protected static SelectionInfo CollectSelectionInfo(bool isPreview)
     {
         if (isPreview)
         {
-            return Vector3Int.FloorToInt(GameManager.instance.RaycastSelector.CurrentHovered.face);
+            return GameManager.instance.RaycastSelector.CurrentHovered;
         } else
         {
-            return Vector3Int.FloorToInt(GameManager.instance.currentSelection.face);
+            return GameManager.instance.currentSelection;
         }
     }
 
@@ -669,18 +669,13 @@ public abstract class Skill
     /// <returns></returns>
     static protected List<Placeable> PatternUseLine(Placeable target, bool isPreview, int size = 2)
     {
-        int state;
-        if (isPreview)
-        {
-            state = GameManager.instance.RaycastSelector.CurrentHovered.orientationState;
-        }
-        else
-        {
-            state = GameManager.instance.currentSelection.orientationState;
-        }
+        SelectionInfo currentSelection = Skill.CollectSelectionInfo(isPreview);
+
         List<Placeable> targets = new List<Placeable>();
         Vector3 Position = target.GetPosition();
-        Vector3Int direction = new Vector3Int(state, 0, 1 - state);
+
+        Vector3Int direction = ComputeDirectionForLine(currentSelection);
+
 
         Placeable placeableTemp = null;
 
@@ -697,5 +692,26 @@ public abstract class Skill
         }
 
         return targets;
+    }
+
+    private static Vector3Int ComputeDirectionForLine(SelectionInfo selectionInfo)
+    {
+        int state = selectionInfo.orientationState % 2;
+        if (selectionInfo.face.x != 0)
+        {
+            return new Vector3Int(0, state, 1 - state); //Considering state is 0 or one
+        }
+        else if (selectionInfo.face.y != 0)
+        {
+            return new Vector3Int(state, 0, 1 - state); //Considering state is 0 or one
+        }
+        else if (selectionInfo.face.z != 0)
+        {
+            return new Vector3Int(state, 1 - state, 0); //Considering state is 0 or one
+        } else
+        {
+            Debug.LogError("Fail to find line, no face selected");
+            return Vector3Int.zero;
+        }
     }
 }
