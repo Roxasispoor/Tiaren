@@ -450,7 +450,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    protected static List<Placeable> PatternCreate(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternCreateTop(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -470,7 +470,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    protected static List<Placeable> PatternCreateTop(List<Placeable> vect)
+    protected static List<Placeable> PatternCreate(List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable placeable in vect)
