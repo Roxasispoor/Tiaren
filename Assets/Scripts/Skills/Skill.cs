@@ -464,6 +464,57 @@ public abstract class Skill
     }
 
     /// <summary>
+    /// Create pattern (filter), check if at least one face point toward
+    /// a free and constructible block
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="vect"></param>
+    /// <returns></returns>
+    protected static List<Placeable> PatternCreateTop(List<Placeable> vect)
+    {
+        List<Placeable> targetableblock = new List<Placeable>(vect);
+        foreach (Placeable placeable in vect)
+        {
+            StandardCube cube = placeable as StandardCube;
+            if (cube == null)
+            {
+                targetableblock.Remove(placeable);
+                continue;
+            }
+
+            Vector3 position = cube.GetPosition();
+
+            if (CheckConditionCreateOnPosition(position + Vector3.up)
+                    || CheckConditionCreateOnPosition(position + Vector3.right)
+                    || CheckConditionCreateOnPosition(position + Vector3.forward)
+                    || CheckConditionCreateOnPosition(position + Vector3.left)
+                    || CheckConditionCreateOnPosition(position + Vector3.back)
+                    || CheckConditionCreateOnPosition(position + Vector3.down))
+            {
+                continue;
+            }
+
+            targetableblock.Remove(placeable);
+        }
+        return targetableblock;
+    }
+
+    public static bool CheckConditionCreateOnPosition(Vector3 position)
+    {
+        Vector3Int positionInt = Vector3Int.FloorToInt(position);
+        if (!Grid.instance.CheckNull(positionInt))
+        {
+            return false;
+        }
+        StandardCube cubeUnderPosition = Grid.instance.GetPlaceableFromVector(positionInt + Vector3.down) as StandardCube;
+        if (cubeUnderPosition != null && !cubeUnderPosition.isConstructableOn)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
     /// Destroy pattern
     /// </summary>
     /// <param name="position"></param>

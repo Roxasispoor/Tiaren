@@ -56,7 +56,7 @@ public class CreateSkill : Skill
 
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        vect =  PatternCreate(position, vect);
+        vect =  PatternCreateTop(vect);
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
         for (int i = 0; i < vect.Count; i++)
         {
