@@ -108,7 +108,7 @@ public abstract class Skill
 
     public bool Use(LivingPlaceable caster, NetIdeable target)
     {
-        if (caster.CurrentPA < Cost && !CheckConditions(caster, target))
+        if (caster.CurrentPA < Cost || !CheckConditions(caster, target))
         {
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
@@ -238,31 +238,21 @@ public abstract class Skill
         }
     }
 
-    /*
-    public bool UseTargeted(Skill skill)
+    /// <summary>
+    /// Find the right selection info, this depend if we are in preview or use.
+    /// </summary>
+    /// <param name="isPreview">true if preview, false if use.</param>
+    /// <returns>The selection info.</returns>
+    protected static SelectionInfo CollectSelectionInfo(bool isPreview)
     {
-        if (this.tourCooldownLeft > 0)
+        if (isPreview)
         {
-            return false;
-        }
-        if (condition != null && !condition.Invoke())
+            return GameManager.instance.RaycastSelector.CurrentHovered;
+        } else
         {
-            return false;
+            return GameManager.instance.currentSelection;
         }
-        GameManager.instance.PlayingPlaceable.CurrentPA -= this.cost;
-        this.tourCooldownLeft = this.cooldown;
-        if (skill.skillType == TargetType.ALREADYTARGETED) //Simply use them
-        {
-            foreach (Effect eff in skill.effects)
-            {
-                Effect effectToConsider = eff.Clone();
-                effectToConsider.Launcher = GameManager.instance.PlayingPlaceable;
-                effectToConsider.Use();
-            }
-        }
-        return true;
     }
-    */
 
     // set SkillAnimationToPlay in AnimationHandler
     public void SendAnimationInfo(List<Animator> animTargets, List<Placeable> placeableTargets, List<Vector3> positionTargets)
@@ -440,7 +430,7 @@ public abstract class Skill
     /// <param name="position"></param>
     /// <param name="vect"></param>
     /// <returns></returns>
-    protected static List<Placeable> PatternCreate(Vector3 position, List<Placeable> vect)
+    protected static List<Placeable> PatternCreateTop(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableblock = new List<Placeable>(vect);
         foreach (Placeable plac in vect)
@@ -451,6 +441,57 @@ public abstract class Skill
                 targetableblock.Remove(plac);
         }
         return targetableblock;
+    }
+
+    /// <summary>
+    /// Create pattern (filter), check if at least one face point toward
+    /// a free and constructible block
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="vect"></param>
+    /// <returns></returns>
+    protected static List<Placeable> PatternCreate(List<Placeable> vect)
+    {
+        List<Placeable> targetableblock = new List<Placeable>(vect);
+        foreach (Placeable placeable in vect)
+        {
+            StandardCube cube = placeable as StandardCube;
+            if (cube == null)
+            {
+                targetableblock.Remove(placeable);
+                continue;
+            }
+
+            Vector3 position = cube.GetPosition();
+
+            if (CheckConditionCreateOnPosition(position + Vector3.up)
+                    || CheckConditionCreateOnPosition(position + Vector3.right)
+                    || CheckConditionCreateOnPosition(position + Vector3.forward)
+                    || CheckConditionCreateOnPosition(position + Vector3.left)
+                    || CheckConditionCreateOnPosition(position + Vector3.back)
+                    || CheckConditionCreateOnPosition(position + Vector3.down))
+            {
+                continue;
+            }
+
+            targetableblock.Remove(placeable);
+        }
+        return targetableblock;
+    }
+
+    public static bool CheckConditionCreateOnPosition(Vector3 position)
+    {
+        Vector3Int positionInt = Vector3Int.FloorToInt(position);
+        if (!Grid.instance.CheckNull(positionInt))
+        {
+            return false;
+        }
+        StandardCube cubeUnderPosition = Grid.instance.GetPlaceableFromVector(positionInt + Vector3.down) as StandardCube;
+        if (cubeUnderPosition != null && !cubeUnderPosition.isConstructableOn)
+        {
+            return false;
+        }
+        return true;
     }
 
     /// <summary>
@@ -608,18 +649,13 @@ public abstract class Skill
     /// <returns></returns>
     static protected List<Placeable> PatternUseLine(Placeable target, bool isPreview, int size = 2)
     {
-        int state;
-        if (isPreview)
-        {
-            state = GameManager.instance.RaycastSelector.CurrentHovered.orientationState;
-        }
-        else
-        {
-            state = GameManager.instance.currentSelection.orientationState;
-        }
+        SelectionInfo currentSelection = Skill.CollectSelectionInfo(isPreview);
+
         List<Placeable> targets = new List<Placeable>();
         Vector3 Position = target.GetPosition();
-        Vector3Int direction = new Vector3Int(state, 0, 1 - state);
+
+        Vector3Int direction = ComputeDirectionForLine(currentSelection);
+
 
         Placeable placeableTemp = null;
 
@@ -636,5 +672,26 @@ public abstract class Skill
         }
 
         return targets;
+    }
+
+    private static Vector3Int ComputeDirectionForLine(SelectionInfo selectionInfo)
+    {
+        int state = selectionInfo.orientationState % 2;
+        if (selectionInfo.face.x != 0)
+        {
+            return new Vector3Int(0, state, 1 - state); //Considering state is 0 or one
+        }
+        else if (selectionInfo.face.y != 0)
+        {
+            return new Vector3Int(state, 0, 1 - state); //Considering state is 0 or one
+        }
+        else if (selectionInfo.face.z != 0)
+        {
+            return new Vector3Int(state, 1 - state, 0); //Considering state is 0 or one
+        } else
+        {
+            Debug.LogError("Fail to find line, no face selected");
+            return Vector3Int.zero;
+        }
     }
 }

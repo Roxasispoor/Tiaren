@@ -14,6 +14,11 @@ public class Builder
     {
         // Get filename.
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
+        if (path.Length == 0)
+        {
+            EditorUtility.DisplayDialog("Error building", "Path empty, cancelling", "ok");
+            return;
+        }
         string[] levels = new string[] { "Assets/online.unity"};
 
         // Build player.  PlayerSettings.SetPropertyInt("ScriptingBackend", (int)ScriptingImplementation.Mono2x, BuildTargetGroup.Standalone); // Ideal setting for Windows

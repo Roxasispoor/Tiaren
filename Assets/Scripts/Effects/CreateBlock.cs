@@ -42,7 +42,7 @@ public class CreateBlock : EffectOnPlaceable {
         for (int i = 1; i < height + 1 ; i++)
         {
             //new CreateBlockRelativeEffect(Target, prefab, new Vector3Int(0, 1, 0), new Vector3Int(0, 1 + i, 0)).Use();
-            if (!Grid.instance.CheckNull(target.GetPosition() + face * i))
+            if (!Skill.CheckConditionCreateOnPosition(target.GetPosition() + face * i))
             {
                 break;
             }
@@ -91,7 +91,7 @@ public class CreateBlock : EffectOnPlaceable {
         for (int i = 1; i < height + 1; i++)
         {
             //new CreateBlockRelativeEffect(Target, prefab, new Vector3Int(0, 1, 0), new Vector3Int(0, 1 + i, 0)).Use();
-            if (!Grid.instance.CheckNull(Target.GetPosition() + face * i))
+            if (!Skill.CheckConditionCreateOnPosition(Target.GetPosition() + face * i))
             {
                 Debug.Log("CreateBlockEffect : Something on the way");
                 break;
