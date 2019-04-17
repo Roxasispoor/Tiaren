@@ -71,13 +71,13 @@ public class CreateSkill : Skill
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
         CreateEffect.Launcher = caster;
-        CreateEffect.face = Vector3Int.FloorToInt(GameManager.instance.currentSelection.face);
+        CreateEffect.face = CollectSelectedFace(false);
         target.DispatchEffect(CreateEffect);
     }
 
     public override void Preview(NetIdeable target)
     {
-        CreateEffect.face = Vector3Int.FloorToInt(GameManager.instance.RaycastSelector.CurrentHovered.face);
+        CreateEffect.face = CollectSelectedFace(true);
 
         if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
         {

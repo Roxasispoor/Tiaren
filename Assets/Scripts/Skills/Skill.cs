@@ -258,31 +258,21 @@ public abstract class Skill
         }
     }
 
-    /*
-    public bool UseTargeted(Skill skill)
+    /// <summary>
+    /// Find the face selected, this depend if we are in preview or use.
+    /// </summary>
+    /// <param name="isPreview">true if preview, false if use.</param>
+    /// <returns>The face selected.</returns>
+    protected static Vector3Int CollectSelectedFace(bool isPreview)
     {
-        if (this.tourCooldownLeft > 0)
+        if (isPreview)
         {
-            return false;
-        }
-        if (condition != null && !condition.Invoke())
+            return Vector3Int.FloorToInt(GameManager.instance.RaycastSelector.CurrentHovered.face);
+        } else
         {
-            return false;
+            return Vector3Int.FloorToInt(GameManager.instance.currentSelection.face);
         }
-        GameManager.instance.PlayingPlaceable.CurrentPA -= this.cost;
-        this.tourCooldownLeft = this.cooldown;
-        if (skill.skillType == TargetType.ALREADYTARGETED) //Simply use them
-        {
-            foreach (Effect eff in skill.effects)
-            {
-                Effect effectToConsider = eff.Clone();
-                effectToConsider.Launcher = GameManager.instance.PlayingPlaceable;
-                effectToConsider.Use();
-            }
-        }
-        return true;
     }
-    */
 
     // set SkillAnimationToPlay in AnimationHandler
     public void SendAnimationInfo(List<Animator> animTargets, List<Placeable> placeableTargets, List<Vector3> positionTargets)
