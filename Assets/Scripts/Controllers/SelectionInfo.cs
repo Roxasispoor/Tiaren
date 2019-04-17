@@ -19,7 +19,13 @@ public struct SelectionInfo
     public int[] ConvertForNetwork()
     {
         int[] array = new int[5];
-        array[0] = placeable.netId;
+        if (placeable != null)
+        {
+            array[0] = placeable.netId;
+        } else
+        {
+            array[0] = GameManager.instance.PlayingPlaceable.netId;
+        }
         array[1] = (int) face.x;
         array[2] = (int) face.y;
         array[3] = (int) face.z;
