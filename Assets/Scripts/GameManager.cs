@@ -223,7 +223,7 @@ public class GameManager : NetworkBehaviour
 
             if (characterToSpawn != null)
             {
-                characterToSpawn.UnHighlightTarget();
+                characterToSpawn.UnHighlight();
             }
 
             if (value != null)
@@ -423,6 +423,8 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.REPULSIVEGRENADE, System.Type.GetType("RepulsiveGrenade"));
         SkillDictionary.Add(SkillTypes.GRAPPLE, System.Type.GetType("GrappleHook"));
         SkillDictionary.Add(SkillTypes.MAKIBISHI, System.Type.GetType("MakibishiSkill"));
+        SkillDictionary.Add(SkillTypes.CREATETOTEMHP, System.Type.GetType("CreateTotemHP"));
+        SkillDictionary.Add(SkillTypes.CREATETOTEMAP, System.Type.GetType("CreateTotemAP"));
         SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
 
         // ***** BELOW - Initialise the skills given in game *****
@@ -776,7 +778,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
                 if (playingPlaceable.Player.isLocalPlayer // If it is the player turn
                     && (playingPlaceable.TargetArea != null && playingPlaceable.TargetArea.Contains(placeable))  // If is a targetable cube
-                    || (placeable.IsLiving() && playingPlaceable.TargetableUnits.Contains((LivingPlaceable)placeable))) // Or is if a targetable living
+                    || (null != placeable as IHurtable && playingPlaceable.TargetableHurtable.Contains(placeable))) // Or is if a targetable living
                 {
 
                     playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId);
@@ -1075,6 +1077,8 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             
             SetCamera();
 
+            EffectManager.instance.TriggerTotems(PlayingPlaceable);
+
             PlayingPlaceable.Player.cameraScript.BackToMovement();
         }
     }
@@ -1183,6 +1187,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
             if (material != null)
             {
+                spawnpoint.oldMaterial = spawnpoint.GetComponent<MeshRenderer>().material;
                 spawnpoint.GetComponent<MeshRenderer>().material = material;
             }
             spawnpoint.isConstructableOn = false;

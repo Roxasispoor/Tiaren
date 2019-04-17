@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageCalculated : EffectOnLiving {
+public class DamageCalculated : EffectOnNetIdeable {
   
     public enum DamageScale {STR,DEXT,MAG,BRUT}
     [SerializeField]
@@ -23,7 +23,7 @@ public class DamageCalculated : EffectOnLiving {
         this.SinFactor = sinFactor;
     }
 
-    public DamageCalculated(DamageCalculated other) : base(other)
+    public DamageCalculated(DamageCalculated other) : base()
     {
         this.Power = other.Power;
         scaleOn = other.scaleOn;
@@ -82,37 +82,44 @@ public class DamageCalculated : EffectOnLiving {
     /// <summary>
     /// Calculates the damage to deal before calling damage to deal it
     /// </summary>
-    /// <param name="preview">True for Preview mode</param>
     /// <returns></returns>
     public int CalculateDamage()
     {
         if (null == Launcher)
             Launcher = GameManager.instance.PlayingPlaceable;
         float totalDmg = 0;
-        if (scaleOn == DamageScale.STR || scaleOn == DamageScale.DEXT)
+        if (Target as Totem != null)
         {
-            totalDmg = power * power / Target.Def;
+            totalDmg = 1;
         }
-        else if (scaleOn == DamageScale.MAG)
+        else
         {
-            totalDmg = power * power / Target.Mdef;
-        }
-        else if (scaleOn == DamageScale.BRUT)
-        {
-            totalDmg = power;
-        }
-        if (Launcher.GetPosition().y > Target.GetPosition().y)
-        {
-            totalDmg *= ( 1 + SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
-                  (Launcher.GetPosition() - Target.GetPosition()).magnitude);
+            LivingPlaceable target = (LivingPlaceable)Target;
+            if (scaleOn == DamageScale.STR || scaleOn == DamageScale.DEXT)
+            {
+                totalDmg = power * power / target.Def;
+            }
+            else if (scaleOn == DamageScale.MAG)
+            {
+                totalDmg = power * power / target.Mdef;
+            }
+            else if (scaleOn == DamageScale.BRUT)
+            {
+                totalDmg = power;
+            }
+            if (Launcher.GetPosition().y > Target.GetPosition().y)
+            {
+                totalDmg *= (1 + SinFactor * (Launcher.GetPosition().y - Target.GetPosition().y) /
+                      (Launcher.GetPosition() - Target.GetPosition()).magnitude);
+            }
         }
 
         return (int) totalDmg;
     }
 
-    public int CalculateDamage(LivingPlaceable target)
+    public int CalculateDamage(NetIdeable target)
     {
-        LivingPlaceable save = Target;
+        NetIdeable save = Target;
         Target = target;
         int damage = CalculateDamage();
         Target = save;

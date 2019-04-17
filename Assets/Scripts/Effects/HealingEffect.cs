@@ -41,7 +41,7 @@ public class HealingEffect : EffectOnNetIdeable
         IHurtable hurtable = Target as IHurtable;
         if (hurtable == null)
         {
-            Debug.LogError("Try to healing a non-Hurtable NetIdeable");
+            Debug.LogError("Try to healing a non-HURTABLE NetIdeable");
         }
         hurtable.ReceiveDamage(-healingValue);
     }

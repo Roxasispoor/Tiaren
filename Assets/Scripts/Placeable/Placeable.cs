@@ -42,12 +42,6 @@ public abstract class Placeable : NetIdeable
     public Material oldMaterial;
 
     /// <summary>
-    /// Base material.
-    /// </summary>
-    // AMELIORATION: move to cube ?
-    public Material baseMaterial;
-
-    /// <summary>
     /// How it react to gravity.
     /// </summary>
     // TODO: Changed it to protected -> Need to create a Spawn prefab
@@ -144,12 +138,15 @@ public abstract class Placeable : NetIdeable
 
     public abstract void Highlight();
 
+    public virtual void HighlightForAttacks()
+    {
+
+    }
+
     public abstract void UnHighlight();
 
     protected virtual void Awake()
     {
-
-        baseMaterial = GetComponent<Renderer>().material;
     }
 
     /// <summary>

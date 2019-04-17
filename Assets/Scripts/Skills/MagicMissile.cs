@@ -28,7 +28,7 @@ public class MagicMissile : Skill
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
     {
-        if (!target.IsLiving())
+        if ( null == target as IHurtable )
         {
             Debug.LogError("Trying to launch an attack on a block");
             return false;

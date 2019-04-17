@@ -4,31 +4,35 @@ using UnityEngine;
 
 public class TotemPa : Totem, IEffectOnTurnStart
 {
+    [SerializeField]
     private int power;
+    [SerializeField]
     private int nbTurns;
 
     protected override void Awake()
     {
         base.Awake();
+        EffectManager.instance.Totems.Add(this);
     }
 
-    public void ApplyEffect(Placeable target)
+    public override void ApplyEffect(Placeable target)
     {
         if(target as LivingPlaceable)
         {
             if (state == State.PURE)
-                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, power, 3, nbTurns);
+                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, power, 2, nbTurns);
             else
-                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, -power, 3, nbTurns);
+                ParameterChangeV2<LivingPlaceable, float>.CreateChangeAndReset((LivingPlaceable)target, -power, 2, nbTurns);
         }
     }
 
-    protected override void CheckInRange(LivingPlaceable target)
+    public override bool CheckInRange(LivingPlaceable target)
     {
         Vector3 direction = target.GetPosition() - GetPosition();
         if (Physics.Raycast(GetPosition(), direction, range, LayerMask.GetMask("LivingPlaceable")))
         {
-            ApplyEffect(target);
+            return true;
         }
+        return false;
     }
 }

@@ -113,9 +113,8 @@ public abstract class Skill
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
         }
-
         UseSpecific(caster, target);
-
+        
         GameManager.instance.ActiveSkill = null;
         this.cooldownTurnLeft = this.cooldown;
         caster.CurrentPA -= Cost;
@@ -181,8 +180,9 @@ public abstract class Skill
         playingPlaceable.ResetTargets();
         LayerMask livingMask = LayerMask.GetMask("LivingPlaceable");
         LayerMask cubeMask = LayerMask.GetMask("Cube");
+        LayerMask totemMask = LayerMask.GetMask("Totems");
         List<Vector3Int> vect = new List<Vector3Int>();
-        List<LivingPlaceable> targetUnits = new List<LivingPlaceable>();
+        List<Placeable> targetHurtable = new List<Placeable>();
         if (targetType == TargetType.BLOCK || targetType == TargetType.AREA)
         {
             vect = Grid.instance.FindTargetableBlocks(playingPlaceable.GetPosition(),this, false);
@@ -194,9 +194,9 @@ public abstract class Skill
             placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
             playingPlaceable.TargetArea = placeables;
             GameManager.instance.ResetAllBatches();
-            GameManager.instance.RaycastSelector.layerMask = cubeMask;
+            GameManager.instance.RaycastSelector.layerMask = cubeMask | totemMask;
         }
-        else if (targetType == TargetType.LIVING)
+        else if (targetType == TargetType.HURTABLE)
         {
             vect = Grid.instance.FindTargetableBlocks(playingPlaceable.GetPosition(), this, true);
             List<StandardCube> range = new List<StandardCube>();
@@ -210,20 +210,10 @@ public abstract class Skill
             playingPlaceable.Range = range;
 
 
-            targetUnits = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
-            List<Placeable> placeables = new List<Placeable>();
-            foreach (LivingPlaceable livingPlaceable in targetUnits)
-            {
-                placeables.Add(livingPlaceable);
-            }
-            placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
-            targetUnits.Clear();
-            foreach (LivingPlaceable livingPlaceable in placeables)
-            {
-                targetUnits.Add(livingPlaceable);
-            }
-            playingPlaceable.TargetableUnits = targetUnits;
-            GameManager.instance.RaycastSelector.layerMask = livingMask;
+            targetHurtable = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
+            targetHurtable = PatterVision(playingPlaceable.GetPosition(), targetHurtable);
+            playingPlaceable.TargetableHurtable = targetHurtable;
+            GameManager.instance.RaycastSelector.layerMask = livingMask | totemMask;
         }
         else if (targetType == TargetType.PLACEABLE)
         {
@@ -237,20 +227,10 @@ public abstract class Skill
             playingPlaceable.TargetArea = floortargets;
 
 
-            targetUnits = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
-            List<Placeable> placeables = new List<Placeable>();
-            foreach (LivingPlaceable livingPlaceable in targetUnits)
-            {
-                placeables.Add(livingPlaceable);
-            }
-            placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
-            targetUnits.Clear();
-            foreach (LivingPlaceable livingPlaceable in placeables)
-            {
-                targetUnits.Add(livingPlaceable);
-            }
-            playingPlaceable.TargetableUnits = targetUnits;
-            GameManager.instance.RaycastSelector.layerMask = livingMask | cubeMask;
+            targetHurtable = Grid.instance.FindTargetableLiving(playingPlaceable.GetPosition(), this);
+            targetHurtable = PatterVision(playingPlaceable.GetPosition(), targetHurtable);
+            playingPlaceable.TargetableHurtable = targetHurtable;
+            GameManager.instance.RaycastSelector.layerMask = livingMask | cubeMask | totemMask;
         }
         else
         {
@@ -395,7 +375,7 @@ public abstract class Skill
     protected static List<Placeable> PatternSwordRange(Vector3 position, List<Placeable> vect)
     {
         List<Placeable> targetableunits = new List<Placeable>(vect);
-        foreach (LivingPlaceable Character in vect)
+        foreach (Placeable Character in vect)
         {
             Vector3 Pos = Character.GetPosition();
             if (Math.Abs(Pos.y - position.y) > 1 || Math.Abs(Pos.x - position.x) > 1 || Math.Abs(Pos.z - position.z) > 1)

@@ -32,15 +32,16 @@ public abstract class EffectOnNetIdeable : Effect
     protected EffectOnNetIdeable()
     {
     }
+
     protected EffectOnNetIdeable(int numberOfTurn, bool triggerAtEnd = false, ActivationType activationType = ActivationType.INSTANT) : base(numberOfTurn, triggerAtEnd, activationType)
     {
     }
-    protected EffectOnNetIdeable(LivingPlaceable target, NetIdeable launcher) : base()
+    protected EffectOnNetIdeable(NetIdeable target, NetIdeable launcher) : base()
     {
         Target = target;
         Launcher = launcher;
     }
-    protected EffectOnNetIdeable(LivingPlaceable target, NetIdeable launcher, int numberOfTurns) : base(numberOfTurns)
+    protected EffectOnNetIdeable(NetIdeable target, NetIdeable launcher, int numberOfTurns) : base(numberOfTurns)
     {
         Target = target;
         Launcher = launcher;

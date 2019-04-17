@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Totem : StandardCube, IHurtable
+public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
 {
     protected int hp;
     [SerializeField]
@@ -40,13 +40,37 @@ public abstract class Totem : StandardCube, IHurtable
         }
     }
 
+    private void OnDestroy()
+    {
+        EffectManager.instance.Totems.Remove(this);
+    }
+
     protected void SwitchState()
     {
         state = state == State.CORRUPTED ? State.PURE : State.CORRUPTED;
     }
 
+    public override void HighlightForAttacks()
+    {
+        Renderer rend = gameObject.GetComponentsInChildren<Renderer>()[0];
+        rend.material.shader = GameManager.instance.PlayingPlaceable.outlineShader;
+        rend.material.SetColor("_OutlineColor", Color.red);
+    }
+
+    public override void UnHighlight()
+    {
+        base.UnHighlight();
+        gameObject.GetComponentsInChildren<Renderer>()[0].material.shader = GameManager.instance.PlayingPlaceable.originalShader;
+    }
+
     /// <summary>
-    /// Used to find the objects to affect
+    /// Used to check if the target should be affected
     /// </summary>
-    protected abstract void CheckInRange(LivingPlaceable target);
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public abstract bool CheckInRange(LivingPlaceable target);
+
+    public virtual void ApplyEffect(Placeable target)
+    {
+    }
 }

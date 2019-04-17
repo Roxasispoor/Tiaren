@@ -21,7 +21,11 @@
     REPULSIVEGRENADE,
     GRAPPLE,
     MAKIBISHI, //20
-    DOWNZIP, 
+    CREATETOTEMHP,
+    CREATETOTEMAP,
+    TOTEMSWITCH,
+    TOTEMDESTROY,
+    DOWNZIP, //25
     PICKOBJECT 
 }
 
@@ -34,7 +38,7 @@ public enum TargetType
     /// <summary>
     /// skill targeting a living (character)
     /// </summary>
-    LIVING,
+    HURTABLE,
     /// <summary>
     /// skill targeting a block
     /// </summary>

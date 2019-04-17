@@ -238,6 +238,30 @@
     "targetType": 1,
     "prefabName": "MakibishiParent",
 	"power": 15
+  },	
+	"CreateTotemHP": {
+    "skillName": "Life Totem",
+    "cost": 2,
+    "cooldown": 0,
+    "spritePath": "default",
+    "description": "Creates a Totem that gives HP, beware the fallen form...",
+    "maxRange": 4,
+    "minRange": 1,
+    "targetType": 1,
+    "cubeName": "TotemHP",
+	"power": 15
+  },	
+	"CreateTotemAP": {
+    "skillName": "Energy Totem",
+    "cost": 2,
+    "cooldown": 0,
+    "spritePath": "default",
+    "description": "Creates a Totem that gives AP, beware the fallen form...",
+    "maxRange": 4,
+    "minRange": 1,
+    "targetType": 1,
+    "cubeName": "TotemAP",
+	"power": 1
   },
   "UseZipline": {
     "skillName": "Zip !",
