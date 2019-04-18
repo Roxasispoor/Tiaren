@@ -223,7 +223,7 @@ public class GameManager : NetworkBehaviour
 
             if (characterToSpawn != null)
             {
-                characterToSpawn.UnHighlight();
+                characterToSpawn.UnHighlightTarget();
             }
 
             if (value != null)

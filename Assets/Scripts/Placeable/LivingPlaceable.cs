@@ -346,9 +346,16 @@ public class LivingPlaceable : Placeable, IHurtable
         {
             if (targetableHurtable != null)
             {
-                foreach (Placeable living in targetableHurtable)
+                foreach (Placeable placeable in targetableHurtable)
                 {
-                    living.UnHighlight();
+                    if (placeable.IsLiving())
+                    {
+                        ((LivingPlaceable)placeable).UnHighlightTarget();
+                    }
+                    else
+                    {
+                        placeable.UnHighlight();
+                    }
                 }
             }
 
@@ -1090,9 +1097,14 @@ public class LivingPlaceable : Placeable, IHurtable
         }
         else
         {
-            isTarget = false;
             DesactivateOutline();
         }
+    }
+
+    public void UnHighlightTarget()
+    {
+        isTarget = false;
+        DesactivateOutline();
     }
 
     public void HighlightForSpawn()
