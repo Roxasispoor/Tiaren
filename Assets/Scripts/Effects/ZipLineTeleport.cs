@@ -30,7 +30,6 @@ public class ZipLineTeleport : EffectOnObjectBloc
 
     public override void Use()
     {
-        Debug.LogError("Using ZiplineTeleport");
         ZipLine arrival = ((ZipLine)Target).linkedTo;
         ZipLine start = (ZipLine)Target;
         Vector3 direction = arrival.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position - start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position;

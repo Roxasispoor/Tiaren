@@ -28,6 +28,7 @@ public class DestroySkill : Skill
         if (target as Placeable == null)
         {
             Debug.LogError("target is not a placeable! Not good in push");
+            Debug.LogError(target.name + " " + target.GetPosition() + " - " + target.netId);
             return false;
         }
         return true;
