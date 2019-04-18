@@ -75,10 +75,12 @@ public class RaycastSelector : MonoBehaviour
             }
         }
 
+        bool changedOrientation = false;
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             currentHovered.orientationState = (currentHovered.orientationState == 3 ? 0 : currentHovered.orientationState + 1);
-            //Debug.Log(state);
+            changedOrientation = true;
         }
 
         if (GameManager.instance.isGameStarted || GameManager.instance.State == States.Spawn )
@@ -90,7 +92,7 @@ public class RaycastSelector : MonoBehaviour
             {
                 Placeable placeableHitted = hit.transform.GetComponent<Placeable>();
                 Vector3 faceHitted = hit.normal;
-                if (placeableHitted != currentHovered.placeable || faceHitted != currentHovered.face)
+                if (placeableHitted != currentHovered.placeable || faceHitted != currentHovered.face || changedOrientation)
                 {
                     UnHighligthAndUnPreviewCurrent();
                     currentHovered.face = faceHitted;
