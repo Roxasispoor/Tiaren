@@ -778,19 +778,19 @@ public class Grid : MonoBehaviour
     /// <param name="ydrop"></param>
     private Vector3Int FindFallingSpot(int x, int y, int z, int ydrop)
     {
-        if(gridMatrix[x, y - ydrop, z + 1] == null)
+        if(z + 1 < sizeZ && gridMatrix[x, y - ydrop, z + 1] == null)
         {
             return new Vector3Int(x, y - ydrop, z + 1);
         }
-        if (gridMatrix[x + 1, y - ydrop, z] == null)
+        if (x + 1 < sizeX && gridMatrix[x + 1, y - ydrop, z] == null)
         {
             return new Vector3Int(x + 1, y - ydrop, z);
         }
-        if (gridMatrix[x, y - ydrop, z - 1] == null)
+        if (z - 1 > 0 && gridMatrix[x, y - ydrop, z - 1] == null)
         {
             return new Vector3Int(x, y - ydrop, z - 1);
         }
-        if (gridMatrix[x - 1, y - ydrop, z] == null)
+        if (x - 1 > 0 && gridMatrix[x - 1, y - ydrop, z] == null)
         {
             return new Vector3Int(x - 1, y - ydrop, z);
         }
