@@ -35,7 +35,6 @@ public abstract class EffectOnObjectBloc : Effect
 
     public override void TargetAndInvokeEffectManager(ObjectOnBloc placeable)//TODO, doesn't work
     {
-        Debug.LogError("TargetAndInvokeEffectManager for EffectOnObjectBloc");
         Target = placeable;
         EffectManager.instance.DirectAttack(this);
     }

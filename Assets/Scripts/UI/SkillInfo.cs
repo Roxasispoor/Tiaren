@@ -46,11 +46,15 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
     }
 
-    public void BecomeCurrentSkill()
+    public void ChangeCurrentSkill()
     {
         if (currentSkill)
-            SkillInfo.currentSkill.SetHighlight(false);
-        SkillInfo.currentSkill = this;
+        {
+            currentSkill.SetHighlight(false);
+            currentSkill = null;
+            return;
+        }
+        currentSkill = this;
         SetHighlight(true);
     }
 
@@ -61,6 +65,9 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         DisplayAvailability();
     }
 
+    /// <summary>
+    /// Called to update cooldowns, gray filters and yellow border
+    /// </summary>
     public void DisplayAvailability()
     {
         if (skill == null)
@@ -82,6 +89,10 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(GameManager.instance.PlayingPlaceable.CurrentPA < skill.Cost)
         {
             buttonImage.color = Color.gray;
+        }
+        if (currentSkill == this)
+        {
+            SetHighlight(false);
         }
     }
 

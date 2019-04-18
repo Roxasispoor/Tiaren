@@ -163,9 +163,9 @@ public class StandardCube : Placeable
         if (this.Destroyable)
         {
             Grid.instance.GridMatrix[GetPosition().x, GetPosition().y, GetPosition().z] = null;
-            foreach (ObjectOnBloc obj in ObjectOns)
+            for (int i = ObjectOns.Count - 1; i >= 0; i--)
             {
-                obj.Destroy();
+                ObjectOns[i].Destroy();
             }
             if (!IsLiving())
             {

@@ -40,7 +40,7 @@ public class PiercingDamageEffect : DamageCalculated
         foreach (RaycastHit hit in hits)
         {
             NetIdeable placeable = hit.collider.gameObject.GetComponent<NetIdeable>();
-            if (placeable == null )
+            if (null == placeable as IHurtable )
             {
                 totalThrough++;
             }

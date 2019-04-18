@@ -93,7 +93,7 @@ public class FXManager : MonoBehaviour
     /// <param name="launcher"></param>
     public void ZiplinePreview(StandardCube target, LivingPlaceable launcher)
     {
-        if (null == makibishiPreview)
+        if (null == zipStart && null == zipEnd)
         {
             zipEnd = Instantiate(prefabTransparentZipline, target.GetPosition(), Quaternion.identity);
             zipStart = Instantiate(prefabTransparentZipline, launcher.GetPosition() + new Vector3Int(0, -1, 0), Quaternion.identity);

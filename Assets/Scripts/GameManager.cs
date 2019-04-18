@@ -765,6 +765,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             case States.Move:
                 if (placeable.walkable && playingPlaceable.player.isLocalPlayer)
                 {
+                    Debug.LogError(placeable.ToString());
                     Vector3[] path = GetPathFromClicked(placeable);//Check and move on server
                     playingPlaceable.Player.CmdMoveTo(path, playingPlaceable.netId);
                 }
@@ -1146,6 +1147,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Vector3[] realPath = inListDestination.GetPathFromStart();
             return realPath;
         }
+        Debug.LogError("inlistdest = null");
         return null;
     }
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className, int prefabNumber)

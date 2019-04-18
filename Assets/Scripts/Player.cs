@@ -918,11 +918,13 @@ public class Player : NetworkBehaviour
     public void CmdMoveTo(Vector3[] path, int netIdAskingChar)
     {
         if (path.Length <= 1)
+        {
+            Debug.LogError("path is too short");
             return;
+        }
         LivingPlaceable askingPlaceable = CheckAskingTurn(netIdAskingChar);
         if (null == askingPlaceable)
             return;
-
         if (Grid.instance.CheckPath(path, askingPlaceable))
         {
             List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
