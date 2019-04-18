@@ -74,8 +74,8 @@ public class RepulsiveGrenade : Skill
         StandardCube above = Grid.instance.GetPlaceableFromVector(target.GetPosition() + Vector3Int.up) as StandardCube;
         if (null == above)
         {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }
