@@ -1110,7 +1110,7 @@ public class LivingPlaceable : Placeable, IHurtable
     }
     public void HighlightAreaOfMovement()
     {
-        Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Cube");
+        Player.GetComponentInChildren<RaycastSelector>().layerMask = LayerMask.GetMask("Totems") | LayerMask.GetMask("Cube");
         Debug.Log("area of movement " + areaOfMouvement.Count);
     }
 
