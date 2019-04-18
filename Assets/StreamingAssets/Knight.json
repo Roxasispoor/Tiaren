@@ -7,7 +7,7 @@
 		"z":0.0
 	},
 	"playerPosesser":"",
-	"maxHP":{"baseValue":200.0},
+	"maxHP":{"baseValue":160.0},
 	"currentHP":{"baseValue":200.0},
 	"pmMax":{"baseValue":5.0},
 	"currentPM":{"baseValue":5.0},
@@ -16,13 +16,13 @@
 	"speed":{"baseValue":40.0},
 	"speedStack":{"baseValue":0.02500000037252903},
 	"jump":{"baseValue":1.0},
-	"def":{"baseValue":75.0},
-	"mdef":{"baseValue":45.0},
+	"def":{"baseValue":70.0},
+	"mdef":{"baseValue":32.0},
 	"deathLength":{"baseValue":1.0},
 	"isDead":false,
 	"serializeNumber":2,
 	"netId":0,
-	"ChosenSkills":  
+	"ChosenSkills":
 	[
 		0,
 		1,

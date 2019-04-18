@@ -17,7 +17,7 @@
 	"speedStack": { "baseValue": 0.0153846153846154 },
 	"jump": { "baseValue": 1.0 },
 	"def": { "baseValue": 65.0 },
-	"mdef": { "baseValue": 55.0 },
+	"mdef": { "baseValue": 40.0 },
 	"deathLength": { "baseValue": 1.0 },
 	"isDead": false,
 	"serializeNumber": 4,
