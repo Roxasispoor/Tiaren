@@ -16,7 +16,7 @@
 	"speed":{"baseValue":55.0},
 	"speedStack":{"baseValue":0.01818181818},
 	"jump":{"baseValue":1.0},
-	"def":{"baseValue":20.0},
+	"def":{"baseValue":30.0},
 	"mdef":{"baseValue":90.0},
 	"deathLength":{"baseValue":1.0},
 	"isDead":false,

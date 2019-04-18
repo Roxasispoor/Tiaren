@@ -52,12 +52,12 @@
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
-    "power": 40
+    "power": 28
   },
   "BleedingAttack": {
     "skillName": "Bleed",
     "cost": 1,
-    "cooldown": 1,
+    "cooldown": 2,
     "spritePath": "Bleeding",
     "description": "Damage over time",
     "maxRange": 1,
@@ -84,10 +84,10 @@
     "cooldown": 1,
     "spritePath": "Tackle",
     "description": "Charge in a line push things on the way",
-    "maxRange": 5,
+    "maxRange": 4,
     "minRange": 1,
     "targetType": 3,
-    "power": 40
+    "power": 28
   },
   "BowShot": {
     "skillName": "Bow Shot",
@@ -98,7 +98,7 @@
     "maxRange": 4,
     "minRange": 2,
     "targetType": 0,
-    "power": 60
+    "power": 40
   },
   "PiercingShot": {
     "skillName": "Piercing Shot",
@@ -109,7 +109,7 @@
     "maxRange": 5,
     "minRange": 3,
     "targetType": 0,
-    "power": 50
+    "power": 30
   },
   "HighGround": {
     "skillName": "High ground",
@@ -141,7 +141,7 @@
     "cooldown": 1,
     "spritePath": "ZipLine",
     "description": "Create a zipline",
-    "maxRange": 5,
+    "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
     "prefabZiplineName": "ZipParent"
@@ -155,7 +155,7 @@
     "maxRange": 3,
     "minRange": 1,
     "targetType": 0,
-    "power": 50
+    "power": 45
   },
   "Wall": {
     "skillName": "Wall",
@@ -186,11 +186,11 @@
     "cooldown": 1,
     "spritePath": "Fireball",
     "description": "Explosive fireball dealing damage and destroying the terrain in a radius around the target",
-    "maxRange": 5,
+    "maxRange": 4,
     "minRange": 1,
     "sizeZone": 2,
     "targetType": 3,
-    "power": 50
+    "power": 45
   },
   "EarthBending": {
     "skillName": "Earth bending",
