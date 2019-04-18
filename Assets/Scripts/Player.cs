@@ -934,7 +934,11 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            Debug.LogError("Path is invalid");
+            Debug.LogError("Path is invalid: ");
+            for (int i = 0; i < path.Length; i++)
+            {
+                Debug.LogError("(" + i + "): " + path[i]);
+            }
         }
     }
 
