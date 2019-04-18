@@ -69,10 +69,7 @@ public class CreateSkill : Skill
     {
         SelectionInfo curentinfo = CollectSelectionInfo(true);
         CreateEffect.face = Vector3Int.FloorToInt(curentinfo.face);
-
-        if (CheckConditions(GameManager.instance.PlayingPlaceable, target))
-        {
-            CreateEffect.Preview((Placeable)target);
-        }
+        
+        CreateEffect.Preview(curentinfo.placeable);
     }
 }
