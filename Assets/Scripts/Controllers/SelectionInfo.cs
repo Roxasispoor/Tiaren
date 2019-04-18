@@ -44,6 +44,11 @@ public struct SelectionInfo
         orientationState = buffer[4];
     }
 
+    public override string ToString()
+    {
+        return "[" + placeable.ToString() + ", " + face + ", " + orientationState + "]";
+    }
+
     /// <summary>
     /// The placeable hitted.
     /// </summary>
