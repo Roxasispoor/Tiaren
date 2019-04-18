@@ -33,7 +33,6 @@ public class ZipLineTeleport : EffectOnObjectBloc
         ZipLine arrival = ((ZipLine)Target).linkedTo;
         ZipLine start = (ZipLine)Target;
         Vector3 direction = arrival.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position - start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position;
-       // Debug.DrawRay(Target.GetPosition() + new Vector3(0, 1.5f, 0), arrival - Target.GetPosition(),Color.green,10f);
         if (arrival.GetPosition().y<Target.GetPosition().y && Grid.instance.CheckNull(arrival.GetPosition() + new Vector3Int(0,1,0))
             && !Physics.Raycast(start.gameObject.GetComponentInChildren<ZiplineFX>().TopPole.position, direction,
             (direction).magnitude,LayerMask.GetMask("Totems") | LayerMask.GetMask("Cube")))

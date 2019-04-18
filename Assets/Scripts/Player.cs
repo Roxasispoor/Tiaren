@@ -925,10 +925,8 @@ public class Player : NetworkBehaviour
         LivingPlaceable askingPlaceable = CheckAskingTurn(netIdAskingChar);
         if (null == askingPlaceable)
             return;
-        Debug.LogError("before cmd checkpath");
         if (Grid.instance.CheckPath(path, askingPlaceable))
         {
-            Debug.LogError("before cmd if(checkpath)");
             List<Vector3> finalPath = Grid.instance.CheckPathForEffect(path, askingPlaceable);
 
             Move(finalPath.ToArray(), askingPlaceable, true);
