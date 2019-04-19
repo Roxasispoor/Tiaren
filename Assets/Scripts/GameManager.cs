@@ -765,7 +765,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             case States.Move:
                 if (placeable.walkable && playingPlaceable.player.isLocalPlayer)
                 {
-                    Debug.LogError(placeable.ToString());
                     Vector3[] path = GetPathFromClicked(placeable);//Check and move on server
                     playingPlaceable.Player.CmdMoveTo(path, playingPlaceable.netId);
                 }

@@ -14,7 +14,6 @@ public class ObjectOnBloc : NetIdeable {
     public Placeable parent;
     public override void DispatchEffect(Effect effect)
     {
-        Debug.LogError("dispatch on blck");
         effect.TargetAndInvokeEffectManager(this);
     }
     //Does nothing if you try to pick An object on block that isn't blockable
