@@ -625,14 +625,12 @@ public class Player : NetworkBehaviour
         // Remove the material from the spawning points
         for (int i = 0; i < Grid.instance.SpawnPlayer1.Count; i++)
         {
-            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer1[i].x, Grid.instance.SpawnPlayer1[i].y - 1,
-                Grid.instance.SpawnPlayer1[i].z];
+            Placeable bloc = Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer1[i] + Vector3Int.down);
             bloc.GetComponent<MeshRenderer>().material = bloc.oldMaterial;
         }
         for (int i = 0; i < Grid.instance.SpawnPlayer2.Count; i++)
         {
-            Placeable bloc = Grid.instance.GridMatrix[Grid.instance.SpawnPlayer2[i].x, Grid.instance.SpawnPlayer2[i].y - 1,
-                Grid.instance.SpawnPlayer2[i].z];
+            Placeable bloc = Grid.instance.GetPlaceableFromVector(Grid.instance.SpawnPlayer2[i] + Vector3Int.down);
             bloc.GetComponent<MeshRenderer>().material = bloc.oldMaterial;
         }
 

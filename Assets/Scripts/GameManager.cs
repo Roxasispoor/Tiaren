@@ -1188,7 +1188,6 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             spawnpoint = (StandardCube)Grid.instance.GetPlaceableFromVector(player.spawnList[i] + Vector3.down);
             if (material != null)
             {
-                spawnpoint.oldMaterial = spawnpoint.GetComponent<MeshRenderer>().material;
                 spawnpoint.GetComponent<MeshRenderer>().material = material;
             }
             spawnpoint.isConstructableOn = false;
