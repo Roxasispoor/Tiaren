@@ -143,4 +143,18 @@ public class ObjectOnBloc : NetIdeable {
     public virtual void TriggerOnWalk(Placeable target)
     {
     }
+
+    protected void FindAndAttachToTheNextCubeAbove()
+    {
+        Vector3Int currentPos = GetPosition();
+        StandardCube nextCube = Grid.instance.GetPlaceableFromVector(currentPos + Vector3Int.up) as StandardCube;
+        while (currentPos.y < Grid.instance.sizeY && nextCube != null)
+        {
+            currentPos += Vector3Int.up;
+            nextCube = Grid.instance.GetPlaceableFromVector(currentPos + Vector3Int.up) as StandardCube;
+        }
+
+        transform.SetParent(Grid.instance.GetPlaceableFromVector(currentPos).transform.Find("Inventory"));
+        transform.localPosition = new Vector3();
+    }
 }
