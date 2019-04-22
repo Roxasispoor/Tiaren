@@ -19,9 +19,9 @@ public class Goal : StandardCube {
         this.traversableBullet = TraversableType.NOTHROUGH;
 
         this.gravityType = GravityType.NULL_GRAVITY;
-        this.crushable = CrushType.CRUSHDESTROYBLOC;
+        this.crushable = CrushType.CRUSHSTAY;
         this.explored = false;
         this.grounded = false;
-        this.OnWalkEffects = new List<Effect>() { new FlagVictoryEffect()};
+        this.OnWalkEffects = new List<Effect>() { new FlagVictoryEffect(this)};
     }
 }

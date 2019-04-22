@@ -14,12 +14,6 @@ public class Flag : ObjectOnBloc {
     }
     public override void SomethingPutAbove()
     {
-         Vector3Int currentPos = GetPosition();
-        while (Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z] != null && currentPos.y < Grid.instance.sizeY)
-        {
-            transform.SetParent(Grid.instance.GridMatrix[currentPos.x, currentPos.y, currentPos.z].transform.Find("Inventory"));
-            transform.localPosition = new Vector3();
-            currentPos = new Vector3Int(currentPos.x, currentPos.y + 1, currentPos.z);
-        }
+        FindAndAttachToTheNextCubeAbove();
     }
 }

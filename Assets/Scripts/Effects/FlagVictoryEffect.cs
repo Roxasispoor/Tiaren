@@ -7,8 +7,10 @@ public class FlagVictoryEffect : EffectOnLiving {
     {
         return new FlagVictoryEffect(this);
     }
-    public FlagVictoryEffect():base()
-    { }
+    public FlagVictoryEffect(Placeable launcher):base()
+    {
+        Launcher = launcher;
+    }
     public override void Use()
     {
        if(GameManager.instance.gameMode==GameMode.FLAG &&  Target.Player!=((Placeable)Launcher).Player &&

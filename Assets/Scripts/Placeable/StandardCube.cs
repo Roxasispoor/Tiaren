@@ -144,6 +144,8 @@ public class StandardCube : Placeable
         this.AttachedEffects = new List<Effect>();
         this.ObjectOns = new List<ObjectOnBloc>();
 
+        this.oldMaterial = GetComponentInChildren<MeshRenderer>().material;
+
         quads = new GameObject[6];
 
         quads[0] = transform.Find("Quads").Find("QuadUp").gameObject;
@@ -152,6 +154,8 @@ public class StandardCube : Placeable
         quads[3] = transform.Find("Quads").Find("QuadRight").gameObject;
         quads[4] = transform.Find("Quads").Find("QuadFront").gameObject;
         quads[5] = transform.Find("Quads").Find("QuadBack").gameObject;
+
+    
     }
 
     /// <summary>

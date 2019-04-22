@@ -14,7 +14,6 @@ public class ObjectOnBloc : NetIdeable {
     public Placeable parent;
     public override void DispatchEffect(Effect effect)
     {
-        Debug.LogError("dispatch on blck");
         effect.TargetAndInvokeEffectManager(this);
     }
     //Does nothing if you try to pick An object on block that isn't blockable
@@ -143,5 +142,19 @@ public class ObjectOnBloc : NetIdeable {
 
     public virtual void TriggerOnWalk(Placeable target)
     {
+    }
+
+    protected void FindAndAttachToTheNextCubeAbove()
+    {
+        Vector3Int currentPos = GetPosition();
+        StandardCube nextCube = Grid.instance.GetPlaceableFromVector(currentPos + Vector3Int.up) as StandardCube;
+        while (currentPos.y < Grid.instance.sizeY && nextCube != null)
+        {
+            currentPos += Vector3Int.up;
+            nextCube = Grid.instance.GetPlaceableFromVector(currentPos + Vector3Int.up) as StandardCube;
+        }
+
+        transform.SetParent(Grid.instance.GetPlaceableFromVector(currentPos).transform.Find("Inventory"));
+        transform.localPosition = new Vector3();
     }
 }

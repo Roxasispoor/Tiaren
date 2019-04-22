@@ -16,10 +16,18 @@ MonoBehaviour:
   netId: 0
   shouldBatch: 1
   isMoving: 0
-  destination: {x: 0, y: 0, z: 0}
-  baseMaterial: {fileID: 0}
+  logicPosition: {x: 0, y: -1, z: 0}
+  walkable: 0
+  movable: 0
+  traversableType: 0
+  traversableBullet: 0
+  gravityType: 0
+  explored: 0
+  grounded: 0
   player: {fileID: 0}
+  isConstructableOn: 1
   isSpawnPoint: 0
+  outline: {fileID: 3213207818563227677}
 --- !u!1001 &8070520547256703921
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86,6 +94,12 @@ PrefabInstance:
 --- !u!1 &8071459303666089851 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1032257904305354, guid: 7c893640092990747915af8aad64f627,
+    type: 3}
+  m_PrefabInstance: {fileID: 8070520547256703921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3213207818563227677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6671982591421320108, guid: 7c893640092990747915af8aad64f627,
     type: 3}
   m_PrefabInstance: {fileID: 8070520547256703921}
   m_PrefabAsset: {fileID: 0}
