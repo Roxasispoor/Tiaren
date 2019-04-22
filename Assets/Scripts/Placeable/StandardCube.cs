@@ -172,7 +172,7 @@ public class StandardCube : Placeable
                 GameManager.instance.RemoveBlockFromBatch((StandardCube)this);
             }
             gameObject.SetActive(false);
-            this.UnHighlight();
+            this.UnhighlightHovered();
             Destroy(this.gameObject);
         }
 
@@ -258,11 +258,10 @@ public class StandardCube : Placeable
     /// <summary>
     /// Unhighlight when the element is unhovered.
     /// </summary>
-    public override void UnHighlight()
+    public override void UnhighlightHovered()
     {
         //If we are in move mode doesn't belong to path we desactivate it
         if (isInAreaOfMovement)
-
         {
             foreach (GameObject quad in quads)
             {

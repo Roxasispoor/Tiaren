@@ -66,12 +66,19 @@ public class PiercingDamageEffect : DamageCalculated
 
     public override void Preview(NetIdeable target)
     {
-        Target = (LivingPlaceable) target;
-        PiercingDamage();
-        for (int i = 0; i < targets.Count; i++)
+        if(null == target as IHurtable)
         {
-            if(targets[i] as LivingPlaceable != null)
-                GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], 1, (LivingPlaceable)targets[i]);
+            return;
+        }
+        if (target.IsLiving())
+        {
+            Target = (LivingPlaceable)target;
+            PiercingDamage();
+            for (int i = 0; i < targets.Count; i++)
+            {
+                if (targets[i] as LivingPlaceable != null)
+                    GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damages[i], 1, (LivingPlaceable)targets[i]);
+            }
         }
     }
 

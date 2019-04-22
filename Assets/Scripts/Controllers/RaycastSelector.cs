@@ -124,7 +124,7 @@ public class RaycastSelector : MonoBehaviour
             {
                 GameManager.instance.ActiveSkill.UnPreview(placeable);
             }
-            placeable.UnHighlight();
+            placeable.UnhighlightHovered();
         }
     }
 

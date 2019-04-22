@@ -67,9 +67,12 @@ public class DamageCalculated : EffectOnNetIdeable {
     {
         if (target as IHurtable == null)
             return;
-        Target = (LivingPlaceable) target;
-        int damage = CalculateDamage();
-        GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damage, 1, (LivingPlaceable) target);
+        if (target.IsLiving())
+        {
+            Target = (LivingPlaceable)target;
+            int damage = CalculateDamage();
+            GameManager.instance.PlayingPlaceable.Player.gameObject.GetComponent<UIManager>().Preview(damage, 1, (LivingPlaceable)target);
+        }
     }
 
     public override void ResetPreview(NetIdeable target)

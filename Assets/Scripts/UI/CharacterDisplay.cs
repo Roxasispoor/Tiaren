@@ -43,7 +43,7 @@ public class CharacterDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         displayer.Deactivate();
         isHovered = false;
-        character.UnHighlight();
+        character.UnhighlightHovered();
         displayer.Activate(GameManager.instance.PlayingPlaceable);
     }
 

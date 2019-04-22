@@ -143,7 +143,7 @@ public abstract class Placeable : NetIdeable
 
     }
 
-    public abstract void UnHighlight();
+    public abstract void UnhighlightHovered();
 
     protected virtual void Awake()
     {

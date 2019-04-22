@@ -11,8 +11,12 @@ public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
     protected State state = State.PURE;
     [SerializeField]
     protected float range;
+    [SerializeField]
+    protected GameObject rangeDisplay;
 
     protected List<Effect> effects = new List<Effect>();
+    [SerializeField]
+    protected ParticleSystem particulesForState;
 
 
     // Start is called before the first frame update
@@ -48,19 +52,61 @@ public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
     protected void SwitchState()
     {
         state = state == State.CORRUPTED ? State.PURE : State.CORRUPTED;
+        /*
+        var ps = particulesForState.main;
+        if (state == State.CORRUPTED)
+        {
+            ps.startColor = Color.black;
+        }
+        else
+        {
+            ps.startColor = Color.white;
+        }
+        */
     }
 
     public override void HighlightForAttacks()
     {
+        isTarget = true;
         Renderer rend = gameObject.GetComponentsInChildren<Renderer>()[0];
         rend.material.shader = GameManager.instance.PlayingPlaceable.outlineShader;
         rend.material.SetColor("_OutlineColor", Color.red);
     }
 
-    public override void UnHighlight()
+    public override void UnhighlightHovered()
     {
-        base.UnHighlight();
-        gameObject.GetComponentsInChildren<Renderer>()[0].material.shader = GameManager.instance.PlayingPlaceable.originalShader;
+        base.UnhighlightHovered();
+        if (isTarget)
+        {
+            Renderer rend = gameObject.GetComponentsInChildren<Renderer>()[0];
+            rend.material.SetColor("_OutlineColor", Color.red);
+        }
+        else
+        {
+            gameObject.GetComponentsInChildren<Renderer>()[0].material.shader = GameManager.instance.PlayingPlaceable.originalShader;
+        }
+        rangeDisplay.SetActive(false);
+    }
+
+    public void UnHighlightTarget()
+    {
+        isTarget = false;
+        UnhighlightHovered();
+    }
+
+    public override void Highlight()
+    {
+        base.Highlight();
+        if(GameManager.instance.State == States.UseSkill)
+        {
+            Renderer rend = gameObject.GetComponentsInChildren<Renderer>()[0];
+            rend.material.shader = GameManager.instance.PlayingPlaceable.outlineShader;
+            rend.material.SetColor("_OutlineColor", Color.white);
+        }
+        else
+        {
+            rangeDisplay.SetActive(true);
+        }
     }
 
     /// <summary>

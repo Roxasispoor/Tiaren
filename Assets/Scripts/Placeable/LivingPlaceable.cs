@@ -354,7 +354,7 @@ public class LivingPlaceable : Placeable, IHurtable
                     }
                     else
                     {
-                        placeable.UnHighlight();
+                        ((Totem)placeable).UnHighlightTarget();
                     }
                 }
             }
@@ -986,7 +986,7 @@ public class LivingPlaceable : Placeable, IHurtable
     public void DamagePreview(int damage)
     {
         float realValue = flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount;
-        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = (realValue - damage) / MaxHP;
+        flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = realValue - damage / MaxHP;
     }
 
     public void ResetPreview()
@@ -1089,7 +1089,7 @@ public class LivingPlaceable : Placeable, IHurtable
         ActivateOutline(Color.white);
     }
 
-    public override void UnHighlight()
+    public override void UnhighlightHovered()
     {
         if (isTarget)
         {
@@ -1154,7 +1154,7 @@ public class LivingPlaceable : Placeable, IHurtable
     /// <returns></returns>
     public bool IsPlaceableInTarget(Placeable placeable)
     {
-        return (null != placeable as IHurtable) && targetableHurtable.Contains(placeable) || targetArea != null && targetArea.Contains(placeable);
+        return targetArea != null && targetArea.Contains(placeable) || targetableHurtable != null && (null != placeable as IHurtable) && targetableHurtable.Contains(placeable);
     }
 
     public void SearchAndInstantianteSkills()

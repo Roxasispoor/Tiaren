@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ public class TotemHp : Totem, IEffectOnTurnStart
     public  override bool CheckInRange(LivingPlaceable target)
     {
         Vector3 direction = target.GetPosition() - GetPosition();
-        if (Physics.Raycast(GetPosition(), direction, range, LayerMask.GetMask("LivingPlaceable")))
+        if (Math.Abs(direction.x) + Math.Abs(direction.y) + Math.Abs(direction.z) < range)
         {
             return true;
         }
