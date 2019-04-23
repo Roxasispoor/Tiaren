@@ -184,6 +184,7 @@ public class CameraScript : MonoBehaviour
         //resume the movement part
         if (player.DicoCondition["BackToMovement"]())
         {
+            GameManager.instance.GetLocalPlayer().gameObject.GetComponent<UIManager>().UpdateAvailability();
             BackToMovement();
         }
 

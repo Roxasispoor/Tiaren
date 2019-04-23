@@ -1024,6 +1024,11 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
         UpdateTimeline();
         PlayingPlaceable = TurnOrder[0].Character;
         PlayingPlaceable.SpeedStack += 1 / PlayingPlaceable.Speed;
+        if (PlayingPlaceable.IsDead && PlayingPlaceable.TurnsRemaingingCemetery > 0)
+        {
+            PlayingPlaceable.TurnsRemaingingCemetery--;
+            EndOFTurn();
+        }
         if (isClient)
         {
             localPlayer.GetComponent<UIManager>().ShowTurnCard();
@@ -1041,46 +1046,38 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             EffectManager.instance.StartTurnUseEffect(PlayingPlaceable.AttachedEffects[i]);
         }
 
-        if (PlayingPlaceable.IsDead && PlayingPlaceable.TurnsRemaingingCemetery > 0)
+        if (PlayingPlaceable.IsDead)
         {
-            PlayingPlaceable.TurnsRemaingingCemetery--;
-            EndOFTurn();
+            PlayingPlaceable.IsDead = false;
+            PlayingPlaceable.Player.Respawn(PlayingPlaceable);
         }
-        else
+
+        player1.GetComponent<Timer>().StartTimer(timerLength);
+        player2.GetComponent<Timer>().StartTimer(timerLength);
+
+        PlayingPlaceable.CurrentPM = PlayingPlaceable.MaxPM;
+        PlayingPlaceable.CurrentPA = PlayingPlaceable.PaMax;
+
+        //initialise UI
+        // reducing cooldown of skill by 1
+        foreach (Skill sk in PlayingPlaceable.Skills)
         {
-            if (PlayingPlaceable.IsDead)
+            if (sk.cooldownTurnLeft > 0)
             {
-                PlayingPlaceable.IsDead = false;
-                PlayingPlaceable.Player.Respawn(PlayingPlaceable);
+                sk.cooldownTurnLeft--;
             }
-
-            player1.GetComponent<Timer>().StartTimer(timerLength);
-            player2.GetComponent<Timer>().StartTimer(timerLength);
-
-            PlayingPlaceable.CurrentPM = PlayingPlaceable.MaxPM;
-            PlayingPlaceable.CurrentPA = PlayingPlaceable.PaMax;
-
-            //initialise UI
-            // reducing cooldown of skill by 1
-            foreach (Skill sk in PlayingPlaceable.Skills)
-            {
-                if (sk.cooldownTurnLeft > 0)
-                {
-                    sk.cooldownTurnLeft--;
-                }
-            }
-            if (isClient)
-            {
-                localPlayer.GetComponent<UIManager>().ChangeTurn();
-            }
-            State = States.Move;
+        }
+        if (isClient)
+        {
+            localPlayer.GetComponent<UIManager>().ChangeTurn();
+        }
+        State = States.Move;
             
-            SetCamera();
+        SetCamera();
 
-            EffectManager.instance.TriggerTotems(PlayingPlaceable);
+        EffectManager.instance.TriggerTotems(PlayingPlaceable);
 
-            PlayingPlaceable.Player.cameraScript.BackToMovement();
-        }
+        PlayingPlaceable.Player.cameraScript.BackToMovement();
     }
     
     public void SetCamera()

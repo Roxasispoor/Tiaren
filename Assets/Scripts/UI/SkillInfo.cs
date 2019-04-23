@@ -92,6 +92,7 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         if (currentSkill == this)
         {
+            currentSkill = null;
             SetHighlight(false);
         }
     }

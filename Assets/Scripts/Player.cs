@@ -1533,6 +1533,10 @@ public class Player : NetworkBehaviour
             GameManager.instance.State = States.Move;
             FloatingTextController.CreateFloatingText("Not enough PA", GameManager.instance.PlayingPlaceable.transform, Color.red);
             skill.UnPreview(GameManager.instance.FindLocalIdeable(netidTarget));
+            if (isLocalPlayer)
+            {
+                gameObject.GetComponent<UIManager>().UpdateAvailability();
+            }
             cameraScript.BackToMovement();
         }
     }

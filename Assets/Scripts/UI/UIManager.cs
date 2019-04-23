@@ -132,7 +132,7 @@ public class UIManager : MonoBehaviour
         CurrentCharacters[i] = mod(CurrentCharacters[i] - 1, GameManager.instance.PossibleCharacters.Count);
         images[CurrentCharacters[i]].gameObject.SetActive(true);
     }
-
+    
     private void Update()
     {
         if (GameManager.instance.State != States.Spawn && GameManager.instance.State != States.TeamSelect && GameManager.instance.PlayingPlaceable!=null && gameObject.GetComponent<Player>().isLocalPlayer)
