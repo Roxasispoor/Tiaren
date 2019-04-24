@@ -8,6 +8,8 @@ public class DestroyBloc : EffectOnPlaceableOnly
 {
     public int depth=1;
 
+    private bool affectTotem = false;
+
     /// <summary>
     /// The direcion of to dig.
     /// </summary>
@@ -23,14 +25,16 @@ public class DestroyBloc : EffectOnPlaceableOnly
     public DestroyBloc(DestroyBloc other) : base(other)
     {
         this.depth = other.depth;
+        this.affectTotem = other.affectTotem;
     }
-    public DestroyBloc(int depth = 1) : base()
+    public DestroyBloc(int depth = 1, bool affectTotem = false) : base()
     {
         this.depth = depth;
     }
-    public DestroyBloc(Placeable launcher,int depth) : base(launcher)
+    public DestroyBloc(Placeable launcher,int depth, bool affectTotem = false) : base(launcher)
     {
         this.depth = depth;
+        this.affectTotem = affectTotem;
         Launcher = launcher;
     }
 
@@ -53,11 +57,11 @@ public class DestroyBloc : EffectOnPlaceableOnly
         {
             previewedCubes = new Queue<GameObject>();
         }
-        //throw new System.NotImplementedException();
         for (int i = 0; i < depth; i++)
         {
             StandardCube block = Grid.instance.GetPlaceableFromVector(target.GetPosition() + direction * i) as StandardCube;
-            if (block != null && block.Destroyable == true)
+            bool hurtingTotem = affectTotem == true && null != block as IHurtable || null == block as IHurtable;
+            if (block != null && block.Destroyable == true && hurtingTotem)
             {
                 MeshRenderer meshRenderer = block.GetComponent<MeshRenderer>();
                 GameManager.instance.RemoveBlockFromBatch(block);

@@ -425,6 +425,7 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.MAKIBISHI, System.Type.GetType("MakibishiSkill"));
         SkillDictionary.Add(SkillTypes.CREATETOTEMHP, System.Type.GetType("CreateTotemHP"));
         SkillDictionary.Add(SkillTypes.CREATETOTEMAP, System.Type.GetType("CreateTotemAP"));
+        SkillDictionary.Add(SkillTypes.TOTEMDESTROY, System.Type.GetType("DestroyTotem"));
         SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
 
         // ***** BELOW - Initialise the skills given in game *****
@@ -766,7 +767,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
                 if (placeable.walkable && playingPlaceable.player.isLocalPlayer)
                 {
                     Vector3[] path = GetPathFromClicked(placeable);//Check and move on server
-                    playingPlaceable.Player.CmdMoveTo(path, playingPlaceable.netId);
+                    if (null != path)
+                    {
+                        playingPlaceable.Player.CmdMoveTo(path, playingPlaceable.netId);
+                    }
                 }
                 break;
 
@@ -778,7 +782,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
 
                 if (playingPlaceable.Player.isLocalPlayer // If it is the player turn
                     && (playingPlaceable.TargetArea != null && playingPlaceable.TargetArea.Contains(placeable))  // If is a targetable cube
-                    || (null != placeable as IHurtable && playingPlaceable.TargetableHurtable.Contains(placeable))) // Or is if a targetable living
+                    || (null != placeable as IHurtable && null != playingPlaceable.TargetableHurtable && playingPlaceable.TargetableHurtable.Contains(placeable))) // Or is if a targetable living
                 {
 
                     playingPlaceable.player.OnUseSkill(Player.SkillToNumber(playingPlaceable, ActiveSkill), placeable.netId);
@@ -1143,7 +1147,7 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Vector3[] realPath = inListDestination.GetPathFromStart();
             return realPath;
         }
-        Debug.LogError("inlistdest = null");
+        Debug.Log("inlistdest = null");
         return null;
     }
     private void InitialiseCharacter(GameObject charac, GameObject player, Vector3Int spawnCoordinates, string className, int prefabNumber)

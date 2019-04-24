@@ -73,7 +73,7 @@ public class Fireball : Skill
     {
         vect =  PatternDestroy(position, vect);
         LivingPlaceable caster =(LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for(int i = 0; i < vect.Count; i++)
+        for (int i = vect.Count - 1; i >= 0; i--)
         {
             if (caster!=null && !CheckSpecificConditions(caster, vect[i]))
             {
@@ -87,13 +87,13 @@ public class Fireball : Skill
     {
         DamageEffect.Launcher = caster;
 
-        affectedPlaceable = Skill.PatternUseSphere((Placeable)target, sizezone);
+        affectedPlaceable = PatternUseSphere((Placeable)target, sizezone);
         
         foreach (Placeable placeable in affectedPlaceable)
         {
-            if (placeable.IsLiving())
+            if (null != placeable as IHurtable)
             {
-                ((LivingPlaceable)placeable).DispatchEffect(DamageEffect);
+                placeable.DispatchEffect(DamageEffect);
             }
             else
             {

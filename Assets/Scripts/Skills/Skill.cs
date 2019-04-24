@@ -189,10 +189,9 @@ public abstract class Skill
             List<Placeable> placeables = new List<Placeable>();
             foreach(Vector3Int pos in vect)
             {
-                placeables.Add(Grid.instance.GridMatrix[pos.x, pos.y, pos.z]);
+                placeables.Add(Grid.instance.GetPlaceableFromVector(pos));
             }
-            placeables = PatterVision(playingPlaceable.GetPosition(), placeables);
-            playingPlaceable.TargetArea = placeables;
+            playingPlaceable.TargetArea = PatterVision(playingPlaceable.GetPosition(), placeables);
             GameManager.instance.ResetAllBatches();
             GameManager.instance.RaycastSelector.layerMask = cubeMask | totemMask;
         }

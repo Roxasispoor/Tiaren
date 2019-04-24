@@ -263,6 +263,16 @@
     "cubeName": "TotemAP",
 	"power": 1
   },
+  "DestroyTotem": {
+    "skillName": "Totem Dispel",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "Destruction",
+    "description": "Instantly destroy one of your totems",
+    "maxRange": 4,
+    "minRange": 0,
+    "targetType": 1
+	},
   "UseZipline": {
     "skillName": "Zip !",
     "cost": 0,

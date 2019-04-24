@@ -51,8 +51,11 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (currentSkill)
         {
             currentSkill.SetHighlight(false);
-            currentSkill = null;
-            return;
+            if (currentSkill == this)
+            {
+                currentSkill = null;
+                return;
+            }
         }
         currentSkill = this;
         SetHighlight(true);

@@ -56,7 +56,7 @@ public class Tackle : Skill
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for (int i = vect.Count-1; i >= 0; i--)
+        for (int i = vect.Count - 1; i >= 0; i--)
         {
             if (caster != null && !CheckSpecificConditions(caster, vect[i]))
             {

@@ -12,7 +12,7 @@ public class CreateTotemSkill : Skill
 
     GameObject cubeToCreate;
 
-    CreateBlock CreateEffect { get { return (CreateBlock)effects[0]; } }
+    CreateTotemEffect CreateEffect { get { return (CreateTotemEffect)effects[0]; } }
 
     public CreateTotemSkill(string JSON) : base(JSON)
     {
@@ -29,7 +29,7 @@ public class CreateTotemSkill : Skill
             if (cube.name == cubeName)
             {
                 cubeToCreate = cube;
-                effects.Add(new CreateBlock(cubeToCreate, new Vector3Int(0, 1, 0)));
+                effects.Add(new CreateTotemEffect(cubeToCreate, new Vector3Int(0, 1, 0)));
                 return;
             }
         }
@@ -66,7 +66,7 @@ public class CreateTotemSkill : Skill
     {
         vect = PatternCreate(vect);
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for (int i = 0; i < vect.Count; i++)
+        for (int i = vect.Count - 1; i >= 0; i--)
         {
             if (caster != null && !CheckSpecificConditions(caster, vect[i]))
             {

@@ -139,7 +139,7 @@ public class DamageCalculated : EffectOnNetIdeable {
         }
         else
         {
-            Debug.LogError("Damage calculated on a non living plaeable in forbidden");
+            Debug.LogError("Damage calculated on a non hurtable in forbidden");
         }
     }
 

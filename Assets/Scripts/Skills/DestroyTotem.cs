@@ -1,36 +1,25 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
-using System;
 
-public class DestroySkill : Skill
+public class DestroyTotem : Skill
 {
 
     DestroyBloc DestroyEffect { get { return (DestroyBloc)effects[0]; } }
 
-    public DestroySkill(string JSON) : base(JSON)
+    public DestroyTotem(string JSON) : base(JSON)
     {
-        Debug.LogError("Creating a destroy skill");
+        Debug.LogError("Creating a destroyTotem skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["DestroySkill"]);
-        InitSpecific(deserializedSkill["DestroySkill"]);
+        Init(deserializedSkill["DestroyTotem"]);
     }
 
-    private void InitSpecific(JToken deserializedSkill)
+    protected override void Init(JToken deserializedSkll)
     {
+        base.Init(deserializedSkll);
         effects = new List<Effect>();
-        effects.Add(new DestroyBloc());
-    }
-
-    protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
-    {
-        if (null == target as StandardCube || null != target as IHurtable)
-        {
-            Debug.Log("destroying a non cube");
-            return false;
-        }
-        return true;
+        effects.Add(new DestroyBloc(affectTotem : true));
     }
 
     public override void Preview(NetIdeable target)
@@ -41,9 +30,18 @@ public class DestroySkill : Skill
         }
     }
 
+    protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
+    {
+        if(caster.LinkedObjects.Contains(target))
+        {
+            return true;
+        }
+        Debug.LogError("non totem can't be destroyed this way");
+        return false;
+    }
+
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
-        vect = PatternDestroy(position, vect);
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
         for (int i = vect.Count - 1; i >= 0; i--)
         {

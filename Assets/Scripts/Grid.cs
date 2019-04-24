@@ -185,11 +185,12 @@ public class Grid : MonoBehaviour
     /// </summary>
     /// <param name="prefab"></param>
     /// <param name="position"></param>
-    public void InstantiateCube(GameObject prefab, Vector3Int position)
+    public GameObject InstantiateCube(GameObject prefab, Vector3Int position)
     {
         if (!prefab.GetComponent<StandardCube>())
         {
             Debug.LogError("InstantiateCube: trying to instantiate a non-cube prefab: " + prefab.name);
+            return null;
         }
         if (CheckNull(position))
         {
@@ -223,7 +224,9 @@ public class Grid : MonoBehaviour
                     GameManager.instance.RefreshBatch(newBlock.GetComponent<StandardCube>());
                 }
             }
+            return newBlock;
         }
+        return null;
 
     }
 

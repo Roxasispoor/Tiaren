@@ -81,7 +81,7 @@ class Fissure : Skill
     {
         vect = PatternDestroy(position, vect);
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for (int i = 0; i < vect.Count; i++)
+        for (int i = vect.Count - 1; i >= 0; i--)
         {
             if (!CheckSpecificConditions(caster, vect[i]))
             {

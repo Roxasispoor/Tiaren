@@ -42,7 +42,7 @@ public class PiercingShot : Skill
     protected override List<Placeable> PatterVision(Vector3 position, List<Placeable> vect)
     {
         LivingPlaceable caster = (LivingPlaceable)Grid.instance.GetPlaceableFromVector(position);
-        for (int i = 0; i < vect.Count; i++)
+        for (int i = vect.Count - 1; i >= 0; i--)
         {
             if (caster != null && !CheckSpecificConditions(caster, vect[i]))
             {

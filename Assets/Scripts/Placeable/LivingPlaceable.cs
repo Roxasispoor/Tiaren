@@ -59,6 +59,9 @@ public class LivingPlaceable : Placeable, IHurtable
     private List<Placeable> targetArea;
     private List<Placeable> targetableHurtable;
 
+    //List of objects connected to the character (totems / traps ...)
+    private List<NetIdeable> linkedObjects;
+
     public Canvas flyingInfo;
     public Sprite characterSprite;
 
@@ -66,8 +69,6 @@ public class LivingPlaceable : Placeable, IHurtable
     private bool isTarget = false;
     private Renderer rend;
     //Shaders (used for the highlight)
-    
-
     public Shader originalShader;
     public Shader outlineShader;
     private Color previousColor = Color.white;
@@ -95,7 +96,7 @@ public class LivingPlaceable : Placeable, IHurtable
 
         set
         {
-            currentHP.BaseValue = value;
+            currentHP.BaseValue = value;    
             flyingInfo.transform.Find("HPBar").gameObject.GetComponent<Image>().fillAmount = value / MaxHP;
             flyingInfo.transform.Find("HPPreview").gameObject.GetComponent<Image>().fillAmount = value / MaxHP;
         }
@@ -766,6 +767,8 @@ public class LivingPlaceable : Placeable, IHurtable
         }
     }
 
+    public List<NetIdeable> LinkedObjects { get => linkedObjects; set => linkedObjects = value; }
+
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {
         return Grid.instance.GridMatrix[GetPosition().x, GetPosition().y - 1, GetPosition().z]
@@ -824,6 +827,7 @@ public class LivingPlaceable : Placeable, IHurtable
             this.characterSprite = Resources.Load<Sprite>("UI_Images/Characters/" + className);
             this.AreaOfMouvement = new List<NodePath>();
             targetArea = new List<Placeable>();
+            this.linkedObjects = new List<NetIdeable>();
 
             ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.MaxPMFlat);
             ParameterChangeV2<LivingPlaceable, float>.MethodsForEffects.Add(o => o.CurrentHP);
@@ -937,8 +941,8 @@ public class LivingPlaceable : Placeable, IHurtable
         this.gravityType = GravityType.SIMPLE_GRAVITY;
         this.crushable = CrushType.CRUSHDAMAGE;
         this.AreaOfMouvement = new List<NodePath>();
-        targetArea = new List<Placeable>();
-        targetableHurtable = new List<Placeable>();
+        this.targetArea = new List<Placeable>();
+        this.targetableHurtable = new List<Placeable>();
         this.AttachedEffects = new List<Effect>();
         this.Skills = new List<Skill>();
         this.IsDead = false;
@@ -946,6 +950,7 @@ public class LivingPlaceable : Placeable, IHurtable
         this.TurnsRemaingingCemetery = 0;
         this.ShootPosition = new Vector3(0, 0.5f, 0);
         this.AreaOfMouvement = new List<NodePath>();
+        this.linkedObjects = new List<NetIdeable>();
         
         
         rend = GetComponentsInChildren<Renderer>().ToArray()[1]; // The 1st renderer is the circle could not manage to find the good renderer correctly
@@ -960,7 +965,6 @@ public class LivingPlaceable : Placeable, IHurtable
             ClassName = GameManager.instance.PossibleCharacters[classNumber].className;
             LoadFromjson(Path.Combine(Application.streamingAssetsPath, ClassName + ".json"));
             circleTeam.color = Player.color;
-            targetableHurtable = new List<Placeable>();
         }
     }
 
