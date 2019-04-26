@@ -5,6 +5,13 @@ using Hellmade.Sound;
 
 public class AnimationHandler : MonoBehaviour
 {
+
+    // ##################### NEW VARIABLE ##########################
+
+    private Queue<Animation> AnimationSequence;
+
+
+    // ##################### OLD VARIABLE ##########################
     private static AnimationHandler m_Instance = null;
     // dictionary of enums
     Dictionary<string, string> AnimDictionary;
@@ -21,7 +28,17 @@ public class AnimationHandler : MonoBehaviour
             {
                 m_Instance = (new GameObject("AnimationHandler")).AddComponent<AnimationHandler>();
                 DontDestroyOnLoad(m_Instance.gameObject);
-                m_Instance.AnimDictionary = new Dictionary<string, string>() {
+            }
+            return m_Instance;
+        }
+    }
+
+
+    // ####################################### NEW STUFF ####################################################
+
+    private void Awake()
+    {
+        AnimDictionary = new Dictionary<string, string>() {
 
                     {"Sword attack", "WaitAndBasicAttack" },
                     {"Destruction", "WaitAndDestroyBlock" },
@@ -37,12 +54,37 @@ public class AnimationHandler : MonoBehaviour
                     {"Spinning attack","WaitAndSpin" },
                     {"Explosive fireball","WaitAndLaunchFireball" },
                     {"Staff Shot","WaitAndLaunchFireball" },
-
                 };
-            }
-            return m_Instance;
-        }
+
+        AnimationSequence = new Queue<Animation>();
     }
+
+    public void QueueAnimation(Animation animation)
+    {
+        if (AnimationSequence.Count == 0)
+        {
+            StartCoroutine(animation.Launch());
+        }
+
+        AnimationSequence.Enqueue(animation);
+    }
+    
+    public void NotifyAnimationEnded(Animation animation)
+    {
+        Debug.LogError("AnimationEnded" + this.GetHashCode());
+        AnimationSequence.Dequeue();
+        if (AnimationSequence.Count > 0)
+            {
+                StartCoroutine(AnimationSequence.Peek().Launch());
+            }
+    }
+
+    public Coroutine InstantLaunch(IEnumerator enumerator)
+    {
+        return StartCoroutine(enumerator);
+    }
+
+    // ####################################### OLD STUFF ####################################################
 
     public void PlayAnimation()
     {

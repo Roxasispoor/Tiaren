@@ -656,7 +656,7 @@ public class Grid : MonoBehaviour
                 placeable.isMoving = false;
                 StopCoroutine(placeable.moveCoroutine);
             }
-            placeable.transform.position = desiredPosition; //shifting model
+            //placeable.transform.position = desiredPosition; //shifting model
         }
         if(!placeable.IsLiving()
             && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null
