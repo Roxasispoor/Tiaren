@@ -104,6 +104,10 @@ public class CameraScript : MonoBehaviour
         //If camera mode change
         if (player.DicoCondition["SwitchCameraType"]())
         {
+            if(GameManager.instance.State == States.Link)
+            {
+                GameManager.instance.GetLocalPlayer().gameObject.GetComponent<UIManager>().linkSkillZone.GetComponent<LinkDisplayer>().BreakLink();
+            }
             if (freecam == 0 && GameManager.instance.isGameStarted && target != GameManager.instance.PlayingPlaceable.transform) //Focus on plying placeable if were on other character
             {
                 if (GameManager.instance.isGameStarted)
@@ -185,7 +189,14 @@ public class CameraScript : MonoBehaviour
         if (player.DicoCondition["BackToMovement"]())
         {
             GameManager.instance.GetLocalPlayer().gameObject.GetComponent<UIManager>().UpdateAvailability();
-            BackToMovement();
+            if (GameManager.instance.State == States.Link)
+            {
+                GameManager.instance.GetLocalPlayer().gameObject.GetComponent<UIManager>().linkSkillZone.GetComponent<LinkDisplayer>().BreakLink();
+            }
+            else
+            {
+                BackToMovement();
+            }
         }
 
 

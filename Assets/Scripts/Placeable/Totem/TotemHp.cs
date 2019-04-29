@@ -33,7 +33,7 @@ public class TotemHp : Totem, IEffectOnTurnStart
     public  override bool CheckInRange(LivingPlaceable target)
     {
         Vector3 direction = target.GetPosition() - GetPosition();
-        if (Math.Abs(direction.x) + Math.Abs(direction.y) + Math.Abs(direction.z) <= range)
+        if (Math.Abs(direction.x) + Math.Abs(direction.y) + Math.Abs(direction.z) <= Range)
         {
             return true;
         }

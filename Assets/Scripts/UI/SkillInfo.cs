@@ -16,6 +16,9 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     [SerializeField]
     private GameObject highlight;
+    private StatDisplayer statsDisplayer;
+    private SkillDisplayer skillDisplayer;
+
     
 
     public Skill Skill
@@ -31,34 +34,52 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
     }
 
+    private void Awake()
+    {
+        statsDisplayer = gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>();
+        skillDisplayer = gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>();
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (GameManager.instance.State != States.TeamSelect && GameManager.instance.State != States.Spawn)
         {
-            gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Deactivate();
-            gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Activate(Skill);
+            statsDisplayer.Deactivate();
+            skillDisplayer.Activate(Skill);
+            if (skill.oneClickUse)
+            {
+                skill.Preview(null);
+            }
+            Debug.Log("range of skill " + skill.MaxRange);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        gameObject.GetComponentInParent<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
-        gameObject.GetComponentInParent<Canvas>().transform.Find("StatsDisplayer").GetComponent<StatDisplayer>().Activate(GameManager.instance.PlayingPlaceable);
+        skillDisplayer.Deactivate();
+        statsDisplayer.Activate(GameManager.instance.PlayingPlaceable);
+        if (skill.oneClickUse)
+        {
+            skill.UnPreview(null);
+        }
     }
 
     public void ChangeCurrentSkill()
     {
-        if (currentSkill)
+        if (GameManager.instance.State != States.Link)
         {
-            currentSkill.SetHighlight(false);
-            if (currentSkill == this)
+            if (currentSkill)
             {
-                currentSkill = null;
-                return;
+                currentSkill.SetHighlight(false);
+                if (currentSkill == this)
+                {
+                    currentSkill = null;
+                    return;
+                }
             }
+            currentSkill = this;
+            SetHighlight(true);
         }
-        currentSkill = this;
-        SetHighlight(true);
     }
 
     public void UpdateButtonInfo()

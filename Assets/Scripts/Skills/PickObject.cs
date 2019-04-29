@@ -38,15 +38,12 @@ class PickObject : Skill
         PickObject newPickObject = new PickObject();
         newPickObject.CopyMainVariables(PickObject.reference);
         newPickObject.effects.Add(new PickObjectOnBlockEffect(objectToPick));
-        //newUseZipline.ZipLineTeleportEffect.Target = zipLine;
         return newPickObject;
     }
 
     protected override void Init(JToken deserializedSkill)
     {
         base.Init(deserializedSkill);
-
-        //effects.Add(new MoveEffect());
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)

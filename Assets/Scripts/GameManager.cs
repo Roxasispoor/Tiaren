@@ -426,6 +426,9 @@ public class GameManager : NetworkBehaviour
         SkillDictionary.Add(SkillTypes.CREATETOTEMHP, System.Type.GetType("CreateTotemHP"));
         SkillDictionary.Add(SkillTypes.CREATETOTEMAP, System.Type.GetType("CreateTotemAP"));
         SkillDictionary.Add(SkillTypes.TOTEMDESTROY, System.Type.GetType("DestroyTotem"));
+        SkillDictionary.Add(SkillTypes.TOTEMLINK, System.Type.GetType("TotemLinkSkill"));
+        SkillDictionary.Add(SkillTypes.TOTEMHEAL, System.Type.GetType("TotemHealSkill"));
+        SkillDictionary.Add(SkillTypes.TOTEMEXPLOSION, System.Type.GetType("TotemExplosionSkill"));
         SkillDictionary.Add(SkillTypes.PICKOBJECT, System.Type.GetType("PickObject"));
 
         // ***** BELOW - Initialise the skills given in game *****
@@ -433,6 +436,8 @@ public class GameManager : NetworkBehaviour
         string JSON = readerJSON.ReadToEnd();
 
         PickObject.reference = new PickObject(JSON);
+        ExplosionLinkSkill.reference = new ExplosionLinkSkill(JSON);
+        HealingTotemLinkSkill.reference = new HealingTotemLinkSkill(JSON);
     }
 
 
@@ -1111,10 +1116,10 @@ gameManager apply, check effect is activable, not stopped, etc... and use()
             Debug.Log("tour suivaaaaaaaaant Area of movement=" + PlayingPlaceable.AreaOfMouvement.Count);
             if (PlayingPlaceable.Player.isLocalPlayer)
             {
-                PlayingPlaceable.ResetTargets();
-                PlayingPlaceable.ClearAreaOfMovement();
                 PlayingPlaceable.ResetHighlightSkill();
                 PlayingPlaceable.Player.GetComponent<UIManager>().ResetEndTurn();
+                PlayingPlaceable.ResetTargets();
+                PlayingPlaceable.ClearAreaOfMovement();
                 //PlayingPlaceable.Player.cameraScript.Freecam = 1;
                 //ResetAllBatches();
             }

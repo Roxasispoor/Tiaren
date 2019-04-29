@@ -25,6 +25,9 @@ public class UIManager : MonoBehaviour
     public RectTransform spawnZone;
     public RectTransform timelineZone;
 
+    //Link related
+    public GameObject linkSkillZone;
+
     //Usefull ui elements
     public GameObject playerTurnObjects;
     public Sprite upChoice;
@@ -306,6 +309,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ActivateLinkUI(Totem totem)
+    {
+        linkSkillZone.SetActive(true);
+        linkSkillZone.GetComponent<LinkDisplayer>().InitializeLink(totem);
+    }
+
     public void UpdateAvailability()
     {
         foreach(GameObject button in abilityButtons)
@@ -396,6 +405,10 @@ public class UIManager : MonoBehaviour
     public void ResetEndTurn()
     {
         gameObject.GetComponentInChildren<Canvas>().transform.Find("SkillDisplayer").GetComponent<SkillDisplayer>().Deactivate();
+        if(GameManager.instance.State == States.Link)
+        {
+            linkSkillZone.GetComponent<LinkDisplayer>().BreakLink();
+        }
     }
 
     public void ClearZone(GameObject zoneToClear)
@@ -412,16 +425,19 @@ public class UIManager : MonoBehaviour
 
     public void DisplayCameraMode(int mode)
     {
-        switch(mode)
+        if (GameManager.instance.isGameStarted)
         {
-            case 1:
-                camModeDisplay.sprite = worldCam;
-                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
-                break;
-            case 0:
-                camModeDisplay.sprite = charaCam;
-                camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
-                break;
-        }
+            switch (mode)
+            {
+                case 1:
+                    camModeDisplay.sprite = worldCam;
+                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                    break;
+                case 0:
+                    camModeDisplay.sprite = charaCam;
+                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse();
+                    break;
+            }
+        } 
     }
 }

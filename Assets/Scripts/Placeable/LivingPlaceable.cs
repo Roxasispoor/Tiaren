@@ -57,10 +57,11 @@ public class LivingPlaceable : Placeable, IHurtable
     private List<NodePath> areaOfMouvement;
     private List<StandardCube> range;
     private List<Placeable> targetArea;
-    private List<Placeable> targetableHurtable;
+    private List<Placeable> targetableHurtable = new List<Placeable>();
 
     //List of objects connected to the character (totems / traps ...)
     private List<NetIdeable> linkedObjects;
+    private NetIdeable activeLink;
 
     public Canvas flyingInfo;
     public Sprite characterSprite;
@@ -768,6 +769,15 @@ public class LivingPlaceable : Placeable, IHurtable
     }
 
     public List<NetIdeable> LinkedObjects { get => linkedObjects; set => linkedObjects = value; }
+
+    public NetIdeable ActiveLink
+    { get => activeLink;
+
+        set
+        {
+            activeLink = value;
+        }
+    }
 
     public ObjectOnBloc[] GetObjectsOnBlockUnder()
     {

@@ -4726,6 +4726,7 @@ MonoBehaviour:
   isConstructableOn: 1
   isSpawnPoint: 0
   outline: {fileID: 2592469005617052918}
+  hp: 0
   MaxHp: 3
   range: 4
   rangeDisplay: {fileID: 4984418550542174398}

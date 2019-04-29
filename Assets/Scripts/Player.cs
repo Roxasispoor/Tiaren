@@ -751,54 +751,92 @@ public class Player : NetworkBehaviour
     }
     public static Skill NumberToSkill(LivingPlaceable living, int skillNumber)
     {
-        if (skillNumber < living.Skills.Count)
+        if (living.ActiveLink == null)
         {
-            return living.Skills[skillNumber];
+            if (skillNumber < living.Skills.Count)
+            {
+                return living.Skills[skillNumber];
+            }
+            else
+            {
+                int total = living.Skills.Count;
+
+                ///The bloc under
+                foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+                {
+                    if (total + obj.GivenSkills.Count > skillNumber)
+                    {
+                        return obj.GivenSkills[skillNumber - total];
+                    }
+                    total += obj.GivenSkills.Count;
+
+                }
+            }
+            Debug.LogError("Skill number not found in living");
+            return null;
         }
         else
         {
-            int total = living.Skills.Count;
-
-
-            ///The bloc under
-            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            if (null != living.ActiveLink.gameObject.GetComponent<Totem>())
             {
-                if (total + obj.GivenSkills.Count > skillNumber)
-                {
-                    return obj.GivenSkills[skillNumber - total];
-                }
-                total += obj.GivenSkills.Count;
-
+                Skill skill = living.ActiveLink.gameObject.GetComponent<Totem>().linkSkill[skillNumber];
+                return skill;
+            }
+            else
+            {
+                Debug.LogError("Link is active but no linkable type script found on active skill");
+                return null;
             }
         }
-        Debug.LogError("Skill number not found");
-        return null;
     }
 
     public static int SkillToNumber(LivingPlaceable living, Skill skill)
     {
-        int total = living.Skills.FindIndex(skill.Equals);
-        if (total != -1)
+        if (null == living.ActiveLink)
         {
-            return total;
+            int total = living.Skills.FindIndex(skill.Equals);
+            if (total != -1)
+            {
+                return total;
+            }
+            else
+            {
+                total = living.Skills.Count;
+                foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+                {
+                    if (obj.GivenSkills.FindIndex(skill.Equals) == -1)
+                    {
+                        total += obj.GivenSkills.Count;
+                    }
+                    else
+                    {
+                        total += obj.GivenSkills.FindIndex(skill.Equals);
+                        return total;
+                    }
+                }
+                Debug.LogError("Skill id was not found even in given skills!");
+                return -1;
+            }
         }
         else
         {
-            total = living.Skills.Count;
-            foreach (ObjectOnBloc obj in living.GetObjectsOnBlockUnder())
+            if (null != living.ActiveLink.gameObject.GetComponent<Totem>())
             {
-                if (obj.GivenSkills.FindIndex(skill.Equals) == -1)
+                Totem totem = living.ActiveLink.gameObject.GetComponent<Totem>();
+                int total = totem.linkSkill.FindIndex(skill.Equals);
+                if (total != -1)
                 {
-                    total += obj.GivenSkills.Count;
-                }
-                else
-                {
-                    total += obj.GivenSkills.FindIndex(skill.Equals);
                     return total;
                 }
+
+                Debug.LogError("Link is Totem but no skill found that corresponds");
+                return -1;
             }
-            Debug.LogError("Skill id was not found even in given skills!");
-            return -1;
+            else
+            {
+                Debug.LogError("Link is active but no linkable type script found on active skill");
+                return -1;
+            }
         }
     }
     /*
@@ -1537,7 +1575,14 @@ public class Player : NetworkBehaviour
             {
                 gameObject.GetComponent<UIManager>().UpdateAvailability();
             }
-            cameraScript.BackToMovement();
+            if (GameManager.instance.State == States.Link)
+            {
+                gameObject.GetComponent<UIManager>().linkSkillZone.GetComponent<LinkDisplayer>().BreakLink();
+            }
+            else
+            {
+                cameraScript.BackToMovement();
+            }
         }
     }
 
@@ -1568,7 +1613,33 @@ public class Player : NetworkBehaviour
 
         if (askingPlaceable.Player.isLocalPlayer)
         {
+            if (skill.linkskill)
+            {
+                gameObject.GetComponent<UIManager>().linkSkillZone.GetComponent<LinkDisplayer>().BreakLink();
+            }
+            else if(GameManager.instance.State != States.Link)
+            {
+                cameraScript.BackToMovement();
+            }
+        }
+    }
+
+    [Command]
+    public void CmdCutLink()
+    {
+        GameManager.instance.PlayingPlaceable.ActiveLink = null;
+        GameManager.instance.State = States.Move;
+        RpcCutLink();
+    }
+
+    [ClientRpc]
+    public void RpcCutLink()
+    {
+        GameManager.instance.PlayingPlaceable.ActiveLink = null;
+        if (isLocalPlayer)
+        {
             cameraScript.BackToMovement();
+            cameraScript.SetTarget(GameManager.instance.PlayingPlaceable.transform);
         }
     }
 }

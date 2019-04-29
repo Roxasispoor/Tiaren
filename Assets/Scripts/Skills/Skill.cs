@@ -42,8 +42,9 @@ public abstract class Skill
 
     protected bool throughblocks = false;
     protected bool squareShaped = false;
+    public bool linkskill = false;
 
-    public int MaxRange { get => maxRange;}
+    public int MaxRange { get => maxRange; set => maxRange = value; }
     public int MinRange { get => minRange;}
     public bool SquareShaped { get => squareShaped;}
     public bool Throughblocks { get => throughblocks;}
@@ -59,7 +60,7 @@ public abstract class Skill
     /// <summary>
     /// Should the skill be automaticaly lauched when we click on the icon.
     /// </summary>
-    protected bool oneClickUse = false;
+    public bool oneClickUse = false;
 
 
     // ####### OLD #########
@@ -119,7 +120,6 @@ public abstract class Skill
         this.cooldownTurnLeft = this.cooldown;
         caster.CurrentPA -= Cost;
         return true;
-
     }
 
 
@@ -152,7 +152,10 @@ public abstract class Skill
     
     public void Activate()
     {
-
+        if(GameManager.instance.State == States.Link && !linkskill)
+        {
+            return;
+        }
         if (GameManager.instance.ActiveSkill == this)
         {
             GameManager.instance.PlayingPlaceable.Player.cameraScript.BackToMovement();

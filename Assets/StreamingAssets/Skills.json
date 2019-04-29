@@ -273,10 +273,40 @@
     "minRange": 0,
     "targetType": 1
 	},
-  "UseZipline": {
-    "skillName": "Zip !",
+	"TotemLinkSkill": {
+    "skillName": "Totem Linking",
     "cost": 0,
     "cooldown": 0,
+    "spritePath": "default",
+    "description": "Creates a link with one of your totems to use special abilities",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 1
+	},
+	"HealingTotemLinkSkill": {
+    "skillName": "Totem Heal",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "default",
+    "description": "Restore 1 HP to this totem",
+    "maxRange": 0,
+    "minRange": 0,
+    "targetType": 1
+	},
+	"ExplosionLinkSkill": {
+    "skillName": "Totem Damage",
+    "cost": 1,
+    "cooldown": 1,
+    "spritePath": "default",
+    "description": "Deals damage to all enemies in range but deals 1 damage to the Totem",
+    "maxRange": 4,
+    "minRange": 0,
+    "targetType": 1
+	},
+  "UseZipline": {
+    "skillName": "Zip !",
+    "cost": 1,
+    "cooldown": 1,
     "spritePath": "Zip",
     "description": "Travel fast using the zipline",
     "maxRange": 0,

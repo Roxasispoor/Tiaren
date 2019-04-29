@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
 {
+    [SerializeField]
     protected int hp;
     [SerializeField]
     protected int MaxHp;
     protected enum State { PURE, CORRUPTED}
     protected State state = State.PURE;
     [SerializeField]
-    protected float range;
+    private int range;
     [SerializeField]
     protected GameObject rangeDisplay;
 
@@ -18,12 +20,18 @@ public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
     [SerializeField]
     protected ParticleSystem particulesForState;
 
+    public int Range { get => range; set => range = value; }
+
+    public List<Skill> linkSkill;
+
 
     // Start is called before the first frame update
     protected override void Awake()
     {
         base.Awake();
         hp = MaxHp;
+        linkSkill = new List<Skill>(); 
+        InitializeLinkSkils();
     }
 
     public void ReceiveDamage(float damage)
@@ -63,6 +71,12 @@ public abstract class Totem : StandardCube, IEffectOnTurnStart, IHurtable
             ps.startColor = Color.white;
         }
         */
+    }
+
+    protected void InitializeLinkSkils()
+    {
+        linkSkill.Add(HealingTotemLinkSkill.CreateNewInstanceFromReferenceAndSetTarget(this));
+        linkSkill.Add(ExplosionLinkSkill.CreateNewInstanceFromReferenceAndSetTarget(this));
     }
 
     public override void HighlightForAttacks()
