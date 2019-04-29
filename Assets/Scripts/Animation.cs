@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Animation
+namespace Animation
 {
-    public virtual IEnumerator Animate()
+    public abstract class Animation
     {
-        return null;
-    }
+        public virtual IEnumerator Animate()
+        {
+            return null;
+        }
 
-    public IEnumerator Launch()
-    {
-        Debug.LogError("Launch animation!  + this.GetHashCode()");
-        yield return Animate();
-        Debug.LogError("End of animation.");
-        AnimationHandler.Instance.NotifyAnimationEnded(this);
+        public IEnumerator Launch()
+        {
+            yield return Animate();
+            AnimationHandler.Instance.NotifyAnimationEnded(this);
+        }
     }
 }

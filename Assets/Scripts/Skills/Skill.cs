@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
+using Animation;
 /// <summary>
 /// Class representing a skill usable by player through a character of his team
 /// </summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Animation;
 
 /// <summary>
 /// Represents a player
@@ -1106,17 +1107,6 @@ public class Player : NetworkBehaviour
     {
         if (path.Count > 1)
         {
-
-            /*
-            if (placeable.moveCoroutine != null)
-            {
-                placeable.StopCoroutine(placeable.moveCoroutine);
-                placeable.moveCoroutine = null;
-
-            }
-            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, useCurve: useCurve));
-            */
-
             AnimationHandler.Instance.QueueAnimation(new WalkAnimation(placeable, path));
         }
     }
