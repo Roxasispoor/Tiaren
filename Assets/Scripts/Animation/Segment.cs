@@ -14,11 +14,6 @@ namespace Animation
         {
             return (1 - index) * start + index * end;
         }
-
-        protected override float computeDistance()
-        {
-            return (end - start).magnitude;
-        }
     }
 }
 

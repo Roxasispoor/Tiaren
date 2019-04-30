@@ -14,10 +14,10 @@ namespace Animation
         {
             this.start = start;
             this.end = end;
-            this.distance = computeDistance();
+            //this.distance = computeDistance();
         }
 
-        protected abstract float computeDistance();
+        //protected abstract float computeDistance();
 
         /// <summary>
         /// Compute the position relative to this element
