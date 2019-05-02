@@ -8,7 +8,9 @@ public class Menu : MonoBehaviour{
 
     public GameObject baseMenu;
     public GameObject tutorial;
+    public GameObject teamBuilder;
     public GameObject credits;
+    public Button quit;
     public List<Sprite> slides;
     public Image PrefabImageTuto;
     public int slideNumber = 0;
@@ -19,13 +21,14 @@ public class Menu : MonoBehaviour{
     private void Awake()
     {
         descriptions = new List<string>();
-        StreamReader reader = new StreamReader(path);
+        StreamReader reader = new StreamReader(Path.Combine(Application.streamingAssetsPath, path));
         string line;
         while ((line = reader.ReadLine()) != null)
         {
             descriptions.Add(line);
         }
         reader.Close();
+        quit.onClick.AddListener(Application.Quit);
 
         SoundHandler.Instance.StartMenuMusic();
     }
@@ -44,10 +47,17 @@ public class Menu : MonoBehaviour{
         credits.SetActive(true);
     }
 
+    public void ToggleTeamBuilder()
+    {
+        baseMenu.SetActive(false);
+        teamBuilder.SetActive(true);
+    }
+
     public void BackToBase()
     {
         tutorial.SetActive(false);
         credits.SetActive(false);
+        teamBuilder.SetActive(false);
         baseMenu.SetActive(true);
     }
 

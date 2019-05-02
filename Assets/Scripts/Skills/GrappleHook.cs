@@ -28,15 +28,25 @@ public class GrappleHook : Skill
 
     public override void Preview(NetIdeable target)
     {
-        offset = FindDestinationOffset(GameManager.instance.PlayingPlaceable, (StandardCube)target);
+        if (CheckAccessible(GameManager.instance.PlayingPlaceable, (StandardCube)target, true))
+        {
+            if (offset.y == 1 || offset.y == -1)
+            {
+                Debug.Log("offset = " + offset);
+                Vector3 offsetPreview = GameManager.instance.PlayingPlaceable.GetPosition() - (Vector3)(target.GetPosition() + offset);
+                Debug.Log("offsetPreview = " + offsetPreview);
+                float max = Mathf.Max(Mathf.Abs(offsetPreview.x), Mathf.Abs(offsetPreview.z));
+                offsetPreview.y = 0;
+                offsetPreview.x /= max;
+                offsetPreview.z /= max;
 
-        Vector3 offsetPreview = GameManager.instance.PlayingPlaceable.GetPosition() - (Vector3)(target.GetPosition() + offset);
-        float max = Mathf.Max(Mathf.Abs(offsetPreview.x), Mathf.Abs(offsetPreview.z));
-        offsetPreview.y = 0;
-        offsetPreview.x /= max;
-        offsetPreview.z /= max;
-
-        FXManager.instance.Grapplepreview((StandardCube)target, offset + offsetPreview);
+                FXManager.instance.Grapplepreview((StandardCube)target, offset + offsetPreview);
+            }
+            else
+            {
+                FXManager.instance.Grapplepreview((StandardCube)target, offset);
+            }
+        }
     }
 
     public override void UnPreview(NetIdeable target)
@@ -65,18 +75,42 @@ public class GrappleHook : Skill
 
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
-        offset = FindDestinationOffset(GameManager.instance.PlayingPlaceable, (StandardCube)target);
-        Debug.Log(offset.ToString());
-        MoveEffect.Direction = (target.GetPosition() + offset) - caster.GetPosition();
-        caster.DispatchEffect(MoveEffect);
+        if (CheckAccessible(caster, (StandardCube)target, false))
+        {
+            MoveEffect.Direction = (target.GetPosition() + offset) - caster.GetPosition();
+            caster.DispatchEffect(MoveEffect);
+        }
     }
 
-    private Vector3Int FindDestinationOffset(LivingPlaceable caster, StandardCube target)
+    //Checks accessibility of the side pointed and sets the offset used for preview and use
+    public bool CheckAccessible(LivingPlaceable caster, StandardCube target, bool isPreview)
     {
-        if(null == Grid.instance.GetPlaceableFromVector(target.GetPosition() + new Vector3Int(0,1,0)))
+        SelectionInfo curentinfo = CollectSelectionInfo(isPreview);
+        Vector3 startingPoint = caster.GetPosition();
+
+        if(null != Grid.instance.GetPlaceableFromVector(target.GetPosition() + curentinfo.face))
         {
-            return new Vector3Int(0, 1, 0);
+            Debug.Log("The desired position is occupied");
+            return false;
         }
-        return new Vector3Int();
+        Vector3 direction = (target.GetPosition() + curentinfo.face * 0.55f) - startingPoint;
+        if (target.GetPosition().y >= startingPoint.y)
+        {
+            if (Physics.Raycast(startingPoint, direction.normalized, direction.magnitude, LayerMask.GetMask("Cube") | LayerMask.GetMask("Totems")) && curentinfo.face != new Vector3(0, 1, 0))
+            {
+                Debug.Log("There is something in the way");
+                return false;
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(startingPoint, direction.normalized, direction.magnitude, LayerMask.GetMask("Cube") | LayerMask.GetMask("Totems")))
+            {
+                Debug.Log("There is something in the way");
+                return false;
+            }
+        }
+        offset = Vector3Int.FloorToInt(curentinfo.face);
+        return true;
     }
 }

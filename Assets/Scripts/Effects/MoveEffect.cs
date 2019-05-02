@@ -119,6 +119,6 @@ public class MoveEffect : EffectOnLiving {
 
     public override void ResetPreview(NetIdeable target)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 }

@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
+    
     /// <summary>
     /// Name of the file to charge for the map
     /// </summary>

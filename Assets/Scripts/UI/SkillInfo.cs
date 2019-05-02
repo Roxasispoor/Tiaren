@@ -50,7 +50,6 @@ public class SkillInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             {
                 skill.Preview(null);
             }
-            Debug.Log("range of skill " + skill.MaxRange);
         }
     }
 

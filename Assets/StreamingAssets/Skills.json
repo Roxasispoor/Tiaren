@@ -5,9 +5,11 @@
     "cooldown": 0,
     "spritePath": "Push",
     "description": "Push a block",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 1,
+	"targetShape": "basic",
     "damage": 20,
     "nbCases": 1
   },
@@ -17,9 +19,11 @@
     "cooldown": 0,
     "spritePath": "Create",
     "description": "Create a block",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 0,
     "targetType": 1,
+	"targetShape": "basic",
     "cubeName": "Cube"
   },
   "DestroySkill": {
@@ -28,9 +32,11 @@
     "cooldown": 0,
     "spritePath": "Destruction",
     "description": "Destroy a block",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 0,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
   },
   "SwordAttack": {
     "skillName": "Sword attack",
@@ -38,9 +44,11 @@
     "cooldown": 1,
     "spritePath": "Sword attack",
     "description": "An attack with a sword",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
+	"targetShape": "basic",
     "power": 40
   },
   "SpinningAttack": {
@@ -49,9 +57,11 @@
     "cooldown": 1,
     "spritePath": "Spinning attack",
     "description": "Spinning attack dealing damage all around you",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
+	"targetShape": "basic",
     "power": 28
   },
   "BleedingAttack": {
@@ -60,9 +70,11 @@
     "cooldown": 2,
     "spritePath": "Bleeding",
     "description": "Damage over time",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
+	"targetShape": "basic",
     "damage": 10,
     "nbTurns": 3
   },
@@ -72,9 +84,11 @@
     "cooldown": 1,
     "spritePath": "Leg swipe",
     "description": "Hit in the legs reducing movement by 1",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
+	"targetShape": "basic",
     "damage": 10,
     "buffValue": -1,
   },
@@ -84,9 +98,11 @@
     "cooldown": 1,
     "spritePath": "Tackle",
     "description": "Charge in a line push things on the way",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 3,
+	"targetShape": "basic",
     "power": 28
   },
   "BowShot": {
@@ -95,9 +111,11 @@
     "cooldown": 1,
     "spritePath": "Bow shot",
     "description": "Ranged attack with your bow",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 2,
     "targetType": 0,
+	"targetShape": "basic",
     "power": 40
   },
   "PiercingShot": {
@@ -106,9 +124,11 @@
     "cooldown": 1,
     "spritePath": "Piercing shot",
     "description": "Ranged attack that pierces through blocks and people",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 5,
     "minRange": 3,
     "targetType": 0,
+	"targetShape": "basic",
     "power": 30
   },
   "HighGround": {
@@ -117,9 +137,11 @@
     "cooldown": 1,
     "spritePath": "Higher Ground",
     "description": "Ranged attack with your bow",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "height": 2,
     "cubeName": "Cube"
   },
@@ -129,9 +151,11 @@
     "cooldown": 1,
     "spritePath": "default",
     "description": "Hit in the legs reducing movement by 1",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 0,
     "targetType": 0,
+	"targetShape": "basic",
     "damage": 10,
     "buffValue": 1
   },
@@ -141,9 +165,11 @@
     "cooldown": 1,
     "spritePath": "ZipLine",
     "description": "Create a zipline",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "prefabZiplineName": "ZipParent"
   },
   "MagicMissile": {
@@ -152,9 +178,11 @@
     "cooldown": 1,
     "spritePath": "Staff shot",
     "description": "Ranged magical attack",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 3,
     "minRange": 1,
     "targetType": 0,
+	"targetShape": "basic",
     "power": 45
   },
   "Wall": {
@@ -163,9 +191,11 @@
     "cooldown": 1,
     "spritePath": "Wall",
     "description": "Create a wall",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "sizeZone": 2,
     "cubeName": "Cube"
   },
@@ -175,9 +205,11 @@
     "cooldown": 1,
     "spritePath": "Fissure",
     "description": "Create a chasm",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 0,
     "targetType": 1,
+	"targetShape": "basic",
     "sizeZone": 2
   },
   "Fireball": {
@@ -186,10 +218,12 @@
     "cooldown": 1,
     "spritePath": "Fireball",
     "description": "Explosive fireball dealing damage and destroying the terrain in a radius around the target",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "sizeZone": 2,
     "targetType": 3,
+	"targetShape": "basic",
     "power": 45
   },
   "EarthBending": {
@@ -198,9 +232,11 @@
     "cooldown": 1,
     "spritePath": "EarthBending",
     "description": "Lift a cube from the ground and throw it straight ahead",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 1,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "nbCasePush": 4,
     "damage": 50
   },
@@ -210,9 +246,11 @@
     "cooldown": 1,
     "spritePath": "RepulsiveGrenade",
     "description": "throw a grenade pushing the character away of the center of the explosion",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "nbCasePush": 2,
     "damagePush": 10,
     "damage": 5
@@ -223,9 +261,11 @@
     "cooldown": 1,
     "spritePath": "default",
     "description": "Grapple to move around",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 5,
     "minRange": 1,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
   },  
 	"MakibishiSkill": {
     "skillName": "Makibishi",
@@ -233,9 +273,11 @@
     "cooldown": 0,
     "spritePath": "default",
     "description": "Spread caltrops on the ground, hurting anyone who steps on it",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "prefabName": "MakibishiParent",
 	"power": 15
   },	
@@ -245,9 +287,11 @@
     "cooldown": 0,
     "spritePath": "default",
     "description": "Creates a Totem that gives HP, beware the fallen form...",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "cubeName": "TotemHP",
 	"power": 15
   },	
@@ -257,9 +301,11 @@
     "cooldown": 0,
     "spritePath": "default",
     "description": "Creates a Totem that gives AP, beware the fallen form...",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 1,
     "targetType": 1,
+	"targetShape": "basic",
     "cubeName": "TotemAP",
 	"power": 1
   },
@@ -269,9 +315,11 @@
     "cooldown": 1,
     "spritePath": "Destruction",
     "description": "Instantly destroy one of your totems",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 0,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
 	},
 	"TotemLinkSkill": {
     "skillName": "Totem Linking",
@@ -279,9 +327,11 @@
     "cooldown": 0,
     "spritePath": "default",
     "description": "Creates a link with one of your totems to use special abilities",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 0,
     "minRange": 0,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
 	},
 	"HealingTotemLinkSkill": {
     "skillName": "Totem Heal",
@@ -289,9 +339,11 @@
     "cooldown": 1,
     "spritePath": "default",
     "description": "Restore 1 HP to this totem",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 0,
     "minRange": 0,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
 	},
 	"ExplosionLinkSkill": {
     "skillName": "Totem Damage",
@@ -299,9 +351,11 @@
     "cooldown": 1,
     "spritePath": "default",
     "description": "Deals damage to all enemies in range but deals 1 damage to the Totem",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 4,
     "minRange": 0,
-    "targetType": 1
+    "targetType": 1,
+	"targetShape": "basic",
 	},
   "UseZipline": {
     "skillName": "Zip !",
@@ -309,9 +363,11 @@
     "cooldown": 1,
     "spritePath": "Zip",
     "description": "Travel fast using the zipline",
+    "menuDescription": "Instantly destroy one of your totems",
     "maxRange": 0,
     "minRange": 0,
-    "targetType": 0
+    "targetType": 0,
+	"targetShape": "basic",
   },
   "PickObject": {
     "skillName": "Pick ",

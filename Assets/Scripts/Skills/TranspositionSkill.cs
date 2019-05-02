@@ -1,30 +1,21 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grapple : Skill
+public class TranspositionSkill : Skill
 {
-
-
-    public Grapple(string JSON) : base(JSON)
+    public TranspositionSkill(string JSON) : base(JSON)
     {
-        Debug.LogError("Creating a grapple skill");
+        Debug.LogError("Creating a Transposition skill");
         JObject deserializedSkill = JObject.Parse(JSON);
-        base.Init(deserializedSkill["Grapple"]);
-        InitSpecific(deserializedSkill["Grapple"]);
-    }
-
-    private void InitSpecific(JToken deserializedSkill)
-    {
-        effects = new List<Effect>();
-        effects.Add(new MoveEffect());
+        base.Init(deserializedSkill["TranspositionSkill"]);
+        Init(deserializedSkill["TranspositionSkill"]);
     }
 
     public override void Preview(NetIdeable target)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("no preview for transposition");
     }
 
     protected override bool CheckSpecificConditions(LivingPlaceable caster, NetIdeable target)
