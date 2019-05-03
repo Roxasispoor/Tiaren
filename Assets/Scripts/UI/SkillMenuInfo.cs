@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class SkillMenuInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -20,28 +21,27 @@ public class SkillMenuInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public string targets;
     public int power = 0;
 
-    public SkillMenuInfo(string JSON, string name)
-    {
-        JObject deserializedSkillInfo = JObject.Parse(JSON);
-        Initialize(deserializedSkillInfo, name);
-    }
+    public Image display;
+    public GameObject highlight;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         GetComponentInParent<TeamBuilder>().DisplaySkillInfo(this);
+        highlight.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         GetComponentInParent<TeamBuilder>().ResetSkillInfo();
+        highlight.SetActive(false);
     }
 
-    private void Initialize(JObject deserializedSkillInfo, string name)
+    public void Initialize(JObject deserializedSkillInfo, string name)
     {
         skillName = (string)deserializedSkillInfo[name]["skillName"];
         cooldown = (int)deserializedSkillInfo[name]["cooldown"];
         cost = (int)deserializedSkillInfo[name]["cost"];
-        string spritePath = (string)deserializedSkillInfo[name]["skillName"];
+        string spritePath = (string)deserializedSkillInfo[name]["spritePath"];
         skillSprite = Resources.Load<Sprite>("UI_Images/Abilities/" + spritePath);
         maxRange = (int)deserializedSkillInfo[name]["maxRange"];
         minRange = (int)deserializedSkillInfo[name]["minRange"];
@@ -50,5 +50,7 @@ public class SkillMenuInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         targetSprite = Resources.Load<Sprite>("UI_Images/Abilities/Shapes/" + targetShape);
         targets = (string)deserializedSkillInfo[name]["targets"];
         power = (int?)deserializedSkillInfo[name]["power"] ?? 0;
+
+        display.sprite = skillSprite;
     }
 }

@@ -40,14 +40,19 @@ public class TeamBuilder : MonoBehaviour
 
     public List<CharacterMenuInfo> PossibleCharacters;
 
-    public GameObject CharacterInfoDisplay;
+    public GameObject characterInfoDisplay;
+    public GameObject skillInfoDisplay;
+    public GameObject possibleCharactersDisplay;
+    public GameObject cancelButton;
+    public GameObject saveButton;
+    public GameObject returnButton;
 
     public Dictionary<SkillTypes, string> menuSkills;
 
 
     //PlayerPref variables
 
-    private void Awake()
+    private void Start()
     {
         menuSkills = new Dictionary<SkillTypes, string>();
         menuSkills.Add(SkillTypes.PUSH, "PushSkill");
@@ -125,6 +130,10 @@ public class TeamBuilder : MonoBehaviour
     {
         titleCard.SetActive(false);
         activeTeam = team;
+        state = States.TeamModify;
+        cancelButton.SetActive(true);
+        saveButton.SetActive(true);
+        returnButton.SetActive(false);
         foreach(TeamInfo teamTest in teams)
         {
             if(team != teamTest)
@@ -132,34 +141,76 @@ public class TeamBuilder : MonoBehaviour
                 teamTest.gameObject.SetActive(false);
             }
         }
-        team.ActivateModifyUI();
+        if (team.ActivateModifyUI())
+        {
+            possibleCharactersDisplay.SetActive(true);
+            if(team.chosenCharacters[0] != null)
+            {
+                ActivateCharacter(team.chosenCharacters[0]);
+            }
+            else
+            {
+                activeCharacter = PossibleCharacters[0];
+                PossibleCharacters[0].toggle.isOn = true;
+            }
+        }
     }
 
-    public void DeactivateModifyTeam(TeamInfo team)
+    private void ActivateCharacter(CharacterMenuInfo character)
     {
+        int actualCharacter = PossibleCharacters.FindIndex(character.Equals);
+        activeCharacter = PossibleCharacters[actualCharacter];
+        PossibleCharacters[actualCharacter].toggle.isOn = true;
+    }
+
+    public void DeactivateModifyTeam()
+    {
+        state = States.TeamSelect;
+        cancelButton.SetActive(false);
+        saveButton.SetActive(false);
+        returnButton.SetActive(true);
         titleCard.SetActive(true);
-        activeTeam = null;
+        activeCharacter.skillDisplay.SetActive(false);
+        activeCharacter.toggle.group.SetAllTogglesOff();
+        activeCharacter = null;
+        possibleCharactersDisplay.SetActive(false);
+        characterInfoDisplay.SetActive(false);
+        activeTeam.DeactivateModifyUI();
         foreach (TeamInfo teamTest in teams)
         {
             teamTest.gameObject.SetActive(true);
         }
-        team.DeactivateModifyUI();
+        activeTeam = null;
     }
 
-    //Goes back to base team builer ui and update info
-    public void ResetModify()
+    public void CancelModification()
     {
-        UpdateDisplay();
+        activeTeam.ResetModification();
+        DeactivateModifyTeam();
+    }
+
+    public void ModifyActiveTeamInfo()
+    {
+        if(state == States.TeamSelect)
+        {
+            return;
+        }
+        activeTeam.SetCharacterForSlot(activeCharacter);
     }
 
     //save info of current active team to player pref
     public void SaveInfo()
     {
-        int index = teams.FindIndex(activeTeam.Equals);
-        SetPref("TEAM_" + index + "_NAME", activeTeam.TeamName);
-        for (int i = 0; i < activeTeam.ChosenCharacters.Count; i++)
+        if (activeTeam.CheckReadyForSave())
         {
-            SetPref("TEAM_" + index + "_Player_" + i, PossibleCharacters.FindIndex(activeTeam.ChosenCharacters[i].Equals));
+            int index = teams.FindIndex(activeTeam.Equals);
+            SetPref("TEAM_" + index + "_NAME", activeTeam.TeamName);
+            for (int i = 0; i < activeTeam.chosenCharacters.Length; i++)
+            {
+                SetPref("TEAM_" + index + "_Player_" + i, PossibleCharacters.FindIndex(activeTeam.chosenCharacters[i].Equals));
+            }
+            Debug.Log("Team : " + GetStringPref("TEAM_" + index + "_NAME").ToString());
+            DeactivateModifyTeam();
         }
     }
 
@@ -170,14 +221,20 @@ public class TeamBuilder : MonoBehaviour
         {
             return;
         }
+        if(character != activeCharacter && activeCharacter != null)
+        {
+            activeCharacter.DeactivateInfoDisplay();
+        }
+        character.ActivateInfoDisplay();
+        characterInfoDisplay.SetActive(true);
         className.text = character.characterStat.className;
-        hpDisplay.text = "HP : " + character.characterStat.maxHP;
-        apDisplay.text = "AP : " + character.characterStat.paMax;
-        jumpDisplay.text = "JUMP : " + character.characterStat.jump;
-        speedDisplay.text = "Speed : " + character.characterStat.speed;
-        movDisplay.text = "MOV : " + character.characterStat.pmMax;
-        defDisplay.text = "Def : " + character.characterStat.def;
-        mdefDisplay.text = "M.Def : " + character.characterStat.mdef;
+        hpDisplay.text = "HP : " + character.characterStat.maxHP.ToString();
+        apDisplay.text = "AP : " + character.characterStat.paMax.ToString();
+        jumpDisplay.text = "JUMP : " + character.characterStat.jump.ToString();
+        speedDisplay.text = "Speed : " + character.characterStat.speed.ToString();
+        movDisplay.text = "MOV : " + character.characterStat.pmMax.ToString();
+        defDisplay.text = "Def : " + character.characterStat.def.ToString();
+        mdefDisplay.text = "M.Def : " + character.characterStat.mdef.ToString();
         characterDescription.text = character.description;
         characterImage.sprite = character.characterSprite;
         activeCharacter = character;
@@ -190,7 +247,9 @@ public class TeamBuilder : MonoBehaviour
         {
             return;
         }
-        className.text = skill.name;
+        characterInfoDisplay.SetActive(false);
+        skillInfoDisplay.SetActive(true);
+        skillName.text = skill.skillName;
         cooldownDisplay.text = "Cooldown : " + skill.cooldown;
         costDisplay.text = "Cost : " + skill.cooldown;
         targetDescription.text = "Targets : " + skill.targets;
@@ -200,7 +259,12 @@ public class TeamBuilder : MonoBehaviour
 
         if(skill.power != 0)
         {
+            powerDisplay.gameObject.SetActive(true);
             powerDisplay.text = "Power : " + skill.power;
+        }
+        else
+        {
+            powerDisplay.gameObject.SetActive(false);
         }
 
         shape.sprite = skill.targetSprite;
@@ -210,6 +274,7 @@ public class TeamBuilder : MonoBehaviour
 
     public void ResetSkillInfo()
     {
+        skillInfoDisplay.SetActive(false);
         DisplayCharacterInfo(activeCharacter);
     }
 

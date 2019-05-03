@@ -55,4 +55,9 @@ public struct Attribute
             percentModif = value;
         }
     }
+
+    public override string ToString()
+    {
+        return baseValue.ToString();
+    }
 }

@@ -12,9 +12,11 @@ public class CharacterMenuInfo : MonoBehaviour
     public Stats characterStat;
     public Sprite characterSprite;
     public string description;
-    List<SkillMenuInfo> skillsInfos = new List<SkillMenuInfo>();
+    public List<SkillMenuInfo> skillsInfos;
 
-    public Image toggle;
+    public GameObject skillDisplay;
+
+    public Toggle toggle;
 
     public void Initialize(string className)
     {
@@ -35,20 +37,27 @@ public class CharacterMenuInfo : MonoBehaviour
         List<JToken> jTokens = deserializedCharac["ChosenSkills"].Children().ToList();
         StreamReader skillReader = new StreamReader(Path.Combine(Application.streamingAssetsPath, "Skills.json"));
         string skillJson = skillReader.ReadToEnd();
-        foreach (JToken jToken in jTokens)
+        for(int i = 0; i<jTokens.Count; i++)
         {
-            SkillTypes type = jToken.ToObject<SkillTypes>();
+            SkillTypes type = jTokens[i].ToObject<SkillTypes>();
             string typeName;
             if (GetComponentInParent<TeamBuilder>().menuSkills.TryGetValue(type, out typeName))
             {
-                skillsInfos.Add(new SkillMenuInfo(skillJson, typeName));
+                JObject deserializedSkillInfo = JObject.Parse(skillJson);
+                skillsInfos[i].Initialize(deserializedSkillInfo, typeName);
             }
         }
-        toggle.sprite = characterSprite;
+        toggle.image.sprite = characterSprite;
     }
 
-    public void displayInformation()
+    public void ActivateInfoDisplay()
     {
-        GetComponentInParent<TeamBuilder>().DisplayCharacterInfo(this);
+        skillDisplay.SetActive(true);
+        
+    }
+
+    public void DeactivateInfoDisplay()
+    {
+        skillDisplay.SetActive(false);
     }
 }
