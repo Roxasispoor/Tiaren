@@ -9,18 +9,12 @@ namespace Animation
 
         // ##################### NEW VARIABLE ##########################
 
-        private Queue<Animation> AnimationSequence;
+        private Queue<AnimationBlock> animationSequence;
 
+        private AnimationBlock animationCurrentlyBuild;
 
-        // ##################### OLD VARIABLE ##########################
         private static AnimationHandler m_Instance = null;
-        // dictionary of enums
-        Dictionary<string, string> AnimDictionary;
-        public string SkillAnimationToPlay;
-        public Animator animLauncher;
-        public List<Animator> animTargets;
-        public List<Placeable> placeableTargets;
-        public List<Vector3> positionTargets;
+
         public static AnimationHandler Instance
         {
             get
@@ -33,12 +27,21 @@ namespace Animation
                 return m_Instance;
             }
         }
+        // ##################### OLD VARIABLE ##########################
+        // dictionary of enums
+        Dictionary<string, string> AnimDictionary;
+        public string SkillAnimationToPlay;
+        public Animator animLauncher;
+        public List<Animator> animTargets;
+        public List<Placeable> placeableTargets;
+        public List<Vector3> positionTargets;
 
 
         // ####################################### NEW STUFF ####################################################
 
         private void Awake()
         {
+            /*
             AnimDictionary = new Dictionary<string, string>() {
 
                     {"Sword attack", "WaitAndBasicAttack" },
@@ -55,28 +58,49 @@ namespace Animation
                     {"Spinning attack","WaitAndSpin" },
                     {"Explosive fireball","WaitAndLaunchFireball" },
                     {"Staff Shot","WaitAndLaunchFireball" },
-                };
+                };*/
 
-            AnimationSequence = new Queue<Animation>();
+            animationSequence = new Queue<AnimationBlock>();
         }
 
-        public void QueueAnimation(Animation animation)
+        public void QueueAnimation(AnimationBlock animation)
         {
-            if (AnimationSequence.Count == 0)
+            if (animationSequence.Count == 0)
             {
                 StartCoroutine(animation.Launch());
             }
 
-            AnimationSequence.Enqueue(animation);
+            animationSequence.Enqueue(animation);
         }
 
-        public void NotifyAnimationEnded(Animation animation)
+        public void NotifyAnimationEnded(AnimationBlock animation)
         {
-            AnimationSequence.Dequeue();
-            if (AnimationSequence.Count > 0)
+            animationSequence.Dequeue();
+            if (animationSequence.Count > 0)
             {
-                StartCoroutine(AnimationSequence.Peek().Launch());
+                StartCoroutine(animationSequence.Peek().Launch());
             }
+        }
+
+        //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)
+        public void AddComponentToCurrentAnimationBlock(AnimationComponent component)
+        {
+            animationCurrentlyBuild.AddComponent(component);
+        }
+
+        public void SetCurrentBuildingAnimation(AnimationBlock animationBlock)
+        {
+            if (animationCurrentlyBuild != null)
+            {
+                Debug.LogError("Warning, trying to change the animation block currently build but the old one is still in the variable");
+            }
+            animationCurrentlyBuild = animationBlock;
+        }
+
+        public void FinishCurrentAnimationCreation()
+        {
+            animationSequence.Enqueue(animationCurrentlyBuild);
+            animationCurrentlyBuild = null;
         }
 
         public Coroutine InstantLaunch(IEnumerator enumerator)

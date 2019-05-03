@@ -4,8 +4,10 @@ using UnityEngine;
 
 namespace Animation
 {
-    public abstract class Animation
+    public abstract class AnimationBlock
     {
+        protected Queue<AnimationComponent> components;
+
         public virtual IEnumerator Animate()
         {
             return null;
@@ -13,8 +15,30 @@ namespace Animation
 
         public IEnumerator Launch()
         {
+            OnStart();
             yield return Animate();
+            while (components.Count > 0)
+            {
+                AnimationComponent current = components.Dequeue();
+                yield return current.Launch();
+            }
+            OnEnd();
             AnimationHandler.Instance.NotifyAnimationEnded(this);
+        }
+
+        protected virtual void OnStart()
+        {
+
+        }
+
+        protected virtual void OnEnd()
+        {
+
+        }
+
+        public void AddComponent(AnimationComponent component)
+        {
+            components.Enqueue(component);
         }
     }
 }
