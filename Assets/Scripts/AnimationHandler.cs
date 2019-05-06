@@ -68,6 +68,9 @@ namespace Animation
 
         public void QueueAnimation(AnimationBlock animation)
         {
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
             if (animationSequence.Count == 0)
             {
                 Debug.Log("Start animation");
@@ -91,11 +94,17 @@ namespace Animation
         //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)
         public void AddComponentToCurrentAnimationBlock(AnimationComponent component)
         {
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
             animationCurrentlyBuild.AddComponent(component);
         }
 
         public void SetCurrentBuildingAnimation(AnimationBlock animationBlock)
         {
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
             if (animationCurrentlyBuild != null)
             {
                 Debug.LogError("Warning, trying to change the animation block currently build but the old one is still in the variable");
@@ -105,6 +114,9 @@ namespace Animation
 
         public void FinishCurrentAnimationCreation()
         {
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
             QueueAnimation(animationCurrentlyBuild);
             animationCurrentlyBuild = null;
         }
