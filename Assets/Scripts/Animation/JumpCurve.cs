@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Animation
 {
-    class JumpCurve : displacementElement
+    class JumpCurve : DisplacementElement
     {
         Vector3 controlPoint;
 
@@ -16,6 +16,13 @@ namespace Animation
         public override Vector3 computePosition(float index)
         {
             return Mathf.Pow(1 - index, 2) * (start) + 2 * (1 - index) * index * (controlPoint) + Mathf.Pow(index, 2) * (end); ;
+        }
+
+        protected override float computeDistance()
+        {
+            Debug.LogError("JumpCurve: Compute distance not implemented.");
+            Vector3 shiftBetween = end - start;
+            return shiftBetween.magnitude;
         }
     }
 }

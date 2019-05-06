@@ -27,6 +27,9 @@ namespace Animation
                 return m_Instance;
             }
         }
+
+        public int Couroutine_count { get { return animationSequence.Count; } }
+
         // ##################### OLD VARIABLE ##########################
         // dictionary of enums
         Dictionary<string, string> AnimDictionary;
@@ -67,6 +70,7 @@ namespace Animation
         {
             if (animationSequence.Count == 0)
             {
+                Debug.Log("Start animation");
                 StartCoroutine(animation.Launch());
             }
 
@@ -78,8 +82,10 @@ namespace Animation
             animationSequence.Dequeue();
             if (animationSequence.Count > 0)
             {
+                Debug.Log("Start animation");
                 StartCoroutine(animationSequence.Peek().Launch());
             }
+            Debug.LogError("Queue in animation: " + animationSequence.Count);
         }
 
         //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)
@@ -99,7 +105,7 @@ namespace Animation
 
         public void FinishCurrentAnimationCreation()
         {
-            animationSequence.Enqueue(animationCurrentlyBuild);
+            QueueAnimation(animationCurrentlyBuild);
             animationCurrentlyBuild = null;
         }
 

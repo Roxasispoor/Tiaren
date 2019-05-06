@@ -119,6 +119,13 @@ public abstract class Skill
             return false;
         }
 
+        if (GameManager.instance.isClient)
+        {
+            InitializeAnimation(caster, target);
+            AnimationHandler.Instance.SetCurrentBuildingAnimation(animation);
+        }
+
+
         UseSpecific(caster, target);
 
 

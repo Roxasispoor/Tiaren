@@ -28,7 +28,7 @@ namespace Animation
 
             //float overTime = 0;
 
-            displacementElement currentElement;
+            DisplacementElement currentElement;
 
             animatorLauncher.SetBool("walking", true);
 

@@ -6,7 +6,7 @@ namespace Animation
 {
     public abstract class AnimationBlock
     {
-        protected Queue<AnimationComponent> components;
+        protected Queue<AnimationComponent> components = new Queue<AnimationComponent>();
 
         public virtual IEnumerator Animate()
         {

@@ -12,6 +12,23 @@ public abstract class NetIdeable : MonoBehaviour {
     public Vector3Int logicPosition = Vector3Int.down;
     public static int currentMaxId = 0;
 
+    [SerializeField]
+    private Transform visualTransorm;
+
+    public Transform VisualTransform
+    {
+        get
+        {
+            if (visualTransorm == null)
+            {
+                return transform;
+            }
+
+            return visualTransorm;
+        }
+    }
+
+
     public Vector3Int GetPosition()
     {
         if(logicPosition == Vector3Int.down)

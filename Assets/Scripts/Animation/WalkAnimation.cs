@@ -31,7 +31,7 @@ namespace Animation
 
             //float overTime = 0;
 
-            displacementElement currentElement;
+            DisplacementElement currentElement;
 
             animator.SetBool("walking", true);
 
@@ -69,6 +69,8 @@ namespace Animation
 
                 stepInPath++;
             }
+
+            placeable.transform.position = path[path.Count - 1];
 
             animator.SetBool("walking", false);
         }
