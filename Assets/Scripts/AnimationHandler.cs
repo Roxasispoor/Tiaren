@@ -73,7 +73,6 @@ namespace Animation
                 return;
             if (animationSequence.Count == 0)
             {
-                Debug.Log("Start animation");
                 StartCoroutine(animation.Launch());
             }
 
@@ -85,10 +84,8 @@ namespace Animation
             animationSequence.Dequeue();
             if (animationSequence.Count > 0)
             {
-                Debug.Log("Start animation");
                 StartCoroutine(animationSequence.Peek().Launch());
             }
-            Debug.LogError("Queue in animation: " + animationSequence.Count);
         }
 
         //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)

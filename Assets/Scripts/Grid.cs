@@ -754,10 +754,14 @@ public class Grid : MonoBehaviour
                 simpleGravity();
 
             }
+            Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
+            Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
             MovePlaceable(gridMatrix[x, y, z], desiredPosition);
         }
         else if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
+            Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
+            Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
             MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
@@ -822,10 +826,6 @@ public class Grid : MonoBehaviour
                        (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
                        (gridMatrix[x, y, z].explored && !gridMatrix[x, y, z].grounded)))
                     {
-                        //batchlist.Add(gridMatrix[x, y, z]);
-                        //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving())
-                            GameManager.instance.RemoveBlockFromBatch((StandardCube)gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null
