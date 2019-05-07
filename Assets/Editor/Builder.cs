@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using System.Diagnostics;
+using UnityEngine;
 
 public class Builder
 {
@@ -7,6 +8,12 @@ public class Builder
     public static void RecompileAll()
     {
         AssetDatabase.Refresh();
+    }
+
+    [MenuItem("MyTools/DeleteAllPrefs")]
+    public static void DeletePrefs()
+    {
+        PlayerPrefs.DeleteAll();
     }
 
     [MenuItem("MyTools/Windows Build With Postprocess")]

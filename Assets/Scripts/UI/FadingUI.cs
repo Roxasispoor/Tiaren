@@ -10,7 +10,7 @@ public class FadingUI : MonoBehaviour
     private float currentTime;
     private bool pulseStarted = false;
 
-    public void StartPulse(Image pulsingImage)
+    public void StartPulseImage(Image pulsingImage)
     {
         gameObject.SetActive(true);
         currentTime = totalTime;
@@ -36,7 +36,7 @@ public class FadingUI : MonoBehaviour
         yield return 0;
     }
 
-    public void StartPulse(TMP_Text pulsingText)
+    public void StartPulseText(TMP_Text pulsingText)
     {
         gameObject.SetActive(true);
         currentTime = totalTime;

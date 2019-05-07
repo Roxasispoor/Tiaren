@@ -9,7 +9,15 @@ public class TeamBuilder : MonoBehaviour
     enum States { TeamSelect, TeamModify };
     private States state = States.TeamSelect;
 
+    public GameObject prefabTeamInfo;
+    public Vector3 firstPosition;
+
+    public GameObject addTeamButton;
+    public Vector3 teamGap;
+
     public GameObject titleCard;
+    public FadingUI teamNameWarning;
+
     public List<TeamInfo> teams;
     private TeamInfo activeTeam;
     private CharacterMenuInfo activeCharacter;
@@ -48,6 +56,7 @@ public class TeamBuilder : MonoBehaviour
     public GameObject returnButton;
 
     public Dictionary<SkillTypes, string> menuSkills;
+
 
 
     //PlayerPref variables
@@ -114,14 +123,32 @@ public class TeamBuilder : MonoBehaviour
         for(int i = 0; i < 5; i++)
         {
             if(PlayerPrefs.HasKey("TEAM_" + i + "_NAME")){
+                GameObject teamObject = Instantiate(prefabTeamInfo, gameObject.transform);
+                teamObject.transform.localPosition = firstPosition - teamGap * i;
+                teams.Add(teamObject.GetComponent<TeamInfo>());
                 string teamName = GetStringPref("TEAM_" + i + "_NAME");
+                int character;
                 CharacterMenuInfo[] characters = new CharacterMenuInfo[3];
                 for(int j = 0; j<3; j++)
                 {
-                    characters[j] = PossibleCharacters[GetIntPref("TEAM_" + i + "_Player_" + j)];
+                    character = GetIntPref("TEAM_" + i + "_Player_" + j);
+                    if(character != -1)
+                    {
+                        characters[j] = PossibleCharacters[GetIntPref("TEAM_" + i + "_Player_" + j)];
+                    }
                 }
                 teams[i].UpdateInfo(teamName, characters);
+                teams[i].teamNumber = i;
+                addTeamButton.transform.localPosition = firstPosition - teamGap * i - new Vector3(680, 100, 0);
             }
+        }
+        if (teams.Count >= 5)
+        {
+            addTeamButton.SetActive(false);
+        }
+        else if(teams.Count == 0)
+        {
+            AddNewTeam();
         }
     }
 
@@ -129,10 +156,9 @@ public class TeamBuilder : MonoBehaviour
     public void ActivateModifyTeam(TeamInfo team)
     {
         titleCard.SetActive(false);
+        addTeamButton.SetActive(false);
         activeTeam = team;
         state = States.TeamModify;
-        cancelButton.SetActive(true);
-        saveButton.SetActive(true);
         returnButton.SetActive(false);
         foreach(TeamInfo teamTest in teams)
         {
@@ -141,18 +167,70 @@ public class TeamBuilder : MonoBehaviour
                 teamTest.gameObject.SetActive(false);
             }
         }
-        if (team.ActivateModifyUI())
+    }
+
+    public void ShowCharacters(TeamInfo team)
+    {
+        possibleCharactersDisplay.SetActive(true);
+        if (team.chosenCharacters[0] != null)
         {
-            possibleCharactersDisplay.SetActive(true);
-            if(team.chosenCharacters[0] != null)
+            ActivateCharacter(team.chosenCharacters[0]);
+        }
+        else
+        {
+            activeCharacter = PossibleCharacters[0];
+            PossibleCharacters[0].toggle.isOn = true;
+        }
+    }
+
+    public void AddNewTeam()
+    {
+        if (teams.Count < 5)
+        {
+            GameObject teamObject = Instantiate(prefabTeamInfo, gameObject.transform);
+            teamObject.transform.localPosition = firstPosition - teamGap * teams.Count;
+            teams.Add(teamObject.GetComponent<TeamInfo>());
+            teams[teams.Count - 1].teamNumber = teams.Count - 1;
+            addTeamButton.transform.localPosition = firstPosition - teamGap * (teams.Count - 1) - new Vector3(680, 100, 0);
+            SaveToPlayerPref(teams[teams.Count - 1]);
+        }
+        if(teams.Count >= 5)
+        {
+            addTeamButton.SetActive(false);
+        }
+    }
+
+    public void RemoveTeam(TeamInfo team)
+    {
+        int index = team.teamNumber;
+        RemoveTeamPref(index);
+        teams.Remove(team);
+        Destroy(team.gameObject);
+        for(int i = index; i < teams.Count; i++)
+        {
+            teams[i].teamNumber = i;
+            teams[i].gameObject.transform.localPosition = firstPosition - teamGap * i;
+            teams[i].UpdatePositionInfo();
+        }
+        addTeamButton.transform.localPosition = firstPosition - teamGap * (teams.Count-1) - new Vector3(680, 100, 0);
+    }
+
+    private void RemoveTeamPref(int teamToRemove)
+    {
+        for (int i = teamToRemove; i < teams.Count - 1; i++)
+        {
+            int nextElem = i + 1;
+            SetPref("TEAM_" + i + "_NAME", GetStringPref("TEAM_" + nextElem + "_NAME"));
+            for (int j = 0; j < teams[i].chosenCharacters.Length; j++)
             {
-                ActivateCharacter(team.chosenCharacters[0]);
+                SetPref("TEAM_" + i + "_Player_" + j, GetIntPref("TEAM_" + nextElem + "_Player_" + j));
             }
-            else
-            {
-                activeCharacter = PossibleCharacters[0];
-                PossibleCharacters[0].toggle.isOn = true;
-            }
+        }
+        int lastElem = teams.Count - 1;
+        PlayerPrefs.DeleteKey("TEAM_" + lastElem + "_NAME");
+        for (int j = 0; j < teams[lastElem].chosenCharacters.Length; j++)
+        {
+            PlayerPrefs.DeleteKey("TEAM_" + lastElem + "_Player_" + j);
         }
     }
 
@@ -161,6 +239,9 @@ public class TeamBuilder : MonoBehaviour
         int actualCharacter = PossibleCharacters.FindIndex(character.Equals);
         activeCharacter = PossibleCharacters[actualCharacter];
         PossibleCharacters[actualCharacter].toggle.isOn = true;
+
+        cancelButton.SetActive(true);
+        saveButton.SetActive(true);
     }
 
     public void DeactivateModifyTeam()
@@ -176,11 +257,19 @@ public class TeamBuilder : MonoBehaviour
         possibleCharactersDisplay.SetActive(false);
         characterInfoDisplay.SetActive(false);
         activeTeam.DeactivateModifyUI();
+        activeTeam = null;
+        if(teams.Count < 5)
+        {
+            addTeamButton.SetActive(true);
+        }
+    }
+
+    public void ActivateTeams()
+    {
         foreach (TeamInfo teamTest in teams)
         {
             teamTest.gameObject.SetActive(true);
         }
-        activeTeam = null;
     }
 
     public void CancelModification()
@@ -198,20 +287,45 @@ public class TeamBuilder : MonoBehaviour
         activeTeam.SetCharacterForSlot(activeCharacter);
     }
 
-    //save info of current active team to player pref
+    /// <summary>
+    /// Save Team to Player pref
+    /// </summary>
+    /// <param name="team"></param>
+    public void SaveToPlayerPref(TeamInfo team)
+    {
+        int index = teams.FindIndex(team.Equals);
+        if(null != team.TeamName)
+        {
+            SetPref("TEAM_" + index + "_NAME", team.TeamName);
+        }
+        else
+        {
+            team.TeamName = "NewTeam " + index;
+            SetPref("TEAM_" + index + "_NAME", "NewTeam " + index);
+        }
+        for (int i = 0; i < team.chosenCharacters.Length; i++)
+        {
+            if (null != team.chosenCharacters[i])
+            {
+                SetPref("TEAM_" + index + "_Player_" + i, PossibleCharacters.FindIndex(team.chosenCharacters[i].Equals));
+            }
+            else
+            {
+                SetPref("TEAM_" + index + "_Player_" + i, -1);
+            }
+        }
+        Debug.Log("Team : " + GetStringPref("TEAM_" + index + "_NAME").ToString());
+        
+    }
+
+    /// <summary>
+    /// Called to save from button when in modify
+    /// </summary>
     public void SaveInfo()
     {
-        if (activeTeam.CheckReadyForSave())
-        {
-            int index = teams.FindIndex(activeTeam.Equals);
-            SetPref("TEAM_" + index + "_NAME", activeTeam.TeamName);
-            for (int i = 0; i < activeTeam.chosenCharacters.Length; i++)
-            {
-                SetPref("TEAM_" + index + "_Player_" + i, PossibleCharacters.FindIndex(activeTeam.chosenCharacters[i].Equals));
-            }
-            Debug.Log("Team : " + GetStringPref("TEAM_" + index + "_NAME").ToString());
-            DeactivateModifyTeam();
-        }
+        SaveToPlayerPref(activeTeam);
+        activeTeam.UpdateDisplay();
+        DeactivateModifyTeam();
     }
 
     //display the info of the currently selected character

@@ -431,11 +431,11 @@ public class UIManager : MonoBehaviour
             {
                 case 1:
                     camModeDisplay.sprite = worldCam;
-                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse(camModeDisplay);
+                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulseImage(camModeDisplay);
                     break;
                 case 0:
                     camModeDisplay.sprite = charaCam;
-                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulse(camModeDisplay);
+                    camModeDisplay.gameObject.GetComponent<FadingUI>().StartPulseImage(camModeDisplay);
                     break;
             }
         } 
