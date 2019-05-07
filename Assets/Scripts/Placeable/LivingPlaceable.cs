@@ -975,7 +975,9 @@ public class LivingPlaceable : Placeable, IHurtable
     public void ReceiveDamage(float damage)
     {
         CurrentHP -= damage;
-        FloatingTextController.CreateFloatingText(damage.ToString(), transform, Color.red);
+        Animation.DamageComponent damageComponent = new Animation.DamageComponent(this, (int) damage);
+        Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(damageComponent);
+        //FloatingTextController.CreateFloatingText(damage.ToString(), transform, Color.red);
         if (CurrentHP <= 0)
         {
             Destroy();

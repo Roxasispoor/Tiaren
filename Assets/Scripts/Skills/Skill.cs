@@ -108,7 +108,7 @@ public abstract class Skill
     //TODO: change to abstract when the animation rework will be finished
     protected virtual void InitializeAnimation(LivingPlaceable caster, NetIdeable target)
     {
-
+        animation = new EmptyAnimation();
     }
 
     public bool Use(LivingPlaceable caster, NetIdeable target)
