@@ -8,7 +8,7 @@
 	},
 	"playerPosesser":"",
 	"maxHP":{"baseValue":160.0},
-	"currentHP":{"baseValue":200.0},
+	"currentHP":{"baseValue":160.0},
 	"pmMax":{"baseValue":5.0},
 	"currentPM":{"baseValue":5.0},
 	"currentPA":{"baseValue":3.0},
