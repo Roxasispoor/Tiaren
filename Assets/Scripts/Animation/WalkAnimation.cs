@@ -37,8 +37,8 @@ namespace Animation
 
             while (stepInPath < path.Count - 1  )
             {
-                Vector3 lookAtPosition = new Vector3(path[stepInPath + 1].x, placeable.transform.position.y, path[stepInPath + 1].z);
-                placeable.transform.LookAt(lookAtPosition);
+                Vector3 lookAtPosition = new Vector3(path[stepInPath + 1].x, placeable.VisualTransform.position.y, path[stepInPath + 1].z);
+                placeable.VisualTransform.LookAt(lookAtPosition);
 
                 if (path[stepInPath].y == path[stepInPath + 1].y)
                 {
@@ -62,7 +62,7 @@ namespace Animation
                         animator.SetTrigger("Land");
                     }
 
-                    placeable.transform.position = currentElement.computePosition(currentPercentage);
+                    placeable.VisualTransform.position = currentElement.computePosition(currentPercentage);
                     yield return null;
 
                 }
@@ -70,7 +70,7 @@ namespace Animation
                 stepInPath++;
             }
 
-            placeable.transform.position = path[path.Count - 1];
+            placeable.VisualTransform.position = path[path.Count - 1];
 
             animator.SetBool("walking", false);
         }
