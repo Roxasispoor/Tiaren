@@ -732,6 +732,10 @@ public class Grid : MonoBehaviour
             if (gridMatrix[x, y - ydrop, z] == null)
             {
                 desiredPosition = new Vector3Int(x, y - ydrop, z);
+
+                Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
+                Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
+
                 if (damage > 0)
                 {
                     character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
@@ -745,6 +749,10 @@ public class Grid : MonoBehaviour
                     character.Destroy();
                     return;
                 }
+
+                Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
+                Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
+
                 if (damage > 0)
                 {
                     character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
@@ -754,8 +762,6 @@ public class Grid : MonoBehaviour
                 simpleGravity();
 
             }
-            Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
-            Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
             MovePlaceable(gridMatrix[x, y, z], desiredPosition);
         }
         else if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
