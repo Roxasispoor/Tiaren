@@ -7,12 +7,19 @@ namespace Animation
     public class AnimationHandler : MonoBehaviour
     {
 
-        // ##################### NEW VARIABLE ##########################
-
+        /// <summary>
+        /// The main queue of animation, the first element is currently played and should be removed when it is finished.
+        /// </summary>
         private Queue<AnimationBlock> animationSequence;
 
+        /// <summary>
+        /// Used when creating an animation via skills, when an effect want to add a component it should add to this animation.
+        /// </summary>
         private AnimationBlock animationCurrentlyBuild;
 
+        /// <summary>
+        /// Singleton pattern instance.
+        /// </summary>
         private static AnimationHandler m_Instance = null;
 
         public static AnimationHandler Instance
@@ -28,75 +35,20 @@ namespace Animation
             }
         }
 
-        public int Couroutine_count { get { return animationSequence.Count; } }
-
-        // ##################### OLD VARIABLE ##########################
-        // dictionary of enums
-        Dictionary<string, string> AnimDictionary;
-        public string SkillAnimationToPlay;
-        public Animator animLauncher;
-        public List<Animator> animTargets;
-        public List<Placeable> placeableTargets;
-        public List<Vector3> positionTargets;
-
-
-        // ####################################### NEW STUFF ####################################################
+        /// <summary>
+        /// Used by the debbuger.
+        /// </summary>
+        public int AnimationblockInQueue { get { return animationSequence.Count; } }
 
         private void Awake()
         {
-            /*
-            AnimDictionary = new Dictionary<string, string>() {
-
-                    {"Sword attack", "WaitAndBasicAttack" },
-                    {"Destruction", "WaitAndDestroyBlock" },
-                    {"Push", "WaitAndPushBlock" },
-                    {"Create", "WaitAndSummonBlock" },
-                    {"Fissure","WaitAndDestroyBlock"},
-                    {"Wall","WaitAndSummonBlock" },
-                    {"Bleeding","WaitAndBleed"},
-                    {"Break a leg","WaitAndLowKick" },
-                    {"Higher Ground","WaitAndSummonBlock"},
-                    {"Piercing shot","WaitAndArrowAttack" },
-                    {"Zipline","WaitAndBuff" },
-                    {"Spinning attack","WaitAndSpin" },
-                    {"Explosive fireball","WaitAndLaunchFireball" },
-                    {"Staff Shot","WaitAndLaunchFireball" },
-                };*/
-
             animationSequence = new Queue<AnimationBlock>();
         }
 
-        public void QueueAnimation(AnimationBlock animation)
-        {
-            if (GameManager.instance.isServer)
-                // TODO: Rather than just return, could use the termitateAnimation when they exist
-                return;
-            if (animationSequence.Count == 0)
-            {
-                StartCoroutine(animation.Launch());
-            }
-
-            animationSequence.Enqueue(animation);
-        }
-
-        public void NotifyAnimationEnded(AnimationBlock animation)
-        {
-            animationSequence.Dequeue();
-            if (animationSequence.Count > 0)
-            {
-                StartCoroutine(animationSequence.Peek().Launch());
-            }
-        }
-
-        //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)
-        public void AddComponentToCurrentAnimationBlock(AnimationComponent component)
-        {
-            if (GameManager.instance.isServer)
-                // TODO: Rather than just return, could use the termitateAnimation when they exist
-                return;
-            animationCurrentlyBuild.AddComponent(component);
-        }
-
+        /// <summary>
+        /// Call at the beginning of the use of a skill, to be completed by the component added by the effectss
+        /// </summary>
+        /// <param name="animationBlock"></param>
         public void SetCurrentBuildingAnimation(AnimationBlock animationBlock)
         {
             if (GameManager.instance.isServer)
@@ -109,6 +61,22 @@ namespace Animation
             animationCurrentlyBuild = animationBlock;
         }
 
+        //Amélioration possible, traiter de manières spécial certain component (par exemple regrouper la gravité)
+        /// <summary>
+        /// Used by effect to add a part of animation to an animationBlock.
+        /// </summary>
+        /// <param name="component"></param>
+        public void AddComponentToCurrentAnimationBlock(AnimationComponent component)
+        {
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
+            animationCurrentlyBuild.AddComponent(component);
+        }
+
+        /// <summary>
+        /// Call at the end of the creation of the animation (when it have passed through all the effect) and put it in the queue.
+        /// </summary>
         public void FinishCurrentAnimationCreation()
         {
             if (GameManager.instance.isServer)
@@ -122,165 +90,37 @@ namespace Animation
         {
             return StartCoroutine(enumerator);
         }
-
-        // ####################################### OLD STUFF ####################################################
-
-        public void PlayAnimation()
+    
+        /// <summary>
+        /// Add a block to the sequence, launch it if there was any before.
+        /// </summary>
+        /// <param name="animation"></param>
+        public void QueueAnimation(AnimationBlock animation)
         {
-            if (AnimDictionary.ContainsKey(SkillAnimationToPlay))
+            if (GameManager.instance.isServer)
+                // TODO: Rather than just return, could use the termitateAnimation when they exist
+                return;
+            if (animationSequence.Count == 0)
             {
-                StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
+                StartCoroutine(animation.Launch());
             }
+
+            animationSequence.Enqueue(animation);
         }
 
-        public IEnumerator PlayAnimationCoroutine()
+        /// <summary>
+        /// Called when an animation is finished.
+        /// </summary>
+        /// <param name="animation"></param>
+        public void NotifyAnimationEnded(AnimationBlock animation)
         {
-            yield return StartCoroutine(AnimDictionary[SkillAnimationToPlay]);
-        }
-
-
-        // CHECKING INTERRUPTIONS
-
-        // this coroutine allows to check if turn passes and thus finishes what has to be finished at this time
-        public IEnumerator CheckInterruptions(float time)
-        {
-            Placeable tmpPlaceable = GameManager.instance.PlayingPlaceable;
-            for (float i = 0; i < time; i = i + 0.1f)
+            //TODO: check if it is the first one (just to spot error, it should not exist)
+            animationSequence.Dequeue();
+            if (animationSequence.Count > 0)
             {
-                if (tmpPlaceable == GameManager.instance.PlayingPlaceable) // TODO case if pa > 1, check selection of skill and break wait
-                    yield return new WaitForSeconds(0.1f);
-                else
-                {
-                    break;
-                }
+                StartCoroutine(animationSequence.Peek().Launch());
             }
-        }
-
-        public IEnumerator CheckInterruptionsWithRef(float time, LivingPlaceable refPlaceable)
-        {
-            for (float i = 0; i < time; i = i + 0.1f)
-            {
-                if (refPlaceable == GameManager.instance.PlayingPlaceable) // TODO case if pa > 1, check selection of skill and break wait
-                    yield return new WaitForSeconds(0.1f);
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        // checking interruptions if several actions in a row - give playing placeable as ref at the start
-        // use if several coroutine in one action (ex : damage -> hurt -> die)
-
-        public IEnumerator CheckContinuousInterruptions(float time, LivingPlaceable refPlaceable, bool interrupted)
-        {
-            if (!interrupted)
-            {
-                for (float i = 0; i < time; i = i + 0.1f)
-                {
-                    if (refPlaceable == GameManager.instance.PlayingPlaceable) // TODO case if pa > 1, check selection of skill and break wait
-                        yield return new WaitForSeconds(0.1f);
-                    else
-                    {
-                        interrupted = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // ROUTINES FOR ANIMATION 
-
-        public IEnumerator WaitAndDestroyBlock()
-        {
-            yield return null;
-            SoundHandler.Instance.PlayDestroyBlockSound();
-            animLauncher.Play("destroyBlock");
-        }
-
-        public IEnumerator WaitAndPushBlock()
-        {
-            yield return null;
-            SoundHandler.Instance.PlayPushBlockSound();
-            animLauncher.Play("pushBlock");
-        }
-
-        public IEnumerator WaitAndSummonBlock()
-        {
-            yield return null;
-            animLauncher.Play("createBlock");
-            SoundHandler.Instance.PlayCreateBlockSound();
-        }
-
-        // ATTACKS
-        public IEnumerator WaitAndBasicAttack()
-        {
-            yield return null;
-            SoundHandler.Instance.PlayAttackSound();
-            animLauncher.Play("attack");
-            yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
-            StartCoroutine("WaitAndGetHurt");
-        }
-
-        public IEnumerator WaitAndSpin()
-        {
-            yield return null;
-            SoundHandler.Instance.PlaySpinSound();
-            animLauncher.Play("tourbilol");
-            yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
-            StartCoroutine("WaitAndGetHurt");
-        }
-
-        public IEnumerator WaitAndBleed()
-        {
-            yield return null;
-            SoundHandler.Instance.PlaySwordSound();
-            animLauncher.Play("makebleed");
-            yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
-            StartCoroutine("WaitAndGetHurt");
-        }
-
-        public IEnumerator WaitAndLaunchFireball()
-        {
-            yield return null;
-            SoundHandler.Instance.PlayFireballSound();
-            GameObject tmp = Instantiate((GameObject)Resources.Load("FX/Fireball"), GameManager.instance.PlayingPlaceable.GetPosition(), Quaternion.identity);
-            tmp.GetComponent<FireballFX>().Init(positionTargets[0] + new Vector3(0, 1, 0));
-            //tmp.Init(placeableTargets[0].GetPosition());
-        }
-
-        public IEnumerator WaitAndBuff()
-        {
-            yield return null;
-            animLauncher.Play("buff");
-            SoundHandler.Instance.PlayHealingSound();
-        }
-
-        public IEnumerator WaitAndArrowAttack()
-        {
-            yield return null;
-            SoundHandler.Instance.PlayBowSound();
-            animLauncher.Play("shootArrow");
-            yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
-            StartCoroutine("WaitAndGetHurt");
-        }
-
-        public IEnumerator WaitAndGetHurt()
-        {
-            yield return null;
-            foreach (Animator animTarget in animTargets)
-            {
-                animTarget.Play("hurt");
-                SoundHandler.Instance.PlayHurtSound();
-            }
-        }
-
-        public IEnumerator WaitAndLowKick()
-        {
-            yield return null;
-            animLauncher.Play("lowkick");
-            yield return new WaitForSeconds(animLauncher.GetCurrentAnimatorStateInfo(0).length / 2);
-            SoundHandler.Instance.PlayPunchSound();
         }
     }
+        
 }

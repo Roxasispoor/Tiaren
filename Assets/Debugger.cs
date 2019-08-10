@@ -78,7 +78,7 @@ public class Debugger : MonoBehaviour
     private void DisplayInfo(Placeable placeable)
     {
         Text.text = "";
-        Text.text = "Animation queued: " + Animation.AnimationHandler.Instance.Couroutine_count + "\n";
+        Text.text = "Animation queued: " + Animation.AnimationHandler.Instance.AnimationblockInQueue + "\n";
         Text.text += placeable.name;
         Text.text += "\nNetId: " + placeable.netId;
 
