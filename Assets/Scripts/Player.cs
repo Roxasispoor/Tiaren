@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Animation;
 
 /// <summary>
 /// Represents a player
@@ -1144,14 +1145,7 @@ public class Player : NetworkBehaviour
     {
         if (path.Count > 1)
         {
-            if (placeable.moveCoroutine != null)
-            {
-                placeable.StopCoroutine(placeable.moveCoroutine);
-                placeable.moveCoroutine = null;
-
-            }
-            placeable.moveCoroutine = StartCoroutine(MoveAlongBezier(path, placeable, speed: speed, animator: animator, useCurve: useCurve));
-
+            AnimationHandler.Instance.QueueAnimation(new WalkAnimation(placeable, path));
         }
     }
 
@@ -1164,7 +1158,7 @@ public class Player : NetworkBehaviour
     /// <param name="speed"></param>
     /// <param name="useBezier">If false, use bezier curve</param>
     /// <returns></returns>
-    [Client]
+     /*
     private static IEnumerator MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool useCurve = false)
     {
         if (path.Count < 2)
@@ -1302,7 +1296,7 @@ public class Player : NetworkBehaviour
         placeable.isMoving = false;
 
         Debug.Log("End" + placeable.GetPosition());
-    }
+    }*/
 
     /*
     [Client]

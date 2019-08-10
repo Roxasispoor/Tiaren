@@ -659,7 +659,7 @@ public class Grid : MonoBehaviour
                 placeable.isMoving = false;
                 StopCoroutine(placeable.moveCoroutine);
             }
-            placeable.transform.position = desiredPosition; //shifting model
+            //placeable.transform.position = desiredPosition; //shifting model
         }
         if(!placeable.IsLiving()
             && GetPlaceableFromVector(desiredPosition + Vector3Int.down) != null
@@ -735,6 +735,10 @@ public class Grid : MonoBehaviour
             if (gridMatrix[x, y - ydrop, z] == null)
             {
                 desiredPosition = new Vector3Int(x, y - ydrop, z);
+
+                Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
+                Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
+
                 if (damage > 0)
                 {
                     character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
@@ -748,6 +752,10 @@ public class Grid : MonoBehaviour
                     character.Destroy();
                     return;
                 }
+
+                Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], desiredPosition);
+                Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
+
                 if (damage > 0)
                 {
                     character.DispatchEffect(new DamageCalculated(damage, DamageCalculated.DamageScale.BRUT, 0));
@@ -761,6 +769,8 @@ public class Grid : MonoBehaviour
         }
         else if (gridMatrix[x, y - ydrop, z] == null)// copying and destroying
         {
+            Animation.GravityComponent animationComponent = new Animation.GravityComponent(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
+            Animation.AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animationComponent);
             MovePlaceable(gridMatrix[x, y, z], new Vector3Int(x, y - ydrop, z));
         }
         else if (gridMatrix[x, y - ydrop, z].Crushable == CrushType.CRUSHDAMAGE)
@@ -825,10 +835,6 @@ public class Grid : MonoBehaviour
                        (gridMatrix[x, y, z].GravityType == GravityType.SIMPLE_GRAVITY ||
                        (gridMatrix[x, y, z].explored && !gridMatrix[x, y, z].grounded)))
                     {
-                        //batchlist.Add(gridMatrix[x, y, z]);
-                        //blockfallen = true;
-                        if (!gridMatrix[x, y, z].IsLiving())
-                            GameManager.instance.RemoveBlockFromBatch((StandardCube)gridMatrix[x, y, z]);
                         int ydrop = 0;
 
                         while (y - ydrop > 0 && (gridMatrix[x, y - ydrop - 1, z] == null

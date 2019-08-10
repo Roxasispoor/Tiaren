@@ -16,6 +16,8 @@ public class Tackle : Skill
 
     DamageCalculated ReboundEffect { get { return (DamageCalculated)effects[3]; } }
 
+    TackleAnimation tackleAnimation { get { return (TackleAnimation)animation; } }
+
     public Tackle(string JSON) : base(JSON)
     {
         Debug.LogError("Creating a tackle skill");
@@ -66,6 +68,11 @@ public class Tackle : Skill
         return vect;
     }
 
+    protected override void InitializeAnimation(LivingPlaceable caster, NetIdeable target)
+    {
+        animation = new TackleAnimation(caster);
+    }
+
     protected override void UseSpecific(LivingPlaceable caster, NetIdeable target)
     {
         int travelDistance = 0;
@@ -80,8 +87,15 @@ public class Tackle : Skill
 
         if (colisions.Count == 0)
         {
-            MoveEffect.Direction =  direction * CorrectOutbound(caster, direction, MaxRange);
+            Vector3 displacement = direction * CorrectOutbound(caster, direction, MaxRange);
+            MoveEffect.Direction = Vector3Int.FloorToInt(displacement);
             caster.DispatchEffect(MoveEffect);
+
+            if (GameManager.instance.isClient)
+            {
+                tackleAnimation.AddDisplacementLauncher(displacement);
+
+            }
         }
         else if (!colisions[0].IsLiving())
         {
@@ -93,6 +107,10 @@ public class Tackle : Skill
             colisions[0].DispatchEffect(PushEffect);
 
             caster.DispatchEffect(MoveEffect);
+            if (GameManager.instance.isClient)
+            {
+                tackleAnimation.AddDisplacementLauncher(direction * travelDistance);
+            }
         }
         else if (colisions[0].IsLiving())
         {
@@ -117,6 +135,12 @@ public class Tackle : Skill
                 {
                     ((LivingPlaceable)colisions[0]).DispatchEffect(ReboundEffect);
                 }
+
+                if (GameManager.instance.isClient)
+                {
+                    tackleAnimation.AddDisplacementLauncher(direction * travelDistance);
+                    tackleAnimation.AddDragged(colisions[0], direction * pushDistance);
+                }
             }
             else
             {
@@ -135,6 +159,12 @@ public class Tackle : Skill
                     travelDistance = GetTravelDistanceWithLiving(caster, colisions[0], direction);
                     MoveEffect.Direction = direction * travelDistance;
                     caster.DispatchEffect(MoveEffect);
+
+                    if (GameManager.instance.isClient)
+                    {
+                        tackleAnimation.AddDisplacementLauncher(direction * travelDistance);
+                        tackleAnimation.AddDragged(colisions[0], direction * pushDistance);
+                    }
                 }
                 else
                 {
@@ -154,6 +184,12 @@ public class Tackle : Skill
                     else
                     {
                         ((LivingPlaceable)colisions[0]).DispatchEffect(ReboundEffect);
+                    }
+
+                    if (GameManager.instance.isClient)
+                    {
+                        tackleAnimation.AddDisplacementLauncher(direction * (MaxRange - 1));
+                        tackleAnimation.AddDragged(colisions[0], direction * pushDistance);
                     }
                 }
             }
@@ -260,5 +296,96 @@ public class Tackle : Skill
             }
         }
         return colisions;
+    }
+
+    class TackleAnimation : Animation.AnimationBlock
+    {
+        Placeable launcher;
+        Vector3 displacementLauncher = Vector3.positiveInfinity;
+
+        Placeable dragged;
+        Vector3 displacementDragged;
+
+        const float speedBlocPerSecond = 2f;
+
+        bool bump = false;
+
+        public TackleAnimation(Placeable launcher)
+        {
+            this.launcher = launcher;
+        }
+
+        public void AddDisplacementLauncher(Vector3 displacement)
+        {
+            displacementLauncher = displacement;
+        }
+
+        public void AddDragged(Placeable dragged, Vector3 displacementDragged)
+        {
+            this.dragged = dragged;
+            this.displacementDragged = displacementDragged;
+        }
+
+        public override IEnumerator Animate()
+        {
+            Transform transformLauncher = launcher.VisualTransform;
+            Animator launcherAnimator = transformLauncher.GetComponent<Animator>();
+
+            if (launcherAnimator != null)
+            {
+                launcherAnimator.SetBool("Tackling", true);
+            }
+            
+            if (displacementLauncher == Vector3.positiveInfinity)
+            {
+                Debug.LogError("TackleAnimation: did not update the displacement of the launcher");
+            }
+
+            Animation.Segment launcherMainLane = new Animation.Segment(transformLauncher.position, transformLauncher.position+displacementLauncher);
+
+            float timeToStart = -1;
+            float relativeLength = (displacementDragged.magnitude - 1) / displacementLauncher.magnitude;
+            Animation.Segment draggedMainLane = null;
+
+            if (dragged != null)
+            {
+                timeToStart = 1 - relativeLength;
+                draggedMainLane = new Animation.Segment(dragged.VisualTransform.position, transformLauncher.position + displacementLauncher);
+            }
+
+
+
+            float currentPercentage = 0;
+
+            while (currentPercentage < 1)
+            {
+
+                currentPercentage += Mathf.Min(speedBlocPerSecond * Time.deltaTime, 1);
+                transformLauncher.position = launcherMainLane.computePosition(currentPercentage);
+                if (timeToStart > 0 && currentPercentage > timeToStart)
+                {
+                    float relativePercentage = (currentPercentage - timeToStart) / relativeLength;
+                    dragged.VisualTransform.position = draggedMainLane.computePosition(relativePercentage);
+                }
+                yield return null;
+
+            }
+            if (dragged != null)
+            {
+                Animation.Segment draggedSecondLane = new Animation.Segment(dragged.VisualTransform.position, dragged.VisualTransform.position + displacementDragged.normalized);
+
+                yield return draggedSecondLane.makeMoveAlong(dragged.VisualTransform, speedBlocPerSecond);
+            }
+
+
+            if (bump)
+            {
+
+            } else
+            {
+                
+            }
+
+        }
     }
 }

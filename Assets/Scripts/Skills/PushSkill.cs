@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
 
+using Animation;
+
 public class PushSkill : Skill
 {
     [SerializeField]
@@ -63,4 +65,39 @@ public class PushSkill : Skill
         }
         return true;
     }
+
+    protected override void InitializeAnimation(LivingPlaceable caster, NetIdeable target)
+    {
+        base.InitializeAnimation(caster, target);
+        animation = new PushAnimation(caster, target);
+    }
+
+    public class PushAnimation : AnimationBlock
+    {
+
+        //MoveAlongBezier(List<Vector3> path, Placeable placeable, Animator animator = null, float speed = 4f, bool useCurve = false)
+        Placeable launcher;
+        Animator animatorLauncher;
+        NetIdeable target;
+
+        public PushAnimation(LivingPlaceable launcher, NetIdeable target)
+        {
+            this.launcher = launcher;
+            this.animatorLauncher = this.launcher.GetComponent<Animator>();
+            this.target = target;
+            
+        }
+        public override IEnumerator Animate()
+        {
+            Vector3 targetPosition = target.VisualTransform.position;
+            Vector3 launcherPosition = target.VisualTransform.position;
+            Vector3 positionToLookAt = new Vector3(targetPosition.x, launcherPosition.y, targetPosition.z);
+
+            launcher.VisualTransform.LookAt(positionToLookAt);
+            animatorLauncher.SetTrigger("Push");
+
+            yield return null;
+        }
+    }
+
 }

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
+using Animation;
 /// <summary>
 /// Class representing a skill usable by player through a character of his team
 /// </summary>
 [Serializable]
 public abstract class Skill
 {    
-    // ####### NEW #########
     [SerializeField]
     protected string skillName;
     public string SkillName { get { return skillName; } }
@@ -62,8 +62,7 @@ public abstract class Skill
     /// </summary>
     public bool oneClickUse = false;
 
-
-    // ####### OLD #########
+    protected Animation.AnimationBlock animation;
     
 
     protected Skill()
@@ -107,6 +106,12 @@ public abstract class Skill
 
     protected abstract void UseSpecific(LivingPlaceable caster, NetIdeable target);
 
+    //TODO: change to abstract when the animation rework will be finished
+    protected virtual void InitializeAnimation(LivingPlaceable caster, NetIdeable target)
+    {
+        animation = new EmptyAnimation();
+    }
+
     public bool Use(LivingPlaceable caster, NetIdeable target)
     {
         if (caster.CurrentPA < Cost || !CheckConditions(caster, target))
@@ -114,11 +119,26 @@ public abstract class Skill
             Debug.LogError("Condition not verified to launch the skill: " + this.SkillName);
             return false;
         }
+
+        if (GameManager.instance.isClient)
+        {
+            InitializeAnimation(caster, target);
+            AnimationHandler.Instance.SetCurrentBuildingAnimation(animation);
+        }
+
+
         UseSpecific(caster, target);
-        
+
+
+        if (GameManager.instance.isClient)
+        {
+            AnimationHandler.Instance.FinishCurrentAnimationCreation();
+        }
+
         GameManager.instance.ActiveSkill = null;
         this.cooldownTurnLeft = this.cooldown;
         caster.CurrentPA -= Cost;
+
         return true;
     }
 
@@ -256,69 +276,6 @@ public abstract class Skill
         }
     }
 
-    // set SkillAnimationToPlay in AnimationHandler
-    public void SendAnimationInfo(List<Animator> animTargets, List<Placeable> placeableTargets, List<Vector3> positionTargets)
-    {
-        AnimationHandler.Instance.SkillAnimationToPlay = this.skillName;
-        AnimationHandler.Instance.animLauncher = GameManager.instance.PlayingPlaceable.GetComponent<Animator>();
-        AnimationHandler.Instance.animTargets = animTargets;
-        AnimationHandler.Instance.placeableTargets = placeableTargets;
-        AnimationHandler.Instance.positionTargets = positionTargets;
-    }
-
-    // ask AnimationHandler to play it
-    public void PlayAnimation()
-    {
-        AnimationHandler.Instance.PlayAnimation();
-    }
-
-    
-    /*
-    public bool Use(LivingPlaceable caster, List<NetIdeable> targets)
-    {
-        if (this.tourCooldownLeft > 0)
-        {
-            return false;
-        }
-        if (condition != null && !condition.Invoke())
-        {
-            return false;
-        }
-        
-        List<Animator> animTargets = new List<Animator>();
-        List<Placeable> placeableTargets = new List<Placeable>();
-        List<Vector3> positionTargets = new List<Vector3>();
-        foreach (Placeable target in targets)
-        {
-            placeableTargets.Add(target);
-            positionTargets.Add(target.GetPosition());
-            if (target.GetComponent<Animator>() != null)
-            {
-                animTargets.Add(target.GetComponent<Animator>());
-            }
-        }
-        SendAnimationInfo(animTargets, placeableTargets, positionTargets);
-        PlayAnimation();
-        this.tourCooldownLeft = this.cooldown;
-        Debug.Log(this.Cost);
-        caster.CurrentPA -= this.Cost;
-        Debug.Log(caster.CurrentPA);
-        foreach (Placeable target in targets)
-        { 
-            foreach (Effect effect in effects)
-            {
-                //makes the deep copy, send it to effect manager and zoo
-                Effect effectToConsider = effect.Clone();
-                effectToConsider.Launcher = caster;
-                //Double dispatch
-                target.DispatchEffect(effectToConsider);
-
-            }
-        }
-
-        GameManager.instance.ActiveSkill = null;
-        return true;
-    }*/
 
     //TODO: rework
     public string Save()

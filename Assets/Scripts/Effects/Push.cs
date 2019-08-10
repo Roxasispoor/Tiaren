@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using Animation;
+
 /// <summary>
 /// Effect to push a bloc
 /// </summary>
@@ -97,8 +100,13 @@ public class Push : EffectOnPlaceable
 
         Placeable placeableHitted;
 
+        // TODO : no further need for List<Vector3>, maybe could only use a vector3 
         List<Vector3> path= GeneratePath(direction, distance, out placeableHitted);
-        
+
+        AnimationComponent animation = new pushAnimationComponent(Target, path[0], path[path.Count - 1]);
+
+        AnimationHandler.Instance.AddComponentToCurrentAnimationBlock(animation);
+
         if (placeableHitted != null)
         {
             if (Target.IsLiving())
@@ -126,8 +134,8 @@ public class Push : EffectOnPlaceable
             {
                 Vector3 launcherPosition = Launcher.transform.position;
                 Vector3 positionToLook = new Vector3(targetPositionStart.x, launcherPosition.y, targetPositionStart.z);
-                GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(positionToLook, Vector3.up);
-                GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Target, null, pushSpeed, false);
+                //GameManager.instance.PlayingPlaceable.gameObject.transform.LookAt(positionToLook, Vector3.up);
+                //GameManager.instance.PlayingPlaceable.Player.FollowPathAnimation(path, Target, null, pushSpeed, false);
             }
 
             if (shouldApplyGravity)
@@ -171,5 +179,31 @@ public class Push : EffectOnPlaceable
 
 
         return positions;
+    }
+
+    private class pushAnimationComponent : AnimationComponent
+    {
+        NetIdeable target;
+        Vector3 start;
+        Vector3 end;
+
+        //TODO: get the animator in another way
+        public pushAnimationComponent(NetIdeable target, Vector3 start, Vector3 end): base ()
+        {
+            this.target = target;
+            this.start = start;
+            this.end = end;
+        }
+
+        public override IEnumerator Launch()
+        {
+            StandardCube cube = target as StandardCube;
+            if (cube != null)
+            {
+                GameManager.instance.RemoveBlockFromBatch(cube);
+            }
+            Segment lane = new Segment(start, end);
+            yield return lane.makeMoveAlong(target.VisualTransform, 2f);
+        }
     }
 }
