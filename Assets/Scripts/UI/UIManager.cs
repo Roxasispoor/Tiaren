@@ -81,7 +81,7 @@ public class UIManager : MonoBehaviour
     {
         if (gameObject.GetComponent<Player>().isLocalPlayer)
         {
-            teamCanvas.transform.Find("TitleText").GetComponent<Text>().text = "Choose your characters";
+            teamCanvas.transform.Find("TitleText").GetComponent<TextMeshProUGUI>().text = "Choose your characters";
             teamCanvas.transform.Find("GoTeam").gameObject.SetActive(true);
             //display UI
             for (int i = 0; i < numberOfPlayer; i++)

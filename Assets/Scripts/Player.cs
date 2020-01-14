@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Animation;
+using TMPro;
 
 /// <summary>
 /// Represents a player
@@ -304,7 +305,7 @@ public class Player : NetworkBehaviour
             {
                 GameObject firstCanva = gameObject.transform.Find("TeamCanvas").gameObject;
                 firstCanva.SetActive(true);
-                firstCanva.transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other player";
+                firstCanva.transform.Find("TitleText").GetComponent<TextMeshProUGUI>().text = "Waiting for other player";
             }
             account = FindObjectOfType<PlayerAccount>();
             if (account != null && account.AccountInfoPacket != null && account.AccountInfoPacket.Username != null)
@@ -459,7 +460,7 @@ public class Player : NetworkBehaviour
             characterChoices[i] = gameObject.GetComponent<UIManager>().CurrentCharacters[i];
         }
         gameObject.transform.Find("TeamCanvas").transform.Find("GoTeam").gameObject.SetActive(false);
-        gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<Text>().text = "Waiting for other Player";
+        gameObject.transform.Find("TeamCanvas").transform.Find("TitleText").GetComponent<TextMeshProUGUI>().text = "Waiting for other Player";
         Button[] buttons = gameObject.transform.Find("TeamCanvas").transform.GetComponentsInChildren<Button>();
         foreach (Button but in buttons)
         {
