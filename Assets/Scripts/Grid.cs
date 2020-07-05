@@ -659,6 +659,8 @@ public class Grid : MonoBehaviour
                 placeable.isMoving = false;
                 StopCoroutine(placeable.moveCoroutine);
             }
+
+            placeable.VisualTransform.position = desiredPosition;
             //placeable.transform.position = desiredPosition; //shifting model
         }
         if(!placeable.IsLiving()
@@ -709,11 +711,14 @@ public class Grid : MonoBehaviour
         Vector3Int oldPositionA = placeableA.GetPosition();
         Vector3Int oldPositionB = placeableB.GetPosition();
 
+        
         Grid.instance.gridMatrix[oldPositionB.x, oldPositionB.y, oldPositionB.z] = placeableA;
-        placeableA.transform.position = oldPositionB;
+        placeableA.logicPosition = oldPositionB;
+        placeableA.VisualTransform.position = oldPositionB;
 
         Grid.instance.gridMatrix[oldPositionA.x, oldPositionA.y, oldPositionA.z] = placeableB;
-        placeableB.transform.position = oldPositionA;
+        placeableB.logicPosition = oldPositionA;
+        placeableB.VisualTransform.position = oldPositionA;
     }
 
 

@@ -385,7 +385,7 @@ public class Tackle : Skill
             {
                 
             }
-
+            dragged.ResetVisualTransform();
         }
     }
 }

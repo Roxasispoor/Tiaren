@@ -57,6 +57,12 @@ public abstract class NetIdeable : MonoBehaviour {
             attachedEffects = value;
         }
     }
+
+    public void ResetVisualTransform()
+    {
+        VisualTransform.position = logicPosition;
+    }
+
     public abstract void DispatchEffect(Effect effect);
     public virtual bool IsLiving()
     {
