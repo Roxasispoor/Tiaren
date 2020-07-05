@@ -375,17 +375,9 @@ public class Tackle : Skill
                 Animation.Segment draggedSecondLane = new Animation.Segment(dragged.VisualTransform.position, dragged.VisualTransform.position + displacementDragged.normalized);
 
                 yield return draggedSecondLane.makeMoveAlong(dragged.VisualTransform, speedBlocPerSecond);
+
+                dragged.ResetVisualTransform(); // HACK TO HANDLE BUMP AND NO BUMP, we should make 2 cases
             }
-
-
-            if (bump)
-            {
-
-            } else
-            {
-                
-            }
-            dragged.ResetVisualTransform();
         }
     }
 }
